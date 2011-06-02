@@ -1,0 +1,32 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$this->title('Setup: Sprachauswahl');
+
+?>
+<h2 class="rex-hl2">Bitte wählen Sie eine Sprache aus.</h2>
+<div class="rex-area-content">
+	<ul class="rex-setup-language">
+	<?php
+
+	$langpath = SLY_INCLUDE_PATH.'/lang';
+
+	foreach (sly_Controller_Setup::getLanguages() as $l) {
+		$i18n  = rex_create_lang($l, $langpath, false);
+		$label = $i18n->msg('lang');
+
+		print '<li><a href="index.php?func=license&amp;lang='.urlencode($l).'">'.sly_html($label).'</a></li>';
+	}
+
+	unset($i18n);
+
+	?>
+	</ul>
+</div>
