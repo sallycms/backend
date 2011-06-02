@@ -1,0 +1,116 @@
+#rex-page-linkmap {
+	#sly-page        { width: 100%;            }
+	#rex-redaxo-link { display: none;          }
+	#sly-footer      { display: none;          }
+
+	#sly-wrapper {
+		float: none;
+		margin: 0 auto;
+		padding-top: 20px;
+		width: 690px;
+	}
+
+	#sly-pagehead {
+		background-image: none;
+		height: auto;
+
+		&-row { width: 100%; }
+		p { display: none; }
+		.rex-area-content { line-height: 1em; }
+	}
+}
+
+#rex-linkmap {
+	background-color: #fff;
+	clear: both;
+	position: relative;
+	float: left;
+	width: 100%;
+	+border-radius($brd_rad);
+
+	h3 {
+		width: 94%;
+	}
+
+	li {
+		list-style: none;
+		background-repeat: no-repeat;
+		line-height: 0.9em;
+	}
+
+	.rex-area-col-b ul li a {
+		background-image: url(../document.gif);
+		padding-left: 20px;
+		background-repeat: no-repeat;
+	}
+
+	&, ul li ul {
+		background-image: url(../file_vert.gif);
+		background-position: 49% 0px;
+		background-repeat: repeat-y;
+	}
+
+	.rex-area-col-b ul li.rex-linkmap-startpage a {
+		background-image: url(../liste.gif);
+	}
+
+	ul {
+		margin: 0 5px 10px 10px;
+		list-style: none;
+		line-height: 1em;
+
+		li.rex-children ul li,
+		li ul li.rex-children-last {
+			background-image: url(../file.gif);
+			background-position: -21px 0px;
+			background-repeat: no-repeat;
+		}
+
+		li ul li.rex-children-last {
+			background-image: url(../file_last_2.gif);
+			background-repeat: no-repeat;
+		}
+
+		li {
+			ul {
+				background-position: 2px 0px;
+				margin: 0;
+
+				&.rex-children-one {
+					background: none;
+				}
+			}
+
+			/*	Folder */
+
+			a {
+				background-image: url(../folder_off_empty.gif);
+				background-repeat: no-repeat;
+				display: block;
+				margin-bottom: 4px;
+				padding: 2px 0px 0 35px;
+				height: 20px;
+			}
+
+			a.rex-linkmap-is-not-empty {
+				background-image: url(../folder_off.gif);
+			}
+
+			&.rex-active a.rex-active {
+				background-image: url(../folder_on_empty.gif);
+			}
+
+			&.rex-active a.rex-linkmap-is-not-empty.rex-active {
+				background-image: url(../folder_on.gif);
+			}
+
+			a.rex-offline { color: $link_color_offline; }
+			a.rex-online  { color: $link_color_online; }
+
+			&.rex-children ul li, ul li.rex-children-last {
+				margin-left: 23px;
+				padding-left: 10px;
+			}
+		}
+	}
+}
