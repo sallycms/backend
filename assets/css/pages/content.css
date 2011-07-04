@@ -1,0 +1,255 @@
+.sly-content-header {
+	margin-bottom: 10px;
+	+clearfix;
+
+	ul {
+		padding: 5px 0; /*  Abstand oben und unten */
+		&.rex-navi-slots { float: left; }
+		&.rex-navi-content { float: right; }
+
+		li {
+			list-style: none;
+			display: inline;
+			margin: 0 0 0 5px; /* Abstand der Listenelemente zu einander, s. Buttons Editier-Modus etc. */
+
+			/* Buttons Editier Modus, Metadaten, Anzeigen */
+			a {
+				background-color: #fff;
+				padding: 2px 8px;
+				color: #1f9eb5;
+				+border-radius(3px);
+
+				&:hover {
+					background-color: #b3b3b3;
+					color: #fff;
+				}
+
+				&.rex-active {
+					background-color: $drk_grey;
+					color: #fff;
+
+					&:hover { background-color: #b3b3b3; }
+				}
+			}
+		}
+	}
+}
+
+/*	Editmode */
+.sly-contentpage {
+	&-slice-input,	&-slice-output {
+	    background-color: $lt_grey;
+		clear: both;
+		padding: 10px;
+		ol, ul { margin-left: 20px; }
+	}
+
+	&-slice-output {
+		+border-bottom-radius(4px);
+		color: #999;
+
+		h1{ font-size: 2em;   }
+		h2 { font-size: 1.6em; }
+		h3 { font-size: 1.4em; }
+		h4 { font-size: 1.2em; }
+		h5 { font-size: 1.1em; }
+		h6 { font-size: 1em;   }
+	}
+}
+
+
+.sly-content-editmode {
+
+	color: $drk_grey;
+
+	.rex-message, .sly-content-body {
+		+border-radius(0px);
+		border: 0;
+	}
+}
+
+#addslice {
+	.rex-form-row {
+		background-color: #e8e8e8;
+		clear: both;
+		border: 0;
+		+border-bottom-radius(4px);
+		background-color: $md_grey;
+		padding-left: 0;
+		padding-right: 0;
+		width: 797px;
+
+		input[type=submit] {
+			margin-left: 10px;
+		}
+	}
+}
+
+.sly-form .sly-form-add-slice {
+	.rex-form-wrapper {
+		+border-top-radius(4px);
+	}
+
+	.rex-form-row {
+		border-top: 0;
+	}
+	legend, label { +hide; }
+	select.sly-module-select {width: 100%}
+}
+/*	Editmode */
+.rex-content-editmode-module-name {
+	float: left;
+	width: 100%;
+	line-height: 35px;
+	background-color: $drk_grey;
+	+border-radius(4px);
+
+	h3 {
+		float: left;
+		vertical-align: middle;
+		color: #fff;
+		font-size: 1.1em;
+		margin: 0 0 0 10px;
+	}
+
+	.sly-slice-actions {
+		float: right;
+		margin-right: 5px; /* Schiebt die Edit, Delete- und Pfeil-Buttons rein*/
+	}
+}
+
+/* METAMODE ------------------------------------------------------------------------------------- METAMODE */
+
+#rex-form-content-metamode {
+
+	padding: 0px;
+	margin-bottom: 10px;
+
+	.rex-widget {
+		margin-bottom: 0px;
+	}
+
+	.rex-form {
+
+		&-row {
+			vertical-align: middle;
+			border: 0;
+		}
+
+		&-col-1, &-col-2 {
+
+			.rex-form-wrapper {
+				margin-top: -17px; /* Ausgleich f��r Legend */
+				padding: 0 10px 10px 10px;
+				line-height: 25px;
+				background-color: #fff;
+				margin:0 0 20px -1px;
+				+border-bottom-radius(4px);
+				border: 1px solid #efefef;
+				color: $drk_grey;
+				float: left;
+				width: 777px;
+			}
+
+			input[type=submit], input.rex-form-text, select {border: 1px solid $md_grey; margin-bottom: 0;}
+
+			legend {
+				color: #fff;
+				font-size: 1.1em;
+				+border-top-radius(4px);
+				width: 787px; /* Breite des Loginbereichs abz��glich des padding links*/
+				padding: 8px 0 8px 10px;
+			}
+
+			p.rex-form-read span {
+				margin-left: 155px;
+				color: $md_grey;
+			}
+
+		}
+
+		/* Spezialfall mit zwei Spalten*/
+		&-col-2 {
+
+			.rex-form-col-a {
+				width:49%;
+				float: left;
+			}
+
+			.rex-form-col-b {
+				width:49%;
+				float: right;
+			}
+		}
+	}
+}
+
+/* Wird von rex_article ausgegeben */
+
+.sly-slice-actions li {
+	display: block;
+	float: left;
+	margin-top: 8px;
+	margin-left: 2px;
+
+	a {
+		display: block;
+		color: #fff;
+		font-size: 1em;
+		height: 20px;
+		background-color: $link_color;
+		line-height: 20px;
+		padding-left: 20px;
+		+border-radius(3px);
+
+		/* Editbutton auf Artikelseite */
+		&.rex-tx3 {
+			background-image: url(../background_btn_edit.png);
+			background-position: 6px 0;
+			background-repeat: no-repeat;
+			width: 60px;
+
+
+			&:hover {
+				background-color: #4bcee4;
+			}
+		}
+
+		/* L��schen-Button */
+		&.rex-tx2 {
+			background-image: url(../background_btn_dlt.png);
+			background-position: 6px 0;
+			background-repeat: no-repeat;
+			width: 55px;
+
+			&:hover {
+				background-color: #4bcee4;
+			}
+		}
+
+		/*  Pfeil-Buttons */
+		&.rex-slice-{
+			&move-up, &move-down {
+				padding: 0px;
+				width: 22px;
+
+				&:hover {
+					background-color: #4bcee4;
+				}
+			}
+
+			&move-down {
+				background-image: url(../background_btn_down.png);
+				background-position: 7px 0;
+				background-repeat: no-repeat;
+			}
+
+			&move-up {
+				background-image: url(../background_btn_up.png);
+				background-position: 7px 0;
+				background-repeat: no-repeat;
+			}
+		}
+
+	}
+}
