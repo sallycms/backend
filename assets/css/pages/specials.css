@@ -18,9 +18,11 @@
 	fieldset { padding-bottom: 1em; }
 
 	legend {
-		padding-left: 0;
-		padding-top: 0;
+		padding: 0;
 		background-color: transparent;
+		font-size: 100%;
+		color: $drk_grey;
+		width: auto;
 	}
 
 	.rex-form-row {
@@ -59,6 +61,10 @@
 		padding-bottom: 0;
 		.rex-form-wrapper { margin-bottom: 10px; }
 	}
+
+	p.button {
+		margin: 0 0 15px 5px;
+	}
 }
 
 /*	System: Sprachen */
@@ -84,5 +90,26 @@
 		.rex-form-text {
 			width: 100%;
 		}
+	}
+}
+
+/* System: Fehlerprotokoll */
+
+#rex-page-specials {
+	form.errorlog {
+		input.sly-button {
+			cursor: pointer;
+			margin-left: 0;
+			margin: 1em 0;
+		}
+	}
+
+	#sly-errorlog {
+		th { padding-left: 9px; }
+		td { padding: 4px; height: auto; }
+		td.date { text-align: right; width: 150px; }
+		td.location, td.request { padding-left: 34px; }
+		em { font-style: italic; }
+		tr.where td, tr.request td { border-top: 0 none; }
 	}
 }
