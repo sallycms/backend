@@ -1,0 +1,76 @@
+<?php
+/*
+ * Copyright (C) 2009 REDAXO
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License Version 2 as published by the
+ * Free Software Foundation.
+ */
+
+/**
+ * Dient zur Ausgabe des Sprachen-Blocks
+ *
+ * @package redaxo4
+ */
+
+$_languages   = sly_Util_Language::findAll();
+$_user        = sly_Util_User::getCurrentUser();
+
+if (!isset($curClang)) {
+	$curClang = sly_Core::getCurrentClang();
+}
+
+if (!isset($params)) {
+	$params = array();
+}
+
+if (count($_languages) > 1) {
+	print '
+	<div id="sly-clang" class="rex-toolbar">
+		<div class="rex-toolbar-content">
+			<ul>
+				<li>'.t('languages').' : </li>';
+
+	$stop = false;
+	$i    = 1;
+
+	foreach ($_languages as $language) {
+		$clangID = $language->getId();
+		if ($i == 1) {
+			print '<li class="rex-navi-first rex-navi-clang-'.$clangID.'">';
+		}
+		else {
+			print '<li class="rex-navi-clang-'.$clangID.'">';
+		}
+
+		$clangName = rex_translate($language->getName()); // enthält htmlspecialchars()
+
+		if (!sly_Util_Language::hasPermissionOnLanguage($_user, $clangID)) {
+			print '<span class="rex-strike">'.$clangName.'</span>';
+			$stop |= $curClang == $clangID;
+		}
+		else {
+			$class = '';
+
+			if ($clangID == $curClang) {
+				$class = ' class="rex-active"';
+			}
+			$params['clang'] = $clangID;
+			print '<a'.$class.' href="index.php?'.  http_build_query($params).'">'.$clangName.'</a>';
+		}
+
+		print '</li>';
+		++$i;
+	}
+
+	print '
+		</ul>
+	</div>
+</div>
+';
+	if ($stop) {
+		$_langService = sly_Service_Factory::getLanguageService();
+		$lang = $_langService->findById($stop);
+		throw new sly_Authorisation_Exception(t('authorisation_exception_language_denied', rex_translate($lang->getName())));
+	}
+}

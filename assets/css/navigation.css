@@ -1,0 +1,217 @@
+#sly-navi-main {
+	float: left;
+	width: 171px;
+	margin-left: 16px;
+
+	li {
+		font-size:0.9em;
+		line-height:25px;
+		list-style:none outside none;
+		margin-bottom:1px;
+	}
+
+	a {
+		+border-radius(3px);
+		display: block;
+		color: $drk_grey;
+		background-color: #fff;
+		vertical-align: middle; /* zentriert, zusammen mit line-height aus oberem element, die links */
+	}
+
+	ul li {
+		a {
+			padding:0 0 0 25px;
+			background-image: url(../background_menu_arrow.sld.png);
+			background-position: 10px 0;
+			background-repeat: no-repeat;
+
+			&:hover {
+				color: #fff;
+				background-color: #b3b3b3;
+				text-decoration: none;
+				background-position: 10px -24px;
+				background-repeat: no-repeat;
+			}
+
+			&.rex-active {
+				background-color: $drk_grey;
+				color: #fff;
+				font-weight: bold;
+				background-position: 10px -49px;
+			}
+
+			/* anderes Menü-Icon für Medienpool */
+			&.popup {
+				background-image: url(../background_btn_popup.sld.png);
+				background-position: center 1px;
+
+				&:hover {
+					background-image: url(../background_btn_popup.sld.png);
+					background-position: center center;
+				}
+			}
+
+		}/* Ende a */
+
+
+		/* Untermenü ohne ul, da ein li immer in einem ul ist */
+		li {
+			display: none;
+
+			a {
+				padding-left: 40px;
+				font-weight: normal;
+				background-color: #fff;
+				background-image: url(../background_sub-menu_arrow.sld.png);
+				background-position: 25px 0;
+				background-repeat: no-repeat;
+
+				&.rex-active {
+					color: $drk_grey;
+					background-color: $lt_grey;
+					text-decoration: none;
+					background-position: 25px -49px;
+					font-size: 1.1em; /* font-size vererbung geht nicht? */
+				}
+
+				&:hover {
+					color: #fff;
+					background-color: $md_grey;
+					text-decoration: none;
+					background-position: 25px -24px;
+				}
+			}
+		}
+
+		&.rex-active li { display: block; }
+
+	} /* Ende ul li Ebene 1*/
+
+	/*gesamtes menü*/
+	dl {
+		width: 100%;
+		display: block;
+		color: $drk_grey;
+
+		/* Navi-Headline */
+		dt {
+			display: block;
+			padding: 9px 10px 6px;
+			font-size: 1.4em;
+			letter-spacing: -0.01em;
+			text-shadow: 1px 1px 0px rgba(255,255,255,1.0);
+			border-bottom: 1px dotted $md_grey;
+			margin-bottom: 5px; /* Abstand "Basis Naviagtion" zum ersten Menüpunkt 5px */
+		}
+
+		dd {
+			margin: 0 0 16px 0;
+		} /* Ende dd */
+
+	} /* Ende dl */
+}
+
+/* Textfarbe des aktiven Menüpunkts */
+#sly-navi-main ul li a.rex-active {
+	color: #fff;
+	font-weight: bold;
+}
+
+/******************************************************************************\
+* Navi Logout                                                                  *
+\******************************************************************************/
+#sly-navi-top {
+	color: #b2b2b2;
+	height: 88px;
+	margin-bottom: 36px;
+	background: transparent url(../logo.png) 11px 0px no-repeat;
+
+	.sly-meta {
+		padding: 59px 0 0 0;
+		text-align: right;
+		font-size: 0.8em;
+	}
+
+	a, span { padding: 0 5px; }
+
+	ul li {
+		display: inline;
+		font-weight: bold;
+		background-image: url(../pipe_c2.png);
+		background-position: 0px 2px;
+		background-repeat: no-repeat;
+
+		&.rex-navi-first {
+			background: none;
+		}
+	}
+}
+
+/******************************************************************************\
+* Navigation unter dem Seitentitel                                             *
+\******************************************************************************/
+
+#rex-navi-page ul li {
+	display: inline;
+	font-weight: normal;
+
+	a { margin: 0 15px; }
+	&.rex-navi-first a { margin-left: 0; }
+}
+
+#rex-navi-page ul li a.rex-active {
+	color: $drk_grey;
+}
+
+#sly-footer {
+	float: left;
+	position: relative;
+	background: transparent url(../footer.png) 0 0 repeat-x;
+	margin-top: 50px;
+	width: 100%;
+	height: 51px;
+	line-height: 51px;
+	font-size: 0.8em;
+	+clearfix;
+
+	p {
+		float: right;
+		margin: 0 5px;
+		color: $lt_grey;
+	}
+
+	ul {
+		float: left;
+		width: 50%;
+		margin: 0 5px;
+
+		li {
+			display: inline;
+			background-image: url(../pipe_c2.png);
+			background-position: 0px 2px;
+			background-repeat: no-repeat;
+
+			&.rex-navi-first {
+				background: none;
+			}
+
+			a {
+				margin: 0 8px;
+			}
+
+			&.rex-navi-first a {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+#rex-navi-page {
+	ul li {
+		background-image: url(../pipe_c2.png);
+		background-position: 0 4px;
+		background-repeat: no-repeat;
+
+		&.rex-navi-first { background: none; }
+	}
+}
