@@ -1,0 +1,33 @@
+<?php
+
+$user    = sly_Util_User::getCurrentUser();
+$service = sly_Service_Factory::getTemplateService();
+$modules = $service->getModules($article->getTemplateName(), $slot);
+
+uasort($modules, 'strnatcasecmp');
+
+$moduleSelect = new sly_Form_Select_DropDown('add_module', '', '', array(), 'module'.$prior);
+$moduleSelect->addClass('sly-module-select');
+$moduleSelect->addValue('', '----------------------------  ' . t('add_block'));
+
+foreach ($modules as $module => $moduleTitle) {
+	if ($user->isAdmin() || $user->hasRight('module[' . $module . ']')) {
+		$moduleSelect->addValue($module, rex_translate($moduleTitle, null, false));
+	}
+}
+
+$formID = 'slice' . $prior;
+
+$form = new sly_Form('index.php#slice'.$prior, 'GET', t('add_block'), $formID, $formID);
+$form->addClass('sly-form-add-slice');
+$form->addHiddenValue('page', 'content');
+$form->addHiddenValue('article_id', $article->getId());
+$form->addHiddenValue('clang', $article->getClang());
+$form->addHiddenValue('prior', $prior);
+$form->addHiddenValue('function', 'add');
+$form->addHiddenValue('slot', $slot);
+
+$form->add($moduleSelect);
+$form->setSubmitButton(null);
+$form->setResetButton(null);
+print $form->render();
