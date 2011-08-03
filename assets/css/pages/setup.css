@@ -1,0 +1,120 @@
+.rex-form-setup-step-database .rex-form-row {
+	p input.rex-form-radio,
+	p input.rex-form-submit {
+		margin-left: 5px;
+	}
+}
+
+.rex-form-setup-admin .rex-form-row p.rex-form-text input {
+	width: 200px;
+}
+
+/* Language */
+
+ul.rex-setup-language {
+	font-weight: bold;
+	text-align: center;
+
+	li {
+		display: block;
+		padding: 5px 0;
+	}
+}
+
+/* License */
+
+.rex-area-scroll {
+	margin: 10px 0 10px 20px;
+	padding: 5px 0 5px 5px;
+	width: 598px;
+	height: 200px;
+	overflow: auto;
+	border-width: 1px;
+	border-style: solid;
+
+	p.rex-tx1 {
+		margin: 0;
+		line-height: 18px;
+	}
+}
+
+#rex-page-setup {
+
+	#sly-wrapper,
+	#sly-footer{
+		float: none;
+		width: 650px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	.rex-area-content {
+		width: 100%;
+	}
+
+	h2.sly-setup-fs-problems {
+		margin-top: 10px;
+	}
+
+	.sly-fs-errors {
+		color: white;
+	}
+
+	.sly-form {
+		.rex-form-text input,
+		.rex-form-password input,
+		select#driver,
+		select#timezone {
+			width: 250px;
+		}
+
+		legend { width: 640px; }
+		.rex-form-wrapper { width: 650px; }
+		.rex-form-row { width: 636px; }
+	}
+	
+}
+
+.sly-setup-requirements {
+	padding: 0;
+
+	table {
+		width: 100%;
+	}
+
+	th, td {
+		line-height: 14px;
+		padding: 6px 5px;
+	}
+
+	th { font-weight: bold; }
+	td { border-top: 1px dotted #ACA9A9; }
+
+	td.sly-status, td.sly-recommended {
+		width: 110px;
+		text-align: center;
+	}
+
+	td.sly-status { color: white; }
+
+	.ok      .sly-status { background-color: green;  }
+	.warning .sly-status { background-color: orange; }
+	.failed  .sly-status { background-color: red;    }
+}
+
+/*	Formulare */
+
+#sly-setup-dbsetup {
+	.rex-form-wrapper {
+		margin-bottom: 0;
+	}
+
+	#prefix { width: 50px; }
+	#create_db { width: auto; }
+}
+
+#rex-form-setup-step-2 {
+	.rex-form-checkbox {
+		margin-left: 0;
+	}
+}
