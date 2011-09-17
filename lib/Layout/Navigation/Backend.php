@@ -16,9 +16,67 @@ class sly_Layout_Navigation_Backend {
 	private $currentGroup;
 
 	public function __construct() {
-		$this->groups = array();
-		$this->addGroup('system', 'translate:navigation_basis');
-		$this->addGroup('addon', 'translate:navigation_addons');
+		$user = sly_Util_User::getCurrentUser();
+
+		if (!is_null($user)) {
+			$this->groups = array();
+			$this->addGroup('system', 'translate:navigation_basis');
+			$this->addGroup('addon', 'translate:navigation_addons');
+
+			$isAdmin = $user->isAdmin();
+
+			// Core-Seiten initialisieren
+
+			if ($isAdmin || $user->hasStructureRight()) {
+				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
+
+				if ($hasClangPerm) {
+					$this->addPage('system', 'structure');
+				}
+
+				$this->addPage('system', 'mediapool', null, true);
+			}
+			elseif ($user->hasRight('mediapool[]')) {
+				$this->addPage('system', 'mediapool', null, true);
+			}
+
+			if ($isAdmin) {
+				$this->addPage('system', 'user');
+				$this->addPage('system', 'addon', 'translate:addons');
+				$this->addPage('system', 'specials');
+			}
+
+			// AddOn-Seiten initialisieren
+			$addonService  = sly_Service_Factory::getAddOnService();
+			$pluginService = sly_Service_Factory::getPluginService();
+
+			foreach ($addonService->getAvailableAddons() as $addon) {
+				$link = '';
+				$perm = $addonService->getProperty($addon, 'perm', '');
+				$page = $addonService->getProperty($addon, 'page', '');
+
+				if (!empty($page) && ($isAdmin || empty($perm) || $user->hasRight($perm))) {
+					$name  = $addonService->getProperty($addon, 'name', '');
+					$popup = $addonService->getProperty($addon, 'popup', false);
+
+					$this->addPage('addon', strtolower($addon), $name, $popup, $page);
+				}
+
+				foreach ($pluginService->getAvailablePlugins($addon) as $plugin) {
+					$pluginArray = array($addon, $plugin);
+					$link        = '';
+					$perm        = $pluginService->getProperty($pluginArray, 'perm', '');
+					$page        = $pluginService->getProperty($pluginArray, 'page', '');
+
+					if (!empty($page) && ($isAdmin || empty($perm) || $user->hasRight($perm))) {
+						$name  = $pluginService->getProperty($pluginArray, 'name', '');
+						$popup = $pluginService->getProperty($pluginArray, 'popup', false);
+
+						$this->addPage('addon', strtolower($plugin), $name, $popup, $page);
+					}
+				}
+			}
+		}
 	}
 
 	public function createPage($name, $title = null, $popup = false, $pageParam = null) {

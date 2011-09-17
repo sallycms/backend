@@ -51,7 +51,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend {
 
 		$layout->showNavigation(false);
 		$layout->pageHeader($this->t('media'), $subline);
-
+		$layout->setBodyAttr('class', 'sly-popup');
 		print $this->render('mediapool/javascript.phtml');
 	}
 
@@ -247,7 +247,9 @@ class sly_Controller_Mediapool extends sly_Controller_Backend {
 
 	protected function checkPermission() {
 		$user = sly_Util_User::getCurrentUser();
-		return !empty($user);
+		if(is_null($user)) return false;
+		
+		return $user->hasStructureRight() || $user->hasRight('mediapool[]');
 	}
 
 	protected function isMediaAdmin() {

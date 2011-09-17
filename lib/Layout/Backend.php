@@ -13,6 +13,7 @@
  */
 class sly_Layout_Backend extends sly_Layout_XHTML {
 	private $hasNavigation = true;
+	private $navigation;
 
 	public function __construct() {
 		$config = sly_Core::config();
@@ -26,27 +27,16 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 		$this->setTitle(sly_Core::getProjectName().' - ');
 
 		$config = sly_Core::config();
-		$this->setBodyAttr('class', 'sally sally'.sly_Core::getVersion('XY'));
 		$this->addMeta('robots', 'noindex,nofollow');
 
 		sly_Core::dispatcher()->register('PAGE_CHECKED', array($this, 'pageChecked'));
 	}
 
 	public function pageChecked(array $params) {
-		$body_id = str_replace('_', '-', $params['subject']);
+		$page = $params['subject'];
+
+		$body_id = str_replace('_', '-', $page);
 		$this->setBodyAttr('id', 'rex-page-'.$body_id);
-
-		$popups_arr = array('linkmap', 'mediapool');
-
-		if (in_array($body_id, $popups_arr)) {
-			$this->setBodyAttr('class', 'rex-popup');
-		}
-
-		$active = sly_Core::getNavigation()->getActivePage();
-
-		if ($active && $active->isPopup()) {
-			$this->setBodyAttr('onunload', 'sly.closeAllPopups()');
-		}
 	}
 
 	public function printHeader() {
@@ -170,6 +160,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 
 	public function hasNavigation() {
 		return $this->hasNavigation;
+	}
+	
+	/**
+	 * @return sly_Layout_Navigation_Backend
+	 */
+	public function getNavigation() {
+		if (!isset($this->navigation)) {
+			$this->navigation = new sly_Layout_Navigation_Backend();
+		}
+
+		return $this->navigation;
 	}
 
 	protected function getViewFile($file) {
