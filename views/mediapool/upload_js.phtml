@@ -1,0 +1,37 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
+$filename = addslashes($file->getFilename());
+$title    = addslashes($file->getTitle());
+$advanced = sly_Util_User::getCurrentUser()->hasRight('advancedMode[]');
+
+?>
+<script type="text/javascript">
+var filename = '<?= $filename ?>';
+var title    = '<?= $title ?>';
+var link     = 'data/mediapool/<?= $filename ?>';
+var callback = window.opener['<?= $callback ?>'];
+var fullName = '';
+
+if (title.length === 0) {
+	fullName = filename;
+}
+else {
+	fullName = <?= $advanced ? "title + ' (' + filename + ')'" : 'title' ?>;
+}
+
+// execute callback (media widget, WYMeditor, ...)
+if (typeof callback === 'function') {
+	callback(filename, fullName, title, link);
+}
+
+window.close();
+</script>
