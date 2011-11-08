@@ -13,6 +13,7 @@
  */
 class sly_Layout_Backend extends sly_Layout_XHTML {
 	private $hasNavigation = true;
+	private $navigation;
 
 	public function __construct() {
 		$config = sly_Core::config();
@@ -26,7 +27,6 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 		$this->setTitle(sly_Core::getProjectName().' - ');
 
 		$config = sly_Core::config();
-		$this->setBodyAttr('class', 'sally sally'.sly_Core::getVersion('XY'));
 		$this->addMeta('robots', 'noindex,nofollow');
 		$this->setBase(sly_Util_HTTP::getBaseUrl(true).'/backend/');
 
@@ -36,24 +36,19 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 		if (strlen($locale) === 2) {
 			$this->setLanguage(strtolower($locale));
 		}
-
-		sly_Core::dispatcher()->register('PAGE_CHECKED', array($this, 'pageChecked'));
 	}
 
-	public function pageChecked(array $params) {
-		$body_id = str_replace('_', '-', $params['subject']);
-		$this->setBodyAttr('id', 'rex-page-'.$body_id);
+	public function setCurrentPage($page) {
+		$bodyID = str_replace('_', '-', $page);
+		$this->setBodyAttr('id', 'sly-page-'.$bodyID);
 
-		$popups_arr = array('linkmap', 'mediapool');
-
-		if (in_array($body_id, $popups_arr)) {
-			$this->setBodyAttr('class', 'rex-popup');
-		}
-
-		$active = sly_Core::getNavigation()->getActivePage();
-
-		if ($active && $active->isPopup()) {
-			$this->setBodyAttr('onunload', 'sly.closeAllPopups()');
+		// put some helpers on the body tag (now that we definitly know whether someone is logged in)
+		if (sly_Util_User::getCurrentUser() !== null) {
+			$this->setBodyAttr('class', implode(' ', array(
+				'sly-'.sly_Core::getVersion('X'),
+				'sly-'.sly_Core::getVersion('X_Y'),
+				'sly-'.sly_Core::getVersion('X_Y_Z')
+			)));
 		}
 	}
 
@@ -95,7 +90,6 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 
 		$subtitle_str = $subline;
 		$subtitle     = $subline;
-		$cur_subpage  = sly_request('subpage', 'string');
 		$cur_page     = urlencode(sly_request('page', 'string'));
 		$user         = sly_Util_User::getCurrentUser();
 
@@ -109,44 +103,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 					continue;
 				}
 
-				$link   = $subpage[0];
-				$label  = $subpage[1];
-				$perm   = !empty($subpage[2]) ? $subpage[2] : '';
-				$params = !empty($subpage[3]) ? sly_Util_HTTP::queryString($subpage[3]) : '';
+				$page     = $subpage[0];
+				$label    = $subpage[1];
+				$params   = !empty($subpage[3]) ? sly_Util_HTTP::queryString($subpage[3]) : '';
+				$pageattr = $attr;
 
-				// Berechtigung prüfen
-				// Hat der User das Recht für die aktuelle Subpage?
 
-				if (!empty($perm) && !$isAdmin && !$user->hasRight($perm)) {
-					// Wenn der User kein Recht hat, und diese Seite öffnen will -> Fehler
-					if ($cur_subpage == $link) {
-						exit('You have no permission to this area!');
-					}
-					// Den Punkt aus der Navi entfernen
-					else {
-						continue;
-					}
+				if($cur_page === $page) {
+					$pageattr = $attr.' class="rex-active"';
 				}
-
-				$link   = explode('&', $link, 2);
-				$link   = reset($link); // alles nach dem ersten & abschneiden
-				$active = (empty($cur_subpage) && empty($link)) || (!empty($cur_subpage) && $cur_subpage == $link);
-
-				// Auf der aktiven Seite den Link nicht anzeigen
-				if ($active) {
-					$link       = empty($link) ? '' : '&amp;subpage='.urlencode($link);
-					$format     = '<a href="?page='.$cur_page.'%s%s"%s class="rex-active">%s</a>';
-					$subtitle[] = sprintf($format, $link, $params, $attr, $label);
-				}
-				elseif (empty($link)) {
-					$format     = '<a href="?page='.$cur_page.'%s"%s>%s</a>';
-					$subtitle[] = sprintf($format, $params, $attr, $label);
-				}
-				else {
-					$link       = '&amp;subpage='.urlencode($link);
-					$format     = '<a href="?page='.$cur_page.'%s%s"%s>%s</a>';
-					$subtitle[] = sprintf($format, $link, $params, $attr, $label);
-				}
+				$format     = '<a href="?page=%s%s"%s>%s</a>';
+				$subtitle[] = sprintf($format, $page, $params, $pageattr, $label);
 			}
 
 			if (!empty($subtitle)) {
@@ -181,6 +148,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML {
 
 	public function hasNavigation() {
 		return $this->hasNavigation;
+	}
+
+	/**
+	 * @return sly_Layout_Navigation_Backend
+	 */
+	public function getNavigation() {
+		if (!isset($this->navigation)) {
+			$this->navigation = new sly_Layout_Navigation_Backend();
+		}
+
+		return $this->navigation;
 	}
 
 	protected function getViewFile($file) {

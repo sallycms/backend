@@ -45,7 +45,7 @@ $isAdmin = $user->isAdmin() || $user->hasRight('media[0]');
 ob_start();
 
 ?>
-<table class="rex-table sly-mediapool-list" summary="">
+<table class="sly-table sly-mediapool-list" summary="">
 	<caption><?= t('pool_selectedmedia') ?></caption>
 	<colgroup>
 		<col width="40" />
@@ -148,7 +148,7 @@ ob_start();
 		if ($title == '') $title = '['.t('pool_file_notitle').']';
 		if ($user->hasRight('advancedMode[]')) $title .= ' ['.$id.']';
 
-		$ilink  = 'index.php?page=mediapool&amp;subpage=detail&amp;file_id='.$id.'&amp;rex_file_category='.$selected.$argUrl;
+		$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;rex_file_category='.$selected.$argUrl;
 		$add_td = '<td>&nbsp;</td>';
 
 		if ($isAdmin) {
@@ -179,7 +179,7 @@ ob_start();
 			<td></td>
 			<td colspan="3"><?= t('pool_nomediafound') ?></td>
 		</tr>
-	<? endif ?>
+	<?php endif ?>
 	</tbody>
 </table>
 <?

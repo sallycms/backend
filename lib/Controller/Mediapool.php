@@ -27,13 +27,13 @@ class sly_Controller_Mediapool extends sly_Controller_Backend {
 		// Header
 
 		$subline = array(
-			array('',       $this->t('file_list')),
-			array('upload', $this->t('file_insert'))
+			array('mediapool',       $this->t('file_list')),
+			array('mediapool_upload', $this->t('file_insert'))
 		);
 
 		if ($this->isMediaAdmin()) {
-			$subline[] = array('structure', $this->t('cat_list'));
-			$subline[] = array('sync',      $this->t('sync_files'));
+			$subline[] = array('mediapool_structure', $this->t('cat_list'));
+			$subline[] = array('mediapool_sync',      $this->t('sync_files'));
 		}
 
 		// ArgUrl an Menü anhängen
@@ -51,7 +51,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend {
 
 		$layout->showNavigation(false);
 		$layout->pageHeader($this->t('media'), $subline);
-
+		$layout->setBodyAttr('class', 'sly-popup');
 		print $this->render('mediapool/javascript.phtml');
 	}
 
@@ -247,7 +247,9 @@ class sly_Controller_Mediapool extends sly_Controller_Backend {
 
 	protected function checkPermission() {
 		$user = sly_Util_User::getCurrentUser();
-		return !empty($user);
+		if(is_null($user)) return false;
+		
+		return $user->hasStructureRight() || $user->hasRight('mediapool[]');
 	}
 
 	protected function isMediaAdmin() {

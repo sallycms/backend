@@ -8,8 +8,8 @@ input[type=range],
 textarea,
 select {
 	font-size: 100%;
-	margin: 0;
 	border: 1px solid $lt_grey;
+	margin: 0;
 	padding: 0;
 	vertical-align: baseline;
 	color: $drk_grey;
@@ -34,6 +34,20 @@ select option {
 
 select {
 	background-color: #fff;
+	height: 21px;
+	width: 462px;
+}
+
+select[multiple=multiple] {
+	height: auto;
+}
+
+input[type=text],
+input[type=password],
+span.sly-form-read {
+	height: 17px;
+	padding: 1px 2px;
+	width: 456px;
 }
 
 optgroup {
@@ -47,6 +61,7 @@ optgroup {
 	background-image: url(../button.png);
 	background-repeat: repeat-x;
 	padding: 1px 6px;
+	height: 24px;
 	color: $drk_grey;
 	text-decoration: none;
 	border: 1px solid $lt_grey;
@@ -78,14 +93,13 @@ a.sly-button {
 }
 
 /* REX-FORM -------------------------------------------------------------------------------------- REX-FORM */
-.sly-form,
-.rex-form {
-	span.rex-form-read,
+.sly-form {
+	span.sly-form-read,
 	.sly-form-helptext {
 		display: block;
 	}
 
-	.rex-form-read {
+	.sly-form-read {
 		line-height: 21px;
 	}
 
@@ -99,10 +113,7 @@ a.sly-button {
 	}
 
 	label span {
-		display: inline;
-		margin-left: 0;
 		padding: 0 0 0 5px;
-		font-weight: normal;
 	}
 
 	/*	Select */
@@ -143,6 +154,7 @@ a.sly-button {
 	&.sly-linklist,
 	&.sly-medialist {
 		select {
+			height: 75px;
 			width: 420px;
 			background: #fff;
 		}
@@ -164,6 +176,28 @@ a.sly-button {
 			height: 16px;
 			line-height: 0;
 			margin-bottom: 2px;
+
+			&[rel=open] {
+				background: transparent url(../file_open.png) 0 0 no-repeat;
+			}
+			&[rel=add] {
+				background: transparent url(../file_add.png) 0 0 no-repeat;
+			}
+			&[rel=delete] {
+				background: transparent url(../file_del.png) 0 0 no-repeat;
+			}
+			&[rel=top] {
+				background: transparent url(../file_top.png) 0 0 no-repeat;
+			}
+			&[rel=up] {
+				background: transparent url(../file_up.png) 0 0 no-repeat;
+			}
+			&[rel=bottom] {
+				background: transparent url(../file_bottom.png) 0 0 no-repeat;
+			}
+			&[rel=down] {
+				background: transparent url(../file_down.png) 0 0 no-repeat;
+			}
 		}
 		img {
 			width: 16px;
@@ -175,11 +209,10 @@ a.sly-button {
 
 	&.sly-link input { width: 413px; }
 }
-.rex-form,
+
 .sly-form {
 	label{
-		clear: both;
-		display: block;
+		display: inline-block;
 		float: left;
 		width: 145px;
 		padding: 0;
@@ -188,21 +221,6 @@ a.sly-button {
 		img {
 			vertical-align: middle;
 		}
-	}
-
-	span.rex-form-read,
-	input {
-		width: 456px;
-	}
-
-	select {
-		width: 462px;
-	}
-
-	input[type=text],
-	input[type=password],
-	span.rex-form-read{
-		padding: 1px 2px;
 	}
 
 	.rex-form-col-2 {
@@ -298,13 +316,6 @@ a.sly-button {
 		margin-left: 145px;
 		width: 228px;
 		top: 4px;
-	}
-
-	.rex-form-row {
-		.sly-widget {
-			border: 0;
-			padding: 0;
-		}
 	}
 }
 

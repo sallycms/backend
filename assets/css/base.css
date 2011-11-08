@@ -3,23 +3,10 @@
 
 body {
 	font-family: Calibri, Verdana, Arial, sans-serif;
-	position: relative;
 	color: $drk_grey;
-	background: #f2f2f2 url(../body.png) 0 0 repeat-x;;
-}
-
-#sly-page {
-	width: 1000px;
-	margin: 0 auto;
-	font-size: 0.9em;
-	background-image: url(../website.png);
-	background-repeat: repeat-x;
-	+clearfix;
-}
-
-
-input, textarea, select {
-
+	font-size: 14px;
+	line-height: 18px;
+	background: #f2f2f2 url(../body.png) 0 0 repeat-x;
 }
 
 a {
@@ -37,6 +24,12 @@ del {
 
 img, iframe {
 	vertical-align:bottom;
+}
+
+#sly-page {
+	width: 1000px;
+	margin: 0 auto;
+	+clearfix;
 }
 
 /* PAGEHEAD -------------------------------------------------------- PAGEHEAD */
@@ -87,7 +80,7 @@ img, iframe {
 	}
 	ul li {
 		list-style: none;
-		display: inline;
+		display: inline-block;
 		margin: 0 5px 0 0; /* Abstand der Listenelemente zu einander, s. Sprachen */
 	}
 }
@@ -138,8 +131,10 @@ img, iframe {
 	padding: 10px;
 }
 
-.rex-tx {
-	&2, &3, &4 { font-weight: bold; }
+.rex-tx2,
+.rex-tx3,
+.rex-tx4 {
+	font-weight: bold;
 }
 
 .rex-hl4,
@@ -147,6 +142,10 @@ img, iframe {
 .rex-tx3 {
 	font-size: 1.2em;
 	font-weight: normal;
+}
+
+.rex-hl2 {
+	line-height: 26px;
 }
 
 .rex-tx3 {
@@ -181,15 +180,12 @@ ol.rex-ol1 {
 	color: $link_color_online;
 }
 
-.rex-area-scroll,
-.rex-widget {
+.rex-area-scroll {
 	background-color: #FFF;
 }
 
 .rex-area,
-.rex-content-cols,
-.rex-widget .rex-widget-field input,
-.rex-widget .rex-widget-field select {
+.rex-content-cols {
 	background-color: #fff;
 }
 

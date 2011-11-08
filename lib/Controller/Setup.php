@@ -24,7 +24,7 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 		// wenn nur eine Sprache -> direkte Weiterleitung
 
 		if (count($languages) === 1) {
-			$url = 'index.php?subpage=license&lang='.urlencode(reset($languages));
+			$url = 'index.php?page=setup&func=license&lang='.urlencode(reset($languages));
 			sly_Util_HTTP::redirect($url);
 		}
 
@@ -41,7 +41,7 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 		$tester  = new sly_Util_Requirements();
 		$level   = error_reporting(0);
 
-		$results['php_version']    = array('5.1', '5.3', $tester->phpVersion());
+		$results['php_version']    = array('5.2', '5.3', $tester->phpVersion());
 		$results['mysql_version']  = array('5.0', '5.0', $tester->mySQLVersion());
 		$results['php_time_limit'] = array('20s', '60s', $tester->execTime());
 		$results['php_mem_limit']  = array('16MB / 64MB', '32MB / 64MB', $tester->memoryLimit());
@@ -103,9 +103,13 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 					throw new sly_Exception(t('setup_invalid_driver'));
 				}
 
-				if ($createDatabase && $data['DRIVER'] != 'sqlite') {
-					$db = new sly_DB_PDO_Persistence($data['DRIVER'], $data['HOST'], $data['LOGIN'], $data['PASSWORD']);
-					$db->query('CREATE DATABASE `'.$data['NAME'].'` DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci');
+				if ($createDatabase && $data['DRIVER'] !== 'sqlite' && $data['DRIVER'] !== 'oci') {
+					$driverClass = 'sly_DB_PDO_Driver_'.strtoupper($data['DRIVER']);
+					$driver      = new $driverClass('', '', '', '');
+					$db          = new sly_DB_PDO_Persistence($data['DRIVER'], $data['HOST'], $data['LOGIN'], $data['PASSWORD']);
+					$createStmt  = $driver->getCreateDatabaseSQL($data['NAME']);
+
+					$db->query($createStmt);
 				}
 				else {
 					$db = new sly_DB_PDO_Persistence($data['DRIVER'], $data['HOST'], $data['LOGIN'], $data['PASSWORD'], $data['NAME']);
@@ -163,6 +167,7 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 		if (isset($_POST['submit'])) {
 			$config = sly_Core::config();
 			$prefix = $config->get('DATABASE/TABLE_PREFIX');
+			$driver = $config->get('DATABASE/DRIVER');
 			$error  = '';
 
 			// benötigte Tabellen prüfen
@@ -181,16 +186,17 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 
 			switch ($dbInitFunction) {
 				case 'drop': // alte DB löschen
-
 					$db = sly_DB_Persistence::getInstance();
 
-					foreach ($requiredTables as $table) {
-						$db->query('DROP TABLE IF EXISTS '.$table);
+					// 'DROP TABLE IF EXISTS' is MySQL-only...
+					foreach ($db->listTables() as $tblname) {
+						if (in_array($tblname, $requiredTables)) $db->query('DROP TABLE '.$tblname);
 					}
+
 					// kein break;
 
 				case 'setup': // leere Datenbank neu einrichten
-					$script = SLY_COREFOLDER.'/install/sally.sql';
+					$script = SLY_COREFOLDER.'/install/'.strtolower($driver).'.sql';
 					$error  = $this->setupImport($script);
 
 					break;
@@ -204,10 +210,10 @@ class sly_Controller_Setup extends sly_Controller_Backend {
 
 			if (empty($error)) {
 				$existingTables = array();
-				$db = sly_DB_Persistence::getInstance();
+				$db             = sly_DB_Persistence::getInstance();
 
 				foreach ($db->listTables() as $tblname) {
-					if (substr($tblname, 0, strlen($prefix)) == $prefix) {
+					if (substr($tblname, 0, strlen($prefix)) === $prefix) {
 						$existingTables[] = $tblname;
 					}
 				}
