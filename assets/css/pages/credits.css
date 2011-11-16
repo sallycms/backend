@@ -1,0 +1,20 @@
+#sly-page-credits {
+	.sly-addonlist {
+		.sly-col-b { white-space: pre; padding-right: 5px; }
+		.sly-col-c { padding-right: 5px; }
+	}
+
+	.sly-credits {
+		margin-bottom: 10px;
+	}
+}
+
+#sly-page-credits-bugreport {
+	.sly-sysinfo {
+		font-family: monospace;
+		border: 1px solid $drk_grey;
+		padding: 10px;
+		margin: 10px;
+		width: 749px;
+	}
+}

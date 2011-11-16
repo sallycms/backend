@@ -1,0 +1,110 @@
+.sly-sprite-language     { background-position: 0 -48px; }
+.sly-sprite-language-add { background-position: 0 -64px; }
+
+/*	System: Einstellungen */
+
+#sly-form-system-setup {
+	fieldset {
+		padding-bottom: 1em;
+	}
+
+	legend {
+		padding: 0;
+		background-color: transparent;
+		font-size: 100%;
+		color: $drk_grey;
+		width: auto;
+	}
+
+	.rex-form-row {
+		border-bottom-width: 0;
+		padding: 5px 0;
+
+		label { width: 180px; }
+	}
+
+	fieldset.rex-form-col-1 .rex-form-row {
+		width: 371px;
+
+		p.rex-form-text input,
+		p select {
+			width: 180px;
+		}
+
+		.sly-widget.sly-link {
+			input { width: 140px; }
+		}
+
+		/*	Submit */
+
+		p input.rex-form-submit {
+			margin-left: 180px;
+		}
+	}
+
+	.rex-area-col-b .rex-area-content {
+		padding-bottom: 0;
+	}
+
+	.rex-form-col-1 {
+		padding-bottom: 0;
+		.rex-form-wrapper { margin-bottom: 10px; }
+	}
+
+	p.button {
+		margin: 0 0 15px 5px;
+	}
+}
+
+/*	System: Sprachen */
+
+#sly-form-specials-languages {
+	fieldset table {
+		caption {
+			+border-radius(0);
+			background: $md_grey;
+			border: 1px solid $md_grey;
+		}
+
+		th { background: $md_grey; }
+	}
+
+	.sly-col-c {
+		width: 120px;
+
+		input {
+			width: 100px;
+		}
+	}
+
+	.sly-col-b {
+		padding-right: 20px;
+
+		.rex-form-text {
+			width: 100%;
+		}
+	}
+
+	.sly-col-d {
+		width: 130px;
+	}
+}
+
+/* System: Fehlerprotokoll */
+
+#sly-page-specials-errorlog {
+	.sly-button {
+		cursor: pointer;
+		margin-left: 0;
+		margin: 1em 0;
+	}
+
+	.sly-table {
+		th { padding-left: 9px; }
+		td { padding: 4px; height: auto; }
+		.date { text-align: right; width: 150px; }
+		.location, .request { padding-left: 34px; }
+		em { font-style: italic; }
+		.where td, .request td { border-top: 0 none; }
+	}
+}
