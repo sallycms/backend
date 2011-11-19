@@ -62,10 +62,10 @@ var slyMediaWidgetCallback = null;
 		var url = 'index.php?page=mediapool';
 
 		if (value) {
-			url += '&subpage=detail&file_name='+value;
+			url += '_detail&file_name='+value;
 		}
 		else if (subpage && (subpage != 'detail' || value)) {
-			url += '&subpage=' + subpage;
+			url += '_' + subpage;
 		}
 
 		if (callback) {
@@ -342,14 +342,14 @@ var slyMediaWidgetCallback = null;
 			setTimeout(sly.disableLogin, 1000, timerElement);
 		}
 		else {
-			$('div.rex-message p span').html($('#loginformular').data('message'));
+			$('div.sly-message p span').html($('#loginformular').data('message'));
 			$('#loginformular input:not(:hidden)').prop('disabled', false);
 			$('#rex_user_login').focus();
 		}
 	};
 
 	sly.startLoginTimer = function(message) {
-		var timerElement = $('div.rex-message p span strong');
+		var timerElement = $('div.sly-message p span strong');
 
 		if (timerElement.length == 1) {
 			$('#loginformular input:not(:hidden)').prop('disabled', true);
@@ -420,7 +420,7 @@ var slyMediaWidgetCallback = null;
 	var catsChecked = function() {
 		var c_checked = $('#userperm_cat_all').prop('checked');
 		var m_checked = $('#userperm_media_all').prop('checked');
-		var slider    = $('#rex-page-user .sly-form .rex-form-wrapper .sly-num7');
+		var slider    = $('#sly-page-user .sly-form .rex-form-wrapper .sly-num7');
 
 		$('#userperm_cat').prop('disabled', c_checked);
 		$('#userperm_media').prop('disabled', m_checked);
@@ -477,17 +477,10 @@ var slyMediaWidgetCallback = null;
 			$('input[name=\'' + target + '\']').prop('checked', this.checked);
 		});
 
-		// Lösch-Links in Tabellen
+		// Lösch-Links
 
-		$('table.rex-table').delegate('a.sly-delete, input.sly-button-delete', 'click', function() {
-			var table    = $(this).parents('table');
-			var question = table.attr('rel');
-
-			if (!question) {
-				question = 'Löschen?';
-			}
-
-			return confirm(question);
+		$('a.sly-delete, input.sly-button-delete').click(function() {
+			return confirm('Sicher?');
 		});
 
 		// Filter-Funktionen in sly_Table
@@ -541,8 +534,8 @@ var slyMediaWidgetCallback = null;
 
 		// Benutzer-Formular
 
-		if ($('#rex-page-user .sly-form').length > 0) {
-			var wrapper = $('#rex-page-user .sly-form .rex-form-wrapper');
+		if ($('#sly-page-user .sly-form').length > 0) {
+			var wrapper = $('#sly-page-user .sly-form .rex-form-wrapper');
 			var sliders = wrapper.find('.sly-num6,.sly-num7');
 
 			$('#is_admin').change(function() {
@@ -678,5 +671,7 @@ var slyMediaWidgetCallback = null;
 		$('.sly-module-select').change(function() {
 			$(this).closest('form').submit();
 		});
+
+		$('body.sly-popup').unload(sly.closeAllPopups);
 	});
 })(jQuery, sly);

@@ -18,7 +18,7 @@ class sly_Helper_Content {
 		$moduleService = sly_Service_Factory::getModuleService();
 
 		if (!$moduleService->exists($module)) {
-			$slice_content = rex_warning(t('module_doesnt_exist'));
+			$slice_content = sly_Helper_Message::warn(t('module_doesnt_exist'));
 		}
 		else {
 			$moduleContent = $moduleService->getContent($moduleService->getInputFilename($module));
@@ -41,7 +41,7 @@ class sly_Helper_Content {
 							<legend><?= t('add_block') ?>: <?= sly_html($moduleService->getTitle($module)) ?></legend>
 							<div class="rex-form-wrapper">
 								<div class="sly-contentpage-slice-input">
-									<? eval('?>'.self::replaceObjectVars($values, $moduleContent)); ?>
+									<?php eval('?>'.self::replaceObjectVars($values, $moduleContent)); ?>
 								</div>
 								<div class="rex-form-row">
 									<p class="rex-form-submit">
@@ -53,7 +53,7 @@ class sly_Helper_Content {
 					</form>
 				</div>
 
-				<?
+				<?php
 				self::focusFirstElement();
 
 				sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_ADD', $values, array(
@@ -95,7 +95,7 @@ class sly_Helper_Content {
 						<legend><?= t('edit_block') ?>: <?= sly_html($moduleService->getTitle($articleSlice->getModule())) ?></legend>
 						<div class="rex-form-wrapper">
 							<div class="sly-contentpage-slice-input">
-								<? eval('?>'.self::replaceObjectVars($values, $articleSlice->getInput())); ?>
+								<?php eval('?>'.self::replaceObjectVars($values, $articleSlice->getInput())); ?>
 							</div>
 							<div class="rex-form-row">
 								<p class="rex-form-submit">
@@ -107,7 +107,7 @@ class sly_Helper_Content {
 					</fieldset>
 				</form>
 			</div>
-			<?
+			<?php
 			self::focusFirstElement();
 
 			sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_EDIT', $values, array(

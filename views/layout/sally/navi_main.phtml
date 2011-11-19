@@ -14,18 +14,11 @@
 <dl class="sly-navigation">
 	
 <?php
-$nav    = sly_Core::getNavigation();
+$nav    = sly_Core::getLayout()->getNavigation();
 $groups = $nav->getGroups();
 
 // give addons a way to alter the menu a last time
 $nav = sly_Core::dispatcher()->filter('SLY_LAYOUT_NAVI', $nav);
-
-// try to hide special core pages
-
-foreach (array('credits', 'profile', 'content', 'linkmap') as $page) {
-	$pageObj = $nav->find($page);
-	if ($pageObj) $pageObj->setHidden(true);
-}
 
 foreach ($groups as $group) {
 	$topic    = $group->getName();
@@ -44,7 +37,6 @@ foreach ($groups as $group) {
 	print '<ul id="rex-navi-'.$topic.'">';
 
 	$first   = true;
-	$subpage = sly_request('subpage', 'string');
 
 	// Sort the addon group automatically, since we can't load the addOns in
 	// a translated sorted way.
@@ -80,7 +72,7 @@ foreach ($groups as $group) {
 		print '<li '.$liAttr.'><a '.$aAttr.'>'.$page->getTitle().'</a>';
 
 		// ***** Subnavi
-		if (!empty($subpages)) {
+		if ($page->isActive() && !empty($subpages)) {
 			print '<ul class="rex-navi-level-2">';
 			$first = true;
 
@@ -88,9 +80,8 @@ foreach ($groups as $group) {
 				$param = $sp->getPageParam();
 				$class = 'sly-navigation-level-2';
 				$id    = 'rex-navi-'.$p.'-subpage-'.$param;
-				$href  = 'index.php?page='.$page->getPageParam();
+				$href  = 'index.php?page='.$param;
 
-				if ($param)          $href  .= '&subpage='.$param;
 				if ($first)          $class .= ' rex-navi-first';
 				if ($sp->isActive()) $class .= ' rex-active';
 

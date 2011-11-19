@@ -2,20 +2,25 @@
 	float: left;
 	width: 171px;
 	margin-left: 16px;
+
+	ul li a.rex-active {
+		color: #fff;
+		font-weight: bold;
+	}
 }
 
 .sly-navigation {
 	width: 100%;
 	display: block;
 	color: $drk_grey;
-	
+
 	li {
-		list-style:none outside none;
-		margin-bottom:1px;
-		line-height:25px;
-		font-size:0.9em;
+		list-style: none outside none;
+		margin-bottom: 1px;
+		line-height: 25px;
+		font-size: 0.9em;
 	}
-	
+
 	a {
 		+border-radius(3px);
 		display: block;
@@ -50,7 +55,6 @@
 				background-position: center center;
 			}
 		}
-
 	}
 
 	.sly-navigation-level-2 {
@@ -76,29 +80,20 @@
 	/* Navi-Headline */
 	dt {
 		display: block;
-		padding: 9px 10px 6px;
+		padding: 10px 10px 6px;
 		font-size: 1.4em;
 		letter-spacing: -0.01em;
 		text-shadow: 1px 1px 0px rgba(255,255,255,1.0);
 		border-bottom: 1px dotted $md_grey;
 		margin-bottom: 5px; /* Abstand "Basis Naviagtion" zum ersten Menüpunkt 5px */
+		line-height: 24px;
 	}
 
 	dd {
 		margin: 0 0 16px 0;
 	}
-
 }
 
-/* Textfarbe des aktiven Menüpunkts */
-#sly-navi-main ul li a.rex-active {
-	color: #fff;
-	font-weight: bold;
-}
-
-/******************************************************************************\
-* Navi Logout                                                                  *
-\******************************************************************************/
 #sly-navi-top {
 	color: #b2b2b2;
 	height: 88px;
@@ -126,20 +121,28 @@
 	}
 }
 
-/******************************************************************************\
-* Navigation unter dem Seitentitel                                             *
-\******************************************************************************/
-
 #rex-navi-page ul li {
 	display: inline;
 	font-weight: normal;
+	background-image: url(../pipe_c2.png);
+	background-position: 0 4px;
+	background-repeat: no-repeat;
 
-	a { margin: 0 15px; }
-	&.rex-navi-first a { margin-left: 0; }
-}
+	a {
+		margin: 0 15px;
+	}
 
-#rex-navi-page ul li a.rex-active {
-	color: $drk_grey;
+	&.rex-navi-first {
+		background: none;
+
+		a {
+			margin-left: 0;
+		}
+	}
+
+	a.rex-active {
+		color: $drk_grey;
+	}
 }
 
 #sly-footer {
@@ -182,15 +185,5 @@
 				margin-left: 0;
 			}
 		}
-	}
-}
-
-#rex-navi-page {
-	ul li {
-		background-image: url(../pipe_c2.png);
-		background-position: 0 4px;
-		background-repeat: no-repeat;
-
-		&.rex-navi-first { background: none; }
 	}
 }

@@ -38,10 +38,9 @@ ul.rex-setup-language {
 	}
 }
 
-#rex-page-setup {
-
+#sly-page-setup {
 	#sly-wrapper,
-	#sly-footer{
+	#sly-footer {
 		float: none;
 		width: 650px;
 		margin-right: auto;
@@ -72,7 +71,7 @@ ul.rex-setup-language {
 		.rex-form-wrapper { width: 650px; }
 		.rex-form-row { width: 636px; }
 	}
-	
+
 }
 
 .sly-setup-requirements {

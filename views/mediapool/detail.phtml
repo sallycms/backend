@@ -47,8 +47,7 @@ if ($this->canAccessFile($medium)) {
 	$form = new sly_Form('index.php', 'POST', t('pool_file_edit'), '', 'rex-form-mediapool-detail');
 	$form->setEncType('multipart/form-data');
 
-	$form->addHiddenValue('page', 'mediapool');
-	$form->addHiddenValue('subpage', 'detail');
+	$form->addHiddenValue('page', 'mediapool_detail');
 	$form->addHiddenValue('func', 'save');
 	$form->addHiddenValue('file_id', $fileID);
 	$form->addHiddenValue('callback', sly_request('callback', 'string'));
@@ -129,6 +128,8 @@ if ($this->canAccessFile($medium)) {
 	$submit->setAttribute('name', 'update');
 
 	$delete = new sly_Form_Input_Button('submit', 'delete', t('pool_file_delete'));
+	$delete->addClass('sly-button-delete');
+
 	$form->setApplyButton($delete);
 	$form->setResetButton(null);
 }

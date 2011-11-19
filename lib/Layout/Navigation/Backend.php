@@ -16,27 +16,86 @@ class sly_Layout_Navigation_Backend {
 	private $currentGroup;
 
 	public function __construct() {
-		$this->groups = array();
-		$this->addGroup('system', 'translate:navigation_basis');
-		$this->addGroup('addon', 'translate:navigation_addons');
-	}
+		$user = sly_Util_User::getCurrentUser();
 
-	public function createPage($name, $title = null, $popup = false, $pageParam = null) {
-		return new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
-	}
+		if (!is_null($user)) {
+			$this->groups = array();
+			$this->addGroup('system', 'translate:navigation_basis');
+			$this->addGroup('addon', 'translate:navigation_addons');
 
-	public function createGroup($name, $title) {
-		return new sly_Layout_Navigation_Group($name, $title);
+			$isAdmin = $user->isAdmin();
+
+			// Core-Seiten initialisieren
+
+			if ($isAdmin || $user->hasStructureRight()) {
+				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
+
+				if ($hasClangPerm) {
+					$this->addPage('system', 'structure');
+				}
+
+				$this->addPage('system', 'mediapool', null, true);
+			}
+			elseif ($user->hasRight('mediapool[]')) {
+				$this->addPage('system', 'mediapool', null, true);
+			}
+
+			if ($isAdmin) {
+				$this->addPage('system', 'user');
+				$this->addPage('system', 'addon', 'translate:addons');
+				$specials = $this->addPage('system', 'specials');
+				$specials->addSubpage('specials', t('main_preferences'));
+				$specials->addSubpage('specials_languages', t('languages'));
+				if (!sly_Core::isDeveloperMode()) {
+					$handler = sly_Core::getErrorHandler();
+
+					if (get_class($handler) === 'sly_ErrorHandler_Production') {
+						$specials->addSubpage('specials_errorlog', t('errorlog'));
+					}
+				}
+			}
+
+			// AddOn-Seiten initialisieren
+			$addonService  = sly_Service_Factory::getAddOnService();
+			$pluginService = sly_Service_Factory::getPluginService();
+
+			foreach ($addonService->getAvailableAddons() as $addon) {
+				$link = '';
+				$perm = $addonService->getProperty($addon, 'perm', '');
+				$page = $addonService->getProperty($addon, 'page', '');
+
+				if (!empty($page) && ($isAdmin || empty($perm) || $user->hasRight($perm))) {
+					$name  = $addonService->getProperty($addon, 'name', '');
+					$popup = $addonService->getProperty($addon, 'popup', false);
+
+					$this->addPage('addon', strtolower($addon), $name, $popup, $page);
+				}
+
+				foreach ($pluginService->getAvailablePlugins($addon) as $plugin) {
+					$pluginArray = array($addon, $plugin);
+					$link        = '';
+					$perm        = $pluginService->getProperty($pluginArray, 'perm', '');
+					$page        = $pluginService->getProperty($pluginArray, 'page', '');
+
+					if (!empty($page) && ($isAdmin || empty($perm) || $user->hasRight($perm))) {
+						$name  = $pluginService->getProperty($pluginArray, 'name', '');
+						$popup = $pluginService->getProperty($pluginArray, 'popup', false);
+
+						$this->addPage('addon', strtolower($plugin), $name, $popup, $page);
+					}
+				}
+			}
+		}
 	}
 
 	public function addGroup($name, $title) {
-		$group = $this->createGroup($name, $title);
+		$group = new sly_Layout_Navigation_Group($name, $title);
 		$this->addGroupObj($group);
 		return $group;
 	}
 
 	public function addPage($group, $name, $title = null, $popup = false, $pageParam = null) {
-		$page  = $this->createPage($name, $title, $popup, $pageParam);
+		$page  = new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
 		$this->addPageObj($group, $page);
 		return $page;
 	}
@@ -59,16 +118,32 @@ class sly_Layout_Navigation_Backend {
 		return $this->groups;
 	}
 
+	/**
+	 *
+	 * @param string $name
+	 * @return sly_Layout_Navigation_Group 
+	 */
 	public function getGroup($name) {
 		return isset($this->groups[$name]) ? $this->groups[$name] : null;
 	}
 
+	/**
+	 *
+	 * @param string $name
+	 * @param string $group
+	 * @return sly_Layout_Navigation_Page
+	 */
 	public function get($name, $group) {
 		$pages = $this->groups[$group]->getPages();
 		foreach ($pages as $p) if ($p->getName() === $name || $p->getPageParam() === $name) return $p;
 		return null;
 	}
-
+	
+	/**
+	 *
+	 * @param string $name
+	 * @return sly_Layout_Navigation_Page
+	 */
 	public function find($name) {
 		foreach (array_keys($this->groups) as $group) {
 			$p = $this->get($name, $group);
@@ -78,6 +153,11 @@ class sly_Layout_Navigation_Backend {
 		return null;
 	}
 
+	/**
+	 *
+	 * @param string $name
+	 * @return boolean
+	 */
 	public function hasPage($name) {
 		foreach (array_keys($this->groups) as $group) {
 			if ($this->get($name, $group)) return true;
