@@ -1,0 +1,48 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$callback = sly_get('callback', '');
+$callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
+$advanced = sly_Util_User::getCurrentUser()->hasRight('advancedMode[]');
+
+if ($callback) {
+	ob_start();
+?>
+$(function() {
+	$('.articlelist').delegate('a', 'click', function() {
+		var self     = $(this);
+		var id       = self.data('id');
+		var name     = self.data('name');
+		var link     = 'sally://' + id + '/';
+		var callback = window.opener['<?php echo $callback ?>'];
+		var close    = true;
+		var fullName = name.length === 0 ? '<?php echo t('unnamed_article') ?> [' + id + ']' : <?php echo $advanced ? "name + ' [' + id + ']'" : 'name' ?>;
+
+		// execute callback (link widget, WYMeditor, ...)
+		if (typeof callback === 'function') {
+			close = callback(id, fullName, name, link);
+		}
+
+		// close the popup
+		if (close) window.close();
+		return false;
+	});
+
+	var links = $('a[href!="#"]:visible'), len = links.length, i = 0;
+
+	for (; i < len; ++i) {
+		links[i].href = links[i].href += '&callback=<?php echo $callback ?>';
+	}
+});
+<?php
+	$javascript = ob_get_clean();
+	sly_Core::getLayout()->addJavaScript($javascript);
+}
+?>

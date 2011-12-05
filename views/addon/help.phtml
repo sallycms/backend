@@ -1,0 +1,41 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$service     = sly_Service_Factory::getService($plugin ? 'Plugin' : 'AddOn');
+$component   = $plugin ? array($addon, $plugin) : $addon;
+$helpfile    = $service->baseFolder($component).'/help.inc.php';
+$version     = $service->getVersion($component);
+$author      = $service->getAuthor($component);
+$supportPage = $service->getSupportPageEx($component);
+$name        = $plugin ? $addon.' / '.$plugin : $addon;
+$format      = '<dt>%s:</dt><dd>%s</dd>';
+$credits     = sprintf($format, t('credits_name'), sly_html($name));
+
+if ($version)     $credits .= sprintf($format, t('credits_version'), sly_html($version));
+if ($author)      $credits .= sprintf($format, t('credits_author'), sly_html($author));
+if ($supportPage) $credits .= sprintf($format, t('credits_supportpage'), $supportPage);
+
+?>
+<div class="rex-area sly-addon-help">
+	<h2><?php echo t('addon_help', $name) ?></h2>
+
+	<div class="rex-area-content">
+		<?php if (!is_file($helpfile)): ?>
+		<p><?php echo t('addon_no_help_file') ?></p>
+		<?php else: ?>
+		<?php include $helpfile ?>
+		<?php endif ?>
+		<dl><?php echo $credits ?></dl>
+	</div>
+
+	<div class="rex-area-footer">
+		<p><a href="#" onclick="history.go(-1); return false"><?php echo t('addon_back') ?></a></p>
+	</div>
+</div>
