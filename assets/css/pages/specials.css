@@ -1,0 +1,88 @@
+.sly-sprite-language     { background-position: 0 -48px; }
+.sly-sprite-language-add { background-position: 0 -64px; }
+
+/*	System: Einstellungen */
+#sly-page-specials .rex-area-col-b .sly-form {
+	float: right;
+}
+#sly-form-system-setup {
+	legend {
+		line-height: 26px;
+		font-size: 20px;
+		padding: 7px 10px;
+		width: 375px;
+	}
+
+	.rex-form-row {
+		padding: 5px 0;
+		width: 375px;
+	}
+
+	label  { width: 180px; }
+	input  { width: 185px; }
+	select { width: 191px; }
+
+	.sly-widget.sly-link {
+		input { width: 144px; }
+	}
+
+	input.rex-form-submit {
+		margin-left: 180px;
+		width: auto;
+	}
+
+	.rex-form-wrapper { padding: 10px 10px 15px; }
+}
+
+/*	System: Sprachen */
+
+#sly-form-specials-languages {
+	fieldset table {
+		caption {
+			+border-radius(0);
+			background: $md_grey;
+			border: 1px solid $md_grey;
+		}
+
+		th { background: $md_grey; }
+	}
+
+	.sly-col-c {
+		width: 120px;
+
+		input {
+			width: 100px;
+		}
+	}
+
+	.sly-col-b {
+		padding-right: 20px;
+
+		.rex-form-text {
+			width: 100%;
+		}
+	}
+
+	.sly-col-d {
+		width: 130px;
+	}
+}
+
+/* System: Fehlerprotokoll */
+
+#sly-page-specials-errorlog {
+	.sly-button {
+		cursor: pointer;
+		margin-left: 0;
+		margin: 1em 0;
+	}
+
+	.sly-table {
+		th { padding-left: 9px; }
+		td { padding: 4px; height: auto; }
+		.date { text-align: right; width: 150px; }
+		.location, .request { padding-left: 34px; }
+		em { font-style: italic; }
+		.where td, .request td { border-top: 0 none; }
+	}
+}

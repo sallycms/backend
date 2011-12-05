@@ -1,0 +1,22 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$module  = $articleSlice->getModule();
+$service = sly_Service_Factory::getModuleService();
+
+if (!$service->exists($module)) {
+	print sly_Helper_Message::warn(t('module_not_found'));
+	return;
+}
+
+?>
+<div class="sly-contentpage-slice-output">
+	<?= $articleSlice->getOutput() ?>
+</div>

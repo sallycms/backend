@@ -1,0 +1,75 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
+if (!empty($this->info))    print sly_Helper_Message::info($this->info);
+
+?>
+
+<div class="sly-form" id="sly-form-specials-languages">
+	<?php if ($this->func == 'add' || $this->func == 'edit'): ?>
+	<form action="index.php" method="post">
+		<fieldset class="rex-form-col-1 sly-num0">
+			<legend><?= t('clang_'.$this->func) ?></legend>
+			<input type="hidden" name="page" value="specials_languages" />
+			<input type="hidden" name="clang_id" value="<?= (int) $this->id ?>" />
+			<input type="hidden" name="func" value="<?= $this->func ?>" />
+	<?php endif ?>
+
+	<?php
+
+	$base = 'index.php?page=specials_languages&func=';
+	$link = sly_Util_HTML::getSpriteLink($base.'add', t('clang_add'), 'language-add');
+
+	$table = new sly_Table('languages');
+	$table->addColumn(new sly_Table_Column($link, '', '', array('class' => 'sly-icon')));
+	$table->addColumn(new sly_Table_Column(t('clang_name')));
+	$table->addColumn(new sly_Table_Column(t('clang_locale')));
+	$table->addColumn(new sly_Table_Column(t('clang_function')));
+
+	$table->openBuffer();
+
+	// Das Formular für neue Sprachen erscheint immer vor den anderen Daten.
+
+	if ($this->func == 'add') {
+		$name   = sly_post('clang_name', 'string');
+		$locale = sly_post('clang_locale', 'string');
+
+		?>
+		<tr class="active">
+			<td class="sly-icon sly-col-a"><?= sly_Util_HTML::getSpriteLink('', $name, 'language') ?></td>
+			<td class="sly-col-b"><input class="rex-form-text" type="text" name="clang_name" value="<?= sly_html($name) ?>" /></td>
+			<td class="sly-col-c"><input class="rex-form-text" type="text" name="clang_locale" value="<?= sly_html($locale) ?>" /></td>
+			<td class="sly-col-d"><input type="submit" name="sly-submit" class="rex-form-submit" value="<?= t('clang_add') ?>" /></td>
+		</tr>
+		<?php
+	}
+
+	foreach ($this->languages as $language) {
+		print $this->render('specials/languages_row.phtml', array(
+			'clangID'     => $language->getId(),
+			'clangName'   => $language->getName(),
+			'clangLocale' => $language->getLocale()
+		));
+	}
+
+	$table->closeBuffer();
+	print $table->render();
+
+	if ($this->func == 'add' || $this->func == 'edit'): ?>
+			<script type="text/javascript">
+			<!--
+			jQuery('input[name=clang_name]').focus();
+			//-->
+			</script>
+		</fieldset>
+	</form>
+	<?php endif ?>
+</div>

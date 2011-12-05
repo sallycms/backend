@@ -1,0 +1,45 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$subline = array();
+
+if (!empty($info['version'])) {
+	$subline[] = 'Version '.sly_html($info['version']);
+}
+
+if (!empty($info['author'])) {
+	$subline[] = 'von '.sly_html($info['author']);
+}
+
+?>
+<li class="name"><?php
+	print '<h2>'.sly_html($name).'</h2>';
+	if (!empty($subline)) print '<span>('.implode(', ', $subline).')</span>';
+?></li>
+<li class="buttons reinit">
+	<span class="reinit"><a class="sly-button" href="<?= $base ?>reinit">Assets reinitialisieren</a></span>
+</li>
+<li class="buttons uninstaller">
+	<span class="uninstall"><a class="sly-button" href="<?= $base ?>uninstall">deinstallieren</a></span>
+	<span class="hasdeps"><del class="sly-button">deinstallieren</del></span>
+</li>
+<li class="buttons installer">
+	<span class="install"><a class="sly-button" href="<?= $base ?>install">installieren</a></span>
+	<span class="incompatible">(nicht mit dieser Sally-Version kompatibel)</span>
+	<span class="unusable">(nicht alle Abhängigkeiten sind erfüllt)</span>
+	<?php if ($info['requirements']): ?><span class="fullinstall"><a class="sly-button" href="<?= $base ?>fullinstall">inkl. Abhängigkeiten installieren</a></span><?php endif ?>
+</li>
+<li class="buttons enabler">
+	<span class="activate"><a class="sly-button" href="<?= $base ?>activate">aktivieren</a></span>
+	<span class="deactivate"><a class="sly-button" href="<?= $base ?>deactivate">deaktivieren</a></span>
+	<span class="hasdeps"><del class="sly-button">deaktivieren</del></span>
+	<?php if ($info['requirements']): ?><span class="fullactivate"><a class="sly-button" href="<?= $base ?>fullinstall">inkl. Abhängigkeiten aktivieren</a></span><?php endif ?>
+</li>
+<li class="buttons depsinfo"><?= $stati[$key]['deps'] ?></li>
