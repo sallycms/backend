@@ -1,0 +1,45 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$this->title(t('setup_createuser_title'));
+
+if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
+
+$form = new sly_Form('index.php', 'POST', t('setup_createuser_header'));
+$this->printHiddens('createuser', $form);
+
+// fields
+
+$user = new sly_Form_Input_Text('admin_user', t('setup_createuser_login'), $adminUser);
+
+$form->add($user);
+$form->add(new sly_Form_Input_Text('admin_pass', t('setup_createuser_password')));
+
+if ($usersExist) {
+	$form->add(new sly_Form_Input_Checkbox('no_admin', '', '1', t('setup_createuser_no_admin')));
+	$user->setHelpText(t('setup_createuser_no_admin_notice'));
+	sly_Core::getLayout()->addJavaScript("
+	jQuery(function($) {
+		$('#no_admin').change(function() {
+			$('#admin_user,#admin_pass').prop('disabled', this.checked);
+		});
+	});
+	");
+}
+
+// button config
+
+$form->setResetButton(null);
+$form->getSubmitButton()->setAttribute('value', t('setup_createuser_continue'));
+
+// render it!
+
+$form->setFocus('admin_user');
+print $form->render();

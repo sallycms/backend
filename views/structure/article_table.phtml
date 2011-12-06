@@ -1,0 +1,57 @@
+<form action="index.php" method="post" id="rex-form-structure-article">
+	<fieldset>
+		<input type="hidden" name="page" value="structure" />
+		<input type="hidden" name="category_id" value="<?php echo $this->categoryId ?>" />
+		<input type="hidden" name="clang" value="<?php echo $this->clangId ?>" />
+		<input type="hidden" name="func" value="<?php echo $this->action ?>" />
+	</fieldset>
+
+	<?php
+	$add_url = '';
+	if ($canAdd) {
+		$add_url = 'index.php?page=structure&category_id=' . $this->categoryId . '&clang=' . $this->clangId . '&func=addArticle';
+	}
+	$add_article = sly_Util_HTML::getSpriteLink($add_url, t('add_article'), 'article-add');
+
+	$table = new sly_Table();
+	$table->addColumn(new sly_Table_Column($add_article, '', '', array('class' => 'sly-icon')));
+	$table->addColumn(new sly_Table_Column(t('header_article_name'), '', '', array('class' => 'name')));
+	$table->addColumn(new sly_Table_Column(t('content_arttype'), '', '', array('class' => 'arttype')));
+	$table->addColumn(new sly_Table_Column(t('header_priority'), '', '', array('class' => 'prior')));
+	$table->addColumn(new sly_Table_Column(t('header_status'), '', '', array('class' => 'status')));
+
+	$table->openBuffer();
+
+	if ($this->renderAddArticle) {
+		print $this->render(sly_Controller_Structure::$viewPath.'article_table_row_add.phtml');
+	}
+
+	foreach ($articles as $article) {
+		if ($this->renderEditArticle && $this->renderEditArticle == $article->getId()) {
+			print $this->render(
+				sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
+				array('article' => $article)
+			);
+		}
+		else {
+			if ($this->canEditContent($article->getId())) {
+				print $this->render(
+					sly_Controller_Structure::$viewPath.'article_table_row.phtml',
+					array('article' => $article, 'statusTypes' => $statusTypes, 'canEdit' => $canEdit)
+				);
+			}
+		}
+	}
+
+	if (!$this->renderAddArticle && empty($articles)) {
+		?>
+		<tr>
+			<td colspan="5" class="sly-icon"><?php echo t('no_articles_yet') ?></td>
+		</tr>
+		<?php
+	}
+
+	$table->closeBuffer();
+	print $table->render();
+	?>
+</form>
