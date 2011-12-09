@@ -28,13 +28,11 @@ class sly_Controller_Structure extends sly_Controller_Backend {
 		$this->clangId    = sly_request('clang', 'rex-clang-id', sly_Core::getDefaultClangId());
 
 		sly_Core::getLayout()->pageHeader(t('title_structure'), $this->getBreadcrumb());
-		print $this->render('toolbars/languages.phtml',
-								array(	'curClang' => $this->clangId,
-										'params' => array(
-											'page'        => 'structure',
-											'category_id' => $this->categoryId
-										)
-								));
+
+		print $this->render('toolbars/languages.phtml', array(
+			'curClang' => $this->clangId,
+			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
+		));
 
 		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
 			'category_id' => $this->categoryId,
@@ -47,8 +45,6 @@ class sly_Controller_Structure extends sly_Controller_Backend {
 	}
 
 	protected function view() {
-		$advancedMode = sly_Util_User::getCurrentUser()->hasRight('advancedMode[]');
-
 		$cat_service     = sly_Service_Factory::getCategoryService();
 		$currentCategory = $cat_service->findById($this->categoryId, $this->clangId);
 		$categories      = $cat_service->find(array('re_id' => $this->categoryId, 'clang' => $this->clangId), null, 'catprior ASC');
@@ -56,22 +52,20 @@ class sly_Controller_Structure extends sly_Controller_Backend {
 		$art_service = sly_Service_Factory::getArticleService();
 		$articles    = $art_service->findArticlesByCategory($this->categoryId, false, $this->clangId);
 
-		if (!empty($this->info))    print rex_info($this->info);
-		if (!empty($this->warning)) print rex_warning($this->warning);
+		if (!empty($this->info))    print sly_Helper_Message::info($this->info);
+		if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
 
 		print $this->render(self::$viewPath.'category_table.phtml', array(
 			'categories'      => $categories,
 			'currentCategory' => $currentCategory,
-			'advancedMode'    => $advancedMode,
 			'statusTypes'     => $cat_service->getStati()
 		));
 
 		print $this->render(self::$viewPath.'article_table.phtml', array(
-			'articles'        => $articles,
-			'advancedMode'    => $advancedMode,
-			'statusTypes'     => $art_service->getStati(),
-			'canAdd'          => $this->canEditCategory($this->categoryId),
-			'canEdit'         => $this->canEditCategory($this->categoryId),
+			'articles'     => $articles,
+			'statusTypes'  => $art_service->getStati(),
+			'canAdd'       => $this->canEditCategory($this->categoryId),
+			'canEdit'      => $this->canEditCategory($this->categoryId),
 		));
 
 		if ($this->renderAddArticle || $this->renderAddCategory || $this->renderEditArticle || $this->renderEditCategory) {
@@ -106,8 +100,7 @@ class sly_Controller_Structure extends sly_Controller_Backend {
 		if ($editId) {
 			try {
 				$service = sly_Service_Factory::getArticleService();
-				$article = $service->findById($editId, $this->clangId);
-				$service->changeStatus($article);
+				$service->changeStatus($editId, $this->clangId);
 				$this->info = t('article_status_updated');
 			}
 			catch (sly_Exception $e) {

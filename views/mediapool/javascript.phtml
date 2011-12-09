@@ -10,18 +10,17 @@
 
 $callback = sly_request('callback', '');
 $callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
-$advanced = sly_Util_User::getCurrentUser()->hasRight('advancedMode[]');
 
-if ($callback):
-?>
-<script type="text/javascript">
+if ($callback) {
+	ob_start();
+	?>
 $(function() {
 	$('#sly-wrapper').delegate('a[href="#"]', 'click', function() {
 		var self     = $(this);
 		var filename = self.data('filename');
 		var title    = self.data('title');
-		var link     = 'sally/data/mediapool/' + filename;
-		var callback = '<?= $callback ?>' in window.opener ? window.opener['<?= $callback ?>'] : null;
+		var link     = 'data/mediapool/' + filename;
+		var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
 		var close    = true;
 		var fullName = '';
 
@@ -29,7 +28,7 @@ $(function() {
 			fullName = filename;
 		}
 		else {
-			fullName = <?= $advanced ? "title + ' (' + filename + ')'" : 'title' ?>;
+			fullName = title;
 		}
 
 		// execute callback (media widget, WYMeditor, ...)
@@ -45,7 +44,7 @@ $(function() {
 	var links = $('a[href!="#"]:visible'), len = links.length, i = 0;
 
 	for (; i < len; ++i) {
-		links[i].href = links[i].href += '&callback=<?= $callback ?>';
+		links[i].href = links[i].href += '&callback=<?php echo $callback ?>';
 	}
 });
 
@@ -53,5 +52,7 @@ function openPage(src) {
 	window.opener.location.href = src;
 	self.close();
 }
-</script>
-<? endif ?>
+	<?php
+	$javascript = ob_get_clean();
+	sly_Core::getLayout()->addJavaScript($javascript);
+}

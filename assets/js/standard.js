@@ -61,10 +61,10 @@ var sly = {};
 		var url = 'index.php?page=mediapool';
 
 		if (value) {
-			url += '&subpage=detail&file_name='+value;
+			url += '_detail&file_name='+value;
 		}
 		else if (subpage && (subpage != 'detail' || value)) {
-			url += '&subpage=' + subpage;
+			url += '_' + subpage;
 		}
 
 		if (callback) {
@@ -106,14 +106,14 @@ var sly = {};
 
 	sly.AbstractWidget = function(elem) {
 		this.element    = $(elem);
-		this.valueInput = this.element.find('input[rel=value]');
-		this.nameInput  = this.element.find('input[rel=name]');
+		this.valueInput = this.element.find('input.value');
+		this.nameInput  = this.element.find('input.name');
 
 		// register events
 		var icons = this.element.find('.sly-icons');
-		icons.delegate('a[rel=open]',   'click', $.proxy(this.onOpen,   this));
-		icons.delegate('a[rel=add]',    'click', $.proxy(this.onAdd,    this));
-		icons.delegate('a[rel=delete]', 'click', $.proxy(this.onDelete, this));
+		icons.delegate('a.fct-open',   'click', $.proxy(this.onOpen,   this));
+		icons.delegate('a.fct-add',    'click', $.proxy(this.onAdd,    this));
+		icons.delegate('a.fct-delete', 'click', $.proxy(this.onDelete, this));
 	};
 
 	sly.AbstractWidget.prototype = {
@@ -199,9 +199,9 @@ var sly = {};
 		icons.delegate('a', 'click', $.proxy(this.onMove, this));
 
 		icons = this.element.find('.sly-icons.edit');
-		icons.delegate('a[rel=open]',   'click', $.proxy(this.onOpen,   this));
-		icons.delegate('a[rel=add]',    'click', $.proxy(this.onAdd,    this));
-		icons.delegate('a[rel=delete]', 'click', $.proxy(this.onDelete, this));
+		icons.delegate('a.fct-open',   'click', $.proxy(this.onOpen,   this));
+		icons.delegate('a.fct-add',    'click', $.proxy(this.onAdd,    this));
+		icons.delegate('a.fct-delete', 'click', $.proxy(this.onDelete, this));
 	};
 
 	sly.AbstractListWidget.prototype = {
@@ -258,7 +258,7 @@ var sly = {};
 		},
 
 		onMove: function(event) {
-			var direction = $(event.target).closest('a').attr('rel');
+			var direction = $(event.target).closest('a')[0].className.replace('fct-');
 			var list      = this.list;
 			var selected  = list.find('option:selected');
 
@@ -349,14 +349,14 @@ var sly = {};
 			setTimeout(sly.disableLogin, 1000, timerElement);
 		}
 		else {
-			$('div.rex-message p span').html($('#loginformular').data('message'));
+			$('div.sly-message p span').html($('#loginformular').data('message'));
 			$('#loginformular input:not(:hidden)').prop('disabled', false);
 			$('#rex_user_login').focus();
 		}
 	};
 
 	sly.startLoginTimer = function(message) {
-		var timerElement = $('div.rex-message p span strong');
+		var timerElement = $('div.sly-message p span strong');
 
 		if (timerElement.length == 1) {
 			$('#loginformular input:not(:hidden)').prop('disabled', true);
@@ -427,7 +427,7 @@ var sly = {};
 	var catsChecked = function() {
 		var c_checked = $('#userperm_cat_all').prop('checked');
 		var m_checked = $('#userperm_media_all').prop('checked');
-		var slider    = $('#rex-page-user .sly-form .rex-form-wrapper .sly-num7');
+		var slider    = $('#sly-page-user .sly-form .rex-form-wrapper .sly-num7');
 
 		$('#userperm_cat').prop('disabled', c_checked);
 		$('#userperm_media').prop('disabled', m_checked);
@@ -484,17 +484,10 @@ var sly = {};
 			$('input[name=\'' + target + '\']').prop('checked', this.checked);
 		});
 
-		// Lösch-Links in Tabellen
+		// Lösch-Links
 
-		$('table.rex-table').delegate('a.sly-delete, input.sly-button-delete', 'click', function() {
-			var table    = $(this).parents('table');
-			var question = table.attr('rel');
-
-			if (!question) {
-				question = 'Löschen?';
-			}
-
-			return confirm(question);
+		$('a.sly-delete, input.sly-button-delete').click(function() {
+			return confirm('Sicher?');
 		});
 
 		// Filter-Funktionen in sly_Table
@@ -548,8 +541,8 @@ var sly = {};
 
 		// Benutzer-Formular
 
-		if ($('#rex-page-user .sly-form').length > 0) {
-			var wrapper = $('#rex-page-user .sly-form .rex-form-wrapper');
+		if ($('#sly-page-user .sly-form').length > 0) {
+			var wrapper = $('#sly-page-user .sly-form .rex-form-wrapper');
 			var sliders = wrapper.find('.sly-num6,.sly-num7');
 
 			$('#is_admin').change(function() {
@@ -685,5 +678,61 @@ var sly = {};
 		$('.sly-module-select').change(function() {
 			$(this).closest('form').submit();
 		});
+
+		// use ajax to install/activate addOns
+		var errorHider = null;
+
+		$('#sly-page-addon .sly-addonlist').delegate('a:not(.sly-blank)', 'click', function() {
+			var
+				link     = $(this),
+				list     = $('.sly-addonlist'),
+				rows     = $('.component', list),
+				row      = link.closest('.component'),
+				errorrow = $('.error', list);
+
+			// hide error row
+			errorrow.hide();
+
+			// clear timeout
+			if (errorHider) {
+				window.clearTimeout(errorHider);
+			}
+
+			// show extra div that will contain the loading animation
+			rows.prepend('<div class="blocker"></div>');
+			row.addClass('working');
+
+			var updateAddOnStatus = function(stati) {
+				for (var key in stati) {
+					if (!stati.hasOwnProperty(key)) continue;
+					var status = stati[key], comp = $('.component[data-key="' + key + '"]');
+					comp.attr('class', status['classes'] + ' component');
+					$('.depsinfo', comp).html(status.deps);
+				}
+			};
+
+			$.ajax({
+				url: link.attr('href')+'&json=1',
+				cache: false,
+				dataType: 'json',
+				type: 'POST',
+				success: function(xhr) {
+					updateAddOnStatus(xhr.stati);
+					row.removeClass('working');
+					$('.blocker').remove();
+
+					if (xhr.status !== true) {
+						row.after(errorrow);
+						$('span', errorrow).html(xhr.message);
+						errorrow.show();
+						errorHider = window.setTimeout(function() { errorrow.slideUp(); }, 10000);
+					}
+				}
+			});
+
+			return false;
+		});
+
+		$('body.sly-popup').unload(sly.closeAllPopups);
 	});
 })(jQuery, sly, window);

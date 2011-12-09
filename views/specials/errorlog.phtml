@@ -10,17 +10,16 @@
 ?>
 <form method="post" action="index.php" class="errorlog">
 	<div>
-		<input type="hidden" name="page" value="specials" />
-		<input type="hidden" name="subpage" value="errorlog" />
+		<input type="hidden" name="page" value="specials_errorlog" />
 		<input type="hidden" name="func" value="clear" />
 	</div>
 	<p class="center">
-		<input type="submit" value="<?= t('clear_errorlog') ?>" class="rex-form-submit sly-button" />
+		<input type="submit" value="<?php echo t('clear_errorlog') ?>" class="rex-form-submit sly-button" />
 	</p>
 </form>
-<?
+<?php
 
-$prefix = 'index.php?page=specials&amp;subpage=errorlog&amp;max=';
+$prefix = 'index.php?page=specials_errorlog&amp;max=';
 $units  = array(10, 50, 100, 250, 500);
 $links  = array();
 
@@ -44,10 +43,10 @@ foreach ($units as $unit) {
 
 ?>
 <p>
-	<?= t('errorlog_recenterrors', implode(' | ', $links)) ?>
-	<?= t('errorlog_total', sly_Util_String::formatNumber($lineCount, 0)) ?>
+	<?php echo t('errorlog_recenterrors', implode(' | ', $links)) ?>
+	<?php echo t('errorlog_total', sly_Util_String::formatNumber($lineCount, 0)) ?>
 </p>
-<?
+<?php
 
 $table = new sly_Table('sly-errorlog');
 $table->addColumn(new sly_Table_Column(t('errorlog_message'), '', '', array('colspan' => 2)));
@@ -57,14 +56,14 @@ foreach ($data as $line) {
 	extract($line);
 	?>
 	<tr>
-		<td class="error" colspan="2"><strong><em><?= $type ?></em>: <?= sly_html($message) ?></strong></td>
+		<td class="error" colspan="2"><strong><em><?php echo $type ?></em>: <?php echo sly_html($message) ?></strong></td>
 	</tr><tr class="where">
-		<td class="location">in <?= sly_html($file) ?>, <?= t('errorlog_line') ?> <?= sly_html($line) ?></td>
-		<td class="date"><?= sly_html(strftime(t('datetimeformat'), $date)) ?></td>
+		<td class="location">in <?php echo sly_html($file) ?>, <?php echo t('errorlog_line') ?> <?php echo sly_html($line) ?></td>
+		<td class="date"><?php echo sly_html(strftime(t('datetimeformat'), $date)) ?></td>
 	</tr><tr class="request">
-		<td class="request" colspan="2"><?= sly_html($request) ?></td>
+		<td class="request" colspan="2"><?php echo sly_html($request) ?></td>
 	</tr>
-	<?
+	<?php
 }
 
 $table->closeBuffer();

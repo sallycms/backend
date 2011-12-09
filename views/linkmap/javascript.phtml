@@ -10,21 +10,19 @@
 
 $callback = sly_get('callback', '');
 $callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
-$advanced = sly_Util_User::getCurrentUser()->hasRight('advancedMode[]');
 
-if ($callback):
-?>
-
-<script type="text/javascript">
+if ($callback) {
+	ob_start();
+	?>
 $(function() {
 	$('.articlelist').delegate('a', 'click', function() {
 		var self     = $(this);
 		var id       = self.data('id');
 		var name     = self.data('name');
 		var link     = 'sally://' + id + '/';
-		var callback = '<?= $callback ?>' in window.opener ? window.opener['<?= $callback ?>'] : null;
+		var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
 		var close    = true;
-		var fullName = name.length === 0 ? '<?= t('unnamed_article') ?> [' + id + ']' : <?= $advanced ? "name + ' [' + id + ']'" : 'name' ?>;
+		var fullName = name.length === 0 ? '<?php echo t('unnamed_article') ?> [' + id + ']' : name;
 
 		// execute callback (link widget, WYMeditor, ...)
 		if (callback !== null) {
@@ -39,8 +37,10 @@ $(function() {
 	var links = $('a[href!="#"]:visible'), len = links.length, i = 0;
 
 	for (; i < len; ++i) {
-		links[i].href = links[i].href += '&callback=<?= $callback ?>';
+		links[i].href = links[i].href += '&callback=<?php echo $callback ?>';
 	}
 });
-</script>
-<? endif ?>
+	<?php
+	$javascript = ob_get_clean();
+	sly_Core::getLayout()->addJavaScript($javascript);
+}

@@ -18,7 +18,7 @@ class sly_Helper_Content {
 		$moduleService = sly_Service_Factory::getModuleService();
 
 		if (!$moduleService->exists($module)) {
-			$slice_content = rex_warning(t('module_doesnt_exist'));
+			$slice_content = sly_Helper_Message::warn(t('module_doesnt_exist'));
 		}
 		else {
 			$moduleContent = $moduleService->getContent($moduleService->getInputFilename($module));
@@ -27,25 +27,25 @@ class sly_Helper_Content {
 				ob_start();
 				?>
 				<div class="sly-form sly-slice-form" id="addslice">
-					<form action="index.php#slice<?= $prior ?>" id="slice<?= $prior ?>" method="post" enctype="multipart/form-data">
+					<form action="index.php#slice<?php echo $prior ?>" id="slice<?php echo $prior ?>" method="post" enctype="multipart/form-data">
 						<div>
 							<input type="hidden" name="page" value="content" />
 							<input type="hidden" name="func" value="addArticleSlice" />
-							<input type="hidden" name="article_id" value="<?= $articleId ?>" />
-							<input type="hidden" name="clang" value="<?= $clang ?>" />
-							<input type="hidden" name="slot" value="<?= $slot ?>" />
-							<input type="hidden" name="module" value="<?= sly_html($module) ?>" />
-							<input type="hidden" name="prior" value="<?= $prior ?>" />
+							<input type="hidden" name="article_id" value="<?php echo $articleId ?>" />
+							<input type="hidden" name="clang" value="<?php echo $clang ?>" />
+							<input type="hidden" name="slot" value="<?php echo $slot ?>" />
+							<input type="hidden" name="module" value="<?php echo sly_html($module) ?>" />
+							<input type="hidden" name="prior" value="<?php echo $prior ?>" />
 						</div>
 						<fieldset class="rex-form-col-1">
-							<legend><?= t('add_block') ?>: <?= sly_html($moduleService->getTitle($module)) ?></legend>
+							<legend><?php echo t('add_block') ?>: <?php echo sly_html($moduleService->getTitle($module)) ?></legend>
 							<div class="rex-form-wrapper">
 								<div class="sly-contentpage-slice-input">
-									<? eval('?>'.self::replaceObjectVars($values, $moduleContent)); ?>
+									<?php eval('?>'.self::replaceObjectVars($values, $moduleContent)); ?>
 								</div>
 								<div class="rex-form-row">
 									<p class="rex-form-submit">
-										<input class="rex-form-submit" type="submit" name="btn_save" value="<?= t('add_block') ?>" />
+										<input class="rex-form-submit" type="submit" name="btn_save" value="<?php echo t('add_block') ?>" />
 									</p>
 								</div>
 							</div>
@@ -53,7 +53,7 @@ class sly_Helper_Content {
 					</form>
 				</div>
 
-				<?
+				<?php
 				self::focusFirstElement();
 
 				sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_ADD', $values, array(
@@ -74,40 +74,41 @@ class sly_Helper_Content {
 		print $slice_content;
 	}
 
-	public static function printEditSliceForm(OOArticleSlice $articleSlice, $values = array()) {
+	public static function printEditSliceForm(sly_Model_ArticleSlice $articleSlice, $values = array()) {
 		$moduleService = sly_Service_Factory::getModuleService();
+		$moduleTitle   = $moduleService->getTitle($articleSlice->getModule());
 
 		try {
 			ob_start();
 			?>
 			<div class="sly-form sly-slice-form" id="editslice">
-				<form enctype="multipart/form-data" action="index.php#slice<?= $articleSlice->getPrior() ?>" method="post" id="REX_FORM">
+				<form action="index.php#slice<?php echo $articleSlice->getPrior() ?>" method="post" enctype="multipart/form-data">
 					<div>
 						<input type="hidden" name="page" value="content" />
 						<input type="hidden" name="func" value="editArticleSlice" />
-						<input type="hidden" name="article_id" value="<?= $articleSlice->getArticleId() ?>" />
-						<input type="hidden" name="clang" value="<?= $articleSlice->getClang() ?>" />
-						<input type="hidden" name="slice_id" value="<?= $articleSlice->getId() ?>" />
-						<input type="hidden" name="slot" value="<?= $articleSlice->getSlot() ?>" />
-						<input type="hidden" name="prior" value="<?= $articleSlice->getPrior() ?>" />
+						<input type="hidden" name="article_id" value="<?php echo $articleSlice->getArticleId() ?>" />
+						<input type="hidden" name="clang" value="<?php echo $articleSlice->getClang() ?>" />
+						<input type="hidden" name="slice_id" value="<?php echo $articleSlice->getId() ?>" />
+						<input type="hidden" name="slot" value="<?php echo $articleSlice->getSlot() ?>" />
+						<input type="hidden" name="prior" value="<?php echo $articleSlice->getPrior() ?>" />
 					</div>
 					<fieldset class="rex-form-col-1">
-						<legend><?= t('edit_block') ?>: <?= sly_html($moduleService->getTitle($articleSlice->getModule())) ?></legend>
+						<legend><?php echo t('edit_block') ?>: <?php echo sly_html($moduleTitle) ?></legend>
 						<div class="rex-form-wrapper">
 							<div class="sly-contentpage-slice-input">
-								<? eval('?>'.self::replaceObjectVars($values, $articleSlice->getInput())); ?>
+								<?php eval('?>'.self::replaceObjectVars($values, $articleSlice->getInput())); ?>
 							</div>
 							<div class="rex-form-row">
 								<p class="rex-form-submit">
-									<input class="rex-form-submit" type="submit" value="<?= t('save_block') ?>" name="btn_save" />
-									<input class="rex-form-submit rex-form-submit-2" type="submit" value="<?= t('update_block') ?>" name="btn_update" />
+									<input class="rex-form-submit" type="submit" value="<?php echo t('save_block') ?>" name="btn_save" />
+									<input class="rex-form-submit rex-form-submit-2" type="submit" value="<?php echo t('update_block') ?>" name="btn_update" />
 								</p>
 							</div>
 						</div>
 					</fieldset>
 				</form>
 			</div>
-			<?
+			<?php
 			self::focusFirstElement();
 
 			sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_EDIT', $values, array(
@@ -129,15 +130,15 @@ class sly_Helper_Content {
 	}
 
 	/**
-	 * Perform REX_VAR replacements
+	 * Perform SLY_VAR replacements
 	 *
 	 * @param  int    $slice_id  the slice's ID
 	 * @param  string $content   current slice content
 	 * @return string            parsed content
 	 */
-	private static function replaceObjectVars($data, $content) {
+	private static function replaceObjectVars($values, $content) {
 		foreach (sly_Core::getVarTypes() as $idx => $var) {
-			$content = $var->getBEInput($data, $content);
+			$content = $var->getBEInput($values, $content);
 		}
 		return $content;
 	}

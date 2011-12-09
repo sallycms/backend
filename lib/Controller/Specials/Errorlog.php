@@ -15,7 +15,7 @@ class sly_Controller_Specials_Errorlog extends sly_Controller_Specials {
 		$this->handler = sly_Core::getErrorHandler();
 
 		if (get_class($this->handler) !== 'sly_ErrorHandler_Production') {
-			print rex_warning(t('cant_work_with_foreign_errorhandler', get_class($this->handler)));
+			print sly_Helper_Message::warn(t('cant_work_with_foreign_errorhandler', get_class($this->handler)));
 			$this->handler = null;
 		}
 	}
@@ -29,7 +29,7 @@ class sly_Controller_Specials_Errorlog extends sly_Controller_Specials {
 		$logfile = $log->getFilename();
 
 		if (!file_exists($logfile) || filesize($logfile) === 0) {
-			print rex_info(t('errorlog_is_empty'));
+			print sly_Helper_Message::info(t('errorlog_is_empty'));
 			return;
 		}
 
@@ -48,13 +48,13 @@ class sly_Controller_Specials_Errorlog extends sly_Controller_Specials {
 		$lineCount = $this->getNumberOfLines($logfile);
 
 		if (empty($lines)) {
-			print rex_info(t('errorlog_is_empty'));
+			print sly_Helper_Message::info(t('errorlog_is_empty'));
 			return;
 		}
 
 		// render data
 
-		$regex = '#^\[(.*?)\] PHP (.+?) \((.+?)\): (.+?) in (/.*?) line (\d+) \[(GET|POST|HEAD) (.+?)\]#';
+		$regex = '#^\[(.*?)\] PHP (.+?) \((.+?)\): (.+?) in (.*?) line (\d+) \[(GET|POST|HEAD) (.+?)\]#';
 		$lines = array_reverse($lines); // put most recent line on the top
 		$data  = array();
 
@@ -80,10 +80,10 @@ class sly_Controller_Specials_Errorlog extends sly_Controller_Specials {
 		$logfile = $log->getFilename();
 
 		if (unlink($logfile)) {
-			print rex_info(t('errorlog_cleared'));
+			print sly_Helper_Message::info(t('errorlog_cleared'));
 		}
 		else {
-			print rex_warning(t('errorlog_not_cleared'));
+			print sly_Helper_Message::warn(t('errorlog_not_cleared'));
 		}
 
 		return $this->index();
@@ -131,7 +131,4 @@ class sly_Controller_Specials_Errorlog extends sly_Controller_Specials {
 		return $lines;
 	}
 
-	protected function checkPermission() {
-		return sly_Util_User::getCurrentUser() !== null;
-	}
 }

@@ -13,33 +13,18 @@ class sly_Controller_Specials extends sly_Controller_Backend {
 	protected $info;
 
 	protected function init() {
-		$subline = array(
-			array('',          t('main_preferences')),
-			array('languages', t('languages'))
-		);
-
 		// add subpages
 
-		$navigation = sly_Core::getNavigation();
+		$navigation = sly_Core::getLayout()->getNavigation();
 		$specials   = $navigation->get('specials', 'system');
-
-		$specials->addSubpage('', t('main_preferences'));
-		$specials->addSubpage('languages', t('languages'));
 
 		// show error log when using the original system error handler
 		// (that's the only case when we can ensure that we're able to parse the error log)
 
-		if (!sly_Core::isDeveloperMode()) {
-			$handler = sly_Core::getErrorHandler();
-
-			if (get_class($handler) === 'sly_ErrorHandler_Production') {
-				$specials->addSubpage('errorlog', t('errorlog'));
-				$subline[] = array('errorlog',  t('errorlog'));
-			}
+		$subline = array();
+		foreach($specials->getSubpages() as $subpage) {
+			$subline[] = array($subpage->getPageParam(), $subpage->getTitle());
 		}
-
-		// allow addOns to extend the system page
-		$subline = sly_Core::dispatcher()->filter('SLY_SPECIALS_MENU', $subline, array('page' => $specials));
 
 		$layout = sly_Core::getLayout();
 		$layout->pageHeader(t('specials'), $subline);
@@ -50,7 +35,7 @@ class sly_Controller_Specials extends sly_Controller_Backend {
 	}
 
 	protected function clearcache() {
-		$this->info = rex_generateAll();
+		$this->info = sly_Core::clearCache();
 		$this->index();
 	}
 

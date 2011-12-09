@@ -1,66 +1,34 @@
-/* Sprites */
-
-.sly-sprite {
-	&-language     { background-position: 0 -48px; }
-	&-language-add { background-position: 0 -64px; }
-}
-
-/* System: Einstellungen | unterer Abstand zu den gestrichelten Linien in der rechten Box*/
-
-#rex-page-specials {
-	#languages .sly-col-d { width: 130px; }
-}
+.sly-sprite-language     { background-position: 0 -48px; }
+.sly-sprite-language-add { background-position: 0 -64px; }
 
 /*	System: Einstellungen */
+#sly-page-specials {
+	.button {
+		margin-bottom: 15px;
+	}
+}
 
 #sly-form-system-setup {
-	fieldset { padding-bottom: 1em; }
-
-	legend {
-		padding: 0;
-		background-color: transparent;
-		font-size: 100%;
-		color: $drk_grey;
-		width: auto;
+	.rex-form-wrapper {
+		margin: 0;
 	}
 
 	.rex-form-row {
-		border-bottom-width: 0;
 		padding: 5px 0;
-
-		label { width: 180px; }
+		width: 375px;
 	}
 
-	fieldset.rex-form-col-1 .rex-form-row {
-		width: 371px;
+	label  { width: 180px; }
+	input  { width: 185px; }
+	select { width: 191px; }
 
-		p.rex-form-text input,
-		p select {
-			width: 180px;
-		}
-
-		.sly-widget.sly-link {
-			input { width: 140px; }
-		}
-
-		/*	Submit */
-
-		p input.rex-form-submit {
-			margin-left: 180px;
-		}
+	.sly-widget.sly-link {
+		input { width: 144px; }
 	}
 
-	.rex-area-col-b .rex-area-content {
-		padding-bottom: 0;
-	}
-
-	.rex-form-col-1 {
-		padding-bottom: 0;
-		.rex-form-wrapper { margin-bottom: 10px; }
-	}
-
-	p.button {
-		margin: 0 0 15px 5px;
+	input.rex-form-submit {
+		margin-left: 180px;
+		width: auto;
 	}
 }
 
@@ -73,40 +41,46 @@
 			background: $md_grey;
 			border: 1px solid $md_grey;
 		}
+
 		th { background: $md_grey; }
 	}
-	input[type=submit] { margin-left: 0; margin-right: 5px; }
+
 	.sly-col-c {
 		width: 120px;
+
 		input {
 			width: 100px;
 		}
 	}
+
 	.sly-col-b {
 		padding-right: 20px;
+
 		.rex-form-text {
 			width: 100%;
 		}
+	}
+
+	.sly-col-d {
+		width: 130px;
 	}
 }
 
 /* System: Fehlerprotokoll */
 
-#rex-page-specials {
-	form.errorlog {
-		input.sly-button {
-			cursor: pointer;
-			margin-left: 0;
-			margin: 1em 0;
-		}
+#sly-page-specials-errorlog {
+	.sly-button {
+		cursor: pointer;
+		margin-left: 0;
+		margin: 1em 0;
 	}
 
-	#sly-errorlog {
+	.sly-table {
 		th { padding-left: 9px; }
 		td { padding: 4px; height: auto; }
-		td.date { text-align: right; width: 150px; }
-		td.location, td.request { padding-left: 34px; }
+		.date { text-align: right; width: 150px; }
+		.location, .request { padding-left: 34px; }
 		em { font-style: italic; }
-		tr.where td, tr.request td { border-top: 0 none; }
+		.where td, .request td { border-top: 0 none; }
 	}
 }

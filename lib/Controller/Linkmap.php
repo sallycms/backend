@@ -34,7 +34,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend {
 
 		$naviPath .= '</ul>';
 		$layout    = sly_Core::getLayout();
-
+		$layout->setBodyAttr('class', 'sly-popup');
 		$layout->showNavigation(false);
 		$layout->pageHeader(t('linkmap'), $naviPath);
 	}
@@ -62,7 +62,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend {
 
 	public function checkPermission() {
 		$user = sly_Util_User::getCurrentUser();
-		return !empty($user);
+		return !empty($user) && $user->hasStructureRight();
 	}
 
 	protected function url($local = array()) {
@@ -75,10 +75,6 @@ class sly_Controller_Linkmap extends sly_Controller_Backend {
 
 		if (empty($label)) $label = '&nbsp;';
 
-		if ($user->hasRight('advancedMode[]')) {
-			$label .= ' ['.$object->getId().']';
-		}
-
 		if (sly_Util_Article::isValid($object) && !$object->hasType()) {
 			$label .= ' ['.t('lmap_has_no_type').']';
 		}
@@ -86,46 +82,46 @@ class sly_Controller_Linkmap extends sly_Controller_Backend {
 		return $label;
 	}
 
-	protected function tree($children) {
+	protected function tree($children, $level = 1) {
 		$ul = '';
 
 		if (is_array($children)) {
-			$li = '';
+			$li  = '';
+			$len = count($children);
 
-			foreach ($children as $cat) {
+			foreach ($children as $idx => $cat) {
 				$cat_children = $cat->getChildren();
 				$cat_id       = $cat->getId();
-				$liclasses    = array();
-				$linkclasses  = array();
+				$classes      = array('lvl-'.$level);
 				$sub_li       = '';
 
-				if (!empty($cat_children)) {
-					$liclasses[]   = 'rex-children';
-					$linkclasses[] = 'rex-linkmap-is-not-empty';
+				$classes[] = empty($cat_children) ? 'empty' : 'children';
+
+				if ($idx === 0) {
+					$classes[] = 'first';
 				}
 
-				if (next($children) == null) {
-					$liclasses[] = 'rex-children-last';
+				if ($idx === $len-1) {
+					$classes[] = 'last';
 				}
-
-				$linkclasses[] = $cat->isOnline() ? 'rex-online' : 'rex-offline';
 
 				if (in_array($cat_id, $this->tree)) {
-					$sub_li        = $this->tree($cat_children);
-					$liclasses[]   = 'rex-active';
-					$linkclasses[] = 'rex-active';
+					$sub_li    = $this->tree($cat_children, $level + 1);
+					$classes[] = 'active';
+
+					if ($cat_id == end($this->tree)) {
+						$classes[] = 'leaf';
+					}
 				}
 
-				if (!empty($liclasses)) $liclasses = ' class="'.implode(' ', $liclasses).'"';
-				else $liclasses = '';
+				$classes[] = $cat->isOnline() ? 'rex-online' : 'rex-offline';
+				$label     = $this->formatLabel($cat);
 
-				if (!empty($linkclasses)) $linkclasses = ' class="'.implode(' ', $linkclasses).'"';
-				else $linkclasses = '';
+				if (!empty($classes)) $classes = ' class="'.implode(' ', $classes).'"';
+				else $classes = '';
 
-				$label = $this->formatLabel($cat);
-
-				$li .= '<li'.$liclasses.'>';
-				$li .= '<a'.$linkclasses.' href="'.$this->url(array('category_id' => $cat_id)).'">'.sly_html($label).'</a>';
+				$li .= '<li class="lvl-'.$level.'">';
+				$li .= '<a'.$classes.' href="'.$this->url(array('category_id' => $cat_id)).'">'.sly_html($label).'</a>';
 				$li .= $sub_li;
 				$li .= '</li>';
 			}
