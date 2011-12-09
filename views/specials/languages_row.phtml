@@ -1,0 +1,47 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$editID  = sly_request('clang_id', 'int');
+$add_td  = '';
+$add_td  = '';
+$delLink = t('clang_delete');
+
+if ($clangID == 0) {
+	$delLink = '<span class="sly-strike">'.$delLink.'</span>';
+}
+else {
+	$delLink = '<a href="index.php?page=specials_languages&amp;func=delete&amp;clang_id='.$clangID.'" class="sly-action sly-delete">'.$delLink.'</a>';
+}
+
+// Edit form
+if ($this->func == 'edit' && $editID == $clangID) {
+	$name = sly_post('clang_name', 'string', $clangName);
+	$locale = sly_post('clang_locale', 'string', $clangLocale);
+	?>
+	<tr class="active">
+		<td class="sly-col-a sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, 'language') ?></td>
+		<td class="sly-col-b"><input class="rex-form-text" type="text" name="clang_name" value="<?php echo sly_html($name) ?>" /></td>
+		<td class="sly-col-c"><input class="rex-form-text" type="text" name="clang_locale" value="<?php echo sly_html($locale) ?>" /></td>
+		<td class="sly-col-d"><input type="submit" class="rex-form-submit" name="sly-submit" value="<?php echo t('clang_update') ?>" /></td>
+	</tr>
+	<?php
+}
+else {
+	$editLink = 'index.php?page=specials_languages&func=edit&clang_id='.$clangID.'#clang';
+
+	?>
+	<tr>
+		<td class="sly-col-a sly-icon"><?php echo sly_Util_HTML::getSpriteLink($editLink, $clangName, 'language') ?></td>
+		<td class="sly-col-b"><a href="<?php echo sly_html($editLink) ?>"><?php echo sly_html($clangName) ?></a></td>
+		<td class="sly-col-c"><?php echo sly_html($clangLocale) ?></td>
+		<td class="sly-col-d"><?php echo $delLink ?></td>
+	</tr>
+	<?php
+}
