@@ -1,0 +1,29 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+if ($article->isStartArticle()) {
+	$sprite = 'article-startpage';
+}
+else {
+	$sprite = 'article';
+}
+
+$base_url = 'index.php?page=structure&category_id='.$article->getId().'&clang='.$this->clangId;
+?>
+
+<tr class="active">
+	<td class="sly-icon">
+		<input type="hidden" name="edit_id" value="<?php echo $article->getId() ?>" />
+		<?php echo sly_Util_HTML::getSpriteLink($base_url, $article->getName(), $sprite) ?>
+	</td>
+	<td class="name" colspan="2"><input type="text" class="rex-form-text" id="sly-form-field-name" name="article_name" autofocus="autofocus" value="<?php echo sly_html($article->getName()) ?>" /></td>
+	<td class="pos"><input type="text" class="rex-form-text" id="sly-form-field-pos" name="article_position" value="<?php echo sly_html($article->getPosition()) ?>" /></td>
+	<td class="status"><input type="submit" name="do_edit_article" value="<?php echo t('article_save') ?>" /></td>
+</tr>

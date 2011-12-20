@@ -1,0 +1,29 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$user = sly_Util_User::getCurrentUser();
+
+if ($user && $this->hasNavigation()) {
+	$user_name = $user->getName() != '' ? $user->getName() : $user->getLogin();
+	?>
+	<ul class="sly-meta">
+		<li class="rex-navi-first"><span><?php echo t('logged_in_as').' '.sly_html($user_name) ?></span></li>
+		<li><a href="index.php?page=profile"><?php echo t('profile_title') ?></a></li>
+		<li><a href="index.php?page=login&amp;func=logout"><?php echo t('logout') ?></a></li>
+		<li><a href="../"><?php echo t('to_website') ?></a></li>
+	</ul>
+	<?php
+}
+elseif ($this->hasNavigation()) {
+	print '<p class="sly-meta">'.t('logged_out').'</p>';
+}
+else {
+	print '<p class="sly-meta">&nbsp;</p>';
+}

@@ -1,0 +1,281 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+class sly_Controller_User extends sly_Controller_Backend {
+	public function init() {
+		$layout   = sly_Core::getLayout();
+		$subpages = sly_Core::dispatcher()->filter('SLY_PAGE_USER_SUBPAGES', array(
+			array('', t('title_user'))
+		));
+
+		// don't show the menu if there is only one entry
+		if (count($subpages) === 1) {
+			$subpages = array();
+		}
+		// add subpages
+		else {
+			$navigation = sly_Core::getNavigation();
+			$specials   = $navigation->get('user', 'system');
+
+			foreach ($subpages as $subpage) {
+				$specials->addSubpage($subpage[0], $subpage[1]);
+			}
+		}
+
+		$layout->pageHeader(t('title_user'), $subpages);
+	}
+
+	public function index() {
+		$this->listUsers();
+	}
+
+	public function add() {
+		if (sly_post('save', 'boolean', false)) {
+			$password = sly_post('userpsw', 'string');
+			$login    = sly_post('userlogin', 'string');
+			$timezone = sly_post('timezone', 'string');
+			$service  = sly_Service_Factory::getUserService();
+			$error    = false;
+
+			if (empty($login)) {
+				print sly_Helper_Message::warn('Es muss ein Loginname angegeben werden.');
+				$error = true;
+			}
+
+			if (empty($password)) {
+				print sly_Helper_Message::warn('Es muss ein Passwort angegeben werden.');
+				$error = true;
+			}
+
+			if ($service->find(array('login' => $login))) {
+				print sly_Helper_Message::warn(t('user_login_exists'));
+				$error = true;
+			}
+
+			if ($error) {
+				$this->func = 'add';
+				print $this->render('user/edit.phtml', array('user' => null));
+				return true;
+			}
+
+			$currentUser = sly_Util_User::getCurrentUser();
+
+			$params = array(
+				'login'       => sly_post('userlogin', 'string'),
+				'name'        => sly_post('username', 'string'),
+				'description' => sly_post('userdesc', 'string'),
+				'status'      => sly_post('userstatus', 'boolean', false) ? 1 : 0,
+				'lasttrydate' => 0,
+				'timezone'    => $timezone ? $timezone : null,
+				'createdate'  => time(),
+				'updatedate'  => time(),
+				'createuser'  => $currentUser->getLogin(),
+				'updateuser'  => $currentUser->getLogin(),
+				'psw'         => $password,
+				'rights'      => $this->getRightsFromForm(null),
+				'revision'    => 0
+			);
+
+			// Speichern, fertig.
+
+			try {
+				$service->create($params);
+				print sly_Helper_Message::info(t('user_added'));
+				$this->listUsers();
+				return true;
+			}
+			catch (Exception $e) {
+				print sly_Helper_Message::warn($e->getMessage());
+			}
+		}
+
+		$this->func = 'add';
+		print $this->render('user/edit.phtml', array('user' => null));
+	}
+
+	public function edit() {
+		$user = $this->getUser();
+
+		if ($user === null) {
+			return $this->listUsers();
+		}
+
+		$save        = sly_post('save', 'boolean', false);
+		$service     = sly_Service_Factory::getUserService();
+		$currentUser = sly_Util_User::getCurrentUser();
+
+		if ($save) {
+			$status = sly_post('userstatus', 'boolean', false) ? 1 : 0;
+
+			if ($currentUser->getId() == $user->getId()) {
+				$status = $user->getStatus();
+			}
+
+			$user->setName(sly_post('username', 'string'));
+			$user->setDescription(sly_post('userdesc', 'string'));
+			$user->setStatus($status);
+			$user->setUpdateDate(time());
+			$user->setUpdateUser($currentUser->getLogin());
+
+			if (class_exists('DateTimeZone')) {
+				$tz = sly_post('timezone', 'string', '');
+				$user->setTimezone($tz ? $tz : null);
+			}
+
+			// Passwort ändern?
+
+			$password = sly_post('userpsw', 'string');
+
+			if (!empty($password) && $password != $user->getPassword()) {
+				$user->setPassword($password);
+			}
+
+			$user->setRights($this->getRightsFromForm($user));
+
+			// Speichern, fertig.
+
+			try {
+				$user = $service->save($user);
+				$goon = sly_post('apply', 'string');
+
+				print sly_Helper_Message::info(t('user_data_updated'));
+			}
+			catch (Exception $e) {
+				print sly_Helper_Message::warn($e->getMessage());
+				$goon = true;
+			}
+
+			if (!$goon) {
+				$this->listUsers();
+				return true;
+			}
+		}
+
+		$params     = array('user' => $user);
+		$this->func = 'edit';
+
+		print $this->render('user/edit.phtml', $params);
+	}
+
+	public function delete() {
+		$user = $this->getUser();
+
+		if ($user === null) {
+			return $this->listUsers();
+		}
+
+		$service = sly_Service_Factory::getUserService();
+		$current = sly_Util_User::getCurrentUser();
+
+		if ($current->getId() == $user->getId()) {
+			print sly_Helper_Message::warn(t('user_notdeleteself'));
+			return false;
+		}
+
+		$user->delete();
+		print sly_Helper_Message::info(t('user_deleted'));
+
+		$this->listUsers();
+	}
+
+	public function checkPermission() {
+		$user = sly_Util_User::getCurrentUser();
+		return !is_null($user) && $user->isAdmin();
+	}
+
+	protected function listUsers() {
+		sly_Table::setElementsPerPageStatic(20);
+
+		$search  = sly_Table::getSearchParameters('users');
+		$paging  = sly_Table::getPagingParameters('users', true, false);
+		$service = sly_Service_Factory::getUserService();
+		$where   = null;
+
+		if (!empty($search)) {
+			$db    = sly_DB_Persistence::getInstance();
+			$where = '`login` LIKE ? OR `description` LIKE ? OR `name` LIKE ?';
+			$where = str_replace('?', $db->quote('%'.$search.'%'), $where);
+		}
+
+		$users = $service->find($where, null, 'name', $paging['start'], $paging['elements']);
+		$total = $service->count($where);
+
+		print $this->render('user/list.phtml', compact('users', 'total'));
+	}
+
+	protected function getUser() {
+		$userID  = sly_request('id', 'int', 0);
+		$service = sly_Service_Factory::getUserService();
+		$user    = $service->findById($userID);
+
+		return $user;
+	}
+
+	protected function getBackendLocales() {
+		$langpath = SLY_SALLYFOLDER.'/backend/lang';
+		$locales  = sly_I18N::getLocales($langpath);
+		$result   = array('' => t('use_default_locale'));
+
+		foreach ($locales as $locale) {
+			$i18n = new sly_I18N($locale, $langpath);
+			$result[$locale] = $i18n->msg('lang');
+		}
+
+		return $result;
+	}
+
+	protected function getPossibleStartpages() {
+		$service = sly_Service_Factory::getAddOnService();
+		$addons  = $service->getAvailableAddons();
+
+		$startpages = array();
+		$startpages['structure'] = t('structure');
+		$startpages['profile']   = t('profile');
+
+		foreach ($addons as $addon) {
+			$page = $service->getProperty($addon, 'page', null);
+			$name = $service->getProperty($addon, 'name', $addon);
+
+			if ($page) {
+				$startpages[$page] = rex_translate($name);
+			}
+		}
+
+		return $startpages;
+	}
+
+	protected function getRightsFromForm($user) {
+		$permissions = array();
+		$current     = sly_Util_User::getCurrentUser()->getId();
+
+		if (sly_post('is_admin', 'boolean', false) || ($user && $current == $user->getId())) {
+			$permissions[] = 'admin[]';
+		}
+
+		// Backend-Sprache und -Startseite
+
+		$backendLocale  = sly_post('userperm_mylang', 'string');
+		$backendLocales = $this->getBackendLocales();
+		$startpage      = sly_post('userperm_startpage', 'string');
+		$startpages     = $this->getPossibleStartpages();
+
+		if (isset($backendLocales[$backendLocale])) {
+			$permissions[] = 'be_lang['.$backendLocale.']';
+		}
+
+		if (isset($startpages[$startpage])) {
+			$permissions[] = 'startpage['.$startpage.']';
+		}
+
+		// Rechte zurückgeben
+
+		return '#'.implode('#', $permissions).'#';
+	}
+}
