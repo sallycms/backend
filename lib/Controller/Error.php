@@ -15,7 +15,7 @@ class sly_Controller_Error extends sly_Controller_Backend {
 		$this->exception = $e;
 	}
 
-	public function index() {
+	public function indexAction() {
 		print $this->render('error/index.phtml', array('e' => $this->exception));
 	}
 
