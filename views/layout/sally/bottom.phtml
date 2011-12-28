@@ -1,0 +1,32 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$usage   = function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : memory_get_usage();
+$memory  = sly_Util_String::formatFilesize($usage);
+$classes = sly_Loader::getClassCount();
+$usage   = t('used_ressources', $memory, $classes);
+
+?>
+	</div>
+	<div id="sly-footer">
+		<ul>
+			<li class="sly-first"><a href="#sly-navi-top">&#94;</a></li>
+			<li><a href="http://www.webvariants.de/" class="sly-blank">webvariants.de</a></li>
+			<li><a href="http://www.sallycms.de/" class="sly-blank">sallycms.de</a></li>
+			<?php if (sly_Util_User::getCurrentUser() !== null): ?>
+			<li><a href="index.php?page=credits"><?php echo t('credits') ?></a></li>
+			<?php endif ?>
+		</ul>
+		<p>
+		<span title="<?php echo sly_html($usage) ?>"><?php print sly_Util_String::formatTimespan(microtime(true) - SLY_START_TIME) ?></span> |
+		<?php print sly_Util_String::formatDatetime() ?>
+		</p>
+	</div>
+</div>

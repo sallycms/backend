@@ -1,0 +1,76 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+////////////////////////////////////////////////////////
+// info and error messages
+
+print $this->render('mediapool/notices.phtml');
+
+////////////////////////////////////////////////////////
+// init form
+
+$form = new sly_Form('index.php', 'POST', t('upload_medium'), '', 'sly-form-mediapool-other');
+$form->setEncType('multipart/form-data');
+
+$form->addHiddenValue('page', 'mediapool_upload');
+$form->addHiddenValue('func', 'upload');
+$form->addHiddenValue('callback', sly_request('callback', 'string'));
+
+////////////////////////////////////////////////////////
+// file title
+
+$title = new sly_Form_Input_Text('ftitle', t('title'));
+$title->setRequired();
+$form->add($title);
+$form->setFocus('ftitle');
+
+////////////////////////////////////////////////////////
+// category select box
+
+$select = $this->getCategorySelect();
+$select->setLabel(t('category'));
+$select->setAttribute('value', $this->getCurrentCategory());
+
+$form->add($select);
+
+////////////////////////////////////////////////////////
+// init upload box
+
+$upload    = new sly_Form_Input_File('file_new', t('file'));
+$maxPOST   = sly_ini_get('post_max_size');
+$maxUpload = sly_ini_get('upload_max_filesize');
+$maxSize   = min(array($maxPOST, $maxUpload));
+$helptext  = t('max_uploadsize').': '.sly_Util_String::formatFilesize($maxSize);
+
+$upload->setHelpText($helptext);
+$form->add($upload);
+
+////////////////////////////////////////////////////////
+// setup buttons
+
+$submit = $form->getSubmitButton();
+$submit->setAttribute('name', 'save');
+$submit->setAttribute('value', t('upload'));
+
+$form->setResetButton(null);
+
+if (sly_request('callback', 'string') != '') {
+	$apply = new sly_Form_Input_Button('submit', 'saveandexit', t('upload_and_use'));
+	$form->setApplyButton($apply);
+}
+
+////////////////////////////////////////////////////////
+// and here we go!
+
+$form = sly_Core::dispatcher()->filter('SLY_MEDIA_FORM_ADD', $form);
+
+if ($form instanceof sly_Form) {
+	print $form->render();
+}

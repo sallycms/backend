@@ -1,0 +1,125 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div class="sly-content-header">
+	<?php
+	//navigation
+	print $this->render('content/_slotmenu.phtml');
+	print $this->render('content/_subpagemenu.phtml');
+	?>
+</div>
+<?php
+$category_id = $article->getCategoryId();
+
+$params = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
+$form = new sly_Form('index.php', 'POST', t('general'));
+$form->setEncType('multipart/form-data');
+$form->addHiddenValue('page', 'contentmeta');
+$form->addHiddenValue('func', 'processMetaForm');
+$form->addHiddenValue('article_id', $article->getId());
+$form->addHiddenValue('clang', $article->getClang());
+$form->setSubmitButton(null);
+$form->setResetButton(null);
+
+/////////////////////////////////////////////////////////////////
+// article name / metadata
+
+$name = new sly_Form_Input_Text('meta_article_name', t('article_name'), $article->getName());
+$form->add($name);
+
+$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
+
+$button = new sly_Form_Input_Button('submit', 'savemeta', t('save'));
+$form->add(new sly_Form_ButtonBar(array('submit' => $button)));
+
+$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
+
+/////////////////////////////////////////////////////////////////
+// misc
+// ZUM STARTARTIKEL MACHEN
+
+if ($this->canConvertToStartarticle()) {
+	$form->beginFieldset(t('startarticle'));
+
+	if ($article->getStartpage() == 0 && $article->getParentId() == 0) {
+		$form->add(new sly_Form_Text('', t('root_articles_cannot_be_startarticles')));
+	}
+	elseif ($article->getStartpage() == 1) {
+		$form->add(new sly_Form_Text('', t('article_is_startarticle')));
+	}
+	else {
+		sly_Helper_Content::metaFormAddButtonBar($form, t('convert_to_startarticle'), 'article2startpage');
+	}
+}
+
+// INHALTE KOPIEREN
+
+if ($this->canCopyContent()) {
+	$languages = sly_Util_Language::findAll();
+
+	foreach ($languages as $id => $lang) {
+		$languages[$id] = $lang->getName();
+	}
+
+	$lang_a = new sly_Form_Select_DropDown('clang_a', t('from_language'), sly_request('clang_a', 'int', null), $languages, 'clang_a');
+	$lang_a->setSize(1);
+
+	$lang_b = new sly_Form_Select_DropDown('clang_b', t('to_language'), sly_request('clang_b', 'int', null), $languages, 'clang_b');
+	$lang_b->setSize(1);
+
+	$form->beginFieldset(t('copy_content'), null, 2);
+	$form->addRow(array($lang_a, $lang_b));
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('copy_content'), 'copycontent');
+}
+
+// ARTIKEL VERSCHIEBEN
+
+if ($this->canMoveArticle()) {
+	$select = sly_Form_Helper::getCategorySelect('category_id_new', false, null, null, $user);
+	$select->setAttribute('value', $category_id);
+	$select->setLabel(t('target_category'));
+
+	$form->beginFieldset(t('move_article'));
+	$form->add($select);
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('move_article'), 'movearticle');
+}
+
+// ARTIKEL KOPIEREN
+
+if ($this->canCopyArticle()) {
+	$select = sly_Form_Helper::getCategorySelect('category_copy_id_new', false, null, null, $user);
+	$select->setAttribute('value', $category_id);
+	$select->setLabel(t('target_category'));
+
+	$form->beginFieldset(t('copy_article'));
+	$form->add($select);
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('copy_article'), 'copyarticle');
+}
+
+// KATEGORIE/STARTARTIKEL VERSCHIEBEN
+
+if ($this->canMoveCategory()) {
+	$select = sly_Form_Helper::getCategorySelect('category_id_new', false, null, null, $user);
+	$select->setAttribute('value', $category_id);
+	$select->setLabel(t('target_category'));
+
+	$form->beginFieldset(t('move_category'));
+	$form->add($select);
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('move_category'), 'movecategory');
+}
+
+$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
+
+print $this->render('content/_messages.phtml');
+if ($form instanceof sly_Viewable) print $form->render();

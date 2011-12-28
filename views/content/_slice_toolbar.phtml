@@ -1,0 +1,61 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$user         = sly_Util_User::getCurrentUser();
+$module       = $articleSlice->getSlice()->getModule();
+$service      = sly_Service_Factory::getModuleService();
+$sliceUrl     = 'index.php?page=content&amp;article_id='.$articleSlice->getArticleId().'&amp;slice_id='.$articleSlice->getId().'&amp;clang='.$articleSlice->getClang().'%s#slice'.$articleSlice->getPosition();
+$listElements = array();
+
+if (!$service->exists($module)) {
+	$moduleName = $module;
+}
+else {
+	$moduleName = $service->get($module, 'title', '');
+
+	if ($user->isAdmin() || $user->hasRight('module', 'edit', $module)) {
+		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;function=edit').'" class="sly-edit">'.t('edit').'</a>';
+	}
+}
+
+$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;pos='.$articleSlice->getPosition().'&amp;func=deleteArticleSlice').'" class="sly-delete">'.t('delete').'</a>';
+
+if ($service->exists($module) && ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice'))) {
+	$moveUp   = t('move_up');
+	$moveDown = t('move_down');
+
+	// upd stamp übergeben, da sonst ein block nicht mehrfach hintereindander verschoben werden kann
+	// (Links wären sonst gleich und der Browser lässt das klicken auf den gleichen Link nicht zu)
+
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;upd='.time().'&amp;func=moveSlice&amp;direction=up').'" title="'.$moveUp.'" class="sly-up"></a>';
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;upd='.time().'&amp;func=moveSlice&amp;direction=down').'" title="'.$moveDown.'" class="sly-down"></a>';
+}
+
+$dispatcher   = sly_Core::dispatcher();
+$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
+	'article_id' => $articleSlice->getArticleId(),
+	'clang'      => $articleSlice->getClang(),
+	'ctype'      => $articleSlice->getSlot(),
+	'slot'       => $articleSlice->getSlot(),
+	'module'     => $module,
+	'slice_id'   => $articleSlice->getId()
+));
+
+?>
+<div class="sly-slice-toolbar">
+	<h3><?php echo sly_html($moduleName) ?></h3>
+	<div class="sly-slice-actions">
+		<ul>
+			<?php foreach ($listElements as $listElement): ?>
+			<li><?php echo $listElement ?></li>
+			<?php endforeach ?>
+		</ul>
+	</div>
+</div>

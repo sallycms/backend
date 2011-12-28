@@ -1,0 +1,62 @@
+<?php
+/*
+ * Copyright (c) 2011, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$base   = 'index.php?page=user&amp;func=';
+$thIcon = '<a href="'.$base.'add"><img class="sly-icon sly-sprite sly-sprite-sly-user-add" alt="" src="assets/empty.png" title="'.t('add_user').'" /></a>';
+$table  = new sly_Table('users');
+
+$table->addColumn(new sly_Table_Column($thIcon, '', '', array('class' => 'sly-col-icon sly-icon')));
+$table->addColumn(new sly_Table_Column(t('name'), '', '', array('class' => 'sly-col-name')));
+$table->addColumn(new sly_Table_Column(t('username'), '', '', array('class' => 'sly-col-username')));
+$table->addColumn(new sly_Table_Column(t('last_login'), '', '', array('class' => 'sly-col-last-login')));
+$table->addColumn(new sly_Table_Column(t('function'), '', '', array('class' => 'sly-col-func')));
+
+$table->enableSearching();
+$table->setIsEmpty(false);
+$table->openBuffer();
+
+$tdIcon    = '';
+$user      = sly_Util_User::getCurrentUser();
+$currentID = $user->getId();
+
+foreach ($users as $user) {
+	$id    = (int) $user->getId();
+	$name  = $user->getName();
+	$login = $user->getLogin();
+	$try   = $user->getLastTryDate();
+
+	if (empty($name)) {
+		$name = $login;
+	}
+
+	$try = $try === 0 ? t('never') : sly_Util_String::formatDatetime($try);
+
+	?>
+	<tr>
+		<td class="sly-col-icon sly-icon">
+			<a href="<?php echo $base ?>edit&amp;id=<?php echo $id ?>">
+				<img src="assets/empty.png" class="sly-icon sly-sprite sly-sprite-sly-user" alt="" title="<?php echo sly_html($login) ?>" />
+			</a>
+		</td>
+		<td class="sly-col-name"><a href="<?php echo $base ?>edit&amp;id=<?php echo $id ?>"><?php echo sly_html($name) ?></a></td>
+		<td class="sly-col-username"><?php echo sly_html($user->getLogin()) ?></td>
+		<td class="sly-col-last-login"><?php echo $try ?></td>
+
+		<?php if ($id == $currentID): ?>
+		<td class="sly-col-func"><span class="sly-na"><?php echo t('delete') ?></span></td>
+		<?php else: ?>
+		<td class="sly-col-func"><a class="sly-action sly-delete" href="<?php echo $base ?>delete&amp;id=<?php echo $id ?>"><?php echo t('delete') ?></a></td>
+		<?php endif ?>
+	</tr>
+	<?php
+}
+
+$table->closeBuffer();
+print $table->render($total);
