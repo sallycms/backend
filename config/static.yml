@@ -1,0 +1,45 @@
+RELOGINDELAY: 2
+START_PAGE: structure
+authorisation:
+  pages:
+    title: 'translate:pages'
+    token:
+      mediapool: 'translate:mediapool'
+      addons: 'translate:addons'
+  article:
+    token:
+      edit: 'translate:edit'
+      move: 'translate:move'
+      publish: 'translate:publish'
+      edittype: 'translate:edittype'
+      editcontent: 'translate:editcontent'
+    supers:
+      editcontent: ['edit']
+      edittype: ['edit']
+  module:
+    title: 'translate:modules'
+    list: 'sly_Authorisation_ModuleListProvider'
+    token:
+      add: 'translate:add'
+      edit: 'translate:edit'
+    supers:
+      add: ['edit']
+  language:
+    title: 'translate:languages'
+    list: 'sly_Authorisation_LanguageListProvider'
+    token:
+      access: 'translate:access'
+  mediacategory:
+    title: 'translate:mediacategory'
+    list: 'sly_Authorisation_MediaCategoryListProvider'
+    token:
+      access: 'translate:access'
+  transitional:
+    title: 'translate:transitional'
+    token:
+      moveSlice: moveSlice
+      copyContent: copyContent
+      copyArticle: copyArticle
+      moveCategory: moveCategory
+      publishCategory: publishCategory
+      article2startpage: article2startpage

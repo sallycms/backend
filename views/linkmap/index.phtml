@@ -1,0 +1,76 @@
+<?php
+/*
+ * Copyright (C) 2009 REDAXO
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License Version 2 as published by the
+ * Free Software Foundation.
+ */
+
+$category = $this->category ? $this->category : null;
+$articles = $category ? $category->getArticles() : sly_Util_Article::getRootArticles();
+$catID    = $category ? $category->getId() : 0;
+$cats     = count(sly_Util_Category::findByParentId(0));
+
+foreach ($articles as $idx => $article) {
+	if (!empty($this->types) && !in_array($article->getType(), $this->types)) {
+		unset($articles[$idx]);
+	}
+}
+
+?>
+<div id="sly-linkmap">
+	<div class="sly-area-col-2">
+		<?php
+		if ($cats === 0) {
+			print '<div class="col-a" style="float:left">';
+			print sly_Helper_Message::info(t('no_categories_available'));
+			print '</div>';
+		}
+		else {
+			?>
+			<div class="sly-area col-a">
+				<h2><?php echo t('categories') ?></h2>
+				<div class="sly-area-content">
+				<?php
+				print $this->tree($this->roots);
+				?>
+				</div>
+			</div>
+			<?php
+		}
+
+		if (empty($articles)) {
+			print '<div class="col-b">';
+			print sly_Helper_Message::info(t('no_articles_available'));
+			print '</div>';
+		}
+		else {
+			?>
+			<div class="sly-area col-b">
+				<h2><?php echo t('articles') ?></h2>
+				<div class="sly-area-content articlelist">
+					<ul>
+						<?php
+						foreach ($articles as $article) {
+							$label    = $this->formatLabel($article);
+							$selected = $article->getId() == $catID;
+							$class    = $article->isOnline() ? 'sly-online' : 'sly-offline';
+
+							if ($selected) {
+								$class .= ' startarticle';
+							}
+
+							$linkAttr = 'class="'.$class.'" data-id="'.$article->getId().'" data-name="'.sly_html($article->getName()).'"';
+
+							print '<li><a href="#" '.$linkAttr.'>'.sly_html($label).'</a></li>';
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+			<?php
+		}
+		?>
+	</div>
+</div>

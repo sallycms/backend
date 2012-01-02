@@ -1,0 +1,41 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$service     = sly_Service_Factory::getService($plugin ? 'Plugin' : 'AddOn');
+$component   = $plugin ? array($addon, $plugin) : $addon;
+$helpfile    = $service->baseFolder($component).'/help.inc.php';
+$version     = $service->getVersion($component);
+$author      = $service->getAuthor($component);
+$supportPage = $service->getSupportPageEx($component);
+$name        = $plugin ? $addon.' / '.$plugin : $addon;
+$format      = '<dt>%s:</dt><dd>%s</dd>';
+$credits     = sprintf($format, t('name'), sly_html($name));
+
+if ($version)     $credits .= sprintf($format, t('version'), sly_html($version));
+if ($author)      $credits .= sprintf($format, t('author'), sly_html($author));
+if ($supportPage) $credits .= sprintf($format, t('supportpage'), $supportPage);
+
+?>
+<div class="sly-area sly-addon-help">
+	<h2><?php echo t('component_help', $name) ?></h2>
+
+	<div class="sly-area-content">
+		<?php if (!is_file($helpfile)): ?>
+		<p><?php echo t('component_help_file_not_found') ?></p>
+		<?php else: ?>
+		<?php include $helpfile ?>
+		<?php endif ?>
+		<dl><?php echo $credits ?></dl>
+	</div>
+
+	<div class="sly-area-footer">
+		<p><a href="#" onclick="history.go(-1); return false"><?php echo t('back') ?></a></p>
+	</div>
+</div>

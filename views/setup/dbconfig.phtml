@@ -1,0 +1,81 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$this->title(t('setup_step_n', 2, 5));
+
+if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
+
+$form = new sly_Form('index.php', 'POST', t('setup_database_config'), '', 'sly-setup-dbsetup');
+$this->printHiddens('dbconfig', $form);
+
+// database driver
+
+$all       = array('mysql' => 'MySQL', 'pgsql' => 'PostgreSQL', 'oci' => 'Oracle', 'sqlite' => 'SQLite');
+$available = array();
+
+foreach ($all as $driver => $title) {
+	if (in_array($driver, $drivers)) {
+		$available[$driver] = $title;
+	}
+}
+
+if (count($available) === 0) {
+	return;
+}
+
+if (count($available) === 1) {
+	$form->addHiddenValue('driver', key($available));
+	$form->add(new sly_Form_Text(t('db_driver'), reset($available)));
+}
+else {
+	$drivers = new sly_Form_Select_DropDown('driver', t('db_driver'), null, $available);
+	$drivers->setHelpText(t('setup_dbconfig_driver_notice'));
+	$form->add($drivers);
+}
+
+// database infos
+
+$prefix = new sly_Form_Input_Text('prefix', t('db_prefix'), $prefix);
+$prefix->setHelpText(t('setup_dbconfig_prefix_notice'));
+
+$form->add(new sly_Form_Input_Text('host', t('host'), $host));
+$form->add(new sly_Form_Input_Text('user', t('username'), $user));
+$form->add(new sly_Form_Input_Text('pass', t('password'), $pass));
+
+// slightly more complex input for the target database
+// (only required when not using SQLite)
+
+if (count($available) > 1 || key($available) !== 'sqlite') {
+	$dbname = new sly_Form_Input_Text('dbname', '', $dbname);
+	$create = new sly_Form_Input_Checkbox('create_db', '', '1', t('create'));
+	$name   = new sly_Form_Freeform('dbname', t('database'), $dbname->render().' '.$create->render());
+
+	$name->addFormRowClass('sly-form-text'); // so that the styles for the input box apply
+	$form->add($name);
+}
+else {
+	$name = new sly_Form_Input_Text('dbname', t('database'), $dbname);
+	$form->add($name);
+}
+
+$form->add($prefix);
+
+// button config
+
+$form->setResetButton(null);
+$form->getSubmitButton()->setAttribute('value', t('setup_continue_to_n', 3));
+
+// render it!
+
+$form->setFocus('driver');
+print $form->render();
+
+// disable host,user,pass when selecting SQLite
+sly_Core::getLayout()->addJavaScript("jQuery(function($) { $('#driver').change(function() { $('#host,#user,#pass,#create_db').prop('disabled', $(this).val() === 'sqlite'); }); });");
