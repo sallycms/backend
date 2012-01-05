@@ -1,0 +1,73 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+if (!empty($info))    print sly_Helper_Message::info($info);
+if (!empty($warning)) print sly_Helper_Message::warn($warning);
+
+$sublist = dirname(__FILE__).'/sublist.phtml';
+
+if (empty($tree)) {
+	print sly_Helper_Message::info(t('no_addons_found'));
+}
+else {
+	?>
+	<ul class="sly-addonlist">
+		<?php
+		foreach ($tree as $addon => $aInfo) {
+			$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
+			$info    = $aInfo;
+			$key     = $addon;
+			$name    = $addon;
+			$classes = $stati[$key]['classes'];
+
+			if (in_array('pa1', explode(' ', $classes))) {
+				foreach (array_keys($aInfo['plugins']) as $plugin) {
+					$info['requirements'][] = $addon.'/'.$plugin;
+				}
+			}
+
+			?>
+			<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
+				<ul class="details">
+					<?php include $sublist; ?>
+				</ul>
+				<?php
+				if (!empty($aInfo['plugins'])) print '<ul class="plugins">';
+
+				foreach ($aInfo['plugins'] as $plugin => $pInfo) {
+					$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;plugin='.urlencode($plugin).'&amp;func=';
+					$info    = $pInfo;
+					$key     = $addon.'/'.$plugin;
+					$name    = $plugin;
+					$classes = $stati[$key]['classes'];
+
+					$info['requirements'][] = $addon;
+					$info['requirements'] = array_unique($info['requirements']);
+
+					?>
+					<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
+						<ul class="details">
+							<?php include $sublist; ?>
+						</ul>
+					</li>
+					<?php
+				}
+
+				if (!empty($aInfo['plugins'])) print '</ul>';
+				?>
+			</li>
+			<?php
+		}
+
+		?>
+		<li class="error"><?php echo sly_Helper_Message::warn('dummy') ?></li>
+	</ul>
+	<?php
+}
