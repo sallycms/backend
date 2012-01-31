@@ -1,0 +1,68 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div class="sly-area sly-credits">
+	<h2>SallyCMS <?php echo sly_Core::getVersion() ?></h2>
+
+	<div class="sly-area-content">
+		<p><?php echo t('credits_text') ?></p>
+		<p><?php echo t('credits_thankyou') ?></p>
+	</div>
+</div>
+
+<table class="sly-table sly-addonlist" summary="<?php echo t('credits_caption') ?>">
+	<caption><?php echo t('credits_caption') ?></caption>
+	<thead><tr>
+		<th class="sly-col-icon sly-icon">&nbsp;</th>
+		<th class="sly-col-name" colspan="2"><?php echo t('addon') ?></th>
+		<th class="sly-col-version"><?php echo t('version') ?></th>
+		<th class="sly-col-author"><?php echo t('author') ?></th>
+	</tr></thead>
+	<tbody>
+
+	<?php
+
+	$addons  = sly_Service_Factory::getAddOnService();
+	$plugins = sly_Service_Factory::getPluginService();
+
+	foreach ($addons->getRegisteredAddons() as $addon) {
+		$params['type']        = 'addon';
+		$params['name']        = $addon;
+		$params['version']     = $addons->getVersion($addon);
+		$params['supportPage'] = $addons->getSupportPageEx($addon);
+
+		print $this->render('credits/row.phtml', $params);
+
+		if ($addons->isAvailable($addon)) {
+			$params['type'] = 'plugin';
+
+			foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
+				$params['type']        = 'plugin';
+				$params['name']        = $plugin;
+				$params['addon']       = $addon;
+				$params['version']     = $plugins->getVersion(array($addon, $plugin));
+				$params['supportPage'] = $plugins->getSupportPageEx(array($addon, $plugin));
+
+				print $this->render('credits/row.phtml', $params);
+			}
+		}
+	}
+
+	if (count($addons->getRegisteredAddons()) == 0) {
+		?>
+		<tr>
+			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
+		</tr>
+		<?php
+	}
+
+	?>
+	</tbody>
+</table>
