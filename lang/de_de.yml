@@ -1,0 +1,392 @@
+lang: Deutsch
+htmllang: de
+yes: ja
+no: nein
+month: Monat
+year: Jahr
+days: Tage
+hours: Stunden
+minutes: Minuten
+seconds: Sekunden
+milliseconds: Millisekunden
+days_short: t
+hours_short: h
+minutes_short: m
+seconds_short: s
+milliseconds_short: ms
+never: nie
+all: alle
+general: Allgemein
+dateformat: %d. %b. %Y
+timeformat: %H:%Mh
+datetimeformat: %d. %b. %Y - %H:%Mh
+setlocale: 'de_DE,de_DE@euro,deu_deu,german_germany,de,ge'
+
+home: Home
+input: Eingabe
+output: Ausgabe
+title: Titel
+grant_access: Zugriff gewähren
+
+save: Speichern
+apply: Übernehmen
+reset: Zurücksetzen
+delete: Löschen
+edit: Bearbeiten
+submit: Absenden
+add: Hinzufügen
+remove: Entfernen
+show: Anzeigen
+login: Anmelden
+logout: Abmelden
+change: Ändern
+update: Aktualisieren
+search: Suchen
+move: Verschieben
+publish: Veröffentlichen
+
+available: verfügbar
+unavailable: nicht verfügbar
+required: benötigt
+requires: benötigt
+is_required: 'wird von {0} benötigt'
+activated: aktiviert
+optional: optional
+deactivated: deaktiviert
+allowed: erlaubt
+disallowed: verboten
+any: beliebig
+none: nichts
+recommended: empfohlen
+unknown: unbekannt
+
+from: von
+to: nach
+by: von
+
+select_all: alle auswählen
+select_none: nichts auswählen
+
+sort_asc: Aufsteigend sortieren
+sort_desc: Absteigend sortieren
+sort_none: Keine Sortierung
+pages: Seiten
+filter: Filter
+begin_sorting: Tabelle sortieren
+end_sorting: Sortiermodus beenden
+
+redirect_previous_page: 'Sie werden zu Ihrer <a href="{0}">vorherigen Seite</a> weitergeleitet.'
+redirect_startpage: 'Sie werden zu Ihrer <a href="{0}">Startseite</a> weitergeleitet.'
+unknown_controller: 'Unbekannter Controller {0}'
+unknown_page: Unbekannte Seite
+unknown_action: 'Methode {0} in {1} nicht gefunden!'
+page_not_allowed: 'Zugriff auf {0} in {1} nicht gestattet!'
+security_violation: Sicherheitsverletzung
+controller_error: Controller-Fehler
+unexpected_exception: Unerwartete Ausnahme
+system: System
+user: Benutzer
+users: Benutzer
+mediapool: Medienpool
+content: Inhalt
+structure: Struktur
+addons: AddOns
+profile: Profil
+my_profile: Mein Profil
+login_title: Login
+base_navigation: Basis-Navigation
+
+username: Benutzername
+password: Passwort
+new_password: Neues Passwort
+
+media: Medien
+medium: Medium
+
+logged_out: nicht angemeldet
+logged_in_as: Angemeldet als
+
+add_slice: Block hinzufügen
+no_articles_available: Keine Artikel vorhanden.
+no_categories_available: Keine Kategorien vorhanden.
+module_not_found: 'Das Modul {0} wurde nicht gefunden!'
+edit_slice: Block bearbeiten
+
+article_moved: Artikel wurde verschoben.
+article_deleted: Artikel wurde gelöscht.
+cannot_move_article: Der Artikel konnte nicht verschoben werden.
+check_rights_in_directory: 'Bitte überprüfen Sie die Rechte im Verzeichnis {0}.'
+category_deleted: Kategorie wurde gelöscht.
+category_not_found: 'Die Kategorie {0} wurde nicht gefunden!'
+cannot_delete_start_article: Der Webseiten-Startartikel kann nicht gelöscht werden!
+cannot_delete_not_found_article: Der "Nicht gefunden"-Artikel kann nicht gelöscht werden!
+
+slice_updated: Block wurde aktualisiert.
+slice_added: Block wurde hinzugefügt.
+no_rights_to_this_function: Sie haben keine Rechte für diese Funktion!
+slice_deleted: Block wurde gelöscht.
+no_rights_to_this_module: Sie haben keine Rechte für dieses Modul!
+preview: Vorschau
+edit_mode: Editier Modus
+metadata: Metadaten/Sonstiges
+article_copied: Artikel wurde kopiert.
+file_not_found: 'Die Datei {0} wurde nicht gefunden!'
+error_moving_uploaded_file: 'Beim Verschieben der Datei {0} ist ein Fehler aufgetreten.'
+metadata_updated: Metadaten wurden aktualisiert.
+description: Beschreibung
+move_article: Artikel verschieben
+slice_moved: Block wurde verschoben.
+article_content_copied: Die Inhalte des Artikels wurden kopiert.
+cannot_move_slice: Beim Verschieben des Blocks ist ein Fehler aufgetreten!
+cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
+cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
+cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
+
+copy_content: Inhalte kopieren
+copy_article: Artikel kopieren
+cannot_copy_article: Der Artikel konnte nicht kopiert werden!
+cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+move_category: Kategorie verschieben
+startarticle: Startartikel
+article_is_startarticle: Dieser Artikel ist ein Startartikel.
+convert_to_startarticle: Artikel zum Startartikel umwandeln
+root_articles_cannot_be_startarticles: Artikel auf der obersten Ebene können nicht in Startartikel umgewandelt werden.
+cannot_convert_to_startarticle: Beim Umwandeln in einen Startartikel ist ein Fehler aufgetreten!
+article_converted_to_startarticle: Dieser Artikel wurde erfolgreich zum Startartikel umgewandelt.
+select_type_first: Bitte wählen sie zuerst einen Artikeltypen!
+no_template_defined: Dieser Artikel hat kein Template. Es können keine Inhalte eingepflegt werden.
+template_has_no_slots: In diesem Artikel können keine Inhalte eingepflegt werden.
+no_modules_allowed: In diesem Slot können keine Inhalte eingepflegt werden.
+category_moved: Kategorie wurde verschoben.
+articletype: Artikeltyp
+articletypes: Artikeltypen
+change_articletype: Artikeltyp ändern
+edit_contents: Inhalte bearbeiten
+
+category_updated: Kategorie wurde aktualisiert.
+category_is_not_empty: Kategorie enthält noch Inhalte.
+category_status_updated: Kategoriestatus wurde aktualisiert.
+category_added: Kategorie wurde erstellt.
+article_status_updated: Artikelstatus wurde aktualisiert.
+article_updated: Artikel wurde aktualisiert.
+article_added: Artikel wurde erstellt.
+category: Kategorie
+position: Position
+position_short: Pos
+status: Status
+id: ID
+add_article: Artikel hinzufügen
+add_category: Kategorie hinzufügen
+save_category: Kategorie speichern
+status_online: online
+status_offline: offline
+no_articletype: Kein Artikeltyp
+article_name: Artikelname
+created_at: Erstellt am
+updated_at: Aktualisiert am
+article: Artikel
+publish_category: Kategorie veröffentlichen
+
+start_article: Startseite
+path: Pfad
+function: Funktion
+functions: Funktionen
+
+profile_updated: Ihr Profil wurde aktualisiert.
+user_updated: Benutzer wurde aktualisiert.
+user_deleted: Benutzer wurde gelöscht.
+user_added: Benutzer wurde hinzugefügt.
+edit_user: Benutzer bearbeiten
+add_user: Benutzer hinzufügen
+user_login_already_exists: Der gewählte Benutzername existiert bereits!
+admin: Administrator
+you_cannot_delete_yourself: Sie können sich nicht selbst löschen!
+categories: Kategorien
+modules: Module
+last_login: Letzter Login
+name: Name
+permissions: Rechte
+backend_locale: Backendsprache
+startpage: Startseite
+
+plase_enter_a_name: Bitte geben Sie einen Namen an!
+configuration_updated: Systemkonfiguration wurde aktualisiert.
+delete_cache: Cache löschen
+delete_cache_description: 'Mit dieser Funktion können Sie den Zwischenspeicher leeren, in dem häufig benötigte Daten abgelegt werden. Der Cache wird automatisch während der nächsten Aufrufe Ihrer Website neu aufgebaut.'
+delete_cache_message: Der Cache wurde gelöscht.
+features: Features
+settings: Einstellungen
+invalid_start_article_selected: Es wurde eine ungültige Startseite ausgewählt.
+invalid_not_found_article_selected: Es wurde eine ungültige Fehlerseite ausgewählt.
+invalid_default_language_selected: Es wurde eine ungültige Standardsprache ausgewählt.
+invalid_default_articletype_selected: Es wurde ein ungültiger Standard-Artikeltyp ausgewählt.
+languages: Sprachen
+add_language: Sprache hinzufügen
+edit_language: Sprache bearbeiten
+language_added: Sprache wurde hinzugefügt.
+language_updated: Sprache wurde aktualisiert.
+language_deleted: Sprache wurde gelöscht.
+cannot_delete_language: Die Sprache konnte nicht gelöscht werden!
+locale: Locale
+version: Version
+host: Host
+database: Datenbank
+caching_strategy: Cache-Strategie
+developer_mode: Entwicklermodus
+project_name: Projektname
+default_articletype: Standard-Artikeltyp
+timezone: Zeitzone
+not_found_article: Artikel bei fehlender Seite
+default_language: Standard-Frontendsprache
+
+setup: Setup
+setup_text: Hier können Sie das Setup erneut starten. Dies sollten Sie nur im Notfall machen. Unter normalen Umständen ist es nicht nötig.
+
+back: zurück
+addon: AddOn
+install: installieren
+install_including_requirements: inkl. Abhängigkeiten installieren
+activate_including_requirements: inkl. Abhängigkeiten aktivieren
+uninstall: deinstallieren
+deactivate: deaktivieren
+activate: aktivieren
+reinit_assets: Assets re-initialisieren
+component_help: 'Hilfe für {0}'
+component_help_file_not_found: Die Hilfedatei (help.inc.php) wurde nicht gefunden!
+component_config_not_found: Die Konfigurationsdatei (config.inc.php) wurde nicht gefunden!
+component_install_failed: '{0} konnte aus folgendem Grund nicht installiert werden:<br /> {1}'
+component_install_sql_failed: '{0} konnte wegen Fehlern in der install.sql nicht installiert werden:<br /> {1}'
+component_uninstall_failed: '{0} konnte aus folgendem Grund nicht deinstalliert werden:<br /> {1}'
+component_uninstall_sql_failed: '{0} konnte wegen Fehlern in der unstall.sql nicht deinstalliert werden:<br /> {1}'
+component_activate_failed: '{0} konnte nicht aktiviert werden, da es noch nicht installiert wurde!'
+component_installed: '{0} wurde installiert.'
+component_activated: '{0} wurde aktiviert.'
+component_deactivated: '{0} wurde deaktiviert.'
+component_uninstalled: '{0} wurde deinstalliert.'
+component_assets_copied: Die Assets wurden re-initialisiert.
+component_requires_addon: '{1} benötigt das AddOn {0}.'
+component_requires_plugin: '{1} benötigt das Plugin {0}.'
+component_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
+component_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
+component_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
+component_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0})!'
+no_dependencies: keine Abhängigkeiten
+
+component_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0})!'
+no_addons_found: Keine AddOns gefunden. Laden Sie neue AddOns in das Verzeichnis sally/addons.
+
+credits: Credits
+author: Autor
+supportpage: Website
+credits_caption: Liste der verwendeten AddOns/PlugIns
+credits_text: |
+  <strong>Das webvariants-Team</strong>, <a href="mailto:info@webvariants.de">info@webvariants</a><br />
+  Kernentwicklung<br />
+  webvariants GbR, <a href="http://www.webvariants.de/" class="sly-blank">www.webvariants.de</a>
+credits_thankyou: |
+  Wir danken allen externen Entwicklern und Nutzern, die zur Entwicklung beigetragen haben.
+
+linkmap: Linkmap
+
+select_medium: Medium auswählen
+upload_medium: Neues Medium hochladen
+remove_medium: Ausgewähltes Medium löschen
+
+select_link: Artikel auswählen
+remove_link: Ausgewählten Artikel entfernen
+
+you_have_no_access_to_this_language: 'Sie haben keinen Zugriff auf Sprache {0}!'
+you_have_no_access_to_this_medium: 'Sie haben keinen Zugriff auf dieses Medium!'
+articletype_not_found: 'Der Artikeltyp {0} wurde nicht gefunden!'
+
+no_articletype_set: Der Typ dieses Artikels wurde nicht gesetzt.
+no_startarticle: 'Kein Startartikel selektiert. Bitte setze ihn im <a href="{0}">Backend</a>.'
+used_ressources: '{0} in {1} Klassen'
+to_website: zur Website
+
+errorlog: Fehlerprotokoll
+cant_work_with_foreign_errorhandler: 'Kann Protokoll nicht erzeugen, da der ausgewählte Error Handler ({0}) unbekannten Typs ist.'
+errorlog_is_empty: Das Fehlerprotokoll ist leer.
+errorlog_recenterrors: 'Hier sehen Sie die letzten {0} aufgetretenen Fehler.'
+errorlog_total: 'Im Fehlerlog sind <strong>{0}</strong> Fehler vorhanden.'
+clear_errorlog: Protokoll leeren
+error_details: Fehlerdetails
+in_file: in Datei
+in_line: in Zeile
+errorlog_cleared: Das Protokoll wurde geleert.
+errorlog_not_cleared: Das Protokoll konnte nicht geleert werden!
+
+use_default_locale: '(Projektstandard)'
+unnamed_article: unbenannter Artikel
+
+no_categories_yet: Es wurden noch keine Kategorien angelegt.
+no_articles_yet: Es wurden noch keine Artikel angelegt.
+no_languages_yet: Es wurden noch keine Sprachen angelegt.
+
+login_error: 'Fehler bei der Anmeldung. Bitte vor dem nächsten Versuch {0} Sekunden warten.'
+you_have_been_logged_out: Sie wurden vom System abgemeldet.
+
+articles: Artikel
+articleslice_must_contain_slice_id_or_module: Artikelslices müssen eine Slice-ID oder Modul enthalten.
+article_not_found: 'Artikel {0} wurde nicht gefunden!'
+cannot_insert_multilingual_element_in_multicolumn_fieldset: In mehrspaltige Fieldsets können keine mehrsprachigen Elemente eingefügt werden.
+cannot_move_category_into_child: Eine Kategorie kann nicht in eine Kindkategorie verschoben werden.
+cannot_render_slices: Slices können nicht gerendert werden.
+slots: Slots
+could_not_find_log_dir: Konnte Log-Verzeichnis nicht finden!
+create: anlegen
+db_driver: Datenbank-Typ
+db_prefix: Tabellen-Präfix
+develop_file_not_found: 'Die Development-Ressource {0} wurde nicht gefunden!'
+does_not_implement: 'Die Klasse {0} implementiert nicht das Interface {1}!'
+email_is_invalid: 'Die eMail-Adresse ist ungültig.'
+error_rendering_slice: 'Es trat ein Fehler beim Rendern des Slices auf:<br />{0}'
+error_sending_mail: 'Es trat ein Fehler beim Versenden der eMail auf.'
+exec_time: 'Scriptlaufzeit'
+fieldset_contains_multilingual_elements_has_to_be_singlecolumn: 'Das Fieldset kann nicht mehrspaltig sein, da es bereits mehrsprachige Elemente enthält.'
+file_has_no_internal_name: 'Die Datei {0} hat keinen internen Namen.'
+from_language: 'von Sprache'
+to_language: 'nach Sprache'
+importer_database_imported: 'Der Datenbank-Dump wurde erfolgreich importiert.'
+importer_entry_count: '({0} Queries)'
+importer_no_import_file_chosen_or_wrong_version: 'Die Importdatei ist fehlerhaft oder inkompatibel.'
+importer_no_valid_import_file_prefix: 'Die Importdatei ist fehlerhaft (enthält kein Tabellenpräfix).'
+importer_no_valid_import_file_version: 'Die Importdatei ist fehlerhaft (enthält kein Versionsstempel).'
+invalid_develop_param: 'Ungültigen Parameter {0} gefunden.'
+language_not_found: 'Sprache {0} wurde nicht gefunden.'
+login_welcome: Bitte melden Sie sich an.
+medium_not_found: 'Das Medium {0} wurde nicht gefunden.'
+move_bottom: an das Ende bewegen
+move_down: nach unten bewegen
+move_top: an den Anfang bewegen
+move_up: nach oben bewegen
+multiple_condition_handlers_found: Es wurden mehrere mögliche Condition-Handler gefunden. Verwende den erstbesten.
+name_contains_invalid_characters: Der interne Name enthält ungültige Zeichen.
+not_all_requirements_met: Es sind nicht alle Abhängigkeiten erfüllt.
+no_condition_handler_found: Es wurde kein Condition-Handler gefunden.
+no_password_given: Kein Passwort angegeben.
+no_permission: Keine Berechtigung.
+no_recipients_given: Es wurden keine Empfänger angegeben.
+no_username_given: Kein Benutzername angegeben.
+parent_category_not_found: Die Elternkategorie wurde nicht gefunden.
+password_needs_valid_createdate: Zum Hashen ist ein gültiges createdate erforderlich.
+redirect_to: 'Sie werden <a href="{0}">weitergeleitet</a>.'
+service_not_found: 'Der {0}-Service wurde nicht gefunden!'
+slice_could_not_be_generated: Der Slicecache konnte nicht generiert werden.
+sort_function_not_found: 'Die Sortierfunktion {0} wurde nicht gefunden!'
+source_and_target_are_equal: Quelle und Ziel sind identisch!
+table_is_empty: Diese Tabelle enthält noch keine Inhalte.
+target_category: Ziel-Kategorie
+target_category_not_found: Die Ziel-Kategorie wurde nicht gefunden!
+template_not_found: 'Das Template {0} wurde nicht gefunden!'
+title_cannot_be_empty: Der Titel kann nicht leer sein!
+unknown_log_level: 'Unbekanntes Log-Level {0} angegeben.'
+unsupported_direction: 'Fehlerhafte Richtung {0} angegeben.'
+use_category_service_to_copy_categories: 'Benutzen Sie den Kategorie-Service, um Kategorien zu kopieren.'
+use_category_service_to_move_categories: 'Benutzen Sie den Kategorie-Service, um Kategorien zu verschieben.'
+view_not_found: 'Der View {0} wurde nicht gefunden!'
+safemode_openbasedir: safe_mode und open_basedir
+layout_has_not_been_set: Das Layout wurde noch nicht über ::setLayout() gesetzt.
+media_categories: Medienkategorien
+move_slice: Slice verschieben
+transitional_rights: Vorübergehende Rechte

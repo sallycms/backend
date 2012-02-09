@@ -1,0 +1,45 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$subline = array();
+
+if (!empty($info['version'])) {
+	$subline[] = t('version').' '.sly_html($info['version']);
+}
+
+if (!empty($info['author'])) {
+	$subline[] = t('by').' '.$info['author'];
+}
+
+?>
+<li class="name"><?php
+	print '<h2>'.sly_html($name).'</h2>';
+	if (!empty($subline)) print '<span>('.implode(', ', $subline).')</span>';
+?></li>
+<li class="buttons reinit">
+	<span class="reinit"><a class="sly-button" href="<?php echo $base ?>reinit"><?php echo t('reinit_assets') ?></a></span>
+</li>
+<li class="buttons uninstaller">
+	<span class="uninstall"><a class="sly-button" href="<?php echo $base ?>uninstall"><?php echo t('uninstall') ?></a></span>
+	<span class="hasdeps"><del class="sly-button"><?php echo t('uninstall') ?></del></span>
+</li>
+<li class="buttons installer">
+	<span class="install"><a class="sly-button" href="<?php echo $base ?>install"><?php echo t('install') ?></a></span>
+	<span class="incompatible">(<?php echo t('component_incompatible_with_this_version') ?>)</span>
+	<span class="unusable">(<?php echo t('not_all_requirements_met') ?>)</span>
+	<?php if ($info['requirements']): ?><span class="fullinstall"><a class="sly-button" href="<?php echo $base ?>fullinstall"><?php echo t('install_including_requirements') ?></a></span><?php endif ?>
+</li>
+<li class="buttons enabler">
+	<span class="activate"><a class="sly-button" href="<?php echo $base ?>activate"><?php echo t('activate') ?></a></span>
+	<span class="deactivate"><a class="sly-button" href="<?php echo $base ?>deactivate"><?php echo t('deactivate') ?></a></span>
+	<span class="hasdeps"><del class="sly-button"><?php echo t('deactivate') ?></del></span>
+	<?php if ($info['requirements']): ?><span class="fullactivate"><a class="sly-button" href="<?php echo $base ?>fullinstall"><?php echo t('activate_including_requirements') ?></a></span><?php endif ?>
+</li>
+<li class="buttons depsinfo"><?php echo $stati[$key]['deps'] ?></li>
