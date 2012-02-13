@@ -1,0 +1,22 @@
+#sly-page-login {
+	#sly-wrapper,
+	#sly-footer {
+		float: none;
+		width: 650px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	input[type=text],
+	input[type=password] {
+		width: 250px;
+	}
+
+	legend { width: 640px; }
+
+	.sly-form-wrapper { width: 650px; }
+
+	.sly-form-row {
+		width: 636px;
+	}
+}
