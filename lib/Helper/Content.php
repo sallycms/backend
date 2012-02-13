@@ -25,6 +25,7 @@ class sly_Helper_Content {
 				ob_start();
 				$moduleTitle = $moduleService->getTitle($module);
 				$form = new sly_Form('index.php#slice'.$position, 'post', t('add_slice').': '.sly_translate($moduleTitle, true), '', 'slice'.$position);
+				$form->setEncType('multipart/form-data');
 				$form->addHiddenValue('page', 'content');
 				$form->addHiddenValue('func', 'addArticleSlice');
 				$form->addHiddenValue('article_id', $articleId);
@@ -71,6 +72,7 @@ class sly_Helper_Content {
 		try {
 			ob_start();
 			$form = new sly_Form('index.php#slice'.$articleSlice->getPosition(), 'post', t('edit_slice').': '.sly_translate($moduleTitle, true));
+			$form->setEncType('multipart/form-data');
 			$form->addHiddenValue('page', 'content');
 			$form->addHiddenValue('func', 'editArticleSlice');
 			$form->addHiddenValue('article_id', $articleSlice->getArticleId());
