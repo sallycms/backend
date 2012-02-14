@@ -17,6 +17,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$clang = sly_Core::getCurrentClang();
 		$id    = sly_request('article_id', 'int');
 
+		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
+
 		$this->article = sly_Util_Article::findById($id, $clang);
 
 		if (is_null($this->article)) {
