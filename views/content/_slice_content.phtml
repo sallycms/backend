@@ -8,15 +8,15 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$module  = $articleSlice->getModule();
+$module  = $slice->getModule();
 $service = sly_Service_Factory::getModuleService();
 
 if (!$service->exists($module)) {
-	print sly_Helper_Message::warn(t('module_not_found'));
+	print sly_Helper_Message::warn(t('module_not_found', $module));
 	return;
 }
 
 ?>
 <div class="sly-contentpage-slice-output">
-	<?php echo $articleSlice->getOutput() ?>
+	<?php echo $slice->getOutput() ?>
 </div>
