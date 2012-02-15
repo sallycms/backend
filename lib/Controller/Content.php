@@ -78,7 +78,12 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$user = sly_Util_User::getCurrentUser();
 
 			if ($this->action === 'moveslice') {
-				return ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice'));
+				$slice_id = sly_request('slice_id', 'int', null);
+				if($slice_id) {
+					$slice = sly_Util_ArticleSlice::findById($slice_id);
+					return ($user->isAdmin() || $user->hasRight('module', 'delete', $slice->getModule()));
+				}
+				return false;
 			}
 
 			if ($this->action === 'addarticleslice') {
