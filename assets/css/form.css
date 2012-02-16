@@ -5,6 +5,7 @@
 .sly-form-datetime-local,
 .sly-form-number,
 .sly-form-range,
+.sly-form-email,
 textarea,
 select {
 	font-size: 100%;
@@ -16,11 +17,17 @@ select {
 	font-family: Calibri, Arial, Verdana, sans-serif;
 }
 
+/* make sure elements with placeholders don't look like already filled in fields */
+:-moz-placeholder {
+	color: #A9A9A9;
+}
+
 .sly-form-text,
 .sly-form-password,
 .sly-form-submit,
 .sly-form-reset,
 .sly-form-button,
+.sly-form-email,
 textarea,
 select option {
 	&:disabled {
@@ -105,7 +112,6 @@ a.sly-button {
 .sly-form {
 	.sly-form-helptext {
 		display: block;
-		float: left;
 		margin-left: 145px;
 		margin-top: 5px;
 		color: #777777;
