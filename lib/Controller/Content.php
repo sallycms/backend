@@ -78,7 +78,12 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$user = sly_Util_User::getCurrentUser();
 
 			if ($this->action === 'moveslice') {
-				return ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice'));
+				$slice_id = sly_request('slice_id', 'int', null);
+				if($slice_id) {
+					$slice = sly_Util_ArticleSlice::findById($slice_id);
+					return ($user->isAdmin() || $user->hasRight('module', 'delete', $slice->getModule()));
+				}
+				return false;
 			}
 
 			if ($this->action === 'addarticleslice') {
@@ -124,7 +129,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$clang = sly_Core::getCurrentClang();
 
 			// check permission
-			if ($user->isAdmin() || ($user->hasRight('transitional', 'moveSlice') && $user->hasRight('module', 'edit', $module))) {
+			if ($user->isAdmin() || ($user->hasRight('module', 'move', $module))) {
 				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $clang, $direction);
 
 				if ($success) {
@@ -135,7 +140,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				}
 			}
 			else {
-				$this->warning = t('no_rights_to_this_function');
+				$this->warning = t('no_rights_to_this_module');
 			}
 		}
 
@@ -254,7 +259,9 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			}
 
 			if (!sly_Service_Factory::getArticleTypeService()->hasModule($this->article->getType(), $module, $this->slot)) {
-				$this->warning = t('no_rights_to_this_function');
+				$slotTitle = $templateService->getSlotTitle($templateName, $this->slot);
+				$moduleName = sly_Service_Factory::getModuleService()->getTitle($module);
+				$this->warning = t('module_not_allowed_in_slot', $moduleName, $slotTitle);
 				return false;
 			}
 		}

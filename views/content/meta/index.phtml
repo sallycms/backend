@@ -11,8 +11,8 @@
 <div class="sly-content-header">
 	<?php
 	//navigation
-	print $this->render('content/_slotmenu.phtml');
-	print $this->render('content/_subpagemenu.phtml');
+	print $this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot));
+	print $this->render('content/_subpagemenu.phtml', array('article' => $article));
 	?>
 </div>
 <?php
