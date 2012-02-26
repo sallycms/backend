@@ -71,7 +71,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		return 'content';
 	}
 
-	public function checkPermission($action) {
+	public function checkPermission($action, $forceModule = null) {
 		$this->action = $action;
 
 		if (parent::checkPermission($this->action)) {
@@ -86,9 +86,14 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				return false;
 			}
 
-			if ($this->action === 'addarticleslice') {
-				$module = sly_post('module', 'string');
+			if ($action === 'addarticleslice') {
+				$module = $forceModule === null ? sly_request('module', 'string') : $forceModule;
 				return ($user->isAdmin() || $user->hasRight('module', 'add', $module));
+			}
+
+			if ($action === 'editarticleslice') {
+				$module = $forceModule === null ? sly_request('module', 'string') : $forceModule;
+				return ($user->isAdmin() || $user->hasRight('module', 'edit', $module));
 			}
 
 			return true;
@@ -221,21 +226,35 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function deletearticlesliceAction() {
 		$this->init();
 
-		$ok = false;
+		$ok      = false;
+		$sliceID = sly_request('slice_id', 'int', 0);
+		$slice   = sly_Util_ArticleSlice::findById($sliceID);
+
+		if (!$slice) {
+			$this->localWarning = t('module_not_found', $sliceID);
+			return $this->indexAction();
+		}
+
+		$module = $slice->getModule();
+		$user   = sly_Util_User::getCurrentUser();
+
+		if (!$user->isAdmin() && !$user->hasRight('module', 'edit', $module)) {
+			$this->localWarning = t('no_rights_to_this_module');
+			return $this->indexAction();
+		}
 
 		if ($this->preSliceEdit('delete') !== false) {
-			$slice_id = sly_request('slice_id', 'int', 0);
-			$ok       = sly_Util_ArticleSlice::deleteById($slice_id);
+			$ok = sly_Util_ArticleSlice::deleteById($sliceID);
 		}
 
 		if ($ok) {
 			$this->localInfo = t('slice_deleted');
+			$this->postSliceEdit('delete', $sliceID);
 		}
 		else {
 			$this->localWarning = t('cannot_delete_slice');
 		}
 
-		$this->postSliceEdit('delete', $slice_id);
 		$this->indexAction();
 	}
 
@@ -308,7 +327,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	}
 
 	private function getRequestValues(array $slicedata) {
-		$slicedata['VALUES'] = sly_post('slicevalue', 'array');
+		$slicedata['VALUES'] = sly_post('slicevalue', 'array', array());
 		return $slicedata;
 	}
 
