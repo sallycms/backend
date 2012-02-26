@@ -18,6 +18,7 @@ $allowed      = sly_Service_Factory::getArticleTypeService()->hasModule($slice->
 
 if (!$service->exists($module)) {
 	$moduleName = $module;
+
 }
 else {
 	$moduleName = $service->getTitle($module);
@@ -25,7 +26,6 @@ else {
 		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;function=edit').'" class="sly-edit">'.t('edit').'</a>';
 	}
 }
-
 
 if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
 	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=deleteArticleSlice').'" class="sly-delete">'.t('delete').'</a>';
