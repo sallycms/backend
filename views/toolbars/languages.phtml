@@ -37,7 +37,7 @@ if (count($languages) > 1) {
 			$params['clang'] = $clangID;
 
 			$aclass  = $active ? ' class="sly-active"' : '';
-			$content = '<a'.$aclass.' href="index.php?'.sly_Util_HTTP::queryString($params).'">'.sly_html($name).'</a>';
+			$content = '<a'.$aclass.' href="index.php?'.http_build_query($params, '', '&amp;').'">'.sly_html($name).'</a>';
 		}
 
 		$links[] = '<li class="'.$class.'">'.$content.'</li>';
