@@ -179,7 +179,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				)
 			);
 
-			$this->setSliceValues($slicedata, $slice);
+			$this->setSliceValues($slicedata, $slice->getSlice());
 
 			$this->localInfo = t('slice_added');
 
@@ -205,8 +205,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 		if ($slicedata['SAVE'] === true) {
 			$slice->setUpdateColumns();
-			$slice->flushValues();
-			$this->setSliceValues($slicedata, $slice);
+			$this->setSliceValues($slicedata, $slice->getSlice());
 
 			$sliceservice->save($slice);
 
@@ -331,9 +330,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		return $slicedata;
 	}
 
-	private function setSliceValues(array $slicedata, sly_Model_ArticleSlice $slice) {
+	private function setSliceValues(array $slicedata, sly_Model_Slice $slice) {
 		if(isset($slicedata['VALUES'])) {
 			$slice->setValues($slicedata['VALUES']);
+			sly_Service_Factory::getSliceService()->save($slice);
 		}
 	}
 }
