@@ -1,0 +1,114 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$config = sly_Core::config();
+
+if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
+if (!empty($this->info))    print sly_Helper_Message::info($this->info);
+
+$locales   = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
+$locales   = array_combine($locales, $locales);
+$yesNo     = array('true' => t('yes'), 'false' => t('no'));
+$types     = array('' => t('no_articletype'));
+$languages = sly_Util_Language::findAll();
+
+foreach ($languages as $id => $language) {
+	$languages[$id] = $language->getName();
+}
+
+try {
+	$typeService = sly_Service_Factory::getArticleTypeService();
+	$types       = array_merge($types, $typeService->getArticleTypes());
+}
+catch (Exception $e) {
+	// pass...
+}
+
+foreach ($types as $key => $name) {
+	$types[$key] = sly_translate($name);
+}
+
+$backendLocale   = new sly_Form_Select_DropDown('backend_locale', t('backend_locale'), sly_Core::getDefaultLocale(), $locales);
+$defaultType     = new sly_Form_Select_DropDown('default_type', t('default_articletype'), sly_Core::getDefaultArticleType(), $types);
+$cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_strategy'), sly_Cache::getStrategy(), sly_Cache::getAvailableCacheImpls());
+$frontendSync    = new sly_Form_Select_DropDown('developer_mode', t('developer_mode'), sly_Core::isDeveloperMode() ? 'true' : 'false', $yesNo);
+$defaultClang    = new sly_Form_Select_DropDown('default_clang', t('default_language'), sly_Core::getDefaultClangId(), $languages);
+
+$buttonBar = new sly_Form_ButtonBar(array(
+	'submit' => new sly_Form_Input_Button('submit', 'sendit', t('update'))
+));
+
+?>
+
+<div class="sly-area-col-2">
+	<div class="sly-area col-a">
+		<h2><?php echo t('features') ?></h2>
+
+		<div class="sly-area-content">
+			<h4><?php echo t('delete_cache') ?></h4>
+			<p><?php echo t('delete_cache_description') ?></p>
+			<p class="button"><a class="sly-button" href="index.php?page=system&amp;func=clearcache"><?php echo t('delete_cache') ?></a></p>
+
+			<h4><?php echo t('setup') ?></h4>
+			<p><?php echo t('setup_text') ?></p>
+			<p class="button"><a class="sly-button" href="index.php?page=system&amp;func=setup" onclick="return confirm('<?php echo addslashes(t('setup')) ?>?');"><?php echo t('setup') ?></a></p>
+
+			<h4><?php echo t('version') ?></h4>
+			<p>SallyCMS <?php echo sly_Core::getVersion() ?> &ndash; PHP <?php echo PHP_VERSION ?></p>
+
+			<h4><?php echo t('database') ?></h4>
+			<p><?php
+			$database = $config->get('DATABASE');
+
+			if (strtolower($database['DRIVER']) === 'sqlite') {
+				print t('name').': '.sly_html($database['NAME']).'.sq3';
+			}
+			else {
+				printf('%s: %s<br />%s: %s', t('name'), sly_html($database['NAME']), t('host'), sly_html($database['HOST']));
+			}
+			?>
+		</div>
+	</div>
+
+	<div class="sly-area col-b">
+		<h2><?php echo t('settings') ?></h2>
+
+		<div class="sly-area-content">
+			<?php
+			$form = new sly_Form('index.php', 'POST', '', '', 'sly-form-system-setup');
+			$form->addHiddenValue('page', 'system');
+			$form->addHiddenValue('func', 'update');
+
+			$timezoneList   = DateTimeZone::listIdentifiers();
+			$timezoneList   = array_combine($timezoneList, $timezoneList);
+			$timezoneSelect = new sly_Form_Select_DropDown('timezone', t('timezone'), sly_Core::getTimezone(), $timezoneList);
+			$projectName    = new sly_Form_Input_Text('projectname', t('project_name'), sly_Core::getProjectName());
+
+			$projectName->setRequired();
+
+			$form->addElement($projectName);
+			$form->addElement(new sly_Form_Widget_Link('start_article', t('start_article'), sly_Core::getSiteStartArticleId()));
+			$form->addElement(new sly_Form_Widget_Link('notfound_article', t('not_found_article'), sly_Core::getNotFoundArticleId()));
+			$form->addElement($defaultClang);
+			$form->addElement($defaultType);
+			$form->addElement($frontendSync);
+			$form->addElement($backendLocale);
+			$form->addElement($cachingStrategy);
+			$form->addElement($timezoneSelect);
+
+			$form->setSubmitButton(new sly_Form_Input_Button('submit', 'sendit', t('update')));
+			$form->setApplyButton();
+			$form->setResetButton();
+			print $form->render();
+
+			?>
+		</div>
+	</div>
+</div>
