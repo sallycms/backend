@@ -23,8 +23,11 @@ authorisation:
     token:
       add: 'translate:add'
       edit: 'translate:edit'
+      delete: 'translate:delete'
+      move: 'translate:move'
     supers:
-      add: ['edit']
+      add: ['edit','delete']
+      edit: ['delete', 'move']
   language:
     title: 'translate:languages'
     list: 'sly_Authorisation_LanguageListProvider'
@@ -38,7 +41,6 @@ authorisation:
   transitional:
     title: 'translate:transitional_rights'
     token:
-      moveSlice: translate:move_slice
       copyContent: translate:copy_content
       copyArticle: translate:copy_article
       moveCategory: translate:move_category

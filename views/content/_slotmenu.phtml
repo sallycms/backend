@@ -8,16 +8,10 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-if (!$this->article->hasType())	return;
+if (!$article->hasTemplate()) return;
 
-$typeService     = sly_Service_Factory::getArticleTypeService();
-$templateService = sly_Service_Factory::getTemplateService();
-$templateName    = $typeService->getTemplate($this->article->getType());
-$hasTemplate     = !empty($templateName) && $templateService->exists($templateName);
-
-if (!$hasTemplate) return;
-
-$slots = $templateService->getSlots($templateName);
+$templateName = $article->getTemplateName();
+$slots        = sly_Service_Factory::getTemplateService()->getSlots($templateName);
 
 if (count($slots) < 2) return;
 
@@ -26,20 +20,20 @@ if (count($slots) < 2) return;
 	<li><?php echo t('slots') ?></li>
 	<?php
 	$params['page']       = 'content';
-	$params['article_id'] = $this->article->getId();
-	$params['clang']      = $this->article->getClang();
+	$params['article_id'] = $article->getId();
+	$params['clang']      = $article->getClang();
 	$listElements = array();
 
 	foreach ($slots as $tmpSlot) {
 		$params['slot'] = $tmpSlot;
-		$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $this->slot) ? ' class="sly-active"' : '';
+		$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
 		$slotTitle      = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
 		$listElements[] = '<a href="index.php?'.http_build_query($params, '', '&amp;').'"'.$class.'>'.$slotTitle.'</a>';
 	}
 
 	$listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $listElements, array(
-		'article_id' => $this->article->getId(),
-		'clang'      => $this->article->getClang()
+		'article_id' => $article->getId(),
+		'clang'      => $article->getClang()
 	));
 
 

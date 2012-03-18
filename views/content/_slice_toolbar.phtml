@@ -9,28 +9,29 @@
  */
 
 $user         = sly_Util_User::getCurrentUser();
-$module       = $articleSlice->getSlice()->getModule();
+$module       = $slice->getModule();
+$slot         = $slice->getSlot();
 $service      = sly_Service_Factory::getModuleService();
-$sliceUrl     = 'index.php?page=content&amp;article_id='.$articleSlice->getArticleId().'&amp;slice_id='.$articleSlice->getId().'&amp;clang='.$articleSlice->getClang().'%s#slice'.$articleSlice->getPosition();
+$sliceUrl     = 'index.php?page=content&amp;article_id='.$slice->getArticleId().'&amp;slice_id='.$slice->getId().'&amp;clang='.$slice->getClang().'%s#slice'.$slice->getPosition();
 $listElements = array();
+$allowed      = sly_Service_Factory::getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
 
 if (!$service->exists($module)) {
 	$moduleName = $module;
 
-	if ($user->isAdmin()) {
-		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;pos='.$articleSlice->getPosition().'&amp;func=deleteArticleSlice').'" class="sly-delete">'.t('delete').'</a>';
-	}
 }
 else {
 	$moduleName = $service->getTitle($module);
-
-	if ($user->isAdmin() || $user->hasRight('module', 'edit', $module)) {
+	if (($user->isAdmin() || $user->hasRight('module', 'edit', $module)) && !$nocontent && $allowed) {
 		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;function=edit').'" class="sly-edit">'.t('edit').'</a>';
-		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;pos='.$articleSlice->getPosition().'&amp;func=deleteArticleSlice').'" class="sly-delete">'.t('delete').'</a>';
 	}
 }
 
-if ($service->exists($module) && ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice'))) {
+if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=deleteArticleSlice').'" class="sly-delete">'.t('delete').'</a>';
+}
+
+if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
@@ -39,18 +40,25 @@ if ($service->exists($module) && ($user->isAdmin() || $user->hasRight('transitio
 
 	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;upd='.time().'&amp;func=moveSlice&amp;direction=up').'" title="'.$moveUp.'" class="sly-up"></a>';
 	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;upd='.time().'&amp;func=moveSlice&amp;direction=down').'" title="'.$moveDown.'" class="sly-down"></a>';
+
+	$dispatcher   = sly_Core::dispatcher();
+	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
+		'article_id' => $slice->getArticleId(),
+		'clang'      => $slice->getClang(),
+		'ctype'      => $slice->getSlot(),
+		'slot'       => $slice->getSlot(),
+		'module'     => $module,
+		'slice_id'   => $slice->getId()
+	));
 }
 
-$dispatcher   = sly_Core::dispatcher();
-$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
-	'article_id' => $articleSlice->getArticleId(),
-	'clang'      => $articleSlice->getClang(),
-	'ctype'      => $articleSlice->getSlot(),
-	'slot'       => $articleSlice->getSlot(),
-	'module'     => $module,
-	'slice_id'   => $articleSlice->getId()
-));
-
+if(!$allowed) {
+	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
+	print sly_Helper_Message::warn(t('module_not_allowed_in_slot', $moduleName, $slotTitle));
+}
+if(!$allowed || $nocontent) {
+	print sly_Helper_Message::warn(t('delete_this_slice'));
+}
 ?>
 <div class="sly-slice-toolbar">
 	<h3><?php echo sly_translate($moduleName, true) ?></h3>
