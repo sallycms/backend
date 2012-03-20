@@ -4,6 +4,7 @@ authorisation:
   pages:
     title: 'translate:pages'
     token:
+      structure: 'translate:structure'
       mediapool: 'translate:mediapool'
       addons: 'translate:addons'
   article:
