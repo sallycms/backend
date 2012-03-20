@@ -198,8 +198,12 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyContent() {
-		return sly_Util_Language::isMultilingual() && $this->canDoStuff('copyContent');
+	protected function canCopyContent($clang_a, $clang_b) {
+		$user    = sly_Util_User::getCurrentUser();
+		$editok  = sly_Util_Article::canEditContent($user, $this->article->getId());
+		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
+		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
+		return $editok && $clangok;
 	}
 
 	/**
