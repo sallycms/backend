@@ -10,6 +10,7 @@
 
 abstract class sly_Controller_Content_Base extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $article;
+	protected $slot;
 	protected $info;
 	protected $warning;
 
@@ -25,6 +26,19 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			sly_Core::getLayout()->pageHeader(t('content'));
 			throw new sly_Exception(t('no_articles_available'));
 		}
+
+		$this->slot = sly_request('slot', 'string', sly_Util_Session::get('contentpage_slot', ''));
+
+		// validate slot
+		if ($this->article->hasTemplate()) {
+			$templateName = $this->article->getTemplateName();
+
+			if (!sly_Service_Factory::getTemplateService()->hasSlot($templateName, $this->slot)) {
+				$this->slot = sly_Service_Factory::getTemplateService()->getFirstSlot($templateName);
+			}
+		}
+
+		sly_Util_Session::set('contentpage_slot', $this->slot);
 
 		sly_Core::setCurrentArticleId($id);
 	}

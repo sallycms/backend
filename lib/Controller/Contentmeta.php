@@ -16,6 +16,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		print $this->render('content/meta/index.phtml', array(
 			'article' => $this->article,
+			'slot'    => $this->slot,
 			'user'    => sly_Util_User::getCurrentUser()
 		));
 	}
