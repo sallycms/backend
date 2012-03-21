@@ -145,7 +145,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	private function copyArticle() {
 		$target = sly_post('category_copy_id_new', 'int');
 
-		if ($this->canCopyArticle()) {
+		if ($this->canCopyArticle($target)) {
 			try {
 				$newID         = sly_Service_Factory::getArticleService()->copy($this->article->getId(), $target);
 				$this->info    = t('article_copied');
@@ -209,8 +209,9 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyArticle() {
-		return $this->canDoStuff('copyArticle');
+	protected function canCopyArticle($target) {
+		$user = sly_Util_User::getCurrentUser();
+		return sly_Util_Article::canEditArticle($user, $target);
 	}
 
 	/**
