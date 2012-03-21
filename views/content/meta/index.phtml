@@ -84,16 +84,14 @@ if ($this->canMoveArticle()) {
 
 // copy article
 
-if ($this->canCopyArticle()) {
-	$select = sly_Form_Helper::getCategorySelect('category_copy_id_new', false, null, null, $user);
-	$select->setAttribute('value', $category_id);
-	$select->setLabel(t('target_category'));
+$select = sly_Form_Helper::getCategorySelect('category_copy_id_new', false, null, null, $user);
+$select->setAttribute('value', $category_id);
+$select->setLabel(t('target_category'));
 
-	$form->beginFieldset(t('copy_article'));
-	$form->add($select);
+$form->beginFieldset(t('copy_article'));
+$form->add($select);
 
-	sly_Helper_Content::metaFormAddButtonBar($form, t('copy_article'), 'copy_article');
-}
+sly_Helper_Content::metaFormAddButtonBar($form, t('copy_article'), 'copy_article');
 
 // move category
 
