@@ -354,9 +354,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$clang      = sly_Core::getCurrentClang();
 		$user       = sly_Util_User::getCurrentUser();
 
-		if ($user === null || !sly_Util_Language::hasPermissionOnLanguage($user, $clang)) {
-			return false;
-		}
+		if ($user === null) return false;
+		if(!$user->hasRight('pages', 'structure')) return false;
+		if(!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
 		if ($this->action === 'index') {
 			return $this->canViewCategory($categoryId);

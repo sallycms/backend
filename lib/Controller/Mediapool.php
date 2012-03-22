@@ -283,7 +283,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$user = sly_Util_User::getCurrentUser();
 		if (is_null($user)) return false;
 
-		return $user->hasStructureRight() || $user->hasRight('pages', 'mediapool');
+		return $user->hasRight('pages', 'mediapool');
 	}
 
 	protected function isMediaAdmin() {
