@@ -192,7 +192,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 * @return boolean
 	 */
 	protected function canConvertToStartArticle() {
-		return $this->canDoStuff('article2startpage');
+		$user = sly_Util_User::getCurrentUser();
+		return sly_Util_Article::canEditArticle($user, $this->article->getCategoryId());
 	}
 
 	/**
@@ -221,17 +222,5 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		if (!$this->article->isStartArticle()) return false;
 		$user = sly_Util_User::getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('article', 'move', sly_Authorisation_ArticleListProvider::ALL) || $user->hasRight('article', 'move', $this->article->getId());
-	}
-
-	private function canDoStuff($right, $categoryOnly = false, $requireEditing = true) {
-		if ($categoryOnly && !$this->article->isStartArticle()) return false;
-
-		$user = sly_Util_User::getCurrentUser();
-
-		if ($requireEditing && !sly_Util_Article::canEditArticle($user, $this->article->getId())) {
-			return false;
-		}
-
-		return $user->isAdmin() || $user->hasRight('transitional', $right);
 	}
 }
