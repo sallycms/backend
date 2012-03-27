@@ -1,0 +1,137 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+////////////////////////////////////////////////////////
+// print breadcrumb path
+
+$base  = 'index.php?page=mediapool_structure&amp;cat_id=';
+$path  = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
+$catID = sly_request('cat_id', 'int');
+$cat   = sly_Util_MediaCategory::findById($catID);
+
+if ($cat === null) {
+	$categories = sly_Util_MediaCategory::getRootCategories();
+	$catID      = 0;
+}
+else {
+	$categories = $cat->getChildren();
+	$parents    = $cat->getParentTree();
+
+	foreach ($parents as $parent) {
+		$path .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
+	}
+
+	$path .= '<li> : <a href="'.$base.$catID.'">'.sly_html($cat->getName()).'</a></li>';
+}
+
+?>
+<div class="sly-navi-path">
+	<ul>
+		<li><?php echo t('path') ?></li>
+		<?php echo $path ?>
+	</ul>
+</div>
+<?php
+
+////////////////////////////////////////////////////////
+// info and error messages
+
+print $this->render('mediapool/notices.phtml');
+
+////////////////////////////////////////////////////////
+// start form if needed
+
+$editID = sly_request('edit_id', 'int');
+
+if ($this->action == 'add' || $this->action == 'edit') {
+	$addMode = $this->action == 'add';
+
+	?>
+	<form action="index.php" method="post">
+		<fieldset>
+			<input type="hidden" name="page" value="mediapool_structure" />
+			<input type="hidden" name="cat_id" value="<?php echo $catID ?>" />
+			<input type="hidden" name="func" value="<?php echo $this->action ?>" />
+			<?php	if ($this->action): ?>
+			<input type="hidden" name="edit_id" value="<?php echo $editID ?>" />
+			<?php endif ?>
+
+			<?php foreach ($this->args as $name => $value): ?>
+			<input type="hidden" name="args[<?php echo $name ?>]" value="<?php echo sly_html($value) ?>" />
+			<?php endforeach ?>
+		</fieldset>
+		<?php
+}
+
+$rawBase   = 'index.php?page=mediapool_structure&cat_id=';
+$addSprite = sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=add', t('add_category'), 'mediacat-add');
+
+?>
+<table class="sly-table" id="sly-mediapool-structure">
+	<caption><?php echo sly_html(t('structure_caption')) ?></caption>
+	<thead><tr>
+		<th class="sly-col-icon sly-icon"><?php echo $addSprite ?></th>
+		<th class="sly-col-name"><?php echo t('category_name') ?></th>
+		<th class="sly-col-func"><?php echo t('function') ?></th>
+	</tr></thead>
+	<tbody><?php
+
+	if ($this->action == 'add') {
+		?>
+		<tr class="sly-active">
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', t('add_category'), 'mediacat') ?></td>
+			<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" size="10" id="sly-form-field-name" name="catname" value="" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
+			<td class="sly-col-func sly-has-input"><div><input type="submit" class="sly-form-submit" value="<?php echo t('add') ?>" /></div></td>
+		</tr>
+		<?php
+	}
+
+	foreach ($categories as $cat) {
+		$id = $cat->getId();
+
+		if ($this->action == 'edit' && $editID == $id) {
+			?>
+			<tr class="sly-active">
+				<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $cat->getName(), 'mediacat') ?></td>
+				<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" id="sly-form-field-name" name="catname" value="<?php echo sly_html($cat->getName()) ?>" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
+				<td class="sly-col-func sly-has-input" colspan="2"><div><input type="submit" class="sly-form-submit" value="<?php echo t('save') ?>" /></div></td>
+			</tr>
+			<?php
+		}
+		else {
+			?>
+			<tr>
+				<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=edit&edit_id='.$id, $cat->getName(), 'mediacat') ?></td>
+				<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
+				<td class="sly-col-func">
+					<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
+					<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	if (empty($categories) && $this->action !== 'add' && $this->action !== 'edit') {
+		?>
+		<tr>
+			<td colspan="3" class="center"><?php echo t('no_categories_yet') ?></td>
+		</tr>
+		<?php
+	}
+
+	?></tbody>
+</table>
+
+<?php
+
+if ($this->action == 'add' || $this->action == 'edit') {
+	print '</form>';
+}
