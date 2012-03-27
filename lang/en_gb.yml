@@ -366,4 +366,3 @@ safemode_openbasedir: safe_mode and open_basedir
 layout_has_not_been_set: The layout has not yet been set via ::setLayout().
 media_categories: Medienkategorien
 move: move
-transitional_rights: Transitional rights
