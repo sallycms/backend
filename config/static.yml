@@ -42,5 +42,4 @@ authorisation:
   transitional:
     title: 'translate:transitional_rights'
     token:
-      moveCategory: translate:move_category
       article2startpage: translate:convert_to_startarticle
