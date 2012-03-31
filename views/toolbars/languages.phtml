@@ -1,19 +1,14 @@
 <?php
 /*
- * Copyright (C) 2009 REDAXO
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License Version 2 as published by the
- * Free Software Foundation.
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
  */
 
-/**
- * Dient zur Ausgabe des Sprachen-Blocks
- *
- * @package redaxo4
- */
-
-$languages = sly_Util_Language::findAll();
+$languages = array_values(sly_Util_Language::findAll());
 $user      = sly_Util_User::getCurrentUser();
 
 if (!isset($curClang) || !sly_Util_Language::exists($curClang)) {
@@ -25,54 +20,41 @@ if (!isset($params)) {
 }
 
 if (count($languages) > 1) {
-	print '
+	$forbidden = null;
+	$links     = array();
+
+	foreach ($languages as $i => $language) {
+		$clangID = $language->getId();
+		$class   = 'sly-navi-language-'.$clangID.($i === 0 ? ' sly-first' : '');
+		$name    = sly_translate($language->getName());
+		$active  = $clangID === $curClang;
+
+		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clangID)) {
+			$content   = '<span class="sly-na">'.sly_html($name).'</span>';
+			$forbidden = $active ? $name : null;
+		}
+		else {
+			$params['clang'] = $clangID;
+
+			$aclass  = $active ? ' class="sly-active"' : '';
+			$content = '<a'.$aclass.' href="index.php?'.http_build_query($params, '', '&amp;').'">'.sly_html($name).'</a>';
+		}
+
+		$links[] = '<li class="'.$class.'">'.$content.'</li>';
+	}
+
+	?>
 	<div class="sly-clang-toolbar sly-toolbar">
 		<div class="sly-toolbar-content">
 			<ul>
-				<li>'.t('languages').' : </li>';
-
-	$stop = false;
-	$i    = 1;
-
-	foreach ($languages as $language) {
-		$clangID = $language->getId();
-
-		if ($i == 1) {
-			print '<li class="sly-first sly-navi-language-'.$clangID.'">';
-		}
-		else {
-			print '<li class="sly-navi-language-'.$clangID.'">';
-		}
-
-		$clangName = sly_translate($language->getName(), true); // contains sly_html()
-
-		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clangID)) {
-			print '<span class="sly-na">'.$clangName.'</span>';
-			$stop = $clangID == $curClang;
-		}
-		else {
-			$class = '';
-
-			if ($clangID == $curClang) {
-				$class = ' class="sly-active"';
-			}
-
-			$params['clang'] = $clangID;
-			print '<a'.$class.' href="index.php?'.http_build_query($params, '', '&amp;').'">'.$clangName.'</a>';
-		}
-
-		print '</li>';
-		++$i;
-	}
-
-	print '
-		</ul>
+				<li><?php print t('languages') ?> :</li>
+				<?php print implode('', $links) ?>
+			</ul>
+		</div>
 	</div>
-</div>
-';
+	<?php
 
-	if ($stop !== false) {
-		$lang = sly_Service_Factory::getLanguageService()->findById($stop);
-		throw new sly_Authorisation_Exception(t('you_have_no_access_to_this_language', sly_translate($lang->getName())));
+	if ($forbidden !== null) {
+		throw new sly_Authorisation_Exception(t('you_have_no_access_to_this_language', $forbidden));
 	}
 }

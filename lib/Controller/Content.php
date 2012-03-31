@@ -9,25 +9,8 @@
  */
 
 class sly_Controller_Content extends sly_Controller_Content_Base {
-	protected $slot;
 	protected $localInfo;
 	protected $localWarning;
-
-	protected function init() {
-		parent::init();
-		$this->slot = sly_request('slot', 'string', sly_Util_Session::get('contentpage_slot', ''));
-
-		// validate slot
-		if ($this->article->hasTemplate()) {
-			$templateName = $this->article->getTemplateName();
-
-			if (!sly_Service_Factory::getTemplateService()->hasSlot($templateName, $this->slot)) {
-				$this->slot = sly_Service_Factory::getTemplateService()->getFirstSlot($templateName);
-			}
-		}
-
-		sly_Util_Session::set('contentpage_slot', $this->slot);
-	}
 
 	public function indexAction($extraparams = array()) {
 		$this->init();
@@ -77,8 +60,13 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		if (parent::checkPermission($this->action)) {
 			$user = sly_Util_User::getCurrentUser();
 
-			if ($action === 'moveslice') {
-				return ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice'));
+			if ($this->action === 'moveslice') {
+				$slice_id = sly_request('slice_id', 'int', null);
+				if($slice_id) {
+					$slice = sly_Util_ArticleSlice::findById($slice_id);
+					return ($user->isAdmin() || $user->hasRight('module', 'delete', $slice->getModule()));
+				}
+				return false;
 			}
 
 			if ($action === 'addarticleslice') {
@@ -126,11 +114,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		}
 		else {
 			$user  = sly_Util_User::getCurrentUser();
-			$clang = sly_Core::getCurrentClang();
 
 			// check permission
-			if ($user->isAdmin() || $user->hasRight('transitional', 'moveSlice') || $user->hasRight('module', 'edit', $module)) {
-				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $clang, $direction);
+			if ($user->isAdmin() || ($user->hasRight('module', 'move', $module))) {
+				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $direction);
 
 				if ($success) {
 					$this->localInfo = t('slice_moved');
@@ -140,7 +127,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				}
 			}
 			else {
-				$this->warning = t('no_rights_to_this_function');
+				$this->warning = t('no_rights_to_this_module');
 			}
 		}
 
@@ -156,29 +143,30 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$slicedata   = $this->preSliceEdit('add');
 
 		if ($slicedata['SAVE'] === true) {
-			$sliceService = sly_Service_Factory::getArticleSliceService();
+			$sliceService        = sly_Service_Factory::getSliceService();
+			$articleSliceService = sly_Service_Factory::getArticleSliceService();
+
+			$slice = new sly_Model_Slice();
+			$slice->setModule($module);
+			$slice->setValues($slicedata['VALUES']);
+			$slice = $sliceService->save($slice);
+
 
 			// create the slice
-			$slice = $sliceService->create(
-				array(
-					'pos'        => sly_post('pos', 'int'),
-					'article_id' => $this->article->getId(),
-					'clang'      => $this->article->getClang(),
-					'slot'       => $this->slot,
-					'module'     => $module,
-					'revision'   => 0,
-					'createdate' => time(),
-					'createuser' => $user->getLogin(),
-					'updatedate' => time(),
-					'updateuser' => $user->getLogin()
-				)
-			);
+			$articleSlice = new sly_Model_ArticleSlice();
+			$articleSlice->setPosition(sly_post('pos', 'int', 0));
+			$articleSlice->setCreateColumns($user->getLogin());
+			$articleSlice->getRevision(0);
+			$articleSlice->setSlice($slice);
+			$articleSlice->setSlot($this->slot);
+			$articleSlice->setArticle($this->article);
+			$articleSlice->setRevision(0);
 
-			$this->setSliceValues($slicedata, $slice);
+			$articleSliceService->save($articleSlice);
 
 			$this->localInfo = t('slice_added');
 
-			$this->postSliceEdit('add', $slice->getId());
+			$this->postSliceEdit('add', $articleSlice->getId());
 		}
 		else {
 			$extraparams['function']    = 'add';
@@ -192,18 +180,20 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function editarticlesliceAction() {
 		$this->init();
 
-		$sliceservice = sly_Service_Factory::getArticleSliceService();
-		$slice_id     = sly_request('slice_id', 'int', 0);
-		$slice        = $sliceservice->findById($slice_id);
+		$articleSliceService = sly_Service_Factory::getArticleSliceService();
+		$sliceService        = sly_Service_Factory::getSliceService();
+		$slice_id            = sly_request('slice_id', 'int', 0);
+		$articleSlice        = $articleSliceService->findById($slice_id);
 
 		$slicedata = $this->preSliceEdit('edit');
 
 		if ($slicedata['SAVE'] === true) {
-			$slice->setUpdateColumns();
-			$slice->flushValues();
-			$this->setSliceValues($slicedata, $slice);
+			$slice = $articleSlice->getSlice();
+			$slice->setValues($slicedata['VALUES']);
+			$sliceService->save($slice);
 
-			$sliceservice->save($slice);
+			$articleSlice->setUpdateColumns();
+			$articleSliceService->save($articleSlice);
 
 			$this->localInfo .= t('slice_updated');
 			$this->postSliceEdit('edit', $slice_id);
@@ -273,7 +263,9 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			}
 
 			if (!sly_Service_Factory::getArticleTypeService()->hasModule($this->article->getType(), $module, $this->slot)) {
-				$this->warning = t('no_rights_to_this_function');
+				$slotTitle = $templateService->getSlotTitle($templateName, $this->slot);
+				$moduleName = sly_Service_Factory::getModuleService()->getTitle($module);
+				$this->warning = t('module_not_allowed_in_slot', $moduleName, $slotTitle);
 				return false;
 			}
 		}
@@ -324,9 +316,4 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		return $slicedata;
 	}
 
-	private function setSliceValues(array $slicedata, sly_Model_ArticleSlice $slice) {
-		if(isset($slicedata['VALUES'])) {
-			$slice->setValues($slicedata['VALUES']);
-		}
-	}
 }

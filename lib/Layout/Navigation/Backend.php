@@ -28,16 +28,15 @@ class sly_Layout_Navigation_Backend {
 
 			// Core-Seiten initialisieren
 
-			if ($isAdmin || $user->hasStructureRight()) {
+			if ($isAdmin || $user->hasRight('pages', 'structure')) {
 				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
 
 				if ($hasClangPerm) {
 					$this->addPage('system', 'structure');
 				}
-
-				$this->addPage('system', 'mediapool', null, true);
 			}
-			elseif ($user->hasRight('pages', 'mediapool')) {
+
+			if ($user->hasRight('pages', 'mediapool')) {
 				$this->addPage('system', 'mediapool', null, true);
 			}
 
