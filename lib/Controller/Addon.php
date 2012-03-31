@@ -10,10 +10,8 @@
 
 class sly_Controller_Addon extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $func    = '';
-	protected $addons  = null;
-	protected $plugins = null;
-	protected $addon   = null;
-	protected $plugin  = null;
+	protected $service = null;
+	protected $comp    = null;
 	protected $info    = '';
 	protected $warning = '';
 
@@ -27,34 +25,34 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$layout->pageHeader(t('addons'));
 		}
 
-		$this->addons  = sly_Service_Factory::getAddOnService();
-		$this->plugins = sly_Service_Factory::getPluginService();
-
-		$addon  = sly_request('addon', 'string', '');
-		$plugin = sly_request('plugin', 'string', '');
-		$addons = $this->addons->getRegisteredAddOns();
-
-		$this->addon  = in_array($addon, $addons) ? $addon : null;
-		$this->plugin = null;
-
-		if ($this->addon) {
-			$plugins      = $this->plugins->getRegisteredPlugins($this->addon);
-			$this->plugin = in_array($plugin, $plugins) ? $plugin : null;
-		}
-		else {
-			unset($_REQUEST['func']);
-		}
+		$this->service = sly_Service_Factory::getComponentService();
+		$component     = sly_request('component', 'string', '');
+		$known         = $this->service->getRegisteredComponents(null, true);
+		$this->comp    = in_array($component, $known) ? $component : null;
 	}
 
 	public function indexAction() {
 		$this->init();
-		$this->checkForNewComponents();
+
+		$baseFolder = $this->service->baseFolder();
+		$known      = $this->service->getRegisteredComponents(null, true);
+		$foundComps = $this->readComponents($baseFolder);
+
+		// Vergleiche Addons aus dem Verzeichnis addons/ mit den Einträgen in addons.yaml.
+		// Wenn ein Addon in der Datei fehlt oder nicht mehr vorhanden ist, ändere den Dateiinhalt.
+
+		foreach (array_diff($foundComps, $known) as $comp) {
+			$this->service->add($comp);
+		}
+
+		foreach (array_diff($known, $foundComps) as $comp) {
+			$this->service->removeConfig($comp);
+		}
 
 		$data = $this->buildDataList();
 
 		print $this->render('addon/list.phtml', array(
-			'addons'  => $this->addons,
-			'plugins' => $this->plugins,
+			'service' => $this->service,
 			'tree'    => $data,
 			'stati'   => $this->buildStatusList($data),
 			'info'    => $this->info,
@@ -62,58 +60,39 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		));
 	}
 
-	protected function prepare() {
-		return array(
-			$this->plugin ? $this->plugins : $this->addons,
-			$this->plugin ? array($this->addon, $this->plugin) : $this->addon
-		);
+	private function readDir($dir) {
+		$dir = new sly_Util_Directory($dir);
+		return $dir->exists() ? $dir->listPlain(false, true) : array();
 	}
 
-	protected function checkForNewComponents() {
-		$config  = sly_Core::config();
-		$addons  = $this->readAddOns();
-		$plugins = array();
+	protected function readComponents($root, $compPrefix = null) {
+		$dirs   = $this->readDir($root);
+		$result = array();
 
-		foreach ($addons as $addon) {
-			$plugins[$addon] = $this->readPlugins($addon);
-		}
+		foreach ($dirs as $dir) {
+			$staticFile = $root.'/'.$dir.'/static.yml';
 
-		// Vergleiche Addons aus dem Verzeichnis addons/ mit den Einträgen in addons.yaml.
-		// Wenn ein Addon in der Datei fehlt oder nicht mehr vorhanden ist, ändere den Dateiinhalt.
+			if (file_exists($staticFile)) {
+				$component = $compPrefix === null ? $dir : $compPrefix.'/'.$dir;
+				$subDir    = $root.'/'.$dir.'/plugins';
+				$result[]  = $component;
 
-		$knownAddons = $this->addons->getRegisteredAddOns();
-
-		foreach (array_diff($addons, $knownAddons) as $addon){
-			$this->addons->add($addon);
-		}
-
-		foreach (array_diff($knownAddons, $addons) as $addon){
-			$this->addons->removeConfig($addon);
-		}
-
-		// dito für Plugins
-
-		foreach ($addons as $addon) {
-			$knownPlugins = $this->plugins->getRegisteredPlugins($addon);
-
-			foreach (array_diff($plugins[$addon], $knownPlugins) as $plugin){
-				$this->plugins->add(array($addon, $plugin));
-			}
-
-			foreach (array_diff($knownPlugins, $plugins[$addon]) as $plugin){
-				$this->plugins->removeConfig(array($addon, $plugin));
+				if (is_dir($subDir)) {
+					foreach ($this->readComponents($subDir, $component) as $comp) {
+						$result[] = $comp;
+					}
+				}
 			}
 		}
+
+		return $result;
 	}
 
 	protected function call($method, $i18n) {
-		list($service, $component) = $this->prepare();
-		$this->warning = $service->$method($component);
+		$this->warning = $this->service->$method($this->comp);
 
 		if ($this->warning === true || $this->warning === 1) {
-			$name = is_array($component) ? $component[0].'/'.$component[1] : $component;
-
-			$this->info    = t('component_'.$i18n, $name);
+			$this->info    = t('component_'.$i18n, $this->comp);
 			$this->warning = '';
 		}
 	}
@@ -137,32 +116,19 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	public function fullinstallAction() {
 		$this->init();
 
-		list($service, $component) = $this->prepare();
-
-		$todo = $this->getInstallList($component);
+		$todo = $this->getInstallList($this->comp);
 
 		if (!empty($todo)) {
-			$now = reset($todo);
-
-			// pretend that we're about to work on $now
-			if (is_array($now)) {
-				$this->addon  = $now[0];
-				$this->plugin = $now[1];
-			}
-			else {
-				$this->addon  = $now;
-				$this->plugin = '';
-			}
-
-			list($service, $component) = $this->prepare();
+			// pretend that we're about to work on this now
+			$this->comp = reset($todo);
 
 			// if not installed, install it
-			if (!$service->isInstalled($component)) {
+			if (!$this->service->isInstalled($this->comp)) {
 				$this->call('install', 'installed');
 			}
 
 			// if not activated and install went OK, activate it
-			if (!$service->isAvailable($component) && $this->warning === '') {
+			if (!$this->service->isAvailable($this->comp) && $this->warning === '') {
 				$this->call('activate', 'activated');
 			}
 
@@ -201,27 +167,12 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		return $this->indexAction();
 	}
 
-	private function readAddOns() {
-		$dir = sly_Service_Factory::getAddOnService()->baseFolder(null);
-		return $this->readDir($dir);
-	}
-
-	private function readPlugins($addon) {
-		$dir = sly_Service_Factory::getPluginService()->baseFolder($addon);
-		return $this->readDir($dir);
-	}
-
-	private function readDir($dir) {
-		$dir = new sly_Util_Directory($dir);
-		return $dir->exists() ? $dir->listPlain(false, true) : array();
-	}
-
-	private function getComponentDetails($component, $type) {
+	private function getComponentDetails($component) {
 		static $reqCache = array();
 		static $depCache = array();
 
-		$service = $type === 'addon' ? $this->addons : $this->plugins;
-		$key     = is_array($component) ? $component[0].'/'.$component[1] : $component;
+		$service = $this->service;
+		$key     = $service->getPath($component, '/', false);
 
 		if (!isset($reqCache[$key])) {
 			$reqCache[$key] = $service->getRequirements($component);
@@ -240,12 +191,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$usable       = $compatible ? $this->canBeUsed($component) : false;
 
 		foreach ($requirements as $req) {
-			if (is_array($req)) {
-				if (!$this->plugins->isAvailable($req)) $missing[] = $req;
-			}
-			else {
-				if (!$this->addons->isAvailable($req)) $missing[] = $req;
-			}
+			if (!$service->isAvailable($req)) $missing[] = $req;
 		}
 
 		return compact('requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author');
@@ -261,12 +207,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 * @return boolean
 	 */
 	private function canBeUsed($component) {
-		$service = is_string($component) ? $this->addons : $this->plugins;
+		if (!$this->service->exists($component))       return false;
+		if (!$this->service->isCompatible($component)) return false;
 
-		if (!$service->exists($component))       return false;
-		if (!$service->isCompatible($component)) return false;
-
-		$requirements = $service->getRequirements($component);
+		$requirements = $this->service->getRequirements($component);
 
 		foreach ($requirements as $requirement) {
 			if (!$this->canBeUsed($requirement)) return false;
@@ -289,16 +233,15 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 * @return array             install list
 	 */
 	private function getInstallList($component, array $list = array()) {
-		$service      = is_string($component) ? $this->addons : $this->plugins;
 		$idx          = array_search($component, $list);
-		$requirements = $service->getRequirements($component);
+		$requirements = $this->service->getRequirements($component);
 
 		if ($idx !== false) {
 			unset($list[$idx]);
 			$list = array_values($list);
 		}
 
-		if (!$service->isAvailable($component)) {
+		if (!$this->service->isAvailable($component)) {
 			array_unshift($list, $component);
 		}
 
@@ -309,25 +252,18 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		return $list;
 	}
 
-	private function buildDataList() {
-		$addons = array();
+	private function buildDataList($parent = null) {
+		$result = array();
 
-		foreach ($this->addons->getRegisteredAddOns() as $addon) {
-			$pluginList = $this->plugins->getRegisteredPlugins($addon);
-			$plugins    = array();
+		foreach ($this->service->getRegisteredComponents($parent) as $comp) {
+			$relname = strpos($comp, '/') === false ? $comp : substr($comp, strrpos($comp, '/')+1);
+			$info    = $this->getComponentDetails($comp);
 
-			foreach ($pluginList as $plugin) {
-				$comp             = array($addon, $plugin);
-				$plugins[$plugin] = $this->getComponentDetails($comp, 'plugin');
-			}
-
-			$info            = $this->getComponentDetails($addon, 'addon');
-			$info['plugins'] = $plugins;
-
-			$addons[$addon] = $info;
+			$info['components'] = $this->buildDataList($comp);
+			$result[$relname]   = $info;
 		}
 
-		return $addons;
+		return $result;
 	}
 
 	private function buildStatusList(array $dataList) {
@@ -338,13 +274,13 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 			// build class list for all relevant stati
 
-			if (!empty($aInfo['plugins'])) {
+			if (!empty($aInfo['components'])) {
 				$classes[] = 'p1';
 
-				foreach ($aInfo['plugins'] as $pInfo) {
+				foreach ($aInfo['components'] as $pInfo) {
 					if ($pInfo['activated']) {
 						$classes[] = 'pa1';
-						$classes[] = 'd1';  // assume implicit dependency of plugins from their parent addOns
+						$classes[] = 'd1';  // assume implicit dependency of components from their parent components
 						break;
 					}
 				}
@@ -358,10 +294,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			}
 			else {
 				$classes[] = 'pa0';
-
-//				foreach (array_keys($aInfo['plugins']) as $plugin) {
-//					$aInfo['requirements'][] = $addon.'/'.$plugin;
-//				}
 			}
 
 			$classes[] = 'i'.intval($aInfo['installed']);
@@ -376,7 +308,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 				'deps'    => $this->buildDepsInfo($aInfo)
 			);
 
-			foreach ($aInfo['plugins'] as $plugin => $pInfo) {
+			foreach ($aInfo['components'] as $plugin => $pInfo) {
 				$key     = $addon.'/'.$plugin;
 				$classes = array('sly-plugin');
 
@@ -406,7 +338,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$names = array();
 
 			foreach ($info['dependencies'] as $comp) {
-				$names[] = is_array($comp) ? reset($comp).' / '.end($comp) : $comp;
+				$names[] = $this->service->getPath($comp, ' / ', false);
 			}
 
 			$isRequiredTitle = sly_html(t('is_required', sly_Util_String::humanImplode(array_slice($names, 0, 3))));
@@ -419,7 +351,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$names = array();
 
 			foreach ($info['requirements'] as $comp) {
-				$names[] = is_array($comp) ? reset($comp).' / '.end($comp) : $comp;
+				$names[] = $this->service->getPath($comp, ' / ', false);
 			}
 
 			$requiresTitle = t('requires').' '.sly_Util_String::humanImplode(array_slice($names, 0, 3));
