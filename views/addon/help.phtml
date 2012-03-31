@@ -8,13 +8,12 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$service     = sly_Service_Factory::getService($plugin ? 'Plugin' : 'AddOn');
-$component   = $plugin ? array($addon, $plugin) : $addon;
+$service     = sly_Service_Factory::getComponentService();
 $helpfile    = $service->baseFolder($component).'/help.inc.php';
 $version     = $service->getVersion($component);
 $author      = $service->getAuthor($component);
 $supportPage = $service->getSupportPageEx($component);
-$name        = $plugin ? $addon.' / '.$plugin : $addon;
+$name        = $service->getPath($component, ' / ', false);
 $format      = '<dt>%s:</dt><dd>%s</dd>';
 $credits     = sprintf($format, t('name'), sly_html($name));
 

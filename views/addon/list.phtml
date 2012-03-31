@@ -21,14 +21,14 @@ else {
 	<ul class="sly-addonlist">
 		<?php
 		foreach ($tree as $addon => $aInfo) {
-			$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
+			$base    = 'index.php?page=addon&amp;component='.urlencode($addon).'&amp;func=';
 			$info    = $aInfo;
 			$key     = $addon;
 			$name    = $addon;
 			$classes = $stati[$key]['classes'];
 
 			if (in_array('pa1', explode(' ', $classes))) {
-				foreach (array_keys($aInfo['plugins']) as $plugin) {
+				foreach (array_keys($aInfo['components']) as $plugin) {
 					$info['requirements'][] = $addon.'/'.$plugin;
 				}
 			}
@@ -39,10 +39,10 @@ else {
 					<?php include $sublist; ?>
 				</ul>
 				<?php
-				if (!empty($aInfo['plugins'])) print '<ul class="plugins">';
+				if (!empty($aInfo['components'])) print '<ul class="plugins">';
 
-				foreach ($aInfo['plugins'] as $plugin => $pInfo) {
-					$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;plugin='.urlencode($plugin).'&amp;func=';
+				foreach ($aInfo['components'] as $plugin => $pInfo) {
+					$base    = 'index.php?page=addon&amp;component='.urlencode($addon.'/'.$plugin).'&amp;func=';
 					$info    = $pInfo;
 					$key     = $addon.'/'.$plugin;
 					$name    = $plugin;
@@ -60,7 +60,7 @@ else {
 					<?php
 				}
 
-				if (!empty($aInfo['plugins'])) print '</ul>';
+				if (!empty($aInfo['components'])) print '</ul>';
 				?>
 			</li>
 			<?php

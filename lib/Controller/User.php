@@ -184,8 +184,8 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	protected function getPossibleStartpages() {
-		$service = sly_Service_Factory::getAddOnService();
-		$addons  = $service->getAvailableAddons();
+		$service = sly_Service_Factory::getComponentService();
+		$addons  = $service->getAvailableComponents();
 
 		$startpages = array();
 		$startpages['structure'] = t('structure');

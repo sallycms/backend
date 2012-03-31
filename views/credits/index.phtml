@@ -29,33 +29,34 @@
 
 	<?php
 
-	$addons  = sly_Service_Factory::getAddOnService();
-	$plugins = sly_Service_Factory::getPluginService();
+	$service = sly_Service_Factory::getComponentService();
 
-	foreach ($addons->getRegisteredAddons() as $addon) {
+	foreach ($service->getRegisteredComponents() as $addon) {
 		$params['type']        = 'addon';
 		$params['name']        = $addon;
-		$params['version']     = $addons->getVersion($addon);
-		$params['supportPage'] = $addons->getSupportPageEx($addon);
+		$params['version']     = $service->getVersion($addon);
+		$params['supportPage'] = $service->getSupportPageEx($addon);
 
 		print $this->render('credits/row.phtml', $params);
 
-		if ($addons->isAvailable($addon)) {
+		if ($service->isAvailable($addon)) {
 			$params['type'] = 'plugin';
 
-			foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
+			foreach ($service->getRegisteredComponents($addon) as $plugin) {
+				list($addon, $pluginName) = explode('/', $plugin);
+
 				$params['type']        = 'plugin';
-				$params['name']        = $plugin;
+				$params['name']        = $pluginName;
 				$params['addon']       = $addon;
-				$params['version']     = $plugins->getVersion(array($addon, $plugin));
-				$params['supportPage'] = $plugins->getSupportPageEx(array($addon, $plugin));
+				$params['version']     = $service->getVersion($plugin);
+				$params['supportPage'] = $service->getSupportPageEx($plugin);
 
 				print $this->render('credits/row.phtml', $params);
 			}
 		}
 	}
 
-	if (count($addons->getRegisteredAddons()) == 0) {
+	if (count($service->getRegisteredComponents()) === 0) {
 		?>
 		<tr>
 			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
