@@ -366,3 +366,4 @@ layout_has_not_been_set: Das Layout wurde noch nicht über ::setLayout() gesetzt
 media_categories: Medienkategorien
 move: verschieben
 transitional_rights: Vorübergehende Rechte
+query_uses_forbidden_storage_engine: 'Die {0}. Query verwendet nicht InnoDB, sondern {1} als Storage Engine. Wenn Sie sich absolut sicher sind, {1} verwenden zu wollen, können Sie in der static.yml den Key allow_non_innodb auf true setzen.'
