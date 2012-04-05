@@ -63,31 +63,18 @@ class sly_Layout_Navigation_Backend {
 			}
 
 			// AddOn-Seiten initialisieren
-			$addonService  = sly_Service_Factory::getAddOnService();
-			$pluginService = sly_Service_Factory::getPluginService();
+			$service = sly_Service_Factory::getComponentService();
 
-			foreach ($addonService->getAvailableAddons() as $addon) {
+			foreach ($service->getAvailableComponents(null, true) as $component) {
 				$link = '';
-				$page = $addonService->getProperty($addon, 'page', '');
+				$page = $service->getProperty($component, 'page', '');
 
 				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-					$name  = $addonService->getProperty($addon, 'name', '');
-					$popup = $addonService->getProperty($addon, 'popup', false);
+					$name  = $service->getProperty($component, 'name', '');
+					$popup = $service->getProperty($component, 'popup', false);
+					$param = strpos($component, '/') === false ? $component : substr($component, strrpos($component, '/')+1);
 
-					$this->addPage('addon', strtolower($addon), $name, $popup, $page);
-				}
-
-				foreach ($pluginService->getAvailablePlugins($addon) as $plugin) {
-					$pluginArray = array($addon, $plugin);
-					$link        = '';
-					$page        = $pluginService->getProperty($pluginArray, 'page', '');
-
-					if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-						$name  = $pluginService->getProperty($pluginArray, 'name', '');
-						$popup = $pluginService->getProperty($pluginArray, 'popup', false);
-
-						$this->addPage('addon', strtolower($plugin), $name, $popup, $page);
-					}
+					$this->addPage('addon', strtolower($param), $name, $popup, $page);
 				}
 			}
 		}

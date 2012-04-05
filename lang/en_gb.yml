@@ -241,8 +241,7 @@ component_activated: '{0} has been activated.'
 component_deactivated: '{0} has been deactivated.'
 component_uninstalled: '{0} has been uninstalled.'
 component_assets_copied: Assets have been re-initialized.
-component_requires_addon: '{1} requires the addOn {0}.'
-component_requires_plugin: '{1} requires the plugIn {0}.'
+component_requires_component: '{1} requires {0}.'
 component_incompatible: '{0} is not compatible with this Sally version ({1}).'
 component_incompatible_with_this_version: not compatible with this Sally version
 component_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
@@ -366,3 +365,4 @@ safemode_openbasedir: safe_mode and open_basedir
 layout_has_not_been_set: The layout has not yet been set via ::setLayout().
 media_categories: Medienkategorien
 move: move
+query_uses_forbidden_storage_engine: 'The {0}. query does not use InnoDB, but rather {1} as the storage engine. If you are absolutely sure to use {1}, you can set the key allow_non_innodb to true in the addOns''s static.yml.'
