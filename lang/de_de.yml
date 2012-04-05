@@ -241,8 +241,7 @@ component_activated: '{0} wurde aktiviert.'
 component_deactivated: '{0} wurde deaktiviert.'
 component_uninstalled: '{0} wurde deinstalliert.'
 component_assets_copied: Die Assets wurden re-initialisiert.
-component_requires_addon: '{1} benötigt das AddOn {0}.'
-component_requires_plugin: '{1} benötigt das Plugin {0}.'
+component_requires_component: '{1} benötigt {0}.'
 component_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
 component_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
 component_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
@@ -366,3 +365,4 @@ safemode_openbasedir: safe_mode und open_basedir
 layout_has_not_been_set: Das Layout wurde noch nicht über ::setLayout() gesetzt.
 media_categories: Medienkategorien
 move: verschieben
+query_uses_forbidden_storage_engine: 'Die {0}. Query verwendet nicht InnoDB, sondern {1} als Storage Engine. Wenn Sie sich absolut sicher sind, {1} verwenden zu wollen, können Sie in der static.yml den Key allow_non_innodb auf true setzen.'
