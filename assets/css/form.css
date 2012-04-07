@@ -247,6 +247,11 @@ a.sly-button {
 		.sly-form-text, .sly-form-password, .sly-form-number, select, textarea, .sly-form-read {
 			width: 200px;
 		}
+
+		.sly-widget {
+			.sly-form-text   { width: 159px; }
+			.sly-form-select { width: 165px; }
+		}
 	}
 
 	.sly-form-row {
@@ -369,6 +374,21 @@ a.sly-button {
 	height: 120px;
 	float: left;
 	margin: 10px
+}
+
+.sly-date-delete {
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	line-height: 0;
+	background: transparent url(../file_del.png) 0 0 no-repeat;
+	margin: 0 0 2px 3px;
+}
+
+.sly-date-disabled span {
+	cursor: pointer;
+	border-bottom: 1px dotted $drk_grey;
 }
 
 #tpSelectedTime {
