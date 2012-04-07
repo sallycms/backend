@@ -10,8 +10,9 @@
 
 if (!$article->hasTemplate()) return;
 
-$templateName = $article->getTemplateName();
-$slots        = sly_Service_Factory::getTemplateService()->getSlots($templateName);
+$templateService = sly_Service_Factory::getTemplateService();
+$templateName    = $article->getTemplateName();
+$slots           = $templateService->getSlots($templateName);
 
 if (count($slots) < 2) return;
 
