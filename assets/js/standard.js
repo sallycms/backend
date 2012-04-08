@@ -18,8 +18,15 @@ var sly = sly || {};
 		this.url  = url;
 		this.obj  = window.open(url, name, 'width='+width+',height='+height+extra);
 
-		this.obj.moveTo(posx, posy);
-		this.obj.focus();
+		// Don't position the popup in Chrome 18.
+		//   bug details: http://code.google.com/p/chromium/issues/detail?id=114762
+		//   workaround:  http://code.google.com/p/chromium/issues/detail?id=115585
+		// Remove this once Chrome 18 is not used anymore (~ June 2012)
+
+		if (navigator.userAgent.indexOf('Chrome/18.') === -1) {
+			this.obj.moveTo(posx, posy);
+			this.obj.focus();
+		}
 
 		openPopups[name] = this;
 
@@ -497,36 +504,6 @@ var sly = sly || {};
 		});
 	};
 
-	var catsChecked = function() {
-		var c_checked = $('#userperm_cat_all').prop('checked');
-		var m_checked = $('#userperm_media_all').prop('checked');
-		var slider    = $('#sly-page-user .sly-form .sly-form-wrapper .sly-num7');
-
-		$('#userperm_cat').prop('disabled', c_checked);
-		$('#userperm_media').prop('disabled', m_checked);
-
-		if (c_checked && m_checked)
-			slider.slideUp('slow');
-		else
-			slider.slideDown('slow');
-	};
-
-	var updateStartpageSelect = function() {
-		var isAdmin   = $('#is_admin').is(':checked');
-		var hasPerms  = $('#userperm_sprachen').val() ? true : false;
-		var list      = $('#userperm_startpage');
-		var structure = list.find('option[value=structure]');
-		var isStruct  = structure.is(':selected');
-
-		if (isAdmin || hasPerms) {
-			structure.prop('disabled', false);
-		}
-		else {
-			structure.prop('disabled', true);
-			if (isStruct) list.find('option[value=profile]').prop('selected', true);
-		}
-	};
-
 	/////////////////////////////////////////////////////////////////////////////
 	// dom:loaded handler
 
@@ -590,46 +567,7 @@ var sly = sly || {};
 			return false;
 		});
 
-		// Benutzer-Formular
-
-		if ($('#sly-page-user .sly-form').length > 0) {
-			var wrapper = $('#sly-page-user .sly-form .sly-form-wrapper');
-			var sliders = wrapper.find('.sly-num6,.sly-num7');
-
-			$('#is_admin').change(function() {
-				if ($(this).is(':checked')) {
-					$('#userperm_module').prop('disabled', true);
-					sliders.slideUp('slow');
-				}
-				else {
-					$('#userperm_module').prop('disabled', false);
-					sliders.slideDown('slow');
-					catsChecked();
-				}
-			});
-
-			catsChecked();
-			$('#userperm_cat_all, #userperm_media_all').change(catsChecked);
-
-			// init behaviour
-
-			if ($('#is_admin').is(':checked')) {
-				$('#userperm_module').prop('disabled', true);
-				sliders.hide();
-			}
-
-			if ($('#userperm_cat_all').is(':checked') && $('#userperm_media_all').is(':checked')) {
-				wrapper.find('.sly-num7').hide();
-			}
-
-			// remove structure from list of possible startpages as long as the
-			// user neither is admin nor has any language permissions
-
-			updateStartpageSelect();
-			$('#is_admin, #userperm_sprachen').change(updateStartpageSelect);
-		}
-
-		// Formularframework
+		// form framework
 
 		$('.sly-form .sly-select-checkbox-list a').live('click', function() {
 			var rel   = $(this).attr('rel');
