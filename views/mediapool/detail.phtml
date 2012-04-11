@@ -60,7 +60,7 @@ $isImage = $this->isImage($medium);
 
 if ($isImage) {
 	$imgn    = '../data/mediapool/'.$encoded.'?t='.$updatedate;
-	$resize  = sly_Service_Factory::getComponentService()->isAvailable('image_resize');
+	$resize  = sly_Util_Component::isAvailable('image_resize');
 	$fwidth  = $medium->getWidth();
 	$fheight = $medium->getHeight();
 
