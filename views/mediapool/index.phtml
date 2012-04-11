@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$resize   = sly_Service_Factory::getComponentService()->isAvailable('image_resize');
+$resize   = sly_Util_Component::isAvailable('image_resize');
 $selected = $this->getCurrentCategory();
 
 ////////////////////////////////////////////////////////
