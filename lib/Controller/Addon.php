@@ -185,16 +185,21 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$required     = $service->isRequired($component) !== false;
 		$installed    = $service->isInstalled($component);
 		$activated    = $installed ? $service->isActivated($component) : false;
-		$compatible   = $service->isCompatible($component);
+		$compatible   = $service->isCompatible($component, true);
 		$version      = $service->getVersion($component);
+		$parent       = $service->getParent($component);
 		$author       = $service->getSupportPageEx($component);
-		$usable       = $compatible ? $this->canBeUsed($component) : false;
+		$usable       = ($compatible && ($parent === null || $service->exists($parent))) ? $this->canBeUsed($component) : false;
+
+		if ($parent !== null && !$service->exists($parent)) {
+			$parent = null;
+		}
 
 		foreach ($requirements as $req) {
 			if (!$service->isAvailable($req)) $missing[] = $req;
 		}
 
-		return compact('requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author');
+		return compact('requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author', 'parent');
 	}
 
 	/**
@@ -207,8 +212,8 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 * @return boolean
 	 */
 	private function canBeUsed($component) {
-		if (!$this->service->exists($component))       return false;
-		if (!$this->service->isCompatible($component)) return false;
+		if (!$this->service->exists($component))             return false;
+		if (!$this->service->isCompatible($component, true)) return false;
 
 		$requirements = $this->service->getRequirements($component);
 
