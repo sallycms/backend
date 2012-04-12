@@ -50,6 +50,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		}
 
 		$data = $this->buildDataList();
+		$data = $this->resolveParentRelationships($data);
 
 		print $this->render('addon/list.phtml', array(
 			'service' => $this->service,
@@ -58,6 +59,23 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			'info'    => $this->info,
 			'warning' => $this->warning
 		));
+	}
+
+	private function resolveParentRelationships(array $data) {
+		do {
+			$changes = false;
+
+			foreach ($data as $addon => $info) {
+				if ($info['parent']) {
+					$data[$info['parent']]['components'][$addon] = $info;
+					unset($data[$addon]);
+					$changes = true;
+					break;
+				}
+			}
+		} while ($changes);
+
+		return $data;
 	}
 
 	private function readDir($dir) {
@@ -153,6 +171,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			ob_start('ob_gzhandler');
 
 			$data = $this->buildDataList();
+			$data = $this->resolveParentRelationships($data);
 
 			$response = array(
 				'status'  => !empty($this->info),
@@ -172,7 +191,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		static $depCache = array();
 
 		$service = $this->service;
-		$key     = $service->getPath($component, '/', false);
+		$key     = $component;
 
 		if (!isset($reqCache[$key])) {
 			$reqCache[$key] = $service->getRequirements($component);
@@ -189,17 +208,32 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$version      = $service->getVersion($component);
 		$parent       = $service->getParent($component);
 		$author       = $service->getSupportPageEx($component);
-		$usable       = ($compatible && ($parent === null || $service->exists($parent))) ? $this->canBeUsed($component) : false;
+		$usable       = $compatible ? $this->canBeUsed($component) : false;
 
-		if ($parent !== null && !$service->exists($parent)) {
-			$parent = null;
+		if ($parent !== null) {
+			// do not allow to nest more than one level
+			$exists      = $service->exists($parent);
+			$hasGrand    = $exists ? $service->getParent($parent) : false;
+			$hasChildren = count($service->getRegisteredComponents($component));
+
+			if (!$exists || $hasGrand || $hasChildren) {
+				$parent = null;
+			}
+		}
+
+		if (strpos($component, '/') !== false) {
+			list($addon, $plugin) = explode('/', $component, 2);
+
+			if (!in_array($addon, $requirements)) {
+				$requirements[] = $addon;
+			}
 		}
 
 		foreach ($requirements as $req) {
 			if (!$service->isAvailable($req)) $missing[] = $req;
 		}
 
-		return compact('requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author', 'parent');
+		return compact('key', 'requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author', 'parent');
 	}
 
 	/**
@@ -240,6 +274,14 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	private function getInstallList($component, array $list = array()) {
 		$idx          = array_search($component, $list);
 		$requirements = $this->service->getRequirements($component);
+
+		if (strpos($component, '/') !== false) {
+			list($addon, $plugin) = explode('/', $component, 2);
+
+			if (!in_array($addon, $requirements)) {
+				$requirements[] = $addon;
+			}
+		}
 
 		if ($idx !== false) {
 			unset($list[$idx]);
@@ -314,7 +356,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			);
 
 			foreach ($aInfo['components'] as $plugin => $pInfo) {
-				$key     = $addon.'/'.$plugin;
+				$key     = $pInfo['key'];
 				$classes = array('sly-plugin');
 
 				$pInfo['requirements'][] = $addon;
