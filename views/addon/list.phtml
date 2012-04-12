@@ -27,12 +27,6 @@ else {
 			$name    = $addon;
 			$classes = $stati[$key]['classes'];
 
-			if (in_array('pa1', explode(' ', $classes))) {
-				foreach (array_keys($aInfo['components']) as $plugin) {
-					$info['requirements'][] = $addon.'/'.$plugin;
-				}
-			}
-
 			?>
 			<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
 				<ul class="details">
@@ -42,14 +36,11 @@ else {
 				if (!empty($aInfo['components'])) print '<ul class="plugins">';
 
 				foreach ($aInfo['components'] as $plugin => $pInfo) {
-					$base    = 'index.php?page=addon&amp;component='.urlencode($addon.'/'.$plugin).'&amp;func=';
+					$key     = $pInfo['key'];
+					$base    = 'index.php?page=addon&amp;component='.urlencode($key).'&amp;func=';
 					$info    = $pInfo;
-					$key     = $addon.'/'.$plugin;
 					$name    = $plugin;
 					$classes = $stati[$key]['classes'];
-
-					$info['requirements'][] = $addon;
-					$info['requirements'] = array_unique($info['requirements']);
 
 					?>
 					<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
