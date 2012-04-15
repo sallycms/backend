@@ -4,6 +4,7 @@
 @include 'table.css';
 @include 'form.css';
 @include 'jquery.tools.css';
+@include 'chosen.css';
 
 @include 'pages/credits.css';
 @include 'pages/linkmap.css';

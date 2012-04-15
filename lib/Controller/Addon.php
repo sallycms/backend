@@ -210,6 +210,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$author       = $service->getSupportPageEx($component);
 		$usable       = $compatible ? $this->canBeUsed($component) : false;
 
+		if (is_array($component)) {
+			$requirements[] = $component[0];
+		}
+
 		if ($parent !== null) {
 			// do not allow to nest more than one level
 			$exists      = $service->exists($parent);
@@ -274,6 +278,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	private function getInstallList($component, array $list = array()) {
 		$idx          = array_search($component, $list);
 		$requirements = $this->service->getRequirements($component);
+
+		if (is_array($component) && !in_array($component[0], $requirements)) {
+			$requirements[] = $component[0];
+		}
 
 		if (strpos($component, '/') !== false) {
 			list($addon, $plugin) = explode('/', $component, 2);

@@ -24,6 +24,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$this->addJavaScriptFile('assets/js/modernizr.min.js');
 		$this->addJavaScriptFile('assets/js/iso8601.min.js', 'if lt IE 8');
 		$this->addJavaScriptFile('assets/js/jquery.min.js');
+		$this->addJavaScriptFile('assets/js/jquery.chosen.min.js');
 		$this->addJavaScriptFile('assets/js/jquery.tools.min.js');
 		$this->addJavaScriptFile('assets/js/jquery.datetime.min.js');
 		$this->addJavaScriptFile('assets/js/locales/'.$locale.'.min.js');

@@ -366,3 +366,4 @@ layout_has_not_been_set: The layout has not yet been set via ::setLayout().
 media_categories: Medienkategorien
 move: move
 query_uses_forbidden_storage_engine: 'The {0}. query does not use InnoDB, but rather {1} as the storage engine. If you are absolutely sure to use {1}, you can set the key allow_non_innodb to true in the addOns''s static.yml.'
+no_language_selected: No languages have been selected.
