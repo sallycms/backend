@@ -43,34 +43,22 @@ $sysinfo = array(
 	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
 	'Extensions........: '.implode("\n                    ", $extlists),
 	'',
-	'AddOns & PlugIns',
-	'----------------',
+	'Komponenten',
+	'-----------',
 	'',
 );
 
-// add addOn details
+// add component details
 
-$addons  = sly_Service_Factory::getAddOnService();
-$plugins = sly_Service_Factory::getPluginService();
-$list    = $addons->getRegisteredAddons();
+$service = sly_Service_Factory::getComponentService();
+$list    = $service->getRegisteredComponents(null, true);
 
-foreach ($list as $addon) {
-	if (!$addons->isInstalled($addon)) continue;
+foreach ($list as $component) {
+	if (!$service->isInstalled($component)) continue;
 
-	$status    = $addons->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
-	$version   = '('.$addons->getVersion($addon).')';
-	$sysinfo[] = sprintf('%-22s %-9s [%s]', $addon, $version, $status);
-
-	if ($addons->isAvailable($addon)) {
-		foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
-			$component = array($addon, $plugin);
-			if (!$plugins->isInstalled($component)) continue;
-
-			$status    = $plugins->isActivated($component) ? 'aktiviert' : 'deaktiviert';
-			$version   = '('.$plugins->getVersion($component).')';
-			$sysinfo[] = sprintf('  %-20s %-9s [%s]', $plugin, $version, $status);
-		}
-	}
+	$status    = $service->isActivated($component) ? 'aktiviert' : 'deaktiviert';
+	$version   = '('.$service->getVersion($component).')';
+	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($component, '/', false), $version, $status);
 }
 
 if (empty($list)) {

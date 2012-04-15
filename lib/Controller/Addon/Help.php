@@ -9,40 +9,22 @@
  */
 
 class sly_Controller_Addon_Help extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $addon  = null;
-	protected $plugin = null;
-
 	public function indexAction() {
-		$comp = sly_request('component', 'string', '');
-		$comp = explode('/', $comp, 2);
+		$service   = sly_Service_Factory::getComponentService();
+		$known     = $service->getRegisteredComponents(null, true);
+		$component = sly_request('component', 'string', '');
+		$comp      = in_array($component, $known) ? $component : null;
 
-		if (count($comp) === 1) {
-			$comp[] = '';
-		}
-
-		list($addon, $plugin) = $comp;
-
-		$addons      = sly_Service_Factory::getAddOnService()->getRegisteredAddOns();
-		$this->addon = in_array($addon, $addons) ? $addon : null;
-
-		if ($this->addon) {
+		if ($comp) {
 			$layout = sly_Core::getLayout();
 			$layout->pageHeader(t('addons'));
 			print '<div class="sly-content">';
-
-			$plugins      = sly_Service_Factory::getPluginService()->getRegisteredPlugins($this->addon);
-			$this->plugin = in_array($plugin, $plugins) ? $plugin : null;
-
-			print $this->render('addon/help.phtml', array(
-				'addon'  => $this->addon,
-				'plugin' => $this->plugin
-			));
-
+			print $this->render('addon/help.phtml', array('component' => $comp));
 			print '</div>';
 		}
 		else {
 			$controller = new sly_Controller_Addon();
-			$controller->indexAction();
+			return $controller->indexAction();
 		}
 	}
 
