@@ -340,7 +340,8 @@
 						// prepare sliders
 						$(':range', root).rangeinput({css: {
 							slider: 'sly-date-slider',
-							input: 'sly-date-range sly-form-text'
+							input:  'sly-date-range sly-form-text',
+							handle: 'sly-jqt-handle'
 						}});
 
 						// put some text after the inputs so people know what those numbers mean

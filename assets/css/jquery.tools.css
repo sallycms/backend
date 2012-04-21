@@ -135,7 +135,19 @@ a.caldisabled {
 	color: #fff;
 }
 
-/* slider root */
+/* drag handle */
+.sly-jqt-handle {
+	height: 13px;
+	position: absolute;
+	top: -5px;
+	width: 12px;
+	cursor: pointer;
+	background: $md_grey;
+	border: 1px solid $drk_grey;
+	+border-radius(4px);
+}
+
+/* datetime sliders */
 .sly-date-slider {
 	width: 150px;
 	height: 7px;
@@ -155,14 +167,20 @@ a.caldisabled {
 	text-align: right;
 }
 
-/* drag handle */
-.handle {
-	height: 13px;
-	position: absolute;
-	top: -5px;
-	width: 12px;
+/* input[type=range] sliders */
+.sly-range-slider {
+	width: 150px;
+	height: 7px;
 	cursor: pointer;
-	background: $md_grey;
-	border: 1px solid $drk_grey;
-	+border-radius(4px);
+	position: relative;
+	float: left;
+	margin: 8px 2px;
+	background: $lt_grey;
+	border: 1px solid $md_grey;
+	+border-radius(2px);
+}
+
+.sly-range-range {
+	margin: 3px 0 3px 3px;
+	border: 0 none;
 }
