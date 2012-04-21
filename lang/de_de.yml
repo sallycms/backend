@@ -106,11 +106,8 @@ medium: Medium
 logged_out: nicht angemeldet
 logged_in_as: Angemeldet als
 
-add_slice: Block hinzufügen
 no_articles_available: Keine Artikel vorhanden.
 no_categories_available: Keine Kategorien vorhanden.
-module_not_found: 'Das Modul {0} wurde nicht gefunden!'
-edit_slice: Block bearbeiten
 
 article_moved: Artikel wurde verschoben.
 article_deleted: Artikel wurde gelöscht.
@@ -121,31 +118,14 @@ category_not_found: 'Die Kategorie {0} wurde nicht gefunden!'
 cannot_delete_start_article: Der Webseiten-Startartikel kann nicht gelöscht werden!
 cannot_delete_not_found_article: Der "Nicht gefunden"-Artikel kann nicht gelöscht werden!
 
-slice_updated: Block wurde aktualisiert.
-slice_added: Block wurde hinzugefügt.
 no_rights_to_this_function: Sie haben keine Rechte für diese Funktion!
-slice_deleted: Block wurde gelöscht.
-no_rights_to_this_module: Sie haben keine Rechte für dieses Modul!
-preview: Vorschau
-edit_mode: Editier Modus
-metadata: Metadaten/Sonstiges
-article_copied: Artikel wurde kopiert.
+
 file_not_found: 'Die Datei {0} wurde nicht gefunden!'
 error_moving_uploaded_file: 'Beim Verschieben der Datei {0} ist ein Fehler aufgetreten.'
-metadata_updated: Metadaten wurden aktualisiert.
 description: Beschreibung
-move_article: Artikel verschieben
-slice_moved: Block wurde verschoben.
-article_content_copied: Die Inhalte des Artikels wurden kopiert.
-cannot_move_slice: Beim Verschieben des Blocks ist ein Fehler aufgetreten!
-cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
-cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
-cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
 
 copy_content: Inhalte kopieren
 copy_article: Artikel kopieren
-cannot_copy_article: Der Artikel konnte nicht kopiert werden!
-cannot_move_category: Die Kategorie konnte nicht verschoben werden!
 move_category: Kategorie verschieben
 startarticle: Startartikel
 article_is_startarticle: Dieser Artikel ist ein Startartikel.
@@ -153,10 +133,6 @@ convert_to_startarticle: Artikel zum Startartikel umwandeln
 root_articles_cannot_be_startarticles: Artikel auf der obersten Ebene können nicht in Startartikel umgewandelt werden.
 cannot_convert_to_startarticle: Beim Umwandeln in einen Startartikel ist ein Fehler aufgetreten!
 article_converted_to_startarticle: Dieser Artikel wurde erfolgreich zum Startartikel umgewandelt.
-select_type_first: Bitte wählen sie zuerst einen Artikeltypen!
-no_template_defined: Dieser Artikel hat kein Template. Es können keine Inhalte eingepflegt werden.
-template_has_no_slots: In diesem Artikel können keine Inhalte eingepflegt werden.
-no_modules_allowed: In diesem Slot können keine Inhalte eingepflegt werden.
 category_moved: Kategorie wurde verschoben.
 articletype: Artikeltyp
 articletypes: Artikeltypen
@@ -265,8 +241,7 @@ component_activated: '{0} wurde aktiviert.'
 component_deactivated: '{0} wurde deaktiviert.'
 component_uninstalled: '{0} wurde deinstalliert.'
 component_assets_copied: Die Assets wurden re-initialisiert.
-component_requires_addon: '{1} benötigt das AddOn {0}.'
-component_requires_plugin: '{1} benötigt das Plugin {0}.'
+component_requires_component: '{1} benötigt {0}.'
 component_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
 component_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
 component_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
@@ -389,8 +364,8 @@ view_not_found: 'Der View {0} wurde nicht gefunden!'
 safemode_openbasedir: safe_mode und open_basedir
 layout_has_not_been_set: Das Layout wurde noch nicht über ::setLayout() gesetzt.
 media_categories: Medienkategorien
-move_slice: Slice verschieben
-transitional_rights: Vorübergehende Rechte
+move: verschieben
+query_uses_forbidden_storage_engine: 'Die {0}. Query verwendet nicht InnoDB, sondern {1} als Storage Engine. Wenn Sie sich absolut sicher sind, {1} verwenden zu wollen, können Sie in der static.yml den Key allow_non_innodb auf true setzen.'
 no_language_selected: Es wurden keine Sprachen ausgewählt.
 sally_core_cache: 'SallyCMS-Cache (Artikel, Inhalte)'
 sally_assetcache: Asset-Cache

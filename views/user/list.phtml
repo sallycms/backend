@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+print sly_Helper_Message::renderFlashMessage();
+
 $base   = 'index.php?page=user&amp;func=';
 $thIcon = '<a href="'.$base.'add"><img class="sly-icon sly-sprite sly-sprite-sly-user-add" alt="" src="assets/empty.png" title="'.t('add_user').'" /></a>';
 $table  = new sly_Table('users');
