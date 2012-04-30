@@ -19,7 +19,7 @@
 	}
 
 	caption {
-		@border-top-radius(4px);
+		@border-top-radius(@brd_rad);
 		text-align: left;
 		background-color: @drk_grey;
 		color: #4D4646;
@@ -37,7 +37,8 @@
 		a.sort {
 			color: white;
 			padding-right: 13px;
-			background: url() right center no-repeat;
+			background-repeat: no-repeat;
+			packground-position: right center;
 
 			&.asc    { background-image: url(../ascending.png);  }
 			&.desc   { background-image: url(../descending.png); }
