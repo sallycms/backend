@@ -9,10 +9,3 @@
 	top:-9999px;
 	left:-9999px;
 }
-
-@loop(@selector, @index) when (@index > 0) {
-      (~"@{selector}@{index}") {
-        padding-left: @index * 5px;
-      }
-      @loop(@selector, @index - 1);
-}
