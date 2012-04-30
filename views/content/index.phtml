@@ -64,7 +64,7 @@ elseif (empty($modules)) {
 
 $nocontent = !$hasType || !$hasTemplate || $slot === null || empty($modules);
 
-$articleSlices = $article->getSlices();
+$articleSlices = $article->getSlices($slot);
 
 if($nocontent && !empty($articleSlices)) {
 	print sly_Helper_Message::warn(t('slices_left'));
