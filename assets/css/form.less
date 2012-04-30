@@ -9,11 +9,11 @@
 textarea,
 select {
 	font-size: 100%;
-	border: 1px solid $lt_grey;
+	border: 1px solid @lt_grey;
 	margin: 0;
 	padding: 0;
 	vertical-align: baseline;
-	color: $drk_grey;
+	color: @drk_grey;
 	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
 }
 
@@ -34,7 +34,7 @@ select option {
 		color: GrayText;
 
 		&:active {
-			border-color: $lt_grey;
+			border-color: @lt_grey;
 		}
 	}
 }
@@ -76,15 +76,15 @@ select:disabled {
 	background-repeat: repeat-x;
 	padding: 1px 6px;
 	height: 24px;
-	color: $drk_grey;
-	border: 1px solid $lt_grey;
-	+border-radius($brd_rad);
+	color: @drk_grey;
+	border: 1px solid @lt_grey;
+	@border-radius(@brd_rad);
 	font-size: 100%;
 	font-family: inherit;
 	width: auto;
 
 	&:active, &:focus {
-		border: 1px solid $md_grey;
+		border: 1px solid @md_grey;
 	}
 
 	&.sly-button-delete {
@@ -107,7 +107,7 @@ a.sly-button {
 }
 
 .sly-form-hidden-label {
-	+hide;
+	@hide;
 }
 
 .sly-form {
@@ -165,7 +165,7 @@ a.sly-button {
 }
 
 .sly-widget {
-	+clearfix;
+	.clearfix;
 	display: block;
 	float: left;
 
@@ -256,11 +256,11 @@ a.sly-button {
 	}
 
 	.sly-form-row {
-		+clearfix;
+		.clearfix;
 		padding: 7px;
 		width: 783px;
 		vertical-align: middle;
-		border-top: 1px dotted $md_grey;
+		border-top: 1px dotted @md_grey;
 
 		&:first-child {
 			border-top: 0 none;
@@ -305,16 +305,16 @@ a.sly-button {
 	/* Überschrift | dunkelgrau hinterlegt mit runden Ecken*/
 	legend {
 		color: #fff;
-		background-color: $drk_grey;
+		background-color: @drk_grey;
 		font-size: 1.1em;
 		width: 787px; /* Breite des Loginbereichs abzüglich des padding links*/
 		padding: 8px 0 8px 10px;
-		+border-top-radius(4px);
+		@border-top-radius(@brd_rad);
 	}
 
 	.sly-form-wrapper {
 		background-color: #fff;
-		+border-bottom-radius(4px);
+		@border-bottom-radius(@brd_rad);
 		margin-bottom: 20px;
 	}
 
@@ -370,7 +370,7 @@ a.sly-button {
 
 .sly-date-disabled span {
 	cursor: pointer;
-	border-bottom: 1px dotted $drk_grey;
+	border-bottom: 1px dotted @drk_grey;
 }
 
 /* Mehrsprachige Formulare */
