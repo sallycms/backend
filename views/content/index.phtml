@@ -70,7 +70,7 @@ if($nocontent && !empty($articleSlices)) {
 	print sly_Helper_Message::warn(t('slices_left'));
 }
 
-if(!empty($articleSlices)) {
+if(!$nocontent) {
 	print '<div class="sly-content-editmode">';
 
 	for ($i = 0; $i <= count($articleSlices); $i++) {
