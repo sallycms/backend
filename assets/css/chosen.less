@@ -145,7 +145,7 @@
 	}
 
 	.search-choice {
-		+border-radius(3px);
+		@border-radius(3px);
 		-moz-background-clip: padding;
 		-webkit-background-clip: padding-box;
 		background-clip: padding-box;
@@ -344,10 +344,7 @@
 /* @end */
 
 /* Sally specific */
+
 .chzn-container .chzn-results {
-	@for $i from 1 to 15 {
-		.sly-lvl-$i {
-			padding-left: calc(5 * $i)px;
-		}
-	}
+	@loop('.sly-lvl-', 15);
 }

@@ -1,16 +1,16 @@
-+global-reset;
-+html5-reset;
+@global-reset;
+@html5-reset;
 
 body {
 	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
-	color: $drk_grey;
+	color: @drk_grey;
 	font-size: 14px;
 	line-height: 18px;
 	background: #f2f2f2 url(../body.png) 0 0 repeat-x;
 }
 
 a {
-	color: $link_color;
+	color: @link_color;
 	text-decoration: none;
 
 	&:hover {
@@ -35,7 +35,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #sly-page {
-	+clearfix;
+	.clearfix;
 	width: 984px;
 	margin: 0 auto;
 }
@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {
 		display: inline;
 
 		a.sly-active {
-			color: $drk_grey;
+			color: @drk_grey;
 		}
 	}
 }
@@ -61,14 +61,14 @@ h1, h2, h3, h4, h5, h6 {
 	}
 
 	.pagehead-row {
-		+clearfix;
+		.clearfix;
 		height: 40px;
 		line-height: 40px;
-		border-bottom: 1px dotted $md_grey;
+		border-bottom: 1px dotted @md_grey;
 		overflow: hidden;
 
 		a.sly-active {
-			color: $drk_grey;
+			color: @drk_grey;
 		}
 	}
 }
@@ -77,7 +77,7 @@ h1, h2, h3, h4, h5, h6 {
 	background-color: #fff;
 	position: relative;
 	margin-bottom: 10px;
-	+border-radius($brd_rad);
+	@border-radius(@brd_rad);
 
 	ul li {
 		list-style: none;
@@ -98,7 +98,7 @@ h1, h2, h3, h4, h5, h6 {
 	width: 0px !important;
 	height: 0px !important;
 	overflow: hidden !important;
-	background-color: $background !important;
+	background-color: @background !important;
 }
 
 .center { text-align: center; }
@@ -107,8 +107,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .strike { text-decoration: line-through; }
 
-.sly-offline { color: $link_color_offline; }
-.sly-online  { color: $link_color_online;  }
+.sly-offline { color: @link_color_offline; }
+.sly-online  { color: @link_color_online;  }
 
 .sly-content {
 	clear: left;
@@ -128,7 +128,7 @@ img.sly-sprite, a.sly-sprite, span.sly-sprite {
 	height: 16px;
 	width: 16px;
 
-	span { +hide; }
+	span { @hide; }
 }
 
 a.sly-sprite, span.sly-sprite {
@@ -137,21 +137,21 @@ a.sly-sprite, span.sly-sprite {
 }
 
 caption, legend {
-	&.sly-hidden { +hide; }
+	&.sly-hidden { @hide; }
 }
 
 .sly-message {
 	font-weight: 700;
 	margin-bottom: 10px;
 	padding: 6px 0;
-	+border-radius(4px);
+	@border-radius(@brd_rad);
 	background-image: url(../warning.png);
 	background-position: 0% 50%;
 	background-repeat: no-repeat;
 	color: #fff;
 
 	&.sly-info {
-		background-color: $link_color;
+		background-color: @link_color;
 	}
 
 	&.sly-warn {
@@ -173,20 +173,20 @@ caption, legend {
 	margin-bottom: 10px;
 
 	> h2 {
-		background-color: $drk_grey;
+		background-color: @drk_grey;
 		color: white;
 		line-height: 26px;
 		font-size: 20px;
 		padding: 7px 10px;
-		+border-top-radius($brd_rad);
+		@border-top-radius(@brd_rad);
 	}
 }
 
 .sly-area-footer {
-	background-color: $drk_grey;
+	background-color: @drk_grey;
 	color: white;
 	padding: 7px 10px;
-	+border-bottom-radius($brd_rad);
+	@border-bottom-radius(@brd_rad);
 
 	a {
 		font-weight: bold;
@@ -196,11 +196,11 @@ caption, legend {
 .sly-area-content {
 	line-height: 1.5;
 	padding: 10px;
-	+border-bottom-radius($brd_rad);
+	@border-bottom-radius(@brd_rad);
 	background-color: #fff;
 
 	.sly-has-footer & {
-		+border-bottom-radius(0);
+		@border-bottom-radius(0);
 	}
 
 	p, ul, ol, h3, h4, h5, h6, dl, dd {
@@ -245,7 +245,7 @@ caption, legend {
 }
 
 .sly-area-col-2 {
-	+clearfix;
+	.clearfix;
 
 	> div {
 		width: 394px;
@@ -270,7 +270,7 @@ a.sly-action {
 }
 
 #sly-wrapper {
-	+clearfix;
+	.clearfix;
 	float: right;
 	width: 797px;
 	padding-bottom: 25px;
@@ -282,7 +282,7 @@ a.sly-action {
 
 .sly-clang-toolbar {
 	a.sly-active {
-		color: $drk_grey;
+		color: @drk_grey;
 	}
 }
 
@@ -309,7 +309,7 @@ a.sly-action {
 
 .sly-trace, .sly-code {
 	font-family: monospace;
-	border: 1px solid $drk_grey;
+	border: 1px solid @drk_grey;
 	padding: 10px;
 	margin: 10px 0;
 	width: 777px;
@@ -321,6 +321,6 @@ a.sly-action {
 	}
 
 	.sly-keyword {
-		color: $link_color;
+		color: @link_color;
 	}
 }

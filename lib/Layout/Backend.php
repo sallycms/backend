@@ -19,7 +19,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$config = sly_Core::config();
 		$locale = sly_Core::getI18N()->getLocale();
 
-		$this->addCSSFile('assets/css/import.css');
+		$this->addCSSFile('assets/css/import.less');
 
 		$this->addJavaScriptFile('assets/js/modernizr.min.js');
 		$this->addJavaScriptFile('assets/js/iso8601.min.js', 'if lt IE 8');

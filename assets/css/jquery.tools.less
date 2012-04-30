@@ -9,16 +9,16 @@
 }
 
 #calbody {
-	border: 1px solid $drk_grey;
-	+border-bottom-radius($brd_rad);
+	border: 1px solid @drk_grey;
+	@border-bottom-radius(@brd_rad);
 }
 
 /* head. contains title, prev/next month controls and possible month/year selectors */
 #calhead {
 	padding: 2px 0;
 	height: 20px;
-	background: $drk_grey;
-	+border-top-radius($brd_rad);
+	background: @drk_grey;
+	@border-top-radius(@brd_rad);
 }
 
 #caltitle {
@@ -91,13 +91,13 @@
 	margin-left: 1px;
 	text-align: center;
 	line-height: 20px;
-	color: $drk_grey;
-	+border-radius(3px);
+	color: @drk_grey;
+	@border-radius(3px);
 }
 
 /* different states */
 .calweek a:hover, .calfocus {
-	background-color: $md_grey;
+	background-color: @md_grey;
 	color: white;
 }
 
@@ -125,13 +125,13 @@ a.caldisabled {
 
 /* current day */
 #calcurrent {
-	background-color: $link_color;
+	background-color: @link_color;
 	color: #fff;
 }
 
 /* today */
 #caltoday {
-	background-color: $md_grey;
+	background-color: @md_grey;
 	color: #fff;
 }
 
@@ -142,9 +142,9 @@ a.caldisabled {
 	top: -5px;
 	width: 12px;
 	cursor: pointer;
-	background: $md_grey;
-	border: 1px solid $drk_grey;
-	+border-radius(4px);
+	background: @md_grey;
+	border: 1px solid @drk_grey;
+	@border-radius(@brd_rad);
 }
 
 /* datetime sliders */
@@ -155,9 +155,9 @@ a.caldisabled {
 	position: relative;
 	float: left;
 	margin: 8px 2px;
-	background: $lt_grey;
-	border: 1px solid $md_grey;
-	+border-radius(2px);
+	background: @lt_grey;
+	border: 1px solid @md_grey;
+	@border-radius(2px);
 }
 
 .sly-date-range {
@@ -175,9 +175,9 @@ a.caldisabled {
 	position: relative;
 	float: left;
 	margin: 8px 2px;
-	background: $lt_grey;
-	border: 1px solid $md_grey;
-	+border-radius(2px);
+	background: @lt_grey;
+	border: 1px solid @md_grey;
+	@border-radius(2px);
 }
 
 .sly-range-range {

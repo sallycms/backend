@@ -4,7 +4,7 @@
 	background-color: #fff;
 	border-spacing: 0;
 	*border-collapse: collapse; /* hack for IE7 */
-	+border-bottom-radius(5px);
+	@border-bottom-radius(5px);
 
 	th, td {
 		/* 'sly-col-icon' is only for identification, not for styling! */
@@ -19,11 +19,11 @@
 	}
 
 	caption {
-		+border-top-radius(4px);
+		@border-top-radius(4px);
 		text-align: left;
-		background-color: $drk_grey;
+		background-color: @drk_grey;
 		color: #4D4646;
-		border: 1px solid $drk_grey;
+		border: 1px solid @drk_grey;
 		height: 5px;
 	}
 
@@ -32,7 +32,7 @@
 		color: #fff;
 		padding: 4px 0 9px 0px;
 		vertical-align: middle;
-		background-color: $drk_grey;
+		background-color: @drk_grey;
 
 		a.sort {
 			color: white;
@@ -47,20 +47,20 @@
 
 	td {
 		height: 40px;
-		border-top: 1px dotted $md_grey;
+		border-top: 1px dotted @md_grey;
 		*position: relative;
 	}
 
 	tr.sly-active td {
-		background-color: $link_color;
+		background-color: @link_color;
 		color: #fff;
 	}
 
 	/* make sure the active row doesn't kill the border-bottom with its background color */
 
 	tr:last-child.sly-active td {
-		&:first-child { +border-bottom-left-radius(4px); }
-		&:last-child { +border-bottom-right-radius(4px); }
+		&:first-child { @border-bottom-left-radius(4px); }
+		&:last-child { @border-bottom-right-radius(4px); }
 	}
 
 	.sly-has-input {
