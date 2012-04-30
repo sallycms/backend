@@ -35,7 +35,7 @@
 		$params['type']        = 'addon';
 		$params['name']        = $addon;
 		$params['version']     = $service->getVersion($addon);
-		$params['supportPage'] = $service->getSupportPageEx($addon);
+		$params['supportPage'] = sly_Helper_Component::getSupportPage($addon);
 
 		print $this->render('credits/row.phtml', $params);
 
@@ -49,7 +49,7 @@
 				$params['name']        = $pluginName;
 				$params['addon']       = $addon;
 				$params['version']     = $service->getVersion($plugin);
-				$params['supportPage'] = $service->getSupportPageEx($plugin);
+				$params['supportPage'] = sly_Helper_Component::getSupportPage($plugin);
 
 				print $this->render('credits/row.phtml', $params);
 			}

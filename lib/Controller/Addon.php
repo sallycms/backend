@@ -207,7 +207,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$compatible   = $service->isCompatible($component, true);
 		$version      = $service->getVersion($component);
 		$parent       = $service->getParent($component);
-		$author       = $service->getSupportPageEx($component);
+		$author       = sly_Helper_Component::getSupportPage($component);
 		$usable       = $compatible ? $this->canBeUsed($component) : false;
 
 		if (is_array($component)) {
