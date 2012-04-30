@@ -165,7 +165,7 @@ a.sly-button {
 }
 
 .sly-widget {
-	.clearfix;
+	@clearfix;
 	display: block;
 	float: left;
 
@@ -256,9 +256,8 @@ a.sly-button {
 	}
 
 	.sly-form-row {
-		.clearfix;
+		@clearfix;
 		padding: 7px;
-		width: 783px;
 		vertical-align: middle;
 		border-top: 1px dotted @md_grey;
 
@@ -307,8 +306,9 @@ a.sly-button {
 		color: #fff;
 		background-color: @drk_grey;
 		font-size: 1.1em;
-		width: 787px; /* Breite des Loginbereichs abzüglich des padding links*/
-		padding: 8px 0 8px 10px;
+		width: 100%;
+		padding: 8px 0;
+		text-indent: 10px;
 		@border-top-radius(@brd_rad);
 	}
 

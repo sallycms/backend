@@ -1,6 +1,6 @@
 .sly-content-header {
 	margin-bottom: 10px;
-	.clearfix;
+	@clearfix;
 
 	ul {
 		padding: 5px 0; /*  Abstand oben und unten */
@@ -52,7 +52,7 @@
 	line-height: 35px;
 	background-color: @drk_grey;
 	@border-radius(4px 4px 0 0);
-	.clearfix;
+	@clearfix;
 
 	h3 {
 		float: left;
@@ -132,12 +132,6 @@
 	}
 }
 
-.sly-contentpage-slice-input,
-.sly-contentpage-slice-output {
-	padding: 0 10px 0;
-	ol, ul { margin-left: 20px; }
-}
-
 .sly-contentpage-slice-output {
 	background-color: #e8e8e8;
 	padding: 14px;
@@ -171,8 +165,6 @@
 
 	.row {
 		border-top: 1px dotted @md_grey;
-		margin-left: -10px;
-		margin-right: -10px;
 		padding-left: 7px;
 		padding-right: 7px;
 
@@ -186,8 +178,6 @@
 	}
 
 	.sly-form {
-		margin-left: -10px;
-		width: 779px;
 
 		label, input, select, textarea, .sly-widget {
 			margin: 0px;
@@ -207,9 +197,6 @@
 		}
 
 		.sly-form-row {
-			padding: 7px;
-			width: 783px;
-
 			label {
 				margin: inherit;
 			}
