@@ -62,17 +62,17 @@ class sly_Layout_Navigation_Backend {
 				}
 			}
 
-			// AddOn-Seiten initialisieren
-			$service = sly_Service_Factory::getComponentService();
+			// init package pages
+			$service = sly_Service_Factory::getPackageService();
 
-			foreach ($service->getAvailableComponents(null, true) as $component) {
+			foreach ($service->getAvailablePackages() as $package) {
 				$link = '';
-				$page = $service->getProperty($component, 'page', '');
+				$page = $service->getComposerKey($package, 'page', '');
 
 				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-					$name  = $service->getProperty($component, 'name', '');
-					$popup = $service->getProperty($component, 'popup', false);
-					$param = strpos($component, '/') === false ? $component : substr($component, strrpos($component, '/')+1);
+					$name  = $service->getComposerKey($package, 'name', '');
+					$popup = $service->getComposerKey($package, 'popup', false);
+					$param = strpos($package, '/') === false ? $package : substr($package, strrpos($package, '/')+1);
 
 					$this->addPage('addon', strtolower($param), $name, $popup, $page);
 				}

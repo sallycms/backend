@@ -8,12 +8,12 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$service     = sly_Service_Factory::getComponentService();
-$helpfile    = $service->baseFolder($component).'/help.inc.php';
-$version     = $service->getVersion($component);
-$author      = $service->getAuthor($component);
-$supportPage = sly_Helper_Component::getSupportPage($component);
-$name        = $service->getPath($component, ' / ', false);
+$service     = sly_Service_Factory::getPackageService();
+$helpfile    = $service->baseDirectory($package).'/help.php';
+$version     = $service->getVersion($package);
+$author      = $service->getAuthor($package);
+$supportPage = sly_Helper_Package::getSupportPage($package);
+$name        = str_replace('/', ' / ', $package);
 $format      = '<dt>%s:</dt><dd>%s</dd>';
 $credits     = sprintf($format, t('name'), sly_html($name));
 
@@ -23,11 +23,11 @@ elseif ($author)  $credits .= sprintf($format, t('author'), sly_html($author));
 
 ?>
 <div class="sly-area sly-addon-help">
-	<h2><?php echo t('component_help', $name) ?></h2>
+	<h2><?php echo t('package_help', $name) ?></h2>
 
 	<div class="sly-area-content">
 		<?php if (!is_file($helpfile)): ?>
-		<p><?php echo t('component_help_file_not_found') ?></p>
+		<p><?php echo t('package_help_file_not_found') ?></p>
 		<?php else: ?>
 		<?php include $helpfile ?>
 		<?php endif ?>
