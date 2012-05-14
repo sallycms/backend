@@ -192,16 +192,16 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	protected function getPossibleStartpages() {
-		$service = sly_Service_Factory::getComponentService();
-		$addons  = $service->getAvailableComponents();
+		$service  = sly_Service_Factory::getPackageService();
+		$packages = $service->getAvailablePackages();
 
 		$startpages = array();
 		$startpages['structure'] = t('structure');
 		$startpages['profile']   = t('profile');
 
-		foreach ($addons as $addon) {
-			$page = $service->getProperty($addon, 'page', null);
-			$name = $service->getProperty($addon, 'name', $addon);
+		foreach ($packages as $pkg) {
+			$page = $service->getComposerKey($pkg, 'page', null);
+			$name = $service->getComposerKey($pkg, 'name', $pkg);
 
 			if ($page) {
 				$startpages[$page] = sly_translate($name);

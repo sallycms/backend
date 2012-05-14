@@ -43,22 +43,22 @@ $sysinfo = array(
 	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
 	'Extensions........: '.implode("\n                    ", $extlists),
 	'',
-	'Komponenten',
-	'-----------',
+	'Pakete',
+	'------',
 	'',
 );
 
-// add component details
+// add package details
 
-$service = sly_Service_Factory::getComponentService();
-$list    = $service->getRegisteredComponents(null, true);
+$service = sly_Service_Factory::getPackageService();
+$list    = $service->getRegisteredPackages();
 
-foreach ($list as $component) {
-	if (!$service->isInstalled($component)) continue;
+foreach ($list as $package) {
+	if (!$service->isInstalled($package)) continue;
 
-	$status    = $service->isActivated($component) ? 'aktiviert' : 'deaktiviert';
-	$version   = '('.$service->getVersion($component).')';
-	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($component, '/', false), $version, $status);
+	$status    = $service->isActivated($package) ? 'aktiviert' : 'deaktiviert';
+	$version   = '('.$service->getVersion($package).')';
+	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($package, '/', false), $version, $status);
 }
 
 if (empty($list)) {
@@ -88,7 +88,7 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			<li>Stelle sicher, dass du die
 			<a href="https://projects.webvariants.de/projects/sallycms/files">aktuellste
 			Sally-Version</a> einsetzt.</li>
-			<li>Stelle sicher, dass die von dir eingesetzten AddOns aktuell sind.</li>
+			<li>Stelle sicher, dass die von dir eingesetzten Pakete aktuell sind.</li>
 		</ol>
 
 		<p>
@@ -107,7 +107,7 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			nicht weiter.</li>
 			<li>Tritt das Problem im Frontend, Backend oder in beiden auf?</li>
 			<li>Handelt es sich wirklich um einen Sally-Fehler oder liegt das Problem
-			bei einem AddOn? Für AddOns gibt es eigene Bugtracker.</li>
+			bei einem Paket? Für Pakete gibt es eigene Bugtracker.</li>
 		</ul>
 
 		<p>

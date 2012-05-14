@@ -10,16 +10,15 @@
 
 class sly_Controller_Addon_Help extends sly_Controller_Backend implements sly_Controller_Interface {
 	public function indexAction() {
-		$service   = sly_Service_Factory::getComponentService();
-		$known     = $service->getRegisteredComponents(null, true);
-		$component = sly_request('component', 'string', '');
-		$comp      = in_array($component, $known) ? $component : null;
+		$service = sly_Service_Factory::getPackageService();
+		$package = sly_request('package', 'string', '');
+		$pkg     = $service->isRegistered($package) ? $package : null;
 
-		if ($comp) {
+		if ($pkg) {
 			$layout = sly_Core::getLayout();
 			$layout->pageHeader(t('addons'));
 			print '<div class="sly-content">';
-			print $this->render('addon/help.phtml', array('component' => $comp));
+			print $this->render('addon/help.phtml', array('component' => $pkg));
 			print '</div>';
 		}
 		else {

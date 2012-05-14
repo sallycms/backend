@@ -29,37 +29,22 @@
 
 	<?php
 
-	$service = sly_Service_Factory::getComponentService();
+	$service  = sly_Service_Factory::getPackageService();
+	$packages = $service->getRegisteredPackages();
 
-	foreach ($service->getRegisteredComponents() as $addon) {
+	foreach ($packages as $package) {
 		$params['type']        = 'addon';
-		$params['name']        = $addon;
-		$params['version']     = $service->getVersion($addon);
-		$params['supportPage'] = sly_Helper_Component::getSupportPage($addon);
+		$params['name']        = $package;
+		$params['version']     = $service->getVersion($package);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
 
 		print $this->render('credits/row.phtml', $params);
-
-		if ($service->isAvailable($addon)) {
-			$params['type'] = 'plugin';
-
-			foreach ($service->getRegisteredComponents($addon) as $plugin) {
-				list($addon, $pluginName) = explode('/', $plugin);
-
-				$params['type']        = 'plugin';
-				$params['name']        = $pluginName;
-				$params['addon']       = $addon;
-				$params['version']     = $service->getVersion($plugin);
-				$params['supportPage'] = sly_Helper_Component::getSupportPage($plugin);
-
-				print $this->render('credits/row.phtml', $params);
-			}
-		}
 	}
 
-	if (count($service->getRegisteredComponents()) === 0) {
+	if (count($packages) === 0) {
 		?>
 		<tr>
-			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
+			<td class="sly-col-empty center" colspan="5"><?php echo t('no_packages_found') ?></td>
 		</tr>
 		<?php
 	}

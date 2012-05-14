@@ -11,17 +11,17 @@
 /**
  * @author zozi@webvariants.de
  */
-class sly_Helper_Component {
+class sly_Helper_Package {
 	/**
 	 * Get string with links to support pages
 	 *
-	 * @param  mixed $component  addOn as string, plugin as array
+	 * @param  string $package   package name
 	 * @return string            a comma separated list of URLs
 	 */
-	public static function getSupportPage($component) {
-		$service     = sly_Service_Factory::getComponentService();
-		$supportPage = $service->getSupportPage($component, '');
-		$author      = $service->getAuthor($component);
+	public static function getSupportPage($package) {
+		$service     = sly_Service_Factory::getPackageService();
+		$supportPage = $service->getHomepage($package, '');
+		$author      = $service->getAuthor($package);
 
 		if ($supportPage) {
 			$supportPages = sly_makeArray($supportPage);
