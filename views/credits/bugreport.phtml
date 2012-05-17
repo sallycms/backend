@@ -48,17 +48,18 @@ $sysinfo = array(
 	'',
 );
 
-// add package details
+// add addon details
 
-$service = sly_Service_Factory::getPackageService();
-$list    = $service->getRegisteredPackages();
+$service  = sly_Service_Factory::getAddOnService();
+$pservice = $service->getPackageService();
+$list     = $service->getRegisteredAddOns();
 
-foreach ($list as $package) {
-	if (!$service->isInstalled($package)) continue;
+foreach ($list as $addon) {
+	if (!$service->isInstalled($addon)) continue;
 
-	$status    = $service->isActivated($package) ? 'aktiviert' : 'deaktiviert';
-	$version   = '('.$service->getVersion($package).')';
-	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($package, '/', false), $version, $status);
+	$status    = $service->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
+	$version   = '('.$pservice->getVersion($addon).')';
+	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($addon, '/', false), $version, $status);
 }
 
 if (empty($list)) {

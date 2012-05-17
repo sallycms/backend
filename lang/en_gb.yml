@@ -50,6 +50,7 @@ unavailable: unavailable
 required: required
 requires: requires
 is_required: 'is required by {0}'
+required_by: required by
 activated: activated
 optional: optional
 deactivated: deactivated
@@ -228,27 +229,28 @@ uninstall: uninstall
 deactivate: deactivate
 activate: activate
 reinit_assets: re-initialize assets
-component_help: 'Help for {0}'
-component_help_file_not_found: The help file (help.inc.php) could not be found.
-component_config_not_found: The configuration file (help.inc.php) could not be found.
-component_install_failed: '{0} could not be installed for the following reason:<br /> {1}'
-component_install_sql_failed: '{0} could not be installed for the following errors while running the installation queries:<br /> {1}'
-component_uninstall_failed: '{0} could not be uninstalled for the following reason:<br /> {1}'
-component_uninstall_sql_failed: '{0} could not be installed for the following errors while running the uninstallation queries:<br /> {1}'
-component_activate_failed: '{0} could not be activated because it is not yet installed!'
-component_installed: '{0} has been installed.'
-component_activated: '{0} has been activated.'
-component_deactivated: '{0} has been deactivated.'
-component_uninstalled: '{0} has been uninstalled.'
-component_assets_copied: Assets have been re-initialized.
-component_requires_component: '{1} requires {0}.'
-component_incompatible: '{0} is not compatible with this Sally version ({1}).'
-component_incompatible_with_this_version: not compatible with this Sally version
-component_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
-component_assets_failed: 'An error occured while copying the assets directory ({0}).'
+addon_help: 'Help for {0}'
+addon_help_file_not_found: The help file (help.php) could not be found!
+addon_config_not_found: The startup script (boot.php) could not be found!
+addon_install_failed: '{0} could not be installed for the following reason:<br /> {1}'
+addon_install_sql_failed: '{0} could not be installed for the following errors while running the installation queries:<br /> {1}'
+addon_uninstall_failed: '{0} could not be uninstalled for the following reason:<br /> {1}'
+addon_uninstall_sql_failed: '{0} could not be installed for the following errors while running the uninstallation queries:<br /> {1}'
+addon_activate_failed: '{0} could not be activated because it is not yet installed!'
+addon_installed: '{0} has been installed.'
+addon_activated: '{0} has been activated.'
+addon_deactivated: '{0} has been deactivated.'
+addon_uninstalled: '{0} has been uninstalled.'
+addon_assets_copied: Assets have been re-initialized.
+addon_requires_addon: '{1} requires {0}.'
+addon_incompatible: '{0} is not compatible with this Sally version ({1}).'
+addon_incompatible_with_this_version: not compatible with this Sally version
+addon_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
+addon_assets_failed: 'An error occured while copying the assets directory ({0}).'
+addon_not_found: 'AddOn {0} could not be found!'
 no_dependencies: no dependencies
 
-component_cleanup_failed: 'An error occured while cleaning up the assets directory ({0}).'
+addon_cleanup_failed: 'An error occured while cleaning up the assets directory ({0}).'
 no_addons_found: No addOns found. Put new addOns in the directory sally/addons.
 
 credits: Credits

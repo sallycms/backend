@@ -698,8 +698,8 @@ var sly = sly || {};
 			var
 				link     = $(this),
 				list     = $('.sly-addonlist'),
-				rows     = $('.component', list),
-				row      = link.closest('.component'),
+				rows     = $('.pkg', list),
+				row      = link.closest('.pkg'),
 				errorrow = $('.error', list);
 
 			// hide error row
@@ -717,8 +717,8 @@ var sly = sly || {};
 			var updateAddOnStatus = function(stati) {
 				for (var key in stati) {
 					if (!stati.hasOwnProperty(key)) continue;
-					var status = stati[key], comp = $('.component[data-key="' + key + '"]');
-					comp.attr('class', status['classes'] + ' component');
+					var status = stati[key], comp = $('.pkg[data-key="' + key + '"]');
+					comp.attr('class', status['classes'] + ' pkg');
 					$('.deps', comp).html(status.deps);
 				}
 			};

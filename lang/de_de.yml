@@ -50,6 +50,7 @@ unavailable: nicht verfügbar
 required: benötigt
 requires: benötigt
 is_required: 'wird von {0} benötigt'
+required_by: benötigt von
 activated: aktiviert
 optional: optional
 deactivated: deaktiviert
@@ -228,27 +229,28 @@ uninstall: deinstallieren
 deactivate: deaktivieren
 activate: aktivieren
 reinit_assets: Assets re-initialisieren
-component_help: 'Hilfe für {0}'
-component_help_file_not_found: Die Hilfedatei (help.inc.php) wurde nicht gefunden!
-component_config_not_found: Die Konfigurationsdatei (config.inc.php) wurde nicht gefunden!
-component_install_failed: '{0} konnte aus folgendem Grund nicht installiert werden:<br /> {1}'
-component_install_sql_failed: '{0} konnte wegen Fehlern in der install.sql nicht installiert werden:<br /> {1}'
-component_uninstall_failed: '{0} konnte aus folgendem Grund nicht deinstalliert werden:<br /> {1}'
-component_uninstall_sql_failed: '{0} konnte wegen Fehlern in der unstall.sql nicht deinstalliert werden:<br /> {1}'
-component_activate_failed: '{0} konnte nicht aktiviert werden, da es noch nicht installiert wurde!'
-component_installed: '{0} wurde installiert.'
-component_activated: '{0} wurde aktiviert.'
-component_deactivated: '{0} wurde deaktiviert.'
-component_uninstalled: '{0} wurde deinstalliert.'
-component_assets_copied: Die Assets wurden re-initialisiert.
-component_requires_component: '{1} benötigt {0}.'
-component_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
-component_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
-component_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
-component_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0})!'
+addon_help: 'Hilfe für {0}'
+addon_help_file_not_found: Die Hilfedatei (help.php) wurde nicht gefunden!
+addon_boot_file_not_found: Das Startup-Script (boot.php) wurde nicht gefunden!
+addon_install_failed: '{0} konnte aus folgendem Grund nicht installiert werden:<br /> {1}'
+addon_install_sql_failed: '{0} konnte wegen Fehlern in der install.sql nicht installiert werden:<br /> {1}'
+addon_uninstall_failed: '{0} konnte aus folgendem Grund nicht deinstalliert werden:<br /> {1}'
+addon_uninstall_sql_failed: '{0} konnte wegen Fehlern in der unstall.sql nicht deinstalliert werden:<br /> {1}'
+addon_activate_failed: '{0} konnte nicht aktiviert werden, da es noch nicht installiert wurde!'
+addon_installed: '{0} wurde installiert.'
+addon_activated: '{0} wurde aktiviert.'
+addon_deactivated: '{0} wurde deaktiviert.'
+addon_uninstalled: '{0} wurde deinstalliert.'
+addon_assets_copied: Die Assets wurden re-initialisiert.
+addon_requires_addon: '{1} benötigt {0}.'
+addon_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
+addon_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
+addon_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
+addon_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0})!'
+addon_not_found: 'Das AddOn {0} wurde nicht gefunden!'
 no_dependencies: keine Abhängigkeiten
 
-component_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0})!'
+addon_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0})!'
 no_addons_found: Keine AddOns gefunden. Laden Sie neue AddOns in das Verzeichnis sally/addons.
 
 credits: Credits

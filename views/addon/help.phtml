@@ -8,33 +8,57 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$service     = sly_Service_Factory::getPackageService();
-$helpfile    = $service->baseDirectory($package).'/help.php';
-$version     = $service->getVersion($package);
-$author      = $service->getAuthor($package);
-$supportPage = sly_Helper_Package::getSupportPage($package);
-$name        = str_replace('/', ' / ', $package);
-$format      = '<dt>%s:</dt><dd>%s</dd>';
-$credits     = sprintf($format, t('name'), sly_html($name));
+extract($this->getServices());
 
-if ($version)     $credits .= sprintf($format, t('version'), sly_html($version));
-if ($supportPage) $credits .= sprintf($format, t('author'), $supportPage);
-elseif ($author)  $credits .= sprintf($format, t('author'), sly_html($author));
+$service      = sly_Service_Factory::getAddOnService();
+$helpfile     = $pservice->baseDirectory($addon).'/help.php';
+$version      = $pservice->getVersion($addon);
+$author       = $pservice->getAuthor($addon);
+$requirements = $pservice->getRequirements($addon);
+$dependencies = $pservice->getDependencies($addon);
+$supportPage  = sly_Helper_Package::getSupportPage($addon);
+$name         = str_replace('/', ' / ', $addon);
 
 ?>
 <div class="sly-area sly-addon-help">
-	<h2><?php echo t('package_help', $name) ?></h2>
+	<h2><?php echo t('addon_help', $name) ?></h2>
 
 	<div class="sly-area-content">
 		<?php if (!is_file($helpfile)): ?>
-		<p><?php echo t('package_help_file_not_found') ?></p>
+		<p><?php echo t('addon_help_file_not_found') ?></p>
 		<?php else: ?>
 		<?php include $helpfile ?>
 		<?php endif ?>
-		<dl><?php echo $credits ?></dl>
+		<dl>
+			<dt><?php echo t('name') ?></dt>
+			<dd><?php echo sly_html($name) ?></dd>
+
+			<?php if ($version): ?>
+			<dt><?php echo t('version') ?></dt>
+			<dd><?php echo sly_html($version) ?></dd>
+			<?php endif ?>
+
+			<?php if ($supportPage): ?>
+			<dt><?php echo t('author') ?></dt>
+			<dd><?php echo $supportPage ?></dd>
+			<?php elseif ($author): ?>
+			<dt><?php echo t('author') ?></dt>
+			<dd><?php echo sly_html($author) ?></dd>
+			<?php endif ?>
+
+			<?php if ($requirements): ?>
+			<dt><?php echo t('requires') ?></dt>
+			<dd><code class="sly-inline"><?php echo implode('</code>, <code class="sly-inline">', $requirements) ?></code></dd>
+			<?php endif ?>
+
+			<?php if ($dependencies): ?>
+			<dt><?php echo t('required_by') ?></dt>
+			<dd><code class="sly-inline"><?php echo implode('</code>, <code class="sly-inline">', $dependencies) ?></code></dd>
+			<?php endif ?>
+		</dl>
 	</div>
 
 	<div class="sly-area-footer">
-		<p><a href="#" onclick="history.go(-1); return false"><?php echo t('back') ?></a></p>
+		<p><a href="index.php?page=credits"><?php echo t('back') ?></a></p>
 	</div>
 </div>

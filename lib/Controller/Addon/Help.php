@@ -8,22 +8,16 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Addon_Help extends sly_Controller_Backend implements sly_Controller_Interface {
+class sly_Controller_Addon_Help extends sly_Controller_Addon implements sly_Controller_Interface {
 	public function indexAction() {
-		$service = sly_Service_Factory::getPackageService();
-		$package = sly_request('package', 'string', '');
-		$pkg     = $service->isRegistered($package) ? $package : null;
+		$this->init();
+		$addon = $this->getAddOn();
 
-		if ($pkg) {
-			$layout = sly_Core::getLayout();
-			$layout->pageHeader(t('addons'));
-			print '<div class="sly-content">';
-			print $this->render('addon/help.phtml', array('component' => $pkg));
-			print '</div>';
+		if ($addon) {
+			$this->render('addon/help.phtml', array('addon' => $addon), false);
 		}
 		else {
-			$controller = new sly_Controller_Addon();
-			return $controller->indexAction();
+			print sly_Helper_Message::warn(t('addon_not_found', $addon));
 		}
 	}
 

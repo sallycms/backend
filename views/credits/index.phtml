@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<table class="sly-table sly-addonlist" summary="<?php echo t('credits_caption') ?>">
+<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
 	<caption><?php echo t('credits_caption') ?></caption>
 	<thead><tr>
 		<th class="sly-col-icon sly-icon">&nbsp;</th>
@@ -29,22 +29,22 @@
 
 	<?php
 
-	$service  = sly_Service_Factory::getPackageService();
-	$packages = $service->getRegisteredPackages();
+	$service  = sly_Service_Factory::getAddOnService();
+	$addons = $service->getRegisteredAddOns();
 
-	foreach ($packages as $package) {
-		$params['type']        = 'addon';
-		$params['name']        = $package;
-		$params['version']     = $service->getVersion($package);
-		$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+	foreach ($addons as $addon) {
+		$params['type']        = 'pkg';
+		$params['name']        = $addon;
+		$params['version']     = $service->getPackageService()->getVersion($addon);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
 		print $this->render('credits/row.phtml', $params);
 	}
 
-	if (count($packages) === 0) {
+	if (count($addons) === 0) {
 		?>
 		<tr>
-			<td class="sly-col-empty center" colspan="5"><?php echo t('no_packages_found') ?></td>
+			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
 		</tr>
 		<?php
 	}
