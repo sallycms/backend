@@ -43,7 +43,7 @@ $sysinfo = array(
 	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
 	'Extensions........: '.implode("\n                    ", $extlists),
 	'',
-	'Pakete',
+	'AddOns',
 	'------',
 	'',
 );
@@ -59,7 +59,7 @@ foreach ($list as $addon) {
 
 	$status    = $service->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
 	$version   = '('.$pservice->getVersion($addon).')';
-	$sysinfo[] = sprintf('%-22s %-9s [%s]', $service->getPath($addon, '/', false), $version, $status);
+	$sysinfo[] = sprintf('%-40s %-9s [%s]', $addon, $version, $status);
 }
 
 if (empty($list)) {
