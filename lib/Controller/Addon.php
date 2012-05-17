@@ -10,8 +10,7 @@
 
 class sly_Controller_Addon extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $func    = '';
-	protected $service = null;
-	protected $comp    = null;
+	protected $addon   = false;
 	protected $info    = '';
 	protected $warning = '';
 
@@ -24,25 +23,61 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$layout = sly_Core::getLayout();
 			$layout->pageHeader(t('addons'));
 		}
-
-		$package       = sly_request('package', 'string', '');
-		$this->service = sly_Service_Factory::getPackageService();
-		$this->pkg     = $this->service->isRegistered($package) ? $package : null;
 	}
 
+	/**
+	 * Get current addOn
+	 *
+	 * @return string  the addOn or null
+	 */
+	protected function getAddOn() {
+		if ($this->addon === false) {
+			extract($this->getServices());
+
+			$addon       = sly_request('addon', 'string', '');
+			$this->addon = $aservice->isRegistered($addon) ? $addon : null;
+		}
+
+		return $this->addon;
+	}
+
+	/**
+	 * Set current addOn
+	 *
+	 * @param string $addon  addOn name
+	 */
+	protected function setAddOn($addon) {
+		$this->addon = $addon;
+	}
+
+	/**
+	 * Returns the commonly used services
+	 *
+	 * @return array  {aservice: addon-service, manager: addon-manager, pservice: package-service}
+	 */
+	protected function getServices() {
+		return array(
+			'aservice' => sly_Service_Factory::getAddOnService(),
+			'manager'  => sly_Service_Factory::getAddOnManagerService(),
+			'pservice' => sly_Service_Factory::getAddOnPackageService()
+		);
+	}
+
+	/**
+	 * index action
+	 */
 	public function indexAction() {
 		$this->init();
 
 		$data = $this->buildDataList();
 		$data = $this->resolveParentRelationships($data);
 
-		print $this->render('addon/list.phtml', array(
-			'service' => $this->service,
+		$this->render('addon/list.phtml', array(
 			'tree'    => $data,
 			'stati'   => $this->buildStatusList($data),
 			'info'    => $this->info,
 			'warning' => $this->warning
-		));
+		), false);
 	}
 
 	public function installAction() {
@@ -56,31 +91,52 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		return $this->sendResponse();
 	}
 
-	public function uninstallAction()  { $this->init(); $this->call('uninstall', 'uninstalled');    return $this->sendResponse(); }
-	public function activateAction()   { $this->init(); $this->call('activate', 'activated');       return $this->sendResponse(); }
-	public function deactivateAction() { $this->init(); $this->call('deactivate', 'deactivated');   return $this->sendResponse(); }
-	public function reinitAction()     { $this->init(); $this->call('copyAssets', 'assets_copied'); return $this->sendResponse(); }
+	public function uninstallAction() {
+		$this->init();
+		$this->call('uninstall', 'uninstalled');
+		return $this->sendResponse();
+	}
+
+	public function activateAction() {
+		$this->init();
+		$this->call('activate', 'activated');
+		return $this->sendResponse();
+	}
+
+	public function deactivateAction() {
+		$this->init();
+		$this->call('deactivate', 'deactivated');
+		return $this->sendResponse();
+	}
+
+	public function reinitAction() {
+		$this->init();
+		$this->call('copyAssets', 'assets_copied');
+		return $this->sendResponse();
+	}
 
 	public function fullinstallAction() {
 		$this->init();
 
-		$todo = $this->getInstallList($this->pkg);
+		$todo = $this->getInstallList($this->getAddOn());
+		extract($this->getServices());
 
 		if (!empty($todo)) {
 			// pretend that we're about to work on this now
-			$this->pkg = reset($todo);
+			$addon = reset($todo);
+			$this->setAddOn($addon);
 
 			// if not installed, install it
-			if (!$this->service->isInstalled($this->pkg)) {
+			if (!$aservice->isInstalled($addon)) {
 				$this->call('install', 'installed');
 			}
 
 			// if not activated and install went OK, activate it
-			if (!$this->service->isAvailable($this->pkg) && $this->warning === '') {
+			if (!$aservice->isAvailable($addon) && $this->warning === '') {
 				$this->call('activate', 'activated');
 			}
 
-			// if everything worked out fine, we can redirect to the next component
+			// if everything worked out fine, we can redirect to the next addOn
 			if ($this->warning === '' && count($todo) > 1) {
 				sly_Util_HTTP::redirect($_SERVER['REQUEST_URI'], array(), '', 302);
 			}
@@ -95,10 +151,13 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	protected function call($method, $i18n) {
-		$this->warning = $this->service->$method($this->pkg);
+		extract($this->getServices());
+		$addon = $this->getAddOn();
 
-		if ($this->warning === true || $this->warning === 1) {
-			$this->info    = t('component_'.$i18n, $this->pkg);
+		$this->warning = $manager->$method($addon);
+
+		if ($this->warning === true) {
+			$this->info    = t('addon_'.$i18n, $addon);
 			$this->warning = '';
 		}
 	}
@@ -126,37 +185,36 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	/**
-	 * @param  string $package
+	 * @param  string $addon
 	 * @return array
 	 */
-	private function getPackageDetails($package) {
+	private function getAddOnDetails($addon) {
 		static $reqCache = array();
 		static $depCache = array();
 
-		$service = $this->service;
-		$key     = $package;
+		extract($this->getServices());
 
-		if (!isset($reqCache[$key])) {
-			$reqCache[$key] = $service->getRequirements($package);
-			$depCache[$key] = $service->getDependencies($package);
+		if (!isset($reqCache[$addon])) {
+			$reqCache[$addon] = $aservice->getRequirements($addon);
+			$depCache[$addon] = $aservice->getDependencies($addon, true, true);
 		}
 
-		$requirements = $reqCache[$key];
-		$dependencies = $depCache[$key];
+		$requirements = $reqCache[$addon];
+		$dependencies = $depCache[$addon];
 		$missing      = array();
-		$required     = $service->isRequired($package) !== false;
-		$installed    = $service->isInstalled($package);
-		$activated    = $installed ? $service->isActivated($package) : false;
-		$compatible   = $service->isCompatible($package);
-		$version      = $service->getVersion($package);
-		$parent       = $service->getParent($package);
-		$author       = sly_Helper_Package::getSupportPage($package);
-		$usable       = $compatible ? $this->canBeUsed($package) : false;
+		$required     = $aservice->isRequired($addon) !== false;
+		$installed    = $aservice->isInstalled($addon);
+		$activated    = $installed ? $aservice->isActivated($addon) : false;
+		$compatible   = $aservice->isCompatible($addon);
+		$version      = $pservice->getVersion($addon);
+		$parent       = $pservice->getParent($addon);
+		$author       = sly_Helper_Package::getSupportPage($addon);
+		$usable       = $compatible ? $this->canBeUsed($addon) : false;
 
 		if ($parent !== null) {
 			// do not allow to nest more than one level
-			$exists   = $service->exists($parent);
-			$hasGrand = $exists ? $service->getParent($parent) : false;
+			$exists   = $pservice->exists($parent);
+			$hasGrand = $exists ? $pservice->getParent($parent) : false;
 
 			if (!$exists || $hasGrand) {
 				$parent = null;
@@ -168,10 +226,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		}
 
 		foreach ($requirements as $req) {
-			if (!$service->isAvailable($req)) $missing[] = $req;
+			if (!$aservice->isAvailable($req)) $missing[] = $req;
 		}
 
-		return compact('key', 'requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author', 'parent');
+		return compact('requirements', 'dependencies', 'missing', 'required', 'installed', 'activated', 'compatible', 'usable', 'version', 'author', 'parent');
 	}
 
 	/**
@@ -184,10 +242,12 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 * @return boolean
 	 */
 	private function canBeUsed($package) {
-		if (!$this->service->exists($package))       return false;
-		if (!$this->service->isCompatible($package)) return false;
+		extract($this->getServices());
 
-		$requirements = $this->service->getRequirements($package);
+		if (!$pservice->exists($package))       return false;
+		if (!$aservice->isCompatible($package)) return false;
+
+		$requirements = $aservice->getRequirements($package, false);
 
 		foreach ($requirements as $requirement) {
 			if (!$this->canBeUsed($requirement)) return false;
@@ -197,29 +257,31 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	/**
-	 * Determine what components to install
+	 * Determine what packages to install
 	 *
 	 * This method will walk through all requirements and collect a list of
-	 * components that need to be installed to install the $package. The list
-	 * is ordered ($package is always the last element). Already activated
-	 * components will not be included (so the result can be empty if $package
+	 * packages that need to be installed to install the $addon. The list
+	 * is ordered ($addon is always the last element). Already activated
+	 * packages will not be included (so the result can be empty if $addon
 	 * is also already activated).
 	 *
-	 * @param  string $package  package name
-	 * @param  array  $list     current stack (used internally)
-	 * @return array            install list
+	 * @param  string $addon  addon name
+	 * @param  array  $list   current stack (used internally)
+	 * @return array          install list
 	 */
-	private function getInstallList($package, array $list = array()) {
-		$idx          = array_search($package, $list);
-		$requirements = $this->service->getRequirements($package);
+	private function getInstallList($addon, array $list = array()) {
+		extract($this->getServices());
+
+		$idx          = array_search($addon, $list);
+		$requirements = $aservice->getRequirements($addon);
 
 		if ($idx !== false) {
 			unset($list[$idx]);
 			$list = array_values($list);
 		}
 
-		if (!$this->service->isAvailable($component)) {
-			array_unshift($list, $component);
+		if (!$aservice->isAvailable($addon)) {
+			array_unshift($list, $addon);
 		}
 
 		foreach ($requirements as $requirement) {
@@ -230,75 +292,79 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	private function buildDataList() {
+		extract($this->getServices());
 		$result = array();
 
-		foreach ($this->service->getRegisteredPackages() as $package) {
-			$result[$package] = $this->getPackageDetails($package);
+		foreach ($aservice->getRegisteredAddOns() as $addon) {
+			$details = $this->getAddOnDetails($addon);
+
+			$details['children'] = array();
+			$result[$addon]      = $details;
 		}
 
 		return $result;
 	}
 
-	private function buildStatusList(array $dataList) {
+	private function buildStatusList(array $packageData) {
 		$result = array();
 
-		foreach ($dataList as $addon => $aInfo) {
+		foreach ($packageData as $package => $info) {
 			$classes = array('sly-addon');
 
 			// build class list for all relevant stati
 
-			if (!empty($aInfo['components'])) {
-				$classes[] = 'p1';
+			if (!empty($info['children'])) {
+				$classes[] = 'ch1'; // children yes
 
-				foreach ($aInfo['components'] as $pInfo) {
-					if ($pInfo['activated']) {
-						$classes[] = 'pa1';
-						$classes[] = 'd1';  // assume implicit dependency of components from their parent components
+				foreach ($info['children'] as $childInfo) {
+					if ($childInfo['activated']) {
+						$classes[] = 'ca1';
+						$classes[] = 'd1';  // assume implicit dependency of packages from their parent packages
 						break;
 					}
 				}
 			}
 			else {
-				$classes[] = 'p0';
+				$classes[] = 'ch0'; // childen no
 			}
 
-			if (!in_array('pa1', $classes)) {
-				$classes[] = 'd'.intval($aInfo['required']);
+			// if there are no active children, dependency status is based on required status
+			if (!in_array('ca1', $classes)) {
+				$classes[] = 'd'.intval($info['required']);
 			}
 			else {
-				$classes[] = 'pa0';
+				$classes[] = 'ca0'; // children active no
 			}
 
-			$classes[] = 'i'.intval($aInfo['installed']);
-			$classes[] = 'a'.intval($aInfo['activated']);
-			$classes[] = 'c'.intval($aInfo['compatible']);
-			$classes[] = 'r'.intval($aInfo['requirements']);
-			$classes[] = 'ro'.(empty($aInfo['missing']) ? 1 : 0);
-			$classes[] = 'u'.intval($aInfo['usable']);
+			$classes[] = 'i'.intval($info['installed']);
+			$classes[] = 'a'.intval($info['activated']);
+			$classes[] = 'c'.intval($info['compatible']);
+			$classes[] = 'r'.intval($info['requirements']);
+			$classes[] = 'ro'.(empty($info['missing']) ? 1 : 0);
+			$classes[] = 'u'.intval($info['usable']);
 
-			$result[$addon] = array(
+			$result[$package] = array(
 				'classes' => implode(' ', $classes),
-				'deps'    => $this->buildDepsInfo($aInfo)
+				'deps'    => $this->buildDepsInfo($info)
 			);
 
-			foreach ($aInfo['components'] as $plugin => $pInfo) {
-				$key     = $pInfo['key'];
-				$classes = array('sly-plugin');
+			foreach ($info['children'] as $childPkg => $childInfo) {
+				$classes = array('sly-addon-child');
 
-				$pInfo['requirements'][] = $addon;
-				$pInfo['requirements'] = array_unique($pInfo['requirements']);
+				$childInfo['requirements'][] = $package;
+				$childInfo['requirements'] = array_unique($childInfo['requirements']);
 
-				$classes[] = 'i'.intval($pInfo['installed']);
-				$classes[] = 'a'.intval($pInfo['activated']);
-				$classes[] = 'd'.intval($pInfo['required']);
-				$classes[] = 'c'.intval($pInfo['compatible']);
-				$classes[] = 'r'.intval($pInfo['requirements']);
-				$classes[] = 'ro'.(empty($pInfo['missing']) ? 1 : 0);
-				$classes[] = 'u'.intval($pInfo['usable']);
+				$classes[] = 'i'.intval($childInfo['installed']);
+				$classes[] = 'a'.intval($childInfo['activated']);
+				$classes[] = 'd'.intval($childInfo['required']);
+				$classes[] = 'c'.intval($childInfo['compatible']);
+				$classes[] = 'r'.intval($childInfo['requirements']);
+				$classes[] = 'ro'.(empty($childInfo['missing']) ? 1 : 0);
+				$classes[] = 'u'.intval($childInfo['usable']);
 
-				$result[$key] = array(
+				$result[$childPkg] = array(
 					'classes' => implode(' ', $classes),
-					'deps'    => $this->buildDepsInfo($pInfo)
+					'deps'    => $this->buildDepsInfo($childInfo)
 				);
 			}
 		}
@@ -308,26 +374,14 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 	private function buildDepsInfo(array $info) {
 		if ($info['required']) {
-			$names = array();
-
-			foreach ($info['dependencies'] as $pkg) {
-				$names[] = str_replace('/', ' / ', $pkg);
-			}
-
-			$isRequiredTitle = sly_html(t('is_required', sly_Util_String::humanImplode(array_slice($names, 0, 3))));
+			$isRequiredTitle = sly_html(t('is_required', sly_Util_String::humanImplode(array_slice($info['dependencies'], 0, 3))));
 		}
 		else {
 			$isRequiredTitle = '';
 		}
 
 		if ($info['requirements']) {
-			$names = array();
-
-			foreach ($info['requirements'] as $pkg) {
-				$names[] = str_replace('/', ' / ', $pkg);
-			}
-
-			$requiresTitle = t('requires').' '.sly_Util_String::humanImplode(array_slice($names, 0, 3));
+			$requiresTitle = t('requires').' '.sly_Util_String::humanImplode(array_slice($info['requirements'], 0, 3));
 		}
 		else {
 			$requiresTitle = '';
@@ -342,10 +396,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		do {
 			$changes = false;
 
-			foreach ($data as $addon => $info) {
+			foreach ($data as $package => $info) {
 				if ($info['parent']) {
-					$data[$info['parent']]['components'][$addon] = $info;
-					unset($data[$addon]);
+					$data[$info['parent']]['children'][$package] = $info;
+					unset($data[$package]);
 					$changes = true;
 					break;
 				}

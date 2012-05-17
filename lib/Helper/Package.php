@@ -19,7 +19,16 @@ class sly_Helper_Package {
 	 * @return string            a comma separated list of URLs
 	 */
 	public static function getSupportPage($package) {
-		$service     = sly_Service_Factory::getPackageService();
+		$service = sly_Service_Factory::getAddOnPackageService();
+
+		if (!$service->exists($package)) {
+			$service = sly_Service_Factory::getVendorPackageService();
+
+			if (!$service->exists($package)) {
+				return '';
+			}
+		}
+
 		$supportPage = $service->getHomepage($package, '');
 		$author      = $service->getAuthor($package);
 
