@@ -72,9 +72,8 @@ class sly_Layout_Navigation_Backend {
 				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
 					$name  = $service->getComposerKey($addon, 'name', '');
 					$popup = $service->getComposerKey($addon, 'popup', false);
-					$param = strpos($addon, '/') === false ? $addon : substr($addon, strrpos($addon, '/')+1);
 
-					$this->addPage('addon', strtolower($param), $name, $popup, $page);
+					$this->addPage('addon', $addon, $name, $popup, $page);
 				}
 			}
 		}
