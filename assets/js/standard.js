@@ -592,26 +592,28 @@ var sly = sly || {};
 			}
 		}
 
-		// Fallback-Implementierung für type=range via jQuery Tools Slider
-		$('input[type="range"]:not(.ua-supported)').rangeinput({
-			css: {
-				input:    'sly-range-range',
-				slider:   'sly-range-slider',
-				progress: 'sly-range-progress',
-				handle:   'sly-jqt-handle'
-			}
-		});
+		if (typeof $.fn.rangeinput !== 'undefined') {
+			// Fallback-Implementierung für type=range via jQuery Tools Slider
+			$('input[type="range"]:not(.ua-supported)').rangeinput({
+				css: {
+					input:    'sly-range-range',
+					slider:   'sly-range-slider',
+					progress: 'sly-range-progress',
+					handle:   'sly-jqt-handle'
+				}
+			});
 
-		// Fallback-Implementierung für type=date
-		$('input[type*="date"]').slyDateTime({
-			lngNoDateSelected:   sly.locale.noDateSelected,
-			lngDeleteDate:       sly.locale.deleteDate,
-			lngClickToInputDate: sly.locale.clickToInputDate,
-			lngMonths:           sly.locale.months.join(','),
-			lngShortMonths:      sly.locale.shortMonths.join(','),
-			lngDays:             sly.locale.days.join(','),
-			lngShortDays:        sly.locale.shortDays.join(','),
-		});
+			// Fallback-Implementierung für type=date
+			$('input[type*="date"]').slyDateTime({
+				lngNoDateSelected:   sly.locale.noDateSelected,
+				lngDeleteDate:       sly.locale.deleteDate,
+				lngClickToInputDate: sly.locale.clickToInputDate,
+				lngMonths:           sly.locale.months.join(','),
+				lngShortMonths:      sly.locale.shortMonths.join(','),
+				lngDays:             sly.locale.days.join(','),
+				lngShortDays:        sly.locale.shortDays.join(','),
+			});
+		}
 
 		// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
 		// into lvl-N classes, or else the quick filter function of Chosen will not work
