@@ -48,12 +48,12 @@ $name         = str_replace('/', ' / ', $addon);
 
 			<?php if ($requirements): ?>
 			<dt><?php echo t('requires') ?></dt>
-			<dd><code class="sly-inline"><?php echo implode('</code>, <code class="sly-inline">', $requirements) ?></code></dd>
+			<dd><code class="sly-literal"><?php echo implode('</code>, <code class="sly-literal">', $requirements) ?></code></dd>
 			<?php endif ?>
 
 			<?php if ($dependencies): ?>
 			<dt><?php echo t('required_by') ?></dt>
-			<dd><code class="sly-inline"><?php echo implode('</code>, <code class="sly-inline">', $dependencies) ?></code></dd>
+			<dd><code class="sly-literal"><?php echo implode('</code>, <code class="sly-literal">', $dependencies) ?></code></dd>
 			<?php endif ?>
 		</dl>
 	</div>
