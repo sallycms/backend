@@ -372,26 +372,58 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		return $result;
 	}
 
+	/**
+	 * Build a HTML string describing the requirements and dependencies
+	 *
+	 * @param  array $info  addOn info
+	 * @return string
+	 */
 	private function buildDepsInfo(array $info) {
+		$texts = array();
+
 		if ($info['required']) {
-			$isRequiredTitle = sly_html(t('is_required', sly_Util_String::humanImplode(array_slice($info['dependencies'], 0, 3))));
-		}
-		else {
-			$isRequiredTitle = '';
+			if (count($info['dependencies']) === 1) {
+				$text = t('is_required', reset($info['dependencies']));
+			}
+			else {
+				$list = sly_Util_String::humanImplode($info['dependencies']);
+				$text = t('is_required', count($info['dependencies']));
+				$text = '<span title="'.sly_html($list).'">'.$text.'</span>';
+			}
+
+			$texts[] = $text;
 		}
 
 		if ($info['requirements']) {
-			$requiresTitle = t('requires').' '.sly_Util_String::humanImplode(array_slice($info['requirements'], 0, 3));
-		}
-		else {
-			$requiresTitle = '';
+			if (count($info['requirements']) === 1) {
+				$text = t('requires').' '.reset($info['requirements']);
+			}
+			else {
+				$list = sly_Util_String::humanImplode($info['requirements']);
+				$text = t('requires').' '.count($info['requirements']);
+				$text = '<span title="'.sly_html($list).'">'.$text.'</span>';
+			}
+
+			$texts[] = $text;
 		}
 
-		$texts = array_filter(array($requiresTitle, $isRequiredTitle));
-		if (empty($texts)) $texts[] = t('no_dependencies');
+		if (empty($texts)) {
+			return t('no_dependencies');
+		}
+
 		return implode(' &amp; ', $texts);
 	}
 
+	/**
+	 * Transform addOn list by using parents
+	 *
+	 * This method scans through the flat list of addOns and moved all addOns,
+	 * that have a "parent" declaration into the parent's "children" key. This is
+	 * done to make the view simpler.
+	 *
+	 * @param  array $data
+	 * @return array
+	 */
 	private function resolveParentRelationships(array $data) {
 		do {
 			$changes = false;
