@@ -17,11 +17,11 @@
 	</div>
 </div>
 
-<table class="sly-table sly-addonlist" summary="<?php echo t('credits_caption') ?>">
+<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
 	<caption><?php echo t('credits_caption') ?></caption>
 	<thead><tr>
 		<th class="sly-col-icon sly-icon">&nbsp;</th>
-		<th class="sly-col-name" colspan="2"><?php echo t('addon') ?></th>
+		<th class="sly-col-name"><?php echo t('addon') ?></th>
 		<th class="sly-col-version"><?php echo t('version') ?></th>
 		<th class="sly-col-author"><?php echo t('author') ?></th>
 	</tr></thead>
@@ -29,33 +29,19 @@
 
 	<?php
 
-	$addons  = sly_Service_Factory::getAddOnService();
-	$plugins = sly_Service_Factory::getPluginService();
+	$service  = sly_Service_Factory::getAddOnService();
+	$addons = $service->getRegisteredAddOns();
 
-	foreach ($addons->getRegisteredAddons() as $addon) {
-		$params['type']        = 'addon';
+	foreach ($addons as $addon) {
+		$params['type']        = 'pkg';
 		$params['name']        = $addon;
-		$params['version']     = $addons->getVersion($addon);
-		$params['supportPage'] = $addons->getSupportPageEx($addon);
+		$params['version']     = $service->getPackageService()->getVersion($addon);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
 		print $this->render('credits/row.phtml', $params);
-
-		if ($addons->isAvailable($addon)) {
-			$params['type'] = 'plugin';
-
-			foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
-				$params['type']        = 'plugin';
-				$params['name']        = $plugin;
-				$params['addon']       = $addon;
-				$params['version']     = $plugins->getVersion(array($addon, $plugin));
-				$params['supportPage'] = $plugins->getSupportPageEx(array($addon, $plugin));
-
-				print $this->render('credits/row.phtml', $params);
-			}
-		}
 	}
 
-	if (count($addons->getRegisteredAddons()) == 0) {
+	if (count($addons) === 0) {
 		?>
 		<tr>
 			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>

@@ -202,7 +202,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 				$prefix.'file_category',
 				$prefix.'user',
 				$prefix.'slice',
-				$prefix.'slice_value',
 				$prefix.'registry'
 			);
 
