@@ -66,7 +66,6 @@ class sly_Layout_Navigation_Backend {
 			$service = sly_Service_Factory::getAddOnService();
 
 			foreach ($service->getAvailableAddOns() as $addon) {
-				$link = '';
 				$page = $service->getComposerKey($addon, 'page', '');
 
 				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
