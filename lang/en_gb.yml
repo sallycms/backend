@@ -209,6 +209,7 @@ locale: Locale
 version: Version
 host: Host
 database: Database
+database_connection: Database connection
 caching_strategy: Caching strategy
 developer_mode: Developer mode
 project_name: Project name

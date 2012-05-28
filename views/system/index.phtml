@@ -119,15 +119,19 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 			<h4><?php print t('version') ?></h4>
 			<p>SallyCMS <?php print sly_Core::getVersion() ?> &ndash; PHP <?php print PHP_VERSION ?></p>
 
-			<h4><?php print t('database') ?></h4>
+			<h4><?php print t('database_connection') ?></h4>
 			<p><?php
 			$database = $config->get('DATABASE');
 
 			if (strtolower($database['DRIVER']) === 'sqlite') {
-				print t('name').': '.sly_html($database['NAME']).'.sq3';
+				print sly_html($database['NAME']).'.sq3';
 			}
 			else {
-				printf('%s: %s<br />%s: %s', t('name'), sly_html($database['NAME']), t('host'), sly_html($database['HOST']));
+				print sly_html(sprintf('%s @ %s/%s', $database['LOGIN'], $database['HOST'], $database['NAME']));
+			}
+
+			if (strtolower($database['DRIVER']) !== 'mysql') {
+				printf(' (%s)', strtolower($database['DRIVER']));
 			}
 			?>
 		</div>
