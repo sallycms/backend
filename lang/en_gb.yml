@@ -44,6 +44,7 @@ update: Update
 search: Search
 move: Move
 publish: Publish
+enabled: enabled
 
 available: available
 unavailable: unavailable
