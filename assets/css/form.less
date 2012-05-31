@@ -78,7 +78,7 @@ select:disabled {
 	height: 24px;
 	color: @drk_grey;
 	border: 1px solid @lt_grey;
-	@border-radius(@brd_rad);
+	.border-radius(@brd_rad);
 	font-size: 100%;
 	font-family: inherit;
 	width: auto;
@@ -107,7 +107,7 @@ a.sly-button {
 }
 
 .sly-form-hidden-label {
-	@hide;
+	.hide;
 }
 
 .sly-form {
@@ -165,7 +165,7 @@ a.sly-button {
 }
 
 .sly-widget {
-	@clearfix;
+	.clearfix;
 	display: block;
 	float: left;
 
@@ -256,7 +256,7 @@ a.sly-button {
 	}
 
 	.sly-form-row {
-		@clearfix;
+		.clearfix;
 		padding: 7px;
 		vertical-align: middle;
 		border-top: 1px dotted @md_grey;
@@ -309,12 +309,12 @@ a.sly-button {
 		width: 100%;
 		padding: 8px 0;
 		text-indent: 10px;
-		@border-top-radius(@brd_rad);
+		.border-top-radius(@brd_rad);
 	}
 
 	.sly-form-wrapper {
 		background-color: #fff;
-		@border-bottom-radius(@brd_rad);
+		.border-bottom-radius(@brd_rad);
 		margin-bottom: 20px;
 	}
 

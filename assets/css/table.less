@@ -4,7 +4,7 @@
 	background-color: #fff;
 	border-spacing: 0;
 	*border-collapse: collapse; /* hack for IE7 */
-	@border-bottom-radius(5px);
+	.border-bottom-radius(5px);
 
 	th, td {
 		/* 'sly-col-icon' is only for identification, not for styling! */
@@ -19,7 +19,7 @@
 	}
 
 	caption {
-		@border-top-radius(@brd_rad);
+		.border-top-radius(@brd_rad);
 		text-align: left;
 		background-color: @drk_grey;
 		color: #4D4646;
@@ -38,7 +38,7 @@
 			color: white;
 			padding-right: 13px;
 			background-repeat: no-repeat;
-			packground-position: right center;
+			background-position: right center;
 
 			&.asc    { background-image: url(../ascending.png);  }
 			&.desc   { background-image: url(../descending.png); }

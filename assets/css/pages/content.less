@@ -1,6 +1,6 @@
 .sly-content-header {
 	margin-bottom: 10px;
-	@clearfix;
+	.clearfix;
 
 	ul {
 		padding: 5px 0; /*  Abstand oben und unten */
@@ -18,7 +18,7 @@
 		background-color: #fff;
 		padding: 2px 8px;
 		color: #1f9eb5;
-		@border-radius(3px);
+		.border-radius(3px);
 
 		&:hover {
 			background-color: #b3b3b3;
@@ -37,12 +37,12 @@
 /* add block widget */
 .sly-form-add-slice {
 	.sly-form-wrapper {
-		@border-top-radius(4px);
+		.border-top-radius(4px);
 		background-color: #e8e8e8;
 		margin-bottom: 10px;
 	}
 
-	legend, label { @hide; }
+	legend, label { .hide; }
 	select.sly-module-select { width: 100%; }
 }
 
@@ -51,8 +51,8 @@
 	width: 100%;
 	line-height: 35px;
 	background-color: @drk_grey;
-	@border-radius(4px 4px 0 0);
-	@clearfix;
+	.border-radius(4px 4px 0 0);
+	.clearfix;
 
 	h3 {
 		float: left;
@@ -84,7 +84,7 @@
 		line-height: 20px;
 		padding: 0 2px 0 20px;
 		background-repeat: no-repeat;
-		@border-radius(3px);
+		.border-radius(3px);
 
 		&.sly-edit, &.sly-delete {
 			padding-right: 8px;
@@ -135,7 +135,7 @@
 .sly-contentpage-slice-output {
 	background-color: #e8e8e8;
 	padding: 14px;
-	@border-bottom-radius(4px);
+	.border-bottom-radius(4px);
 	margin: 0 0 10px;
 	color: #999;
 
@@ -185,7 +185,7 @@
 
 		legend {
 			background: @md_grey;
-			@border-radius(0);
+			.border-radius(0);
 		}
 
 		.sly-form-wrapper {
@@ -212,7 +212,7 @@
 .sly-contentpage-slice-input + .sly-form-row {
 	clear: both;
 	border: 0;
-	@border-bottom-radius(4px);
+	.border-bottom-radius(4px);
 	background-color: @md_grey;
 
 	input {
