@@ -79,7 +79,7 @@ end_sorting: Sortiermodus beenden
 
 redirect_previous_page: 'Sie werden zu Ihrer <a href="{0}">vorherigen Seite</a> weitergeleitet.'
 redirect_startpage: 'Sie werden zu Ihrer <a href="{0}">Startseite</a> weitergeleitet.'
-unknown_controller: 'Unbekannter Controller {0}'
+unknown_controller: 'Unbekannter Controller {0} angefordert.'
 unknown_page: Unbekannte Seite
 unknown_action: 'Methode {0} in {1} nicht gefunden!'
 page_not_allowed: 'Zugriff auf {0} in {1} nicht gestattet!'
@@ -114,7 +114,6 @@ no_categories_available: Keine Kategorien vorhanden.
 article_moved: Artikel wurde verschoben.
 article_deleted: Artikel wurde gelöscht.
 cannot_move_article: Der Artikel konnte nicht verschoben werden.
-check_rights_in_directory: 'Bitte überprüfen Sie die Rechte im Verzeichnis {0}.'
 category_deleted: Kategorie wurde gelöscht.
 category_not_found: 'Die Kategorie {0} wurde nicht gefunden!'
 cannot_delete_start_article: Der Webseiten-Startartikel kann nicht gelöscht werden!
@@ -374,3 +373,4 @@ no_language_selected: Es wurden keine Sprachen ausgewählt.
 sally_core_cache: 'SallyCMS-Cache (Artikel, Inhalte)'
 sally_assetcache: Asset-Cache
 sally_develop_content: 'Templates & Module synchronisieren'
+slice_not_found: 'Block {0} wurde nicht gefunden!'
