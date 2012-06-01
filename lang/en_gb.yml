@@ -374,3 +374,5 @@ sally_core_cache: 'SallyCMS cache (articles, contents)'
 sally_assetcache: Asset cache
 sally_develop_content: 'Synchronize templates & modules'
 slice_not_found: 'Block {0} could not be found!'
+applications: Applications
+backend: Backend
