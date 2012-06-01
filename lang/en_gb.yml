@@ -114,7 +114,6 @@ no_categories_available: No categories available.
 article_moved: Article has been moved.
 article_deleted: Article has been deleted.
 cannot_move_article: Article could not be moved.
-check_rights_in_directory: 'Please check the permission in the directory {0}.'
 category_deleted: Category has been deleted.
 category_not_found: 'Category {0} could not be found!'
 cannot_delete_start_article: Cannot delete the site homepage!
@@ -374,3 +373,4 @@ no_language_selected: No languages have been selected.
 sally_core_cache: 'SallyCMS cache (articles, contents)'
 sally_assetcache: Asset cache
 sally_develop_content: 'Synchronize templates & modules'
+slice_not_found: 'Block {0} could not be found!'
