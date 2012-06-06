@@ -16,6 +16,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		print $this->render('content/meta/index.phtml', array(
 			'article' => $this->article,
+			'slot'    => $this->slot,
 			'user'    => sly_Util_User::getCurrentUser()
 		));
 	}
@@ -168,7 +169,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	private function copyArticle() {
 		$target = sly_post('category_copy_id_new', 'int', 0);
 
-		if ($this->canCopyArticle()) {
+		if ($this->canCopyArticle($target)) {
 			try {
 				$newID         = sly_Service_Factory::getArticleService()->copy($this->article->getId(), $target);
 				$this->info    = t('article_copied');
@@ -184,9 +185,9 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function moveCategory() {
-		$target = sly_post('category_id_new', 'int', 0);
-
-		if ($this->canMoveCategory()) {
+		$target = sly_post('category_id_new', 'int');
+		$user   = sly_Util_User::getCurrentUser();
+		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
 			try {
 				sly_Service_Factory::getCategoryService()->move($this->article->getCategoryId(), $target);
 
@@ -215,39 +216,35 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 * @return boolean
 	 */
 	protected function canConvertToStartArticle() {
-		return $this->canDoStuff('article2startpage');
+		$user = sly_Util_User::getCurrentUser();
+		return sly_Util_Article::canEditArticle($user, $this->article->getCategoryId());
 	}
 
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyContent() {
-		return sly_Util_Language::isMultilingual() && $this->canDoStuff('copyContent');
+	protected function canCopyContent($clang_a, $clang_b) {
+		$user    = sly_Util_User::getCurrentUser();
+		$editok  = sly_Util_Article::canEditContent($user, $this->article->getId());
+		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
+		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
+		return $editok && $clangok;
 	}
 
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyArticle() {
-		return $this->canDoStuff('copyArticle');
+	protected function canCopyArticle($target) {
+		$user = sly_Util_User::getCurrentUser();
+		return sly_Util_Article::canEditArticle($user, $target);
 	}
 
 	/**
 	 * @return boolean
 	 */
 	protected function canMoveCategory() {
-		return $this->canDoStuff('moveCategory', true);
-	}
-
-	private function canDoStuff($right, $categoryOnly = false, $requireEditing = true) {
-		if ($categoryOnly && !$this->article->isStartArticle()) return false;
-
+		if (!$this->article->isStartArticle()) return false;
 		$user = sly_Util_User::getCurrentUser();
-
-		if ($requireEditing && !sly_Util_Article::canEditArticle($user, $this->article->getId())) {
-			return false;
-		}
-
-		return $user->isAdmin() || $user->hasRight('transitional', $right);
+		return $user->isAdmin() || $user->hasRight('article', 'move', sly_Authorisation_ArticleListProvider::ALL) || $user->hasRight('article', 'move', $this->article->getId());
 	}
 }

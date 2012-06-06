@@ -17,13 +17,18 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 
 	public function __construct() {
 		$config = sly_Core::config();
+		$locale = sly_Core::getI18N()->getLocale();
 
-		$this->addCSSFile('assets/css/import.css');
+		$this->addCSSFile('assets/css/import.less');
 
+		$this->addJavaScriptFile('assets/js/modernizr.min.js');
+		$this->addJavaScriptFile('assets/js/iso8601.min.js', 'if lt IE 8');
 		$this->addJavaScriptFile('assets/js/jquery.min.js');
 		$this->addJavaScriptFile('assets/js/json2.min.js');
 		$this->addJavaScriptFile('assets/js/jquery.chosen.min.js');
-		$this->addJavaScriptFile('assets/js/modernizr.min.js');
+		$this->addJavaScriptFile('assets/js/jquery.tools.min.js');
+		$this->addJavaScriptFile('assets/js/jquery.datetime.min.js');
+		$this->addJavaScriptFile('assets/js/locales/'.$locale.'.min.js');
 		$this->addJavaScriptFile('assets/js/standard.min.js');
 
 		$this->setTitle(sly_Core::getProjectName().' - ');
@@ -32,7 +37,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$this->addMeta('robots', 'noindex,nofollow');
 		$this->setBase(sly_Util_HTTP::getBaseUrl(true).'/backend/');
 
-		$locale = explode('_', sly_Core::getI18N()->getLocale(), 2);
+		$locale = explode('_', $locale, 2);
 		$locale = reset($locale);
 
 		if (strlen($locale) === 2) {

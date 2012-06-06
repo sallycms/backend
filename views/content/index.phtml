@@ -11,8 +11,8 @@
 <div class="sly-content-header">
 	<?php
 	// navigation
-	print $this->render('content/_slotmenu.phtml');
-	print $this->render('content/_subpagemenu.phtml');
+	print $this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot));
+	print $this->render('content/_subpagemenu.phtml', array('article' => $article));
 	?>
 </div>
 <?php
@@ -27,9 +27,9 @@ $form   = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_f
 
 $form->setEncType('multipart/form-data');
 $form->addHiddenValue('page', 'content');
-$form->addHiddenValue('article_id', $this->article->getId());
+$form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('func', 'setArticleType');
-$form->addHiddenValue('clang', $this->article->getClang());
+$form->addHiddenValue('clang', $article->getClang());
 
 /////////////////////////////////////////////////////////////////
 // articletype
@@ -61,18 +61,17 @@ elseif ($slot === null) {
 elseif (empty($modules)) {
 	print sly_Helper_Message::info(t('no_modules_allowed'));
 }
-else {
-	print '<div class="sly-content-editmode">';
 
-	$articleSlices = sly_Service_Factory::getArticleSliceService()->find(
-		array(
-			'article_id' => $this->article->getId(),
-			'clang'      => $this->article->getClang(),
-			'slot'       => $this->slot
-		),
-		null,
-		'pos ASC'
-	);
+$nocontent = !$hasType || !$hasTemplate || $slot === null || empty($modules);
+
+$articleSlices = $article->getSlices($slot);
+
+if($nocontent && !empty($articleSlices)) {
+	print sly_Helper_Message::warn(t('slices_left'));
+}
+
+if(!$nocontent) {
+	print '<div class="sly-content-editmode">';
 
 	for ($i = 0; $i <= count($articleSlices); $i++) {
 		try {
@@ -93,7 +92,7 @@ else {
 					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $slot, isset($slicevalues) ? $slicevalues : array());
 				}
 			}
-			else {
+			elseif(!$nocontent) {
 				print $this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules));
 			}
 
@@ -111,8 +110,8 @@ else {
 					}
 				}
 				else {
-					print $this->render('content/_slice_toolbar.phtml', array('articleSlice' => $artslice));
-					print $this->render('content/_slice_content.phtml', array('articleSlice' => $artslice));
+					print $this->render('content/_slice_toolbar.phtml', array('slice' => $artslice, 'nocontent' => $nocontent));
+					print $this->render('content/_slice_content.phtml', array('slice' => $artslice));
 				}
 			}
 		}
