@@ -9,12 +9,8 @@
  */
 
 class sly_Controller_Addon extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $func    = '';
-	protected $addon   = false;
-	protected $info    = '';
-	protected $warning = '';
-
-	private $init = 0;
+	protected $addon = false;
+	private   $init  = 0;
 
 	protected function init() {
 		if ($this->init++) return;
@@ -73,19 +69,20 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		$data = $this->resolveParentRelationships($data);
 
 		$this->render('addon/list.phtml', array(
-			'tree'    => $data,
-			'stati'   => $this->buildStatusList($data),
-			'info'    => $this->info,
-			'warning' => $this->warning
+			'tree'  => $data,
+			'stati' => $this->buildStatusList($data)
 		), false);
 	}
 
 	public function installAction() {
 		$this->init();
-		$this->call('install', 'installed');
 
-		if ($this->warning === '') {
+		try {
+			$this->call('install', 'installed');
 			$this->call('activate', 'activated');
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -93,25 +90,53 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 	public function uninstallAction() {
 		$this->init();
-		$this->call('uninstall', 'uninstalled');
+
+		try {
+			$this->call('uninstall', 'uninstalled');
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+		}
+
 		return $this->sendResponse();
 	}
 
 	public function activateAction() {
 		$this->init();
-		$this->call('activate', 'activated');
+
+		try {
+			$this->call('activate', 'activated');
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+		}
+
 		return $this->sendResponse();
 	}
 
 	public function deactivateAction() {
 		$this->init();
-		$this->call('deactivate', 'deactivated');
+
+		try {
+			$this->call('deactivate', 'deactivated');
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+		}
+
 		return $this->sendResponse();
 	}
 
 	public function reinitAction() {
 		$this->init();
-		$this->call('copyAssets', 'assets_copied');
+
+		try {
+			$this->call('copyAssets', 'assets_copied');
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+		}
+
 		return $this->sendResponse();
 	}
 
@@ -126,19 +151,24 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$addon = reset($todo);
 			$this->setAddOn($addon);
 
-			// if not installed, install it
-			if (!$aservice->isInstalled($addon)) {
-				$this->call('install', 'installed');
-			}
+			try {
+				// if not installed, install it
+				if (!$aservice->isInstalled($addon)) {
+					$this->call('install', 'installed');
+				}
 
-			// if not activated and install went OK, activate it
-			if (!$aservice->isAvailable($addon) && $this->warning === '') {
-				$this->call('activate', 'activated');
-			}
+				// if not activated and install went OK, activate it
+				if (!$aservice->isAvailable($addon) && $this->warning === '') {
+					$this->call('activate', 'activated');
+				}
 
-			// if everything worked out fine, we can redirect to the next addOn
-			if ($this->warning === '' && count($todo) > 1) {
-				sly_Util_HTTP::redirect($_SERVER['REQUEST_URI'], array(), '', 302);
+				// redirect to the next addOn
+				if (count($todo) > 1) {
+					sly_Util_HTTP::redirect($_SERVER['REQUEST_URI'], array(), '', 302);
+				}
+			}
+			catch (Exception $e) {
+				sly_Core::getFlashMessage()->appendWarning($e->getMessage());
 			}
 		}
 
@@ -154,12 +184,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		extract($this->getServices());
 		$addon = $this->getAddOn();
 
-		$this->warning = $manager->$method($addon);
+		$manager->$method($addon);
 
-		if ($this->warning === true) {
-			$this->info    = t('addon_'.$i18n, $addon);
-			$this->warning = '';
-		}
+		sly_Core::getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
 	}
 
 	private function sendResponse() {
@@ -168,14 +195,22 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			while (ob_get_level()) ob_end_clean();
 			ob_start('ob_gzhandler');
 
-			$data = $this->buildDataList();
-			$data = $this->resolveParentRelationships($data);
+			$data  = $this->buildDataList();
+			$data  = $this->resolveParentRelationships($data);
+			$flash = sly_Core::getFlashMessage();
+			$msgs  = $flash->getMessages(sly_Util_FlashMessage::TYPE_WARNING);
+
+			foreach ($msgs as $idx => $list) {
+				$msgs[$idx] = is_array($list) ? implode('<br />', $list) : $list;
+			}
 
 			$response = array(
-				'status'  => !empty($this->info),
+				'status'  => empty($msgs),
 				'stati'   => $this->buildStatusList($data),
-				'message' => $this->warning
+				'message' => implode('<br />', $msgs)
 			);
+
+			$flash->clear();
 
 			print json_encode($response);
 			die;

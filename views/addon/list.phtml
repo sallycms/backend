@@ -8,8 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-if (!empty($info))    print sly_Helper_Message::info($info);
-if (!empty($warning)) print sly_Helper_Message::warn($warning);
+sly_Helper_Message::renderFlashMessage();
 
 $sublist = dirname(__FILE__).'/sublist.phtml';
 
