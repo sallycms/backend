@@ -44,12 +44,14 @@ update: Update
 search: Search
 move: Move
 publish: Publish
+enabled: enabled
 
 available: available
 unavailable: unavailable
 required: required
 requires: requires
 is_required: 'is required by {0}'
+required_by: required by
 activated: activated
 optional: optional
 deactivated: deactivated
@@ -106,46 +108,25 @@ medium: Medium
 logged_out: not signed in
 logged_in_as: Logged in as
 
-add_slice: Add block
 no_articles_available: No articles available.
 no_categories_available: No categories available.
-module_not_found: 'Module {0} could not be found.'
-edit_slice: Edit block
 
 article_moved: Article has been moved.
 article_deleted: Article has been deleted.
 cannot_move_article: Article could not be moved.
-check_rights_in_directory: 'Please check the permission in the directory {0}.'
 category_deleted: Category has been deleted.
 category_not_found: 'Category {0} could not be found!'
 cannot_delete_start_article: Cannot delete the site homepage!
 cannot_delete_not_found_article: Cannot delete the not found article!
 
-slice_updated: Block has been updated.
-slice_added: Block has been added.
 no_rights_to_this_function: Improper permissions for this function!
-slice_deleted: Slice has been deleted.
-no_rights_to_this_module: Improper permissions for this module!
-preview: Preview
-edit_mode: Edit mode
-metadata: Metadata/Misc
-article_copied: Article has been copied.
+
 file_not_found: 'File {0} could not be found!'
 error_moving_uploaded_file: 'An error occured while moving the file {0}.'
-metadata_updated: Metadata has been updated.
 description: Description
-move_article: Move article
-slice_moved: Block has been moved.
-article_content_copied: Article content has been copied.
-cannot_move_slice: Block could not be moved!
-cannot_delete_slice: Block could not be deleted!
-cannot_update_slice: Block could not be updated!
-cannot_copy_article_content: 'Article content could not be copied!'
 
 copy_content: 'Copy contents'
 copy_article: 'Copy article'
-cannot_copy_article: Article could not be moved!
-cannot_move_category: Category could not be moved!
 move_category: Move category
 startarticle: Start article
 article_is_startarticle: This article is a start article.
@@ -153,10 +134,6 @@ convert_to_startarticle: This article cannot be converted to a start article.
 root_articles_cannot_be_startarticles: Articles in the root level cannot be converted to start articles.
 cannot_convert_to_startarticle: Article could not be converted to start article!
 article_converted_to_startarticle: Article has been successfully converted to start article.
-select_type_first: Please select an article type first.
-no_template_defined: This article has no template and cannot contain any content.
-template_has_no_slots: This article cannot contain any content.
-no_modules_allowed: This slot cannot contain any content.
 category_moved: Category has been moved.
 articletype: Article type
 articletypes: Article types
@@ -232,6 +209,7 @@ locale: Locale
 version: Version
 host: Host
 database: Database
+database_connection: Database connection
 caching_strategy: Caching strategy
 developer_mode: Developer mode
 project_name: Project name
@@ -253,28 +231,28 @@ uninstall: uninstall
 deactivate: deactivate
 activate: activate
 reinit_assets: re-initialize assets
-component_help: 'Help for {0}'
-component_help_file_not_found: The help file (help.inc.php) could not be found.
-component_config_not_found: The configuration file (help.inc.php) could not be found.
-component_install_failed: '{0} could not be installed for the following reason:<br /> {1}'
-component_install_sql_failed: '{0} could not be installed for the following errors while running the installation queries:<br /> {1}'
-component_uninstall_failed: '{0} could not be uninstalled for the following reason:<br /> {1}'
-component_uninstall_sql_failed: '{0} could not be installed for the following errors while running the uninstallation queries:<br /> {1}'
-component_activate_failed: '{0} could not be activated because it is not yet installed!'
-component_installed: '{0} has been installed.'
-component_activated: '{0} has been activated.'
-component_deactivated: '{0} has been deactivated.'
-component_uninstalled: '{0} has been uninstalled.'
-component_assets_copied: Assets have been re-initialized.
-component_requires_addon: '{1} requires the addOn {0}.'
-component_requires_plugin: '{1} requires the plugIn {0}.'
-component_incompatible: '{0} is not compatible with this Sally version ({1}).'
-component_incompatible_with_this_version: not compatible with this Sally version
-component_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
-component_assets_failed: 'An error occured while copying the assets directory ({0}).'
+addon_help: 'Help for {0}'
+addon_help_file_not_found: The help file (help.php) could not be found!
+addon_config_not_found: The startup script (boot.php) could not be found!
+addon_install_failed: '{0} could not be installed for the following reason:<br /> {1}'
+addon_install_sql_failed: '{0} could not be installed for the following errors while running the installation queries:<br /> {1}'
+addon_uninstall_failed: '{0} could not be uninstalled for the following reason:<br /> {1}'
+addon_uninstall_sql_failed: '{0} could not be installed for the following errors while running the uninstallation queries:<br /> {1}'
+addon_activate_failed: '{0} could not be activated because it is not yet installed!'
+addon_installed: '{0} has been installed.'
+addon_activated: '{0} has been activated.'
+addon_deactivated: '{0} has been deactivated.'
+addon_uninstalled: '{0} has been uninstalled.'
+addon_assets_copied: Assets have been re-initialized.
+addon_requires_addon: '{1} requires {0}.'
+addon_incompatible: '{0} is not compatible with this Sally version ({1}).'
+addon_incompatible_with_this_version: not compatible with this Sally version
+addon_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
+addon_assets_failed: 'An error occured while copying the assets directory ({0}).'
+addon_not_found: 'AddOn {0} could not be found!'
 no_dependencies: no dependencies
 
-component_cleanup_failed: 'An error occured while cleaning up the assets directory ({0}).'
+addon_cleanup_failed: 'An error occured while cleaning up the assets directory ({0}).'
 no_addons_found: No addOns found. Put new addOns in the directory sally/addons.
 
 credits: Credits
@@ -390,11 +368,12 @@ view_not_found: 'View {0} could not be found!'
 safemode_openbasedir: safe_mode and open_basedir
 layout_has_not_been_set: The layout has not yet been set via ::setLayout().
 media_categories: Medienkategorien
-move_slice: Move slice
-transitional_rights: Transitional rights
+move: move
+query_uses_forbidden_storage_engine: 'The {0}. query does not use InnoDB, but rather {1} as the storage engine. If you are absolutely sure to use {1}, you can set the key allow_non_innodb to true in the addOns''s static.yml.'
 no_language_selected: No languages have been selected.
 sally_core_cache: 'SallyCMS cache (articles, contents)'
 sally_assetcache: Asset cache
 sally_develop_content: 'Synchronize templates & modules'
+slice_not_found: 'Block {0} could not be found!'
 applications: Applications
 backend: Backend

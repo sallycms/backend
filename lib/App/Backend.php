@@ -45,10 +45,10 @@ class sly_App_Backend extends sly_App_Base {
 
 		// be the first to init the layout later on, after the possibly available
 		// auth provider has been setup by external addOns / frontend code.
-		sly_Core::dispatcher()->register('ADDONS_INCLUDED', array($this, 'initNavigation'));
+		sly_Core::dispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
 
 		// instantiate asset service before addOns are loaded to make sure
-		// the Scaffold CSS processing is first in the line for CSS files
+		// the CSS processing is first in the line for CSS files
 		sly_Service_Factory::getAssetService();
 
 		// and now init the rest (addOns, listeners, ...)
