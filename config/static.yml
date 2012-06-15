@@ -8,8 +8,9 @@ authorisation:
     title: 'translate:pages'
     token:
       structure: 'translate:structure'
-      mediapool: 'translate:mediapool'
       addons: 'translate:addons'
+      user: 'translate:users'
+      mediapool: 'translate:mediapool'
   article:
     title: 'translate:articles'
     token:
@@ -42,3 +43,10 @@ authorisation:
     list: 'sly_Authorisation_MediaCategoryListProvider'
     token:
       access: 'translate:grant_access'
+  user:
+    title: 'translate:users'
+    token:
+      add: 'translate:add'
+      edit: 'translate:edit'
+      delete: 'translate:delete'
+
