@@ -11,7 +11,7 @@
 class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 	public function indexAction() {
 		$this->init('index');
-		print $this->render('mediapool/structure.phtml');
+		$this->render('mediapool/structure.phtml', array(), false);
 	}
 
 	public function addAction() {

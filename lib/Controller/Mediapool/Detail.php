@@ -16,24 +16,24 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 
 		$fileID = $this->getCurrentFile();
 
-		print $this->render('mediapool/toolbar.phtml');
+		$this->render('mediapool/toolbar.phtml', array(), false);
 
 		if ($fileID == -1) {
 			$this->warning = t('file_not_found');
-			print $this->render('mediapool/index.phtml');
+			$this->render('mediapool/index.phtml', array(), false);
 			return;
 		}
 
-		print $this->render('mediapool/detail.phtml');
+		$this->render('mediapool/detail.phtml', array(), false);
 	}
 
 	protected function getCurrentFile() {
 		if ($this->file === null) {
 			$fileID   = sly_request('file_id', 'int', -1);
-			$fileName = sly_request('file_name', 'string');
+			$fileName = sly_request('file_name', 'string', '');
 			$service  = sly_Service_Factory::getMediumService();
 
-			if (!empty($fileName)) {
+			if (mb_strlen($fileName) > 0) {
 				$files = $service->find(array('filename' => $fileName), null, null, 'LIMIT 1');
 
 				if (!empty($files)) {
