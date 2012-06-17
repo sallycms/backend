@@ -16,7 +16,7 @@ class sly_Helper_Package {
 	 * Get string with links to support pages
 	 *
 	 * @param  string $package   package name
-	 * @return string            a comma separated list of URLs
+	 * @return string            a comma separated list of links to authors
 	 */
 	public static function getSupportPage($package) {
 		$service = sly_Service_Factory::getAddOnPackageService();
@@ -29,29 +29,43 @@ class sly_Helper_Package {
 			}
 		}
 
-		$supportPage = $service->getHomepage($package, '');
-		$author      = $service->getAuthor($package);
+		$authors  = $service->getKey($package, 'authors');
+		$homepage = $service->getHomepage($package, '');
 
-		if ($supportPage) {
-			$supportPages = sly_makeArray($supportPage);
-			$links        = array();
+		if (empty($authors)) {
+			$links[] = array($homepage, $homepage);
+		}
+		else {
+			foreach ($authors as $author) {
+				$name = isset($author['name']) ? $author['name'] : (isset($author['email']) ? $author['email'] : 'Anon Ymous');
+				$url  = isset($author['homepage']) ? $author['homepage'] : $homepage;
 
-			foreach ($supportPages as $idx => $page) {
-				$infos = parse_url($page);
-				if (!isset($infos['host'])) $infos = parse_url('http://'.$page);
-				if (!isset($infos['host'])) continue;
-
-				$page = sprintf('%s://%s%s', $infos['scheme'], $infos['host'], isset($infos['path']) ? $infos['path'] : '');
-				$host = substr($infos['host'], 0, 4) == 'www.' ? substr($infos['host'], 4) : $infos['host'];
-				$name = $idx === 0 && !empty($author) ? $author : $host;
-				$name = sly_Util_String::cutText($name, 40);
-
-				$links[] = '<a href="'.sly_html($page).'" class="sly-blank">'.sly_html($name).'</a>';
+				$links[] = array($name, $url);
 			}
-
-			$supportPage = implode(', ', $links);
 		}
 
-		return $supportPage;
+		$result = array();
+
+		foreach ($links as $link) {
+			list ($name, $url) = $link;
+			$name = sly_Util_String::cutText($name, 40);
+
+			// try to parse the homepage URL
+			$infos = parse_url($url);
+
+			if (!isset($infos['host'])) {
+				$infos = parse_url('http://'.$url);
+			}
+
+			if (!isset($infos['host'])) {
+				$result[] = sly_html($name);
+			}
+			else {
+				$url      = sprintf('%s://%s%s', $infos['scheme'], $infos['host'], isset($infos['path']) ? $infos['path'] : '/');
+				$result[] = '<a href="'.sly_html($url).'" class="sly-blank">'.sly_html($name).'</a>';
+			}
+		}
+
+		return implode(', ', $result);
 	}
 }

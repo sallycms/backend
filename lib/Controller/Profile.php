@@ -60,7 +60,10 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		// Speichern, fertig.
 
 		$service->save($user);
-		print sly_Helper_Message::info(t('profile_updated'));
+
+		sly_Core::getFlashMessage()->appendInfo(t('profile_updated'));
+		print sly_Helper_Message::renderFlashMessage();
+
 		return $this->indexAction();
 	}
 

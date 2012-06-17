@@ -21,7 +21,7 @@
 	<caption><?php echo t('credits_caption') ?></caption>
 	<thead><tr>
 		<th class="sly-col-icon sly-icon">&nbsp;</th>
-		<th class="sly-col-name"><?php echo t('addon') ?></th>
+		<th class="sly-col-name" colspan="2"><?php echo t('addon') ?></th>
 		<th class="sly-col-version"><?php echo t('version') ?></th>
 		<th class="sly-col-author"><?php echo t('author') ?></th>
 	</tr></thead>
@@ -30,15 +30,32 @@
 	<?php
 
 	$service  = sly_Service_Factory::getAddOnService();
-	$addons = $service->getRegisteredAddOns();
+	$pservice = $service->getPackageService();
+	$addons   = $service->getRegisteredAddOns();
+	$skip     = array();
 
 	foreach ($addons as $addon) {
-		$params['type']        = 'pkg';
+		if (in_array($addon, $skip)) continue;
+
+		$params['type']        = 'addon';
 		$params['name']        = $addon;
-		$params['version']     = $service->getPackageService()->getVersion($addon);
+		$params['version']     = $service->getVersion($addon);
 		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
 		$this->render('credits/row.phtml', $params, false);
+
+		$children = $pservice->getChildren($addon);
+
+		foreach ($children as $child) {
+			$params['type']        = 'addon-child';
+			$params['name']        = $child;
+			$params['version']     = $service->getVersion($child);
+			$params['supportPage'] = sly_Helper_Package::getSupportPage($child);
+
+			$this->render('credits/row.phtml', $params, false);
+
+			$skip[] = $child;
+		}
 	}
 
 	if (count($addons) === 0) {
