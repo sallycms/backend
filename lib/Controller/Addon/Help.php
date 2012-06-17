@@ -23,6 +23,6 @@ class sly_Controller_Addon_Help extends sly_Controller_Addon implements sly_Cont
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return isset($user) && $user->isAdmin();
+		return $user && ($user->isAdmin() || $user->hasRight('pages', 'addons'));
 	}
 }
