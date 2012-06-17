@@ -137,10 +137,9 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				throw new sly_Exception(t('you_cannot_delete_yourself'));
 			}
 
-		if ($user->isAdmin() && !$current->isAdmin()) {
-			print sly_Helper_Message::warn(t('you_cannot_delete_admins'));
-			return false;
-		}
+			if ($user->isAdmin() && !$current->isAdmin()) {
+				throw new sly_Exception(t('you_cannot_delete_admins'));
+			}
 
 			$user->delete();
 			$flash->prependInfo(t('user_deleted'), true);

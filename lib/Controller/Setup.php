@@ -32,16 +32,16 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		// wenn nur eine Sprache -> direkte Weiterleitung
 
 		if (count($languages) === 1) {
-			$url = 'index.php?page=setup&func=license&lang='.urlencode(reset($languages));
-			sly_Util_HTTP::redirect($url);
+			$params = array('func' => 'license', 'lang' => reset($languages));
+			sly_Core::getCurrentApp()->redirect('setup', $params);
 		}
 
-		print $this->render('setup/chooselang.phtml');
+		$this->render('setup/chooselang.phtml', array(), false);
 	}
 
 	public function licenseAction() {
 		$this->init();
-		print $this->render('setup/license.phtml');
+		$this->render('setup/license.phtml', array(), false);
 	}
 
 	public function fspermsAction() {
@@ -91,7 +91,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		}
 
 		$params = compact('sysErrors', 'results', 'protects', 'errors', 'cantCreate', 'tester');
-		print $this->render('setup/fsperms.phtml', $params);
+		$this->render('setup/fsperms.phtml', $params, false);
 	}
 
 	public function dbconfigAction() {
@@ -143,7 +143,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			}
 		}
 
-		print $this->render('setup/dbconfig.phtml', array(
+		$this->render('setup/dbconfig.phtml', array(
 			'host'    => $data['HOST'],
 			'user'    => $data['LOGIN'],
 			'pass'    => $data['PASSWORD'],
@@ -151,7 +151,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			'prefix'  => $data['TABLE_PREFIX'],
 			'driver'  => $data['DRIVER'],
 			'drivers' => $drivers
-		));
+		), false);
 	}
 
 	public function configAction() {
@@ -175,10 +175,10 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			return;
 		}
 
-		print $this->render('setup/config.phtml', array(
+		$this->render('setup/config.phtml', array(
 			'projectName' => $config->get('PROJECTNAME'),
 			'timezone'    => @date_default_timezone_get()
-		));
+		), false);
 	}
 
 	public function initdbAction() {
@@ -254,10 +254,10 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			}
 		}
 
-		print $this->render('setup/initdb.phtml', array(
+		$this->render('setup/initdb.phtml', array(
 			'dbInitFunction'  => $dbInitFunction,
 			'dbInitFunctions' => array('setup', 'nop', 'drop')
-		));
+		), false);
 	}
 
 	public function createuserAction() {
@@ -317,16 +317,16 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		}
 
 		$this->warning = $error;
-		print $this->render('setup/createuser.phtml', array(
+		$this->render('setup/createuser.phtml', array(
 			'usersExist' => $usersExist,
 			'adminUser'  => $adminUser
-		));
+		), false);
 	}
 
 	public function finishAction() {
 		$this->init();
 		sly_Core::config()->setLocal('SETUP', false);
-		print $this->render('setup/finish.phtml');
+		$this->render('setup/finish.phtml', array(), false);
 	}
 
 	protected function title($title) {

@@ -14,7 +14,7 @@ $selected = $this->getCurrentCategory();
 ////////////////////////////////////////////////////////
 // info and error messages
 
-print $this->render('mediapool/notices.phtml');
+$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // list all files in the current category

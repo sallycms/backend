@@ -11,13 +11,13 @@
 <div class="sly-content-header">
 	<?php
 	// navigation
-	print $this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot));
-	print $this->render('content/_subpagemenu.phtml', array('article' => $article));
+	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
+	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
 	?>
 </div>
 <?php
 // messages
-print $this->render('content/_messages.phtml');
+$this->render('content/_messages.phtml', array(), false);
 
 $params = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
 $form   = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_form');
@@ -92,12 +92,13 @@ if(!$nocontent) {
 					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $slot, isset($slicevalues) ? $slicevalues : array());
 				}
 			}
-			elseif(!$nocontent) {
-				print $this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules));
+			elseif (!$nocontent) {
+				$this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules), false);
 			}
 
 			if (isset($articleSlices[$i])) {
 				$artslice = $articleSlices[$i];
+
 				if ($function === 'edit' && $slice_id === $artslice->getId()) {
 					if (!$this->checkPermission('editarticleslice', $artslice->getModule())) {
 						print sly_Helper_Message::warn(t('no_rights_to_this_module'));
@@ -110,8 +111,8 @@ if(!$nocontent) {
 					}
 				}
 				else {
-					print $this->render('content/_slice_toolbar.phtml', array('slice' => $artslice, 'nocontent' => $nocontent));
-					print $this->render('content/_slice_content.phtml', array('slice' => $artslice));
+					$this->render('content/_slice_toolbar.phtml', array('slice' => $artslice, 'nocontent' => $nocontent), false);
+					$this->render('content/_slice_content.phtml', array('slice' => $artslice), false);
 				}
 			}
 		}

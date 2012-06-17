@@ -59,10 +59,10 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 
 		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
 
-		print $this->render('toolbars/languages.phtml', array(
+		$this->render('toolbars/languages.phtml', array(
 			'curClang' => $this->clangId,
 			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
-		));
+		), false);
 
 		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
 			'category_id' => $this->categoryId,
@@ -88,22 +88,22 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
 		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
 
-		print $this->render(self::$viewPath.'category_table.phtml', array(
+		$this->render(self::$viewPath.'category_table.phtml', array(
 			'categories'      => $categories,
 			'currentCategory' => $currentCategory,
 			'statusTypes'     => $this->catService->getStates(),
 			'maxPosition'     => $maxPosition,
 			'maxCatPosition'  => $maxCatPosition
-		));
+		), false);
 
-		print $this->render(self::$viewPath.'article_table.phtml', array(
+		$this->render(self::$viewPath.'article_table.phtml', array(
 			'articles'       => $articles,
 			'statusTypes'    => $this->artService->getStates(),
 			'canAdd'         => $this->canEditCategory($this->categoryId),
 			'canEdit'        => $this->canEditCategory($this->categoryId),
 			'maxPosition'    => $maxPosition,
 			'maxCatPosition' => $maxCatPosition
-		));
+		), false);
 	}
 
 	public function editstatuscategoryAction() {
@@ -354,8 +354,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$user       = sly_Util_User::getCurrentUser();
 
 		if ($user === null) return false;
-		if(!$user->hasRight('pages', 'structure')) return false;
-		if(!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
+		if (!$user->hasRight('pages', 'structure')) return false;
+		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
 		if ($this->action === 'index') {
 			return $this->canViewCategory($categoryId);

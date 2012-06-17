@@ -39,26 +39,29 @@
 	$table->openBuffer();
 
 	if ($this->renderAddArticle) {
-		print $this->render(
+		$this->render(
 			sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
-			array('maxPosition' => $maxPosition)
+			array('maxPosition' => $maxPosition),
+			false
 		);
 	}
 
 	foreach ($articles as $article) {
 		if ($this->renderEditArticle && $this->renderEditArticle == $article->getId()) {
-			print $this->render(
+			$this->render(
 				sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
-				array('article' => $article, 'maxPosition' => $maxPosition)
+				array('article' => $article, 'maxPosition' => $maxPosition),
+				false
 			);
 		}
 		elseif ($this->canEditContent($article->getId())) {
-			print $this->render(
+			$this->render(
 				sly_Controller_Structure::$viewPath.'article_table_row.phtml',
 				array(
 					'article' => $article, 'statusTypes' => $statusTypes,
 					'canEdit' => $canEdit, 'isActive' => $isActive
-				)
+				),
+				false
 			);
 		}
 	}

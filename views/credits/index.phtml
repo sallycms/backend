@@ -38,7 +38,7 @@
 		$params['version']     = $service->getPackageService()->getVersion($addon);
 		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
-		print $this->render('credits/row.phtml', $params);
+		$this->render('credits/row.phtml', $params, false);
 	}
 
 	if (count($addons) === 0) {
