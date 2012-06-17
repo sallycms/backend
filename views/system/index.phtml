@@ -8,11 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$config = sly_Core::config();
-
-if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
-if (!empty($this->info))    print sly_Helper_Message::info($this->info);
-
+$config    = sly_Core::config();
 $locales   = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
 $locales   = array_combine($locales, $locales);
 $yesNo     = array('true' => t('yes'), 'false' => t('no'));
@@ -22,6 +18,8 @@ $languages = sly_Util_Language::findAll();
 foreach ($languages as $id => $language) {
 	$languages[$id] = $language->getName();
 }
+
+print sly_Helper_Message::renderFlashMessage();
 
 // build form
 
