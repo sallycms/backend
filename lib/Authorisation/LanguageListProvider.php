@@ -12,15 +12,29 @@
  * @ingroup authorisation
  */
 class sly_Authorisation_LanguageListProvider implements sly_Authorisation_ListProvider {
-
+	/**
+	 * get object IDs
+	 *
+	 * @return array
+	 */
 	public function getObjectIds() {
 		return sly_Util_Language::findAll(true);
 	}
 
+	/**
+	 * get object title
+	 *
+	 * @throws sly_Exception  if the ID was not found
+	 * @param  int $id        language ID
+	 * @return string
+	 */
 	public function getObjectTitle($id) {
-		return sly_Util_Language::findById($id)->getName();
+		$lng = sly_Util_Language::findById($id);
+
+		if (!$lng) {
+			throw new sly_Exception(t('language_not_found', $id));
+		}
+
+		return $lng->getName();
 	}
-
 }
-
-?>
