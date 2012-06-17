@@ -16,6 +16,9 @@
 	?>
 </div>
 <?php
+
+print sly_Helper_Message::renderFlashMessage();
+
 $category_id = $article->getCategoryId();
 
 $params = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
@@ -128,6 +131,4 @@ if ($this->canConvertToStartarticle()) {
 }
 
 $form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
-
-$this->render('content/_messages.phtml', array(), false);
 if ($form instanceof sly_Viewable) print $form->render();

@@ -58,37 +58,41 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			}
 		}
 		catch (Exception $e) {
-			$this->warning = $e->getMessage();
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		$this->indexAction();
 	}
 
 	private function saveMeta() {
-		$name = sly_post('meta_article_name', 'string');
+		$name  = sly_post('meta_article_name', 'string');
+		$flash = sly_Core::getFlashMessage();
 
 		sly_Service_Factory::getArticleService()->edit($this->article->getId(), $this->article->getClang(), $name);
 
 		// notify system
-		$this->info = t('metadata_updated');
+		$flash->appendInfo(t('metadata_updated'));
 
-		sly_Core::dispatcher()->notify('SLY_ART_META_UPDATED', null, array(
-			'id'    => $this->article->getId(),
-			'clang' => $this->article->getClang()
+		sly_Core::dispatcher()->notify('SLY_ART_META_UPDATED', $this->article, array(
+			'id'    => $this->article->getId(),   // deprecated
+			'clang' => $this->article->getClang() // deprecated
 		));
 
 		$this->article = sly_Util_Article::findById($this->article->getId());
 	}
 
 	private function convertToStartArticle() {
-		try {
-			sly_Service_Factory::getArticleService()->convertToStartArticle($this->article->getId());
+		$flash   = sly_Core::getFlashMessage();
+		$service = sly_Service_Factory::getArticleService();
 
-			$this->info    = t('article_converted_to_startarticle');
+		try {
+			$service->convertToStartArticle($this->article->getId());
+			$flash->appendInfo(t('article_converted_to_startarticle'));
+
 			$this->article = sly_Util_Article::findById($this->article->getId());
 		}
 		catch (sly_Exception $e) {
-			$this->warning = t('cannot_convert_to_startarticle').': '.$e->getMessage();
+			$flash->appendWarning(t('cannot_convert_to_startarticle').': '.$e->getMessage());
 		}
 	}
 
@@ -143,64 +147,73 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			}
 		}
 
-		$this->info    = implode("<br />\n", $infos);
-		$this->warning = implode("<br />\n", $errs);
+		$flash = sly_Core::getFlashMessage();
+
+		foreach ($infos as $msg) $flash->appendInfo($info);
+		foreach ($errs  as $msg) $flash->appendWarning($msg);
 	}
 
 	private function moveArticle() {
-		$target = sly_post('category_id_new', 'int', 0);
+		$target  = sly_post('category_id_new', 'int', 0);
+		$flash   = sly_Core::getFlashMessage();
+		$service = sly_Service_Factory::getArticleService();
 
 		if ($this->canMoveArticle()) {
 			try {
-				sly_Service_Factory::getArticleService()->move($this->article->getId(), $target);
+				$service->move($this->article->getId(), $target);
+				$flash->appendInfo(t('article_moved'));
 
-				$this->info    = t('article_moved');
 				$this->article = sly_Util_Article::findById($this->article->getId());
 			}
 			catch (sly_Exception $e) {
-				$this->warning = t('cannot_move_article').': '.$e->getMessage();
+				$flash->appendWarning(t('cannot_move_article').': '.$e->getMessage());
 			}
 		}
 		else {
-			$this->warning = t('no_rights_to_this_function');
+			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
 	}
 
 	private function copyArticle() {
-		$target = sly_post('category_copy_id_new', 'int', 0);
+		$target  = sly_post('category_copy_id_new', 'int', 0);
+		$flash   = sly_Core::getFlashMessage();
+		$service = sly_Service_Factory::getArticleService();
 
 		if ($this->canCopyArticle($target)) {
 			try {
-				$newID         = sly_Service_Factory::getArticleService()->copy($this->article->getId(), $target);
-				$this->info    = t('article_copied');
+				$newID         = $service->copy($this->article->getId(), $target);
 				$this->article = sly_Util_Article::findById($newID);
+
+				$flash->appendInfo(t('article_copied'));
 			}
 			catch (sly_Exception $e) {
-				$this->warning = t('cannot_copy_article').': '.$e->getMessage();
+				$flash->appendWarning(t('cannot_copy_article').': '.$e->getMessage());
 			}
 		}
 		else {
-			$this->warning = t('no_rights_to_this_function');
+			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
 	}
 
 	private function moveCategory() {
-		$target = sly_post('category_id_new', 'int');
-		$user   = sly_Util_User::getCurrentUser();
+		$target  = sly_post('category_id_new', 'int');
+		$user    = sly_Util_User::getCurrentUser();
+		$flash   = sly_Core::getFlashMessage();
+		$service = sly_Service_Factory::getCategoryService();
 
 		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
 			try {
-				sly_Service_Factory::getCategoryService()->move($this->article->getCategoryId(), $target);
+				$service->move($this->article->getCategoryId(), $target);
+				$flash->appendInfo(t('category_moved'));
 
-				$this->info    = t('category_moved');
 				$this->article = sly_Util_Article::findById($this->article->getCategoryId());
 			}
 			catch (sly_Exception $e) {
-				$this->warning = t('cannot_move_category').': '.$e->getMessage();
+				$flash->appendWarning(t('cannot_move_category').': '.$e->getMessage());
 			}
 		}
 		else {
-			$this->warning = t('no_rights_to_this_function');
+			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
 	}
 
