@@ -52,11 +52,11 @@ if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() ||
 	));
 }
 
-if(!$allowed) {
+if (!$allowed) {
 	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
 	print sly_Helper_Message::warn(t('module_not_allowed_in_slot', $moduleName, $slotTitle));
 }
-if(!$allowed || $nocontent) {
+if (!$allowed || $nocontent) {
 	print sly_Helper_Message::warn(t('delete_this_slice'));
 }
 ?>

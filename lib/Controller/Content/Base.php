@@ -11,8 +11,6 @@
 abstract class sly_Controller_Content_Base extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $article;
 	protected $slot;
-	protected $info;
-	protected $warning;
 
 	protected function init() {
 		$id = sly_request('article_id', 'int');
@@ -31,9 +29,10 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		// validate slot
 		if ($this->article->hasTemplate()) {
 			$templateName = $this->article->getTemplateName();
+			$tplService   = sly_Service_Factory::getTemplateService();
 
-			if (!sly_Service_Factory::getTemplateService()->hasSlot($templateName, $this->slot)) {
-				$this->slot = sly_Service_Factory::getTemplateService()->getFirstSlot($templateName);
+			if (!$tplService->hasSlot($templateName, $this->slot)) {
+				$this->slot = $tplService->getFirstSlot($templateName);
 			}
 		}
 
@@ -56,22 +55,23 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	 */
 	protected function getBreadcrumb() {
 		$art    = $this->article;
+		$clang  = $art->getClang();
 		$user   = sly_Util_User::getCurrentUser();
 		$cat    = $art->getCategory();
 		$result = '<ul class="sly-navi-path">
 			<li>'.t('path').'</li>
-			<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$art->getClang().'">'.t('home').'</a></li>';
+			<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$clang.'">'.t('home').'</a></li>';
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if (sly_Util_Category::canReadCategory($user, $parent->getId())) {
-					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$art->getClang().'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$clang.'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
 
 		$result .= '<li> | '.($art->isStartArticle() ? t('startarticle') : t('article')).'</li>';
-		$result .= '<li> : <a href="index.php?page='.$this->getPageName().'&amp;article_id='.$art->getId().'&amp;clang='.$art->getClang().'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
+		$result .= '<li> : <a href="index.php?page='.$this->getPageName().'&amp;article_id='.$art->getId().'&amp;clang='.$clang.'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
 		$result .= '</ul>';
 
 		return $result;
