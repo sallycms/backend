@@ -229,6 +229,28 @@ class sly_App_Backend extends sly_App_Base {
 		return $this->action;
 	}
 
+	public function redirect($page, $params = array()) {
+		$base = sly_Util_HTTP::getBaseUrl(true).'/backend/index.php';
+
+		if (is_string($params)) {
+			if ($params[0] === '?') $params = substr($params, 1);
+			if ($params[0] === '&') $params = substr($params, 1);
+
+			if (strlen($page) !== 0) {
+				$params = 'page='.urlencode($page).'&'.$params;
+			}
+		}
+		else {
+			if (strlen($page) !== 0) {
+				$params['page'] = $page;
+			}
+
+			$params = http_build_query($params, '', '&');
+		}
+
+		sly_Util_HTTP::redirect($base.'?'.$params, '', '', 302);
+	}
+
 	protected function handleControllerError(Exception $e, $controller, $action) {
 		// throw away all content (including notices and warnings)
 		while (ob_get_level()) ob_end_clean();
