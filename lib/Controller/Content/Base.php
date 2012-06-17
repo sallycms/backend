@@ -15,12 +15,11 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected $warning;
 
 	protected function init() {
-		$clang = sly_Core::getCurrentClang();
-		$id    = sly_request('article_id', 'int');
+		$id = sly_request('article_id', 'int');
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
 
-		$this->article = sly_Util_Article::findById($id, $clang);
+		$this->article = sly_Util_Article::findById($id);
 
 		if (is_null($this->article)) {
 			sly_Core::getLayout()->pageHeader(t('content'));
@@ -44,7 +43,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	}
 
 	protected function renderLanguageBar() {
-		print $this->render('toolbars/languages.phtml', array('curClang' => $this->article->getClang(), 'params' => array(
+		print $this->render('toolbars/languages.phtml', array('params' => array(
 			'page'       => $this->getPageName(),
 			'article_id' => $this->article->getId()
 		)));
@@ -105,13 +104,13 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		if (is_null($user)) return false;
+		if ($user === null) return false;
 
 		$articleId = sly_request('article_id', 'int');
 		$article   = sly_Util_Article::findById($articleId);
 
 		// all users are allowed to see the error message in init()
-		if (is_null($article)) return true;
+		if ($article === null) return true;
 
 		$clang   = sly_Core::getCurrentClang();
 		$clangOk = sly_Util_Language::hasPermissionOnLanguage($user, $clang);
