@@ -19,7 +19,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 
 	public function indexAction() {
 		$this->init();
-		print $this->render('profile/index.phtml', array('user' => $this->getUser()));
+		$this->render('profile/index.phtml', array('user' => $this->getUser()), false);
 	}
 
 	public function updateAction() {

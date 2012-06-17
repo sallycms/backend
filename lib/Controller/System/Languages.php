@@ -19,7 +19,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 		$languageService = sly_Service_Factory::getLanguageService();
 		$this->languages = $languageService->find(null, null, 'id');
 
-		print $this->render('system/languages.phtml');
+		$this->render('system/languages.phtml', array(), false);
 	}
 
 	public function addAction() {

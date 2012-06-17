@@ -74,7 +74,7 @@ class sly_Controller_System_Errorlog extends sly_Controller_System {
 			);
 		}
 
-		print $this->render('system/errorlog.phtml', compact('data', 'lineCount', 'max'));
+		$this->render('system/errorlog.phtml', compact('data', 'lineCount', 'max'), false);
 	}
 
 	public function clearAction() {

@@ -11,8 +11,8 @@
 <div class="sly-content-header">
 	<?php
 	//navigation
-	print $this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot));
-	print $this->render('content/_subpagemenu.phtml', array('article' => $article));
+	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
+	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
 	?>
 </div>
 <?php
@@ -129,5 +129,5 @@ if ($this->canConvertToStartarticle()) {
 
 $form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
 
-print $this->render('content/_messages.phtml');
+$this->render('content/_messages.phtml', array(), false);
 if ($form instanceof sly_Viewable) print $form->render();

@@ -16,7 +16,7 @@ class sly_Controller_Error extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function indexAction() {
-		print $this->render('error/index.phtml', array('e' => $this->exception));
+		$this->render('error/index.phtml', array('e' => $this->exception), false);
 	}
 
 	public function checkPermission($action) {

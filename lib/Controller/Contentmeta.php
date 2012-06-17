@@ -14,11 +14,11 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		if ($this->header() !== true) return;
 
-		print $this->render('content/meta/index.phtml', array(
+		$this->render('content/meta/index.phtml', array(
 			'article' => $this->article,
 			'slot'    => $this->slot,
 			'user'    => sly_Util_User::getCurrentUser()
-		));
+		), false);
 	}
 
 	protected function getPageName() {
@@ -187,6 +187,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	private function moveCategory() {
 		$target = sly_post('category_id_new', 'int');
 		$user   = sly_Util_User::getCurrentUser();
+
 		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
 			try {
 				sly_Service_Factory::getCategoryService()->move($this->article->getCategoryId(), $target);
@@ -228,6 +229,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$editok  = sly_Util_Article::canEditContent($user, $this->article->getId());
 		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
 		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
+
 		return $editok && $clangok;
 	}
 

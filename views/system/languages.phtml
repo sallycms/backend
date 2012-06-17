@@ -49,11 +49,11 @@ if ($this->func == 'add' || $this->func == 'edit'): ?>
 	}
 
 	foreach ($this->languages as $language) {
-		print $this->render('system/languages_row.phtml', array(
+		$this->render('system/languages_row.phtml', array(
 			'clangID'     => $language->getId(),
 			'clangName'   => $language->getName(),
 			'clangLocale' => $language->getLocale()
-		));
+		), false);
 	}
 
 	if ($this->func !== 'add' && $this->func !== 'edit' && empty($this->languages)) {

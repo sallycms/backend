@@ -25,7 +25,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function indexAction() {
 		$this->init();
-		print $this->render('system/index.phtml');
+		$this->render('system/index.phtml', array(), false);
 	}
 
 	public function clearcacheAction() {
@@ -152,7 +152,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function setupAction() {
 		$this->init();
 		sly_Core::config()->setLocal('SETUP', true);
-		sly_Util_HTTP::redirect('index.php', array(), '', 302);
+		sly_Core::getCurrentApp()->redirect('');
 	}
 
 	public function checkPermission($action) {

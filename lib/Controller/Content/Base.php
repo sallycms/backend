@@ -43,10 +43,10 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	}
 
 	protected function renderLanguageBar() {
-		print $this->render('toolbars/languages.phtml', array('params' => array(
+		$this->render('toolbars/languages.phtml', array('params' => array(
 			'page'       => $this->getPageName(),
 			'article_id' => $this->article->getId()
-		)));
+		)), false);
 	}
 
 	/**
@@ -61,7 +61,6 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$result = '<ul class="sly-navi-path">
 			<li>'.t('path').'</li>
 			<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$art->getClang().'">'.t('home').'</a></li>';
-
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {

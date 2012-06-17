@@ -26,8 +26,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 
 	public function indexAction() {
 		$this->init();
-
-		print $this->render('login/index.phtml');
+		$this->render('login/index.phtml', array(), false);
 	}
 
 	public function loginAction() {
