@@ -377,3 +377,4 @@ sally_develop_content: 'Synchronize templates & modules'
 slice_not_found: 'Block {0} could not be found!'
 applications: Applications
 backend: Backend
+package: Package

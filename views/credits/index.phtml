@@ -69,3 +69,31 @@
 	?>
 	</tbody>
 </table>
+
+<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
+	<caption><?php echo t('credits_caption') ?></caption>
+	<thead><tr>
+		<th class="sly-col-icon sly-icon">&nbsp;</th>
+		<th class="sly-col-name" colspan="2"><?php echo t('package') ?></th>
+		<th class="sly-col-version"><?php echo t('version') ?></th>
+		<th class="sly-col-author"><?php echo t('author') ?></th>
+	</tr></thead>
+	<tbody>
+
+	<?php
+
+	$service  = sly_Service_Factory::getVendorPackageService();
+	$packages = $service->getPackages();
+
+	foreach ($packages as $package) {
+		$params['type']        = 'addon';
+		$params['name']        = $package;
+		$params['version']     = $service->getVersion($package);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+
+		$this->render('credits/row.phtml', $params, false);
+	}
+
+	?>
+	</tbody>
+</table>
