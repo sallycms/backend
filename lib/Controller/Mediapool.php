@@ -90,11 +90,11 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 	protected function getCurrentCategory() {
 		if ($this->category === null) {
-			$category = sly_request('rex_file_category', 'int', -1);
+			$category = sly_request('category', 'int', -1);
 			$service  = sly_Service_Factory::getMediaCategoryService();
 
 			if ($category == -1) {
-				$category = sly_Util_Session::get('media[rex_file_category]', 'int');
+				$category = sly_Util_Session::get('media[category]', 'int');
 			}
 
 			// respect category filter
@@ -105,7 +105,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			$category = $service->findById($category);
 			$category = $category ? $category->getId() : 0;
 
-			sly_util_Session::set('media[rex_file_category]', $category);
+			sly_util_Session::set('media[category]', $category);
 			$this->category = $category;
 		}
 
@@ -304,7 +304,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$user = sly_Util_User::getCurrentUser();
 
 		if ($this->selectBox === null) {
-			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('rex_file_category', null, $user);
+			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('category', null, $user);
 			$this->selectBox->setLabel(t('categories'));
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());

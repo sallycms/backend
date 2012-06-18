@@ -104,7 +104,7 @@ if ($this->canAccessFile($medium)) {
 
 	$select = $this->getCategorySelect();
 	$select->setLabel(t('category'));
-	$select->setAttribute('id', 'rex_file_new_category');
+	$select->setAttribute('id', 'new_category');
 	$select->setAttribute('onchange', '');
 	$select->setAttribute('value', $categoryID);
 	$form->add($select);

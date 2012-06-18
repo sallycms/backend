@@ -70,7 +70,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 
 		$fileID = $this->getCurrentFile();
 		$medium = sly_Util_Medium::findById($fileID);
-		$target = $this->getCurrentCategory();
+		$target = sly_request('new_category', 'int', 0);
 
 		// only continue if a file was found, we can access it and have access
 		// to the target category
