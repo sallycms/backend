@@ -9,8 +9,7 @@
  */
 
 class sly_Controller_Setup extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $warning;
-	protected $info;
+	protected $flash;
 	protected $lang;
 
 	private $init = false;
@@ -18,8 +17,9 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	protected function init() {
 		if ($this->init) return;
 
-		$this->init = true;
-		$this->lang = sly_request('lang', 'string');
+		$this->flash = sly_Core::getFlashMessage();
+		$this->init  = true;
+		$this->lang  = sly_request('lang', 'string');
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/setup/');
 	}
@@ -29,8 +29,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 
 		$languages = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
 
-		// wenn nur eine Sprache -> direkte Weiterleitung
-
+		// forward if only one locale available
 		if (count($languages) === 1) {
 			$params = array('func' => 'license', 'lang' => reset($languages));
 			sly_Core::getCurrentApp()->redirect('setup', $params);
@@ -86,6 +85,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			$errors = true;
 		}
 
+		// forward if OK
 		if (!$errors && !$warnings) {
 			return $this->dbconfigAction();
 		}
@@ -103,7 +103,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$drivers = sly_DB_PDO_Driver::getAvailable();
 
 		if (empty($drivers)) {
-			$this->warning = t('setup_no_drivers_available');
+			$this->flash->appendWarning(t('setup_no_drivers_available'));
 			$sent = false;
 		}
 
@@ -139,7 +139,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 				return;
 			}
 			catch (sly_DB_PDO_Exception $e) {
-				$this->warning = $e->getMessage();
+				$this->flash->appendWarning($e->getMessage());
 			}
 		}
 
@@ -187,10 +187,10 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$dbInitFunction = sly_post('db_init_function', 'string', '');
 
 		if (isset($_POST['submit'])) {
-			$config = sly_Core::config();
-			$prefix = $config->get('DATABASE/TABLE_PREFIX');
-			$driver = $config->get('DATABASE/DRIVER');
-			$error  = '';
+			$config  = sly_Core::config();
+			$prefix  = $config->get('DATABASE/TABLE_PREFIX');
+			$driver  = $config->get('DATABASE/DRIVER');
+			$success = true;
 
 			// benötigte Tabellen prüfen
 
@@ -206,7 +206,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			);
 
 			switch ($dbInitFunction) {
-				case 'drop': // alte DB löschen
+				case 'drop': // delete old database
 					$db = sly_DB_Persistence::getInstance();
 
 					// 'DROP TABLE IF EXISTS' is MySQL-only...
@@ -214,22 +214,22 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 						if (in_array($tblname, $requiredTables)) $db->query('DROP TABLE '.$tblname);
 					}
 
-					// kein break;
+					// fallthrough
 
-				case 'setup': // leere Datenbank neu einrichten
-					$script = SLY_COREFOLDER.'/install/'.strtolower($driver).'.sql';
-					$error  = $this->setupImport($script);
+				case 'setup': // setup empty database with fresh tables
+					$script  = SLY_COREFOLDER.'/install/'.strtolower($driver).'.sql';
+					$success = $this->setupImport($script);
 
 					break;
 
-				case 'nop': // Datenbank schon vorhanden, nichts tun
+				case 'nop': // do nothing
 				default:
 			}
 
 			// Wenn kein Fehler aufgetreten ist, aber auch etwas geändert wurde, prüfen
 			// wir, ob dadurch alle benötigten Tabellen erzeugt wurden.
 
-			if (empty($error)) {
+			if ($success) {
 				$existingTables = array();
 				$db             = sly_DB_Persistence::getInstance();
 
@@ -240,17 +240,19 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 				}
 
 				foreach (array_diff($requiredTables, $existingTables) as $missingTable) {
-					$error .= t('setup_initdb_table_not_found', $missingTable).'<br />';
+					$this->flash->appendWarning(t('setup_initdb_table_not_found', $missingTable));
+					$success = false;
 				}
 			}
 
-			if (empty($error)) {
+			if ($success) {
+				// redirect
 				unset($_POST['submit']);
 				$this->configAction();
 				return;
 			}
 			else {
-				$this->warning = $error;
+				$this->flash->appendWarning(t('setup_initdb_reinit'));
 			}
 		}
 
@@ -270,23 +272,25 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$createAdmin = !sly_post('no_admin', 'boolean', false);
 		$adminUser   = sly_post('admin_user', 'string');
 		$adminPass   = sly_post('admin_pass', 'string');
-		$error       = '';
+		$success     = true;
 
 		if (isset($_POST['submit'])) {
 			if ($createAdmin) {
 				if (empty($adminUser)) {
-					$error = t('setup_createuser_no_admin_given');
+					$this->flash->appendWarning(t('setup_createuser_no_admin_given'));
+					$success = false;
 				}
 
 				if (empty($adminPass)) {
 					if (!empty($error)) $error .= ' ';
-					$error .= t('setup_createuser_no_password_given');
+					$this->flash->appendWarning(t('setup_createuser_no_password_given'));
+					$success = false;
 				}
 
-				if (empty($error)) {
-					$service    = sly_Service_Factory::getUserService();
-					$user       = $service->find(array('login' => $adminUser));
-					$user       = empty($user) ? new sly_Model_User() : reset($user);
+				if ($success) {
+					$service = sly_Service_Factory::getUserService();
+					$user    = $service->find(array('login' => $adminUser));
+					$user    = empty($user) ? new sly_Model_User() : reset($user);
 
 					$user->setName(ucfirst(strtolower($adminUser)));
 					$user->setLogin($adminUser);
@@ -300,23 +304,29 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 					$user->setPassword($adminPass); // call this after $user->setCreateDate();
 					$user->setRevision(0);
 
-					if (!$service->save($user)) {
-						$error = t('setup_createuser_cant_create_admin');
+					try {
+						$service->save($user);
+					}
+					catch (Exception $e) {
+						$this->flash->appendWarning(t('setup_createuser_cant_create_admin'));
+						$this->flash->appendWarning($e->getMessage());
+						$success = false;
 					}
 				}
 			}
 			elseif (!$usersExist) {
-				$error = t('setup_createuser_no_users_found');
+				$this->flash->appendWarning(t('setup_createuser_no_users_found'));
+				$success = false;
 			}
 
-			if (empty($error)) {
+			if ($success) {
+				// redirect
 				unset($_POST['submit']);
 				$this->finishAction();
 				return;
 			}
 		}
 
-		$this->warning = $error;
 		$this->render('setup/createuser.phtml', array(
 			'usersExist' => $usersExist,
 			'adminUser'  => $adminUser
@@ -362,21 +372,22 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	}
 
 	protected function setupImport($sqlScript) {
-		$err_msg = '';
-
 		if (file_exists($sqlScript)) {
-			$importer = new sly_DB_Importer();
-			$result   = $importer->import($sqlScript);
-
-			if ($result['state'] === false) {
-				$err_msg = $result['message'];
+			try {
+				$importer = new sly_DB_Importer();
+				$importer->import($sqlScript);
+			}
+			catch (Exception $e) {
+				$this->flash->addWarning($e->getMessage());
+				return false;
 			}
 		}
 		else {
-			$err_msg = t('setup_import_dump_not_found').'<br />';
+			$this->flash->addWarning(t('setup_import_dump_not_found'));
+			return false;
 		}
 
-		return $err_msg;
+		return true;
 	}
 
 	public function checkPermission($action) {
