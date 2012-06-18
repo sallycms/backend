@@ -12,8 +12,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected $action;
 	protected $categoryId;
 	protected $clangId;
-	protected $info;
-	protected $warning;
 	protected $artService;
 	protected $catService;
 	protected $renderAddCategory  = false;
@@ -82,9 +80,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		// render flash message
 		print sly_Helper_Message::renderFlashMessage();
 
-		$currentCategory = $this->catService->findById($this->categoryId, $this->clangId);
-		$categories      = $this->catService->findByParentId($this->categoryId, false, $this->clangId);
-		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false, $this->clangId);
+		$currentCategory = $this->catService->findById($this->categoryId);
+		$categories      = $this->catService->findByParentId($this->categoryId, false);
+		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
 		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
 		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
 
