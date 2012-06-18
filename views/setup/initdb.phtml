@@ -11,17 +11,13 @@
 $this->title(t('setup_step_n', 3, 5));
 
 // init page
-
-if (!empty($this->warning)) {
-	print sly_Helper_Message::warn($this->warning.'<br /><br />'.t('setup_initdb_reinit'));
-}
+print sly_Helper_Message::renderFlashMessage();
 
 if (!in_array($dbInitFunction, $dbInitFunctions)) {
 	$dbInitFunction = 'setup';
 }
 
 // create form
-
 $form = new sly_Form('index.php', 'POST', t('setup_initdb_header'), '', 'sly-setup-initdb');
 $this->printHiddens('initdb', $form);
 

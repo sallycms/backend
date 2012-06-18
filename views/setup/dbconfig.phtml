@@ -10,7 +10,7 @@
 
 $this->title(t('setup_step_n', 2, 5));
 
-if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
+print sly_Helper_Message::renderFlashMessage();
 
 $form = new sly_Form('index.php', 'POST', t('setup_database_config'), '', 'sly-setup-dbsetup');
 $this->printHiddens('dbconfig', $form);
