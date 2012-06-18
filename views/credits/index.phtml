@@ -33,10 +33,12 @@
 	$pservice = $service->getPackageService();
 	$addons   = $service->getRegisteredAddOns();
 	$skip     = array();
+	$link     = true;
 
 	foreach ($addons as $addon) {
 		if (in_array($addon, $skip)) continue;
 
+		$params['link']        = $link;
 		$params['type']        = 'addon';
 		$params['name']        = $addon;
 		$params['version']     = $service->getVersion($addon);
@@ -84,8 +86,10 @@
 
 	$service  = sly_Service_Factory::getVendorPackageService();
 	$packages = $service->getPackages();
+	$link     = false;
 
 	foreach ($packages as $package) {
+		$params['link']        = $link;
 		$params['type']        = 'addon';
 		$params['name']        = $package;
 		$params['version']     = $service->getVersion($package);
