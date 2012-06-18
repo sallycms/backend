@@ -73,7 +73,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 
 		if ($category) {
 			try {
-				$service->delete($editID);
+				$service->deleteByCategory($category);
 				$this->info = t('category_deleted');
 			}
 			catch (Exception $e) {

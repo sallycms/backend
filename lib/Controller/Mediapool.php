@@ -250,7 +250,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 				$service = sly_Service_Factory::getMediumService();
 
 				try {
-					$service->delete($medium->getId());
+					$service->deleteByMedium($medium);
 					$this->revalidate();
 					$this->info[] = t('medium_deleted');
 				}

@@ -89,7 +89,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 		$flash     = sly_Core::getFlashMessage();
 
 		if (isset($languages[$clangID])) {
-			$ok = sly_Service_Factory::getLanguageService()->delete(array('id' => $clangID));
+			$ok = sly_Service_Factory::getLanguageService()->deleteById($clangID);
 
 			if ($ok > 0) {
 				$flash->appendInfo(t('language_deleted'));

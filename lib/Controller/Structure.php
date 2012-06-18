@@ -145,7 +145,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
-			$this->catService->delete($editId);
+			$this->catService->deleteById($editId);
 			$flash->prependInfo(t('category_deleted'), true);
 		}
 		catch (Exception $e) {
@@ -162,7 +162,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
-			$this->artService->delete($editId);
+			$this->artService->deleteById($editId);
 			$flash->prependInfo(t('article_deleted'), true);
 		}
 		catch (Exception $e) {
