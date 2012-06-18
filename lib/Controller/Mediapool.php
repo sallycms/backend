@@ -363,9 +363,9 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$filename = addslashes($medium->getFilename());
 		$prefix   = sly_Core::getTablePrefix();
 		$query    =
-			'SELECT s.article_id, s.clang FROM '.$prefix.'slice_value sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
-			'WHERE sv.slice_id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND value LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
+			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
+			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
+			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
 
 		$res    = array();
 		$usages = array();
