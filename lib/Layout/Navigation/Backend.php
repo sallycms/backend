@@ -102,7 +102,7 @@ class sly_Layout_Navigation_Backend {
 	 * @return sly_Layout_Navigation_Page
 	 */
 	public function addPage($group, $name, $title = null, $popup = false, $pageParam = null) {
-		$page  = new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
+		$page = new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
 		$this->addPageObj($group, $page);
 		return $page;
 	}

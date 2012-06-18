@@ -128,7 +128,7 @@ class sly_Helper_Content {
 
 	public static function metaFormAddButtonBar($form, $label, $name) {
 		$button = new sly_Form_Input_Button('submit', $name, $label);
-		$button->setAttribute('onclick', 'return confirm(\''.$label.'?\')');
+		$button->setAttribute('onclick', 'return confirm('.json_encode($label.'?').')');
 		$form->add(new sly_Form_ButtonBar(array('submit' => $button)));
 	}
 }
