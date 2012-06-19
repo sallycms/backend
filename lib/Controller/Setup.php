@@ -53,7 +53,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$tester    = new sly_Util_Requirements();
 		$level     = error_reporting(0);
 
-		$results['php_version']    = array('5.2', '5.3', $tester->phpVersion());
+		$results['php_version']    = array('5.2', '5.4', $tester->phpVersion());
 		$results['mysql_version']  = array('5.0', '5.1', $tester->mySQLVersion());
 		$results['php_time_limit'] = array('20s', '60s', $tester->execTime());
 		$results['php_mem_limit']  = array('16MB', '32MB', $tester->memoryLimit());
