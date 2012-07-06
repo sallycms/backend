@@ -12,21 +12,37 @@
  * @ingroup authorisation
  */
 class sly_Authorisation_MediaCategoryListProvider implements sly_Authorisation_ListProvider {
-
+	/**
+	 * get object IDs
+	 *
+	 * @return array
+	 */
 	public function getObjectIds() {
 		$categories = sly_Service_Factory::getMediaCategoryService()->find();
-		$res = array(self::ALL);
-		foreach($categories as $category) {
-			$res[] = $category->getId();
+		$res        = array(self::ALL);
+
+		foreach ($categories as $category) {
+			$res[] = (int) $category->getId();
 		}
+
 		return $res;
 	}
 
+	/**
+	 * get object title
+	 *
+	 * @throws sly_Exception  if the ID was not found
+	 * @param  int $id        category ID
+	 * @return string
+	 */
 	public function getObjectTitle($id) {
-		if($id == self::ALL) return t('all');
-		return sly_Util_MediaCategory::findById($id)->getName();
+		if ($id === self::ALL) return t('all');
+		$cat = sly_Util_MediaCategory::findById($id);
+
+		if (!$cat) {
+			throw new sly_Exception(t('category_not_found', $id));
+		}
+
+		return $cat->getName();
 	}
-
 }
-
-?>

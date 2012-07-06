@@ -28,16 +28,15 @@ class sly_Layout_Navigation_Backend {
 
 			// Core-Seiten initialisieren
 
-			if ($isAdmin || $user->hasStructureRight()) {
+			if ($isAdmin || $user->hasRight('pages', 'structure')) {
 				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
 
 				if ($hasClangPerm) {
 					$this->addPage('system', 'structure');
 				}
-
-				$this->addPage('system', 'mediapool', null, true);
 			}
-			elseif ($user->hasRight('pages', 'mediapool')) {
+
+			if ($user->hasRight('pages', 'mediapool')) {
 				$this->addPage('system', 'mediapool', null, true);
 			}
 
@@ -63,32 +62,17 @@ class sly_Layout_Navigation_Backend {
 				}
 			}
 
-			// AddOn-Seiten initialisieren
-			$addonService  = sly_Service_Factory::getAddOnService();
-			$pluginService = sly_Service_Factory::getPluginService();
+			// init addOn pages
+			$service = sly_Service_Factory::getAddOnService();
 
-			foreach ($addonService->getAvailableAddons() as $addon) {
-				$link = '';
-				$page = $addonService->getProperty($addon, 'page', '');
+			foreach ($service->getAvailableAddOns() as $addon) {
+				$page = $service->getComposerKey($addon, 'page', '');
 
 				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-					$name  = $addonService->getProperty($addon, 'name', '');
-					$popup = $addonService->getProperty($addon, 'popup', false);
+					$name  = $service->getComposerKey($addon, 'name', '');
+					$popup = $service->getComposerKey($addon, 'popup', false);
 
-					$this->addPage('addon', strtolower($addon), $name, $popup, $page);
-				}
-
-				foreach ($pluginService->getAvailablePlugins($addon) as $plugin) {
-					$pluginArray = array($addon, $plugin);
-					$link        = '';
-					$page        = $pluginService->getProperty($pluginArray, 'page', '');
-
-					if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-						$name  = $pluginService->getProperty($pluginArray, 'name', '');
-						$popup = $pluginService->getProperty($pluginArray, 'popup', false);
-
-						$this->addPage('addon', strtolower($plugin), $name, $popup, $page);
-					}
+					$this->addPage('addon', $addon, $name, $popup, $page);
 				}
 			}
 		}
@@ -118,7 +102,7 @@ class sly_Layout_Navigation_Backend {
 	 * @return sly_Layout_Navigation_Page
 	 */
 	public function addPage($group, $name, $title = null, $popup = false, $pageParam = null) {
-		$page  = new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
+		$page = new sly_Layout_Navigation_Page($name, $title, $popup, $pageParam);
 		$this->addPageObj($group, $page);
 		return $page;
 	}

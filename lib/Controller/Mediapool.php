@@ -25,8 +25,8 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		// load our i18n stuff
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/mediapool/');
 
-		$this->info       = sly_request('info', 'string');
-		$this->warning    = sly_request('warning', 'string');
+		$this->info       = sly_request('info', 'string', '');
+		$this->warning    = sly_request('warning', 'string', '');
 		$this->args       = sly_requestArray('args', 'string');
 		$this->categories = array();
 		$this->action     = $action;
@@ -44,26 +44,28 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$layout = sly_Core::getLayout();
 		$nav    = $layout->getNavigation();
 		$page   = $nav->find('mediapool');
-		$cur    = sly_Core::getCurrentControllerName();
 
-		$subline = array(
-			array('mediapool',        t('media_list')),
-			array('mediapool_upload', t('upload_file'))
-		);
+		if ($page) {
+			$cur     = sly_Core::getCurrentControllerName();
+			$subline = array(
+				array('mediapool',        t('media_list')),
+				array('mediapool_upload', t('upload_file'))
+			);
 
-		if ($this->isMediaAdmin()) {
-			$subline[] = array('mediapool_structure', t('categories'));
-			$subline[] = array('mediapool_sync',      t('sync_files'));
-		}
+			if ($this->isMediaAdmin()) {
+				$subline[] = array('mediapool_structure', t('categories'));
+				$subline[] = array('mediapool_sync',      t('sync_files'));
+			}
 
-		foreach ($subline as $item) {
-			$sp = $page->addSubpage($item[0], $item[1]);
+			foreach ($subline as $item) {
+				$sp = $page->addSubpage($item[0], $item[1]);
 
-			if (!empty($this->args)) {
-				$sp->setExtraParams(array('args' => $this->args));
+				if (!empty($this->args)) {
+					$sp->setExtraParams(array('args' => $this->args));
 
-				// ignore the extra params when detecting the current page
-				if ($cur === $item[0]) $sp->forceStatus(true);
+					// ignore the extra params when detecting the current page
+					if ($cur === $item[0]) $sp->forceStatus(true);
+				}
 			}
 		}
 
@@ -73,7 +75,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$layout->pageHeader(t('media_list'), $page);
 		$layout->setBodyAttr('class', 'sly-popup sly-mediapool');
 
-		print $this->render('mediapool/javascript.phtml');
+		$this->render('mediapool/javascript.phtml', array(), false);
 	}
 
 	protected function getArgumentString($separator = '&amp;') {
@@ -88,11 +90,11 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 	protected function getCurrentCategory() {
 		if ($this->category === null) {
-			$category = sly_request('rex_file_category', 'int', -1);
+			$category = sly_request('category', 'int', -1);
 			$service  = sly_Service_Factory::getMediaCategoryService();
 
 			if ($category == -1) {
-				$category = sly_Util_Session::get('media[rex_file_category]', 'int');
+				$category = sly_Util_Session::get('media[category]', 'int');
 			}
 
 			// respect category filter
@@ -103,7 +105,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			$category = $service->findById($category);
 			$category = $category ? $category->getId() : 0;
 
-			sly_util_Session::set('media[rex_file_category]', $category);
+			sly_util_Session::set('media[category]', $category);
 			$this->category = $category;
 		}
 
@@ -156,13 +158,13 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 		$files = $this->getFiles();
 
-		print $this->render('mediapool/toolbar.phtml');
+		$this->render('mediapool/toolbar.phtml', array(), false);
 
 		if (empty($files)) {
 			print sly_Helper_Message::info(t('no_media_found'));
 		}
 		else {
-			print $this->render('mediapool/index.phtml', compact('files'));
+			$this->render('mediapool/index.phtml', compact('files'), false);
 		}
 	}
 
@@ -183,7 +185,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			return $this->indexAction();
 		}
 
-		$media = sly_postArray('selectedmedia', 'int', array());
+		$media = sly_postArray('selectedmedia', 'int');
 
 		if (empty($media)) {
 			$this->warning = t('no_files_selected');
@@ -214,7 +216,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			return $this->indexAction();
 		}
 
-		$files = sly_postArray('selectedmedia', 'int', array());
+		$files = sly_postArray('selectedmedia', 'int');
 
 		if (empty($files)) {
 			$this->warning = t('no_files_selected');
@@ -248,7 +250,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 				$service = sly_Service_Factory::getMediumService();
 
 				try {
-					$service->delete($medium->getId());
+					$service->deleteByMedium($medium);
 					$this->revalidate();
 					$this->info[] = t('medium_deleted');
 				}
@@ -281,9 +283,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		if (is_null($user)) return false;
-
-		return $user->hasStructureRight() || $user->hasRight('pages', 'mediapool');
+		return $user && ($user->isAdmin() || $user->hasRight('pages', 'mediapool'));
 	}
 
 	protected function isMediaAdmin() {
@@ -304,7 +304,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$user = sly_Util_User::getCurrentUser();
 
 		if ($this->selectBox === null) {
-			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('rex_file_category', null, $user);
+			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('category', null, $user);
 			$this->selectBox->setLabel(t('categories'));
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());
@@ -363,9 +363,9 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$filename = addslashes($medium->getFilename());
 		$prefix   = sly_Core::getTablePrefix();
 		$query    =
-			'SELECT s.article_id, s.clang FROM '.$prefix.'slice_value sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
-			'WHERE sv.slice_id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND value LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
+			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
+			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
+			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
 
 		$res    = array();
 		$usages = array();

@@ -1,23 +1,20 @@
 <?php
 /*
- * Copyright (C) 2009 REDAXO
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License Version 2 as published by the
- * Free Software Foundation.
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
  */
 
-/**
- * @package redaxo4
- */
-
-$resize   = sly_Service_Factory::getAddOnService()->isAvailable('image_resize');
+$resize   = sly_Util_AddOn::isAvailable('sallycms/image-resize');
 $selected = $this->getCurrentCategory();
 
 ////////////////////////////////////////////////////////
 // info and error messages
 
-print $this->render('mediapool/notices.phtml');
+$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // list all files in the current category
@@ -51,20 +48,19 @@ ob_start();
 	// move and delete selected items
 
 	if ($isAdmin) {
-		$add_input = '';
-		$select    = $this->getCategorySelect();
+		$inputs = '';
+		$select = $this->getCategorySelect();
 
 		if ($select->getValueCount() > 1) {
-			$select->setAttribute('id', 'rex_move_file_dest_category');
+			$select->setAttribute('id', 'sly_dest_category');
 			$select->setAttribute('onchange', '');
 
-			$add_input =
-				'<label for="rex_move_file_dest_category">'.t('selected_media').'</label>'.
-				$select->render().
+			$inputs =
+				'<label for="sly_dest_category">'.t('selected_media').'</label>'.$select->render().
 				'<input class="sly-form-submit-2 sly-button-changecat sly-form-submit" type="submit" name="move" value="'.t('move_to_category').'" />';
 		}
 
-		$add_input .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
+		$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
 
 		?>
 		<tfoot><tr>
@@ -72,7 +68,7 @@ ob_start();
 				<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
 				<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
 			</td>
-			<td colspan="3" class="sly-col-footer"><?php echo $add_input ?></td>
+			<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
 		</tr></tfoot>
 		<?php
 	}
@@ -133,7 +129,7 @@ ob_start();
 
 		if ($title == '') $title = '['.t('no_title').']';
 
-		$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;rex_file_category='.$selected.$argUrl;
+		$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected.$argUrl;
 		$add_td = '<td>&nbsp;</td>';
 
 		if ($isAdmin) {
