@@ -158,7 +158,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 				}
 
 				// if not activated and install went OK, activate it
-				if (!$aservice->isAvailable($addon) && $this->warning === '') {
+				if (!$aservice->isAvailable($addon)) {
 					$this->call('activate', 'activated');
 				}
 
