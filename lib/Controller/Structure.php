@@ -352,11 +352,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$user       = sly_Util_User::getCurrentUser();
 
 		if ($user === null) return false;
+		if ($user->isAdmin()) return true;
 		if (!$user->hasRight('pages', 'structure')) return false;
 		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
 		if ($this->action === 'index') {
-			return $this->canViewCategory($categoryId);
+			$this->canViewCategory($categoryId);
 		}
 
 		if (sly_Util_String::startsWith($this->action, 'editstatus')) {
