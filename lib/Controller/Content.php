@@ -326,7 +326,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		sly_Service_Factory::getArticleService()->touch($this->article, $user);
 
 		$dispatcher->notify('SLY_SLICE_POSTSAVE_'.strtoupper($function), $articleSliceId);
-		$dispatcher->notify('SLY_CONTENT_UPDATED', '', array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));
+		$dispatcher->notify('SLY_CONTENT_UPDATED', $this->article, array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));
 	}
 
 	private function getRequestValues(array $slicedata) {
