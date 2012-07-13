@@ -61,20 +61,6 @@ class sly_Layout_Navigation_Backend {
 					}
 				}
 			}
-
-			// init addOn pages
-			$service = sly_Service_Factory::getAddOnService();
-
-			foreach ($service->getAvailableAddOns() as $addon) {
-				$page = $service->getComposerKey($addon, 'page', '');
-
-				if (!empty($page) && ($isAdmin || $user->hasRight('pages', $page))) {
-					$name  = $service->getComposerKey($addon, 'name', '');
-					$popup = $service->getComposerKey($addon, 'popup', false);
-
-					$this->addPage('addon', $addon, $name, $popup, $page);
-				}
-			}
 		}
 	}
 
