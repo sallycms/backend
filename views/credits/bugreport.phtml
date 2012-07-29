@@ -43,34 +43,23 @@ $sysinfo = array(
 	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
 	'Extensions........: '.implode("\n                    ", $extlists),
 	'',
-	'AddOns & PlugIns',
-	'----------------',
+	'AddOns',
+	'------',
 	'',
 );
 
-// add addOn details
+// add addon details
 
-$addons  = sly_Service_Factory::getAddOnService();
-$plugins = sly_Service_Factory::getPluginService();
-$list    = $addons->getRegisteredAddons();
+$service  = sly_Service_Factory::getAddOnService();
+$pservice = $service->getPackageService();
+$list     = $service->getRegisteredAddOns();
 
 foreach ($list as $addon) {
-	if (!$addons->isInstalled($addon)) continue;
+	if (!$service->isInstalled($addon)) continue;
 
-	$status    = $addons->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
-	$version   = '('.$addons->getVersion($addon).')';
-	$sysinfo[] = sprintf('%-22s %-9s [%s]', $addon, $version, $status);
-
-	if ($addons->isAvailable($addon)) {
-		foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
-			$component = array($addon, $plugin);
-			if (!$plugins->isInstalled($component)) continue;
-
-			$status    = $plugins->isActivated($component) ? 'aktiviert' : 'deaktiviert';
-			$version   = '('.$plugins->getVersion($component).')';
-			$sysinfo[] = sprintf('  %-20s %-9s [%s]', $plugin, $version, $status);
-		}
-	}
+	$status    = $service->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
+	$version   = '('.$pservice->getVersion($addon).')';
+	$sysinfo[] = sprintf('%-40s %-9s [%s]', $addon, $version, $status);
 }
 
 if (empty($list)) {
@@ -100,7 +89,7 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			<li>Stelle sicher, dass du die
 			<a href="https://projects.webvariants.de/projects/sallycms/files">aktuellste
 			Sally-Version</a> einsetzt.</li>
-			<li>Stelle sicher, dass die von dir eingesetzten AddOns aktuell sind.</li>
+			<li>Stelle sicher, dass die von dir eingesetzten Pakete aktuell sind.</li>
 		</ol>
 
 		<p>
@@ -119,7 +108,7 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			nicht weiter.</li>
 			<li>Tritt das Problem im Frontend, Backend oder in beiden auf?</li>
 			<li>Handelt es sich wirklich um einen Sally-Fehler oder liegt das Problem
-			bei einem AddOn? Für AddOns gibt es eigene Bugtracker.</li>
+			bei einem Paket? Für Pakete gibt es eigene Bugtracker.</li>
 		</ul>
 
 		<p>

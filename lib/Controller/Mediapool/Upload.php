@@ -11,7 +11,7 @@
 class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 	public function indexAction() {
 		$this->init('index');
-		print $this->render('mediapool/upload.phtml');
+		$this->render('mediapool/upload.phtml', array(), false);
 	}
 
 	public function uploadAction() {
@@ -33,12 +33,11 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 			$callback = sly_request('callback', 'string');
 
 			if ($callback && sly_post('saveandexit', 'boolean', false) && $file !== null) {
-				print $this->render('mediapool/upload_js.phtml', compact('file', 'callback'));
+				$this->render('mediapool/upload_js.phtml', compact('file', 'callback'), false);
 				exit;
 			}
 			elseif ($file !== null) {
-				header('Location: index.php?page=mediapool&info='.urlencode($this->info));
-				exit;
+				sly_Core::getCurrentApp()->redirect('mediapool', array('info' => $this->info));
 			}
 		}
 		else {

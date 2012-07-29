@@ -7,6 +7,7 @@ authorisation:
   pages:
     title: 'translate:pages'
     token:
+      structure: 'translate:structure'
       addons: 'translate:addons'
       user: 'translate:users'
       mediapool: 'translate:mediapool'
@@ -27,8 +28,11 @@ authorisation:
     token:
       add: 'translate:add'
       edit: 'translate:edit'
+      delete: 'translate:delete'
+      move: 'translate:move'
     supers:
-      add: ['edit']
+      add: ['edit','delete']
+      edit: ['delete', 'move']
   language:
     title: 'translate:languages'
     list: 'sly_Authorisation_LanguageListProvider'
@@ -39,15 +43,6 @@ authorisation:
     list: 'sly_Authorisation_MediaCategoryListProvider'
     token:
       access: 'translate:grant_access'
-  transitional:
-    title: 'translate:transitional_rights'
-    token:
-      moveSlice: translate:move_slice
-      copyContent: translate:copy_content
-      copyArticle: translate:copy_article
-      moveCategory: translate:move_category
-      publishCategory: translate:publish_category
-      article2startpage: translate:convert_to_startarticle
   user:
     title: 'translate:users'
     token:
