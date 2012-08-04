@@ -1,0 +1,30 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$version = !empty($version) ? sly_html($version) : 'N/A';
+
+?>
+
+<tr class="sly-<?php echo $type ?>">
+	<?php if ($type === 'addon'): ?>
+	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, $type) ?></td>
+	<td class="sly-col-name" colspan="2">
+		<?php if ($link): ?>
+		<a href="index.php?page=addon_help&amp;addon=<?php echo urlencode($name) ?>"><?php echo sly_html($name) ?></a>
+		<?php else: print sly_html($name); endif; ?>
+	</td>
+	<?php else: ?>
+	<td>&nbsp;</td>
+	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, $type) ?></td>
+	<td class="sly-col-name"><a href="index.php?page=addon_help&amp;addon=<?php echo urlencode($name) ?>"><?php echo sly_html($name) ?></a></td>
+	<?php endif ?>
+	<td class="sly-col-version"><?php echo $version ?></td>
+	<td class="sly-col-author"><?php echo $supportPage ?></td>
+</tr>
