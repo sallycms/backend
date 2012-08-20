@@ -36,7 +36,7 @@ class sly_Layout_Navigation_Backend {
 				}
 			}
 
-			if ($user->hasRight('pages', 'mediapool')) {
+			if ($isAdmin || $user->hasRight('pages', 'mediapool')) {
 				$this->addPage('system', 'mediapool', null, true);
 			}
 
