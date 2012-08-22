@@ -35,7 +35,7 @@ class sly_Helper_Message {
 
 		foreach ($messages as $type => $msgs) {
 			foreach ($msgs as $m) {
-				if (is_array($m)) $m = implode("<br />\n", $msg);
+				if (is_array($m)) $m = implode("<br />\n", $m);
 
 				if ($type === sly_Util_FlashMessage::TYPE_INFO) {
 					$result[] = self::info($m);
