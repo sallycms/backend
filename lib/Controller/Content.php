@@ -130,7 +130,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$user = sly_Util_User::getCurrentUser();
 
 			// check permission
-			if ($user->isAdmin() || ($user->hasRight('module', 'move', $module))) {
+			if ($user->isAdmin() || $user->hasRight('module', 'move', $module) || $user->hasRight('module', 'move', sly_Authorisation_ModuleListProvider::ALL)) {
 				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $direction);
 				$this->localMessages = true;
 
@@ -245,7 +245,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$module = $slice->getModule();
 		$user   = sly_Util_User::getCurrentUser();
 
-		if (!$user->isAdmin() && !$user->hasRight('module', 'edit', $module)) {
+		if (!$user->isAdmin() && !$user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) && !$user->hasRight('module', 'edit', $module)) {
 			$flash->appendWarning(t('no_rights_to_this_module'));
 			return $this->indexAction();
 		}
