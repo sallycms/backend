@@ -19,9 +19,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 		$this->article = sly_Util_Article::findById($id);
 
-		if (is_null($this->article)) {
-			sly_Core::getLayout()->pageHeader(t('content'));
-			throw new sly_Exception(t('no_articles_available'));
+		if ($this->article === null) {
+			throw new sly_Exception(t('article_not_found', $id), 404);
 		}
 
 		$this->slot = sly_request('slot', 'string', sly_Util_Session::get('contentpage_slot', ''));
