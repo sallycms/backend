@@ -131,13 +131,37 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$conf->set('DEFAULT_ARTICLE_TYPE', '');
 		}
 
-		// Sonstige Einstellungen
+		// caching strategy
+		$strategies = sly_Cache::getAvailableCacheImpls();
 
+		if (!isset($strategies[$cachingStrategy])) {
+			$flash->appendWarning(t('invalid_caching_strategy_selected'));
+		}
+		else {
+			$conf->set('CACHING_STRATEGY', $cachingStrategy);
+		}
+
+		// timezone
+		if (!in_array($timezone, DateTimeZone::listIdentifiers())) {
+			$flash->appendWarning(t('invalid_timezone_selected'));
+		}
+		else {
+			$conf->set('TIMEZONE', $timezone);
+		}
+
+		// backend default locale
+		$locales = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
+
+		if (!in_array($backendLocale, $locales)) {
+			$flash->appendWarning(t('invalid_locale_selected'));
+		}
+		else {
+			$conf->set('DEFAULT_LOCALE', $backendLocale);
+		}
+
+		// misc
 		$conf->set('DEVELOPER_MODE', $developerMode);
-		$conf->set('DEFAULT_LOCALE', $backendLocale);
 		$conf->set('PROJECTNAME', $projectName);
-		$conf->setLocal('CACHING_STRATEGY', $cachingStrategy);
-		$conf->set('TIMEZONE', $timezone);
 
 		// notify system
 		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
