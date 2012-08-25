@@ -198,6 +198,9 @@ invalid_start_article_selected: The selected site homepage is invalid.
 invalid_not_found_article_selected: The selected not found article is invalid.
 invalid_default_language_selected: The selected default language is invalid.
 invalid_default_articletype_selected: The selected default article type is invalid.
+invalid_caching_strategy_selected: The selected caching strategy is invalid.
+invalid_timezone_selected: The selected timezone is invalid.
+invalid_locale_selected: The selected backend locale is invalid.
 languages: Languages
 add_language: Add language
 edit_language: Edit language

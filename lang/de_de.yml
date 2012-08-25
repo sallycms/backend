@@ -198,6 +198,9 @@ invalid_start_article_selected: Es wurde eine ungültige Startseite ausgewählt.
 invalid_not_found_article_selected: Es wurde eine ungültige Fehlerseite ausgewählt.
 invalid_default_language_selected: Es wurde eine ungültige Standardsprache ausgewählt.
 invalid_default_articletype_selected: Es wurde ein ungültiger Standard-Artikeltyp ausgewählt.
+invalid_caching_strategy_selected: Es wurde eine ungültige Cache-Strategie ausgewählt.
+invalid_timezone_selected: Es wurde eine ungültige Zeitzone ausgewählt.
+invalid_locale_selected: Es wurde eine ungültige Backendsprache ausgewählt.
 languages: Sprachen
 add_language: Sprache hinzufügen
 edit_language: Sprache bearbeiten
