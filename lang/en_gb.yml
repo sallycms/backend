@@ -330,9 +330,7 @@ fieldset_contains_multilingual_elements_has_to_be_singlecolumn: Fieldset cannot 
 file_has_no_internal_name: 'File {0} has no internal name!'
 from_language: from language
 to_language: to language
-importer_database_imported: The database dump has been successfully imported.
-importer_entry_count: '({0} queries)'
-importer_no_import_file_chosen_or_wrong_version: The import file is either malformed or incompatible!
+importer_database_imported: 'The database dump has been successfully imported, {0} queries have been executed.'
 importer_no_valid_import_file_prefix: Import file is invalid: Table prefix could not be found!
 importer_no_valid_import_file_version: Import file is invalid: Version stamp could not be found!
 invalid_develop_param: 'Detected invalid parameter {0}.'
