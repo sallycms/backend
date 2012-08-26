@@ -229,8 +229,12 @@ class sly_App_Backend extends sly_App_Base {
 		return $this->action;
 	}
 
-	public function redirect($page, $params = array()) {
+	public function redirect($page, $params = array(), $code = 302) {
 		$base = sly_Util_HTTP::getBaseUrl(true).'/backend/index.php';
+
+		if ($page === null) {
+			$page = $this->getCurrentControllerName();
+		}
 
 		if (is_string($params)) {
 			if ($params[0] === '?') $params = substr($params, 1);
@@ -239,6 +243,8 @@ class sly_App_Backend extends sly_App_Base {
 			if (strlen($page) !== 0) {
 				$params = 'page='.urlencode($page).'&'.$params;
 			}
+
+			$params = rtrim($params, '&?');
 		}
 		else {
 			if (strlen($page) !== 0) {
@@ -248,7 +254,7 @@ class sly_App_Backend extends sly_App_Base {
 			$params = http_build_query($params, '', '&');
 		}
 
-		sly_Util_HTTP::redirect($base.'?'.$params, '', '', 302);
+		sly_Util_HTTP::redirect($base.'?'.$params, '', '', $code);
 	}
 
 	protected function handleControllerError(Exception $e, $controller, $action) {
