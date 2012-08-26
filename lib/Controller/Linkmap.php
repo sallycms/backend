@@ -144,7 +144,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return !empty($user) && $user->hasRight('pages', 'structure');
+		return $user && ($user->isAdmin() || $user->hasRight('pages', 'structure'));
 	}
 
 	protected function url($local = array()) {
