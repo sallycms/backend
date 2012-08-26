@@ -30,7 +30,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$allowed = $user->getAllowedCLangs();
 
 			if (!empty($user) && !empty($allowed) && !isset($_REQUEST['clang']) && !in_array(sly_Core::getDefaultClangId(), $allowed)) {
-				sly_Core::getCurrentApp()->redirect('structure', array('clang' => reset($allowed)));
+				$this->redirect(array('clang' => reset($allowed)));
 			}
 		}
 	}
@@ -118,7 +118,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependWarning($e->getMessage(), true);
 		}
 
-		return $this->redirect();
+		return $this->redirectToCat();
 	}
 
 	public function editstatusarticleAction() {
@@ -135,7 +135,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependWarning($e->getMessage());
 		}
 
-		return $this->redirect();
+		return $this->redirectToCat();
 	}
 
 	public function deletecategoryAction() {
@@ -152,7 +152,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependWarning($e->getMessage());
 		}
 
-		return $this->redirect();
+		return $this->redirectToCat();
 	}
 
 	public function deletearticleAction() {
@@ -169,7 +169,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependWarning($e->getMessage());
 		}
 
-		return $this->redirect();
+		return $this->redirectToCat();
 	}
 
 	public function addcategoryAction() {
@@ -184,7 +184,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 				$this->catService->add($this->categoryId, $name, 0, $position);
 				$flash->prependInfo(t('category_added'), true);
 
-				return $this->redirect();
+				return $this->redirectToCat();
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -207,7 +207,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 				$this->artService->add($this->categoryId, $name, 0, $position);
 				$flash->prependInfo(t('article_added'), true);
 
-				return $this->redirect();
+				return $this->redirectToCat();
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -232,7 +232,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 				$this->catService->edit($editId, $this->clangId, $name, $position);
 				$flash->prependInfo(t('category_updated'), true);
 
-				return $this->redirect();
+				return $this->redirectToCat();
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -257,7 +257,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 				$this->artService->edit($editId, $this->clangId, $name, $position);
 				$flash->prependInfo(t('article_updated'), true);
 
-				return $this->redirect();
+				return $this->redirectToCat();
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -378,14 +378,11 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		return true;
 	}
 
-	protected function redirect($catID = null, $clang = null) {
-		$clang = $clang === null ? $this->clangId    : (int) $clang;
-		$catID = $catID === null ? $this->categoryId : (int) $catID;
+	protected function redirectToCat($catID = null, $clang = null) {
+		$clang  = $clang === null ? $this->clangId    : (int) $clang;
+		$catID  = $catID === null ? $this->categoryId : (int) $catID;
+		$params = array('category_id' => $catID, 'clang' => $clang);
 
-		$response = sly_Core::getResponse();
-		$response->setStatusCode(302);
-		$response->setHeader('Location', 'index.php?page=structure&category_id='.$catID.'&clang='.$clang);
-
-		return $response;
+		return $this->redirectResponse($params);
 	}
 }
