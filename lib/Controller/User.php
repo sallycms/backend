@@ -42,7 +42,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$service->create($params);
 				$flash->prependInfo(t('user_added'), true);
 
-				return $this->redirect();
+				return $this->redirectResponse();
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -100,7 +100,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$user = $service->save($user);
 				$flash->prependInfo(t('user_updated'), true);
 
-				return $this->redirect($apply ? '&func=edit&id='.$user->getId() : '');
+				return $this->redirectResponse($apply ? array('func' => 'edit', 'id' => $user->getId()) : '');
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
@@ -125,7 +125,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$user = $this->getUser();
 
 		if ($user === null) {
-			return $this->redirect();
+			return $this->redirectResponse();
 		}
 
 		$service = sly_Service_Factory::getUserService();
@@ -148,7 +148,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$flash->preprendWarning($e->getMessage(), true);
 		}
 
-		return $this->redirect();
+		return $this->redirectResponse();
 	}
 
 	public function viewAction() {
@@ -279,13 +279,5 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		// and build the permission string
 
 		return '#'.implode('#', $permissions).'#';
-	}
-
-	protected function redirect($suffix = '') {
-		$response = sly_Core::getResponse();
-		$response->setStatusCode(302);
-		$response->setHeader('Location', 'index.php?page=user'.$suffix);
-
-		return $response;
 	}
 }
