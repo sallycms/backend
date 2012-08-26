@@ -17,4 +17,8 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 	protected function getViewFolder() {
 		return SLY_SALLYFOLDER.'/backend/views/';
 	}
+
+	protected function redirect($params, $page = null, $code = 302) {
+		sly_Core::getCurrentApp()->redirect($page, $params, $code);
+	}
 }
