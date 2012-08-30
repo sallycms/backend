@@ -245,7 +245,7 @@ class sly_App_Backend extends sly_App_Base {
 		return $response;
 	}
 
-	protected function prepareRedirectUrl() {
+	protected function prepareRedirectUrl($page, $params) {
 		$base = sly_Util_HTTP::getBaseUrl(true).'/backend/index.php';
 
 		if ($page === null) {
