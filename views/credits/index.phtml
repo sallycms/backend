@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<table class="sly-table sly-addonlist" summary="<?php echo t('credits_caption') ?>">
+<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
 	<caption><?php echo t('credits_caption') ?></caption>
 	<thead><tr>
 		<th class="sly-col-icon sly-icon">&nbsp;</th>
@@ -29,38 +29,73 @@
 
 	<?php
 
-	$addons  = sly_Service_Factory::getAddOnService();
-	$plugins = sly_Service_Factory::getPluginService();
+	$service  = sly_Service_Factory::getAddOnService();
+	$pservice = $service->getPackageService();
+	$addons   = $service->getRegisteredAddOns();
+	$skip     = array();
+	$link     = true;
 
-	foreach ($addons->getRegisteredAddons() as $addon) {
+	foreach ($addons as $addon) {
+		if (in_array($addon, $skip)) continue;
+
+		$params['link']        = $link;
 		$params['type']        = 'addon';
 		$params['name']        = $addon;
-		$params['version']     = $addons->getVersion($addon);
-		$params['supportPage'] = $addons->getSupportPageEx($addon);
+		$params['version']     = $service->getVersion($addon);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
-		print $this->render('credits/row.phtml', $params);
+		$this->render('credits/row.phtml', $params, false);
 
-		if ($addons->isAvailable($addon)) {
-			$params['type'] = 'plugin';
+		$children = $pservice->getChildren($addon);
 
-			foreach ($plugins->getRegisteredPlugins($addon) as $plugin) {
-				$params['type']        = 'plugin';
-				$params['name']        = $plugin;
-				$params['addon']       = $addon;
-				$params['version']     = $plugins->getVersion(array($addon, $plugin));
-				$params['supportPage'] = $plugins->getSupportPageEx(array($addon, $plugin));
+		foreach ($children as $child) {
+			$params['type']        = 'addon-child';
+			$params['name']        = $child;
+			$params['version']     = $service->getVersion($child);
+			$params['supportPage'] = sly_Helper_Package::getSupportPage($child);
 
-				print $this->render('credits/row.phtml', $params);
-			}
+			$this->render('credits/row.phtml', $params, false);
+
+			$skip[] = $child;
 		}
 	}
 
-	if (count($addons->getRegisteredAddons()) == 0) {
+	if (count($addons) === 0) {
 		?>
 		<tr>
 			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
 		</tr>
 		<?php
+	}
+
+	?>
+	</tbody>
+</table>
+
+<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
+	<caption><?php echo t('credits_caption') ?></caption>
+	<thead><tr>
+		<th class="sly-col-icon sly-icon">&nbsp;</th>
+		<th class="sly-col-name" colspan="2"><?php echo t('package') ?></th>
+		<th class="sly-col-version"><?php echo t('version') ?></th>
+		<th class="sly-col-author"><?php echo t('author') ?></th>
+	</tr></thead>
+	<tbody>
+
+	<?php
+
+	$service  = sly_Service_Factory::getVendorPackageService();
+	$packages = $service->getPackages();
+	$link     = false;
+
+	foreach ($packages as $package) {
+		$params['link']        = $link;
+		$params['type']        = 'addon';
+		$params['name']        = $package;
+		$params['version']     = $service->getVersion($package);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+
+		$this->render('credits/row.phtml', $params, false);
 	}
 
 	?>

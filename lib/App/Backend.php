@@ -45,10 +45,10 @@ class sly_App_Backend extends sly_App_Base {
 
 		// be the first to init the layout later on, after the possibly available
 		// auth provider has been setup by external addOns / frontend code.
-		sly_Core::dispatcher()->register('ADDONS_INCLUDED', array($this, 'initNavigation'));
+		sly_Core::dispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
 
 		// instantiate asset service before addOns are loaded to make sure
-		// the Scaffold CSS processing is first in the line for CSS files
+		// the CSS processing is first in the line for CSS files
 		sly_Service_Factory::getAssetService();
 
 		// and now init the rest (addOns, listeners, ...)
@@ -227,6 +227,50 @@ class sly_App_Backend extends sly_App_Base {
 
 	public function getCurrentAction() {
 		return $this->action;
+	}
+
+	public function redirect($page, $params = array(), $code = 302) {
+		$url = $this->prepareRedirectUrl($page, $params);
+		sly_Util_HTTP::redirect($url, '', '', $code);
+	}
+
+	public function redirectResponse($page, $params = array(), $code = 302) {
+		$url      = $this->prepareRedirectUrl($page, $params);
+		$response = sly_Core::getResponse();
+
+		$response->setStatusCode($code);
+		$response->setHeader('Location', $url);
+		$response->setContent(t('redirect_to', $url));
+
+		return $response;
+	}
+
+	protected function prepareRedirectUrl($page, $params) {
+		$base = sly_Util_HTTP::getBaseUrl(true).'/backend/index.php';
+
+		if ($page === null) {
+			$page = $this->getCurrentControllerName();
+		}
+
+		if (is_string($params)) {
+			if ($params[0] === '?') $params = substr($params, 1);
+			if ($params[0] === '&') $params = substr($params, 1);
+
+			if (strlen($page) !== 0) {
+				$params = 'page='.urlencode($page).'&'.$params;
+			}
+
+			$params = rtrim($params, '&?');
+		}
+		else {
+			if (strlen($page) !== 0) {
+				$params['page'] = $page;
+			}
+
+			$params = http_build_query($params, '', '&');
+		}
+
+		return $base.'?'.$params;
 	}
 
 	protected function handleControllerError(Exception $e, $controller, $action) {

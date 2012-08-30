@@ -1,0 +1,32 @@
+edit_mode: Edit mode
+metadata: Metadata/Misc
+preview: Preview
+
+module_not_found: 'Module {0} could not be found.'
+module_not_allowed_in_slot: The module {0} is not not allowed in slot {1}.
+no_rights_to_this_module: Improper permissions for this module!
+
+edit_slice: Edit block
+add_slice: Add block
+slice_updated: Block has been updated.
+slice_added: Block has been added.
+slice_moved: Block has been moved.
+slice_deleted: Slice has been deleted.
+cannot_move_slice: Block could not be moved!
+cannot_delete_slice: Block could not be deleted!
+cannot_update_slice: Block could not be updated!
+
+select_type_first: Please select an article type first.
+no_template_defined: This article has no template and cannot contain any content.
+template_has_no_slots: This article cannot contain any content.
+no_modules_allowed: This slot cannot contain any content.
+slices_left: The content of this article can not be edited, but there are blocks left.
+delete_this_slice: Please delete trhis block.
+
+metadata_updated: Metadata has been updated.
+move_article: Move article
+article_copied: Article has been copied.
+article_content_copied: Article content has been copied.
+cannot_copy_article_content: 'Article content could not be copied!'
+cannot_copy_article: Article could not be moved!
+cannot_move_category: Category could not be moved!

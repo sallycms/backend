@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+print sly_Helper_Message::renderFlashMessage();
+
 $base      = 'index.php?page=user&amp;func=';
 $user      = sly_Util_User::getCurrentUser();
 $isAdmin   = $user->isAdmin();
