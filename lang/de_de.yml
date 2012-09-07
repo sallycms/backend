@@ -379,3 +379,5 @@ slice_not_found: 'Block {0} wurde nicht gefunden!'
 applications: Anwendungen
 backend: Backend
 package: Paket
+operation_requires_user_context: 'Die Operation {0} erfordert einen Nutzerkontext!'
+an_operation_requires_user_context: Diese Operation erfordert einen Nutzerkontext!

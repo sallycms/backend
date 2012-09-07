@@ -3,7 +3,7 @@ metadata: Metadata/Misc
 preview: Preview
 
 module_not_found: 'Module {0} could not be found.'
-module_not_allowed_in_slot: The module {0} is not not allowed in slot {1}.
+module_not_allowed_in_slot: 'The module {0} is not not allowed in slot {1}.'
 no_rights_to_this_module: Improper permissions for this module!
 
 edit_slice: Edit block
