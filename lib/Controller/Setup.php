@@ -301,11 +301,11 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 					$user->setLastTryDate(0);
 					$user->setCreateUser('setup');
 					$user->setUpdateUser('setup');
-					$user->setPassword($adminPass); // call this after $user->setCreateDate();
+					$user->setPassword($adminPass);
 					$user->setRevision(0);
 
 					try {
-						$service->save($user);
+						$service->save($user, $user);
 					}
 					catch (Exception $e) {
 						$this->flash->appendWarning(t('setup_createuser_cant_create_admin'));
