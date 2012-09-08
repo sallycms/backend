@@ -49,23 +49,26 @@
 	}
 
 	if ($this->renderAddCategory) {
-		print $this->render(
+		$this->render(
 			sly_Controller_Structure::$viewPath.'category_table_row_add.phtml',
-			array('maxCatPosition' => $maxCatPosition)
+			array('maxCatPosition' => $maxCatPosition),
+			false
 		);
 	}
 
 	foreach ($categories as $category) {
 		if ($this->renderEditCategory && $this->renderEditCategory == $category->getId()) {
-			print $this->render(
+			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row_edit.phtml',
-				array('category' => $category, 'maxCatPosition' => $maxCatPosition)
+				array('category' => $category, 'maxCatPosition' => $maxCatPosition),
+				false
 			);
 		}
 		elseif ($this->canViewCategory($category->getId())) {
-			print $this->render(
+			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row.phtml',
-				array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive)
+				array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive),
+				false
 			);
 		}
 	}

@@ -9,15 +9,11 @@
  */
 
 class sly_Controller_System extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $warning;
-	protected $info;
 	protected $init;
 
 	protected function init() {
 		if ($this->init) return;
 		$this->init = true;
-
-		// add subpages
 
 		$layout = sly_Core::getLayout();
 		$layout->pageHeader(t('system'));
@@ -25,7 +21,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function indexAction() {
 		$this->init();
-		print $this->render('system/index.phtml');
+		$this->render('system/index.phtml', array(), false);
 	}
 
 	public function clearcacheAction() {
@@ -33,7 +29,6 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// do not call sly_Core::clearCache(), since we want to have fine-grained
 		// control over what caches get cleared
-
 		clearstatcache();
 
 		// clear loader cache
@@ -59,7 +54,9 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			sly_Service_Factory::getAssetService()->clearCache();
 		}
 
-		$this->info = sly_Core::dispatcher()->filter('SLY_CACHE_CLEARED', t('delete_cache_message'), array('backend' => true));
+		sly_Core::getFlashMessage()->addInfo(t('delete_cache_message'));
+		sly_Core::dispatcher()->notify('SLY_CACHE_CLEARED', null, array('backend' => true));
+
 		$this->indexAction();
 	}
 
@@ -75,7 +72,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$notFoundArticle = sly_post('notfound_article', 'int');
 		$defaultClang    = sly_post('default_clang',    'int');
 		$defaultType     = sly_post('default_type',     'string');
-		$developerMode   = sly_post('developer_mode',   'string');
+		$developerMode   = sly_post('developer_mode',   'boolean');
 		$backendLocale   = sly_post('backend_locale',   'string');
 		$projectName     = sly_post('projectname',      'string');
 		$cachingStrategy = sly_post('caching_strategy', 'string');
@@ -88,8 +85,10 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// Änderungen speichern
 
-		$conf = sly_Core::config();
-		$this->warning = array();
+		$conf  = sly_Core::config();
+		$flash = sly_Core::getFlashMessage();
+
+		$flash->appendInfo(t('configuration_updated'));
 
 		foreach ($keys as $key) {
 			$originals[$key] = $conf->get($key);
@@ -99,21 +98,21 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$conf->set('START_ARTICLE_ID', $startArticle);
 		}
 		elseif ($startArticle > 0) {
-			$this->warning[] = t('invalid_start_article_selected');
+			$flash->appendWarning(t('invalid_start_article_selected'));
 		}
 
 		if (sly_Util_Article::exists($notFoundArticle)) {
 			$conf->set('NOTFOUND_ARTICLE_ID', $notFoundArticle);
 		}
 		elseif ($notFoundArticle > 0) {
-			$this->warning[] = t('invalid_not_found_article_selected').'<br />';
+			$flash->appendWarning(t('invalid_not_found_article_selected'));
 		}
 
 		if (sly_Util_Language::exists($defaultClang)) {
 			$conf->set('DEFAULT_CLANG_ID', $defaultClang);
 		}
 		else {
-			$this->warning[] = t('invalid_default_language_selected').'<br />';
+			$flash->appendWarning(t('invalid_default_language_selected'));
 		}
 
 		// Standard-Artikeltyp
@@ -122,7 +121,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$service = sly_Service_Factory::getArticleTypeService();
 
 			if (!empty($defaultType) && !$service->exists($defaultType)) {
-				$this->warning[] = t('invalid_default_articletype_selected').'<br />';
+				$flash->appendWarning(t('invalid_default_articletype_selected'));
 			}
 			else {
 				$conf->set('DEFAULT_ARTICLE_TYPE', $defaultType);
@@ -132,16 +131,37 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$conf->set('DEFAULT_ARTICLE_TYPE', '');
 		}
 
-		// Sonstige Einstellungen
+		// caching strategy
+		$strategies = sly_Cache::getAvailableCacheImpls();
 
-		$conf->set('DEVELOPER_MODE', $developerMode === 'true');
-		$conf->set('DEFAULT_LOCALE', $backendLocale);
+		if (!isset($strategies[$cachingStrategy])) {
+			$flash->appendWarning(t('invalid_caching_strategy_selected'));
+		}
+		else {
+			$conf->set('CACHING_STRATEGY', $cachingStrategy);
+		}
+
+		// timezone
+		if (!in_array($timezone, DateTimeZone::listIdentifiers())) {
+			$flash->appendWarning(t('invalid_timezone_selected'));
+		}
+		else {
+			$conf->set('TIMEZONE', $timezone);
+		}
+
+		// backend default locale
+		$locales = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
+
+		if (!in_array($backendLocale, $locales)) {
+			$flash->appendWarning(t('invalid_locale_selected'));
+		}
+		else {
+			$conf->set('DEFAULT_LOCALE', $backendLocale);
+		}
+
+		// misc
+		$conf->set('DEVELOPER_MODE', $developerMode);
 		$conf->set('PROJECTNAME', $projectName);
-		$conf->setLocal('CACHING_STRATEGY', $cachingStrategy);
-		$conf->set('TIMEZONE', $timezone);
-
-		$this->info    = t('configuration_updated');
-		$this->warning = implode("<br />\n", $this->warning);
 
 		// notify system
 		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
@@ -152,7 +172,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function setupAction() {
 		$this->init();
 		sly_Core::config()->setLocal('SETUP', true);
-		sly_Util_HTTP::redirect('index.php', array(), '', 302);
+		sly_Core::getCurrentApp()->redirect('');
 	}
 
 	public function checkPermission($action) {

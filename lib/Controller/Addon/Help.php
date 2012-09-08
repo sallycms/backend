@@ -8,46 +8,21 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Addon_Help extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $addon  = null;
-	protected $plugin = null;
-
+class sly_Controller_Addon_Help extends sly_Controller_Addon implements sly_Controller_Interface {
 	public function indexAction() {
-		$comp = sly_request('component', 'string', '');
-		$comp = explode('/', $comp, 2);
+		$this->init();
+		$addon = $this->getAddOn();
 
-		if (count($comp) === 1) {
-			$comp[] = '';
-		}
-
-		list($addon, $plugin) = $comp;
-
-		$addons      = sly_Service_Factory::getAddOnService()->getRegisteredAddOns();
-		$this->addon = in_array($addon, $addons) ? $addon : null;
-
-		if ($this->addon) {
-			$layout = sly_Core::getLayout();
-			$layout->pageHeader(t('addons'));
-			print '<div class="sly-content">';
-
-			$plugins      = sly_Service_Factory::getPluginService()->getRegisteredPlugins($this->addon);
-			$this->plugin = in_array($plugin, $plugins) ? $plugin : null;
-
-			print $this->render('addon/help.phtml', array(
-				'addon'  => $this->addon,
-				'plugin' => $this->plugin
-			));
-
-			print '</div>';
+		if ($addon) {
+			$this->render('addon/help.phtml', array('addon' => $addon), false);
 		}
 		else {
-			$controller = new sly_Controller_Addon();
-			$controller->indexAction();
+			print sly_Helper_Message::warn(t('addon_not_found', $addon));
 		}
 	}
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return isset($user) && $user->isAdmin();
+		return $user && ($user->isAdmin() || $user->hasRight('pages', 'addons'));
 	}
 }

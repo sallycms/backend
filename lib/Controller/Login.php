@@ -8,31 +8,32 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Login extends sly_Controller_Backend implements sly_Controller_Interface {
-	private $init = false;
-
-	protected function init() {
-		if ($this->init) return;
-		$this->init = true;
-
+class sly_Controller_Login extends sly_Controller_Backend implements sly_Controller_Generic {
+	public function genericAction($action) {
 		$layout = sly_Core::getLayout();
 		$layout->showNavigation(false);
 		$layout->pageHeader(t('login_title'));
-	}
 
-	public function slyGetActionFallback() {
-		return 'index';
+		if (in_array(strtolower($action), array('index', 'login', 'logout'))) {
+			$method = $action.'Action';
+		}
+		else {
+			$method = 'indexAction';
+		}
+
+		try {
+			return $this->$method();
+		}
+		catch (Exception $e) {
+			print sly_Helper_Message::warn($e->getMessage());
+		}
 	}
 
 	public function indexAction() {
-		$this->init();
-
-		print $this->render('login/index.phtml');
+		$this->render('login/index.phtml', array(), false);
 	}
 
 	public function loginAction() {
-		$this->init();
-
 		$username = sly_post('username', 'string');
 		$password = sly_post('password', 'string');
 		$loginOK  = sly_Service_Factory::getUserService()->login($username, $password);
@@ -44,7 +45,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		}
 
 		if ($loginOK !== true) {
-			$this->message = t('login_error', '<strong>'.sly_Core::config()->get('RELOGINDELAY').'</strong>');
+			$msg = t('login_error', '<strong>'.sly_Core::config()->get('RELOGINDELAY').'</strong>');
+			sly_Core::getFlashMessage()->appendWarning($msg);
 			$this->indexAction();
 		}
 		else {
@@ -57,7 +59,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			}
 			else {
 				$user = sly_Util_User::getCurrentUser();
-				$url  = 'index.php?page='.$user->getStartPage();
+				$base = sly_Util_HTTP::getBaseUrl(true);
+				$url  = $base.'/backend/index.php?page='.$user->getStartPage();
 				$msg  = t('redirect_startpage', $url);
 			}
 
@@ -66,9 +69,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function logoutAction() {
-		$this->init();
 		sly_Service_Factory::getUserService()->logout();
-		$this->message = t('you_have_been_logged_out');
+		sly_Core::getFlashMessage()->appendInfo(t('you_have_been_logged_out'));
 		$this->indexAction();
 	}
 

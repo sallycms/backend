@@ -27,4 +27,27 @@ class sly_Helper_Message {
 	public static function warn($message) {
 		return self::message($message, 'sly-warn');
 	}
+
+	public static function renderFlashMessage(sly_Util_Flash $message = null) {
+		$msg      = $message === null ? sly_Core::getFlashMessage() : $message;
+		$messages = $msg->getMessages();
+		$result   = array();
+
+		foreach ($messages as $type => $msgs) {
+			foreach ($msgs as $m) {
+				if (is_array($m)) $m = implode("<br />\n", $m);
+
+				if ($type === sly_Util_FlashMessage::TYPE_INFO) {
+					$result[] = self::info($m);
+				}
+				elseif ($type === sly_Util_FlashMessage::TYPE_WARNING) {
+					$result[] = self::warn($m);
+				}
+			}
+		}
+
+		$msg->clear();
+
+		return implode("\n", $result);
+	}
 }

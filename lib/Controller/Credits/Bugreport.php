@@ -11,7 +11,7 @@
 class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements sly_Controller_Interface {
 	public function indexAction() {
 		$this->init();
-		print $this->render('credits/bugreport.phtml');
+		$this->render('credits/bugreport.phtml', array(), false);
 	}
 
 	protected function getLanguages() {
