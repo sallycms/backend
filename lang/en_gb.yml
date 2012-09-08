@@ -381,3 +381,4 @@ backend: Backend
 package: Package
 operation_requires_user_context: 'The operation {0} requires a user context!'
 an_operation_requires_user_context: This operation requires a user context!
+article_slice_not_found: 'Article slice {0} could not be found!'
