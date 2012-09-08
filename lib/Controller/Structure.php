@@ -9,7 +9,6 @@
  */
 
 class sly_Controller_Structure extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $action;
 	protected $categoryId;
 	protected $clangId;
 	protected $artService;
@@ -35,13 +34,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		}
 	}
 
-	protected function init($action = null, $chromeless = false) {
+	protected function init($chromeless = false) {
 		if ($this->init) return true;
 		$this->init = true;
 
 		self::$viewPath = 'structure/';
 
-		$this->action     = $action;
 		$this->categoryId = sly_request('category_id', 'int', 0);
 		$this->clangId    = sly_Core::getCurrentClang();
 		$this->artService = sly_Service_Factory::getArticleService();
@@ -75,7 +73,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function viewAction() {
-		if (!$this->init('view')) return;
+		if (!$this->init()) return;
 
 		// render flash message
 		print sly_Helper_Message::renderFlashMessage();
@@ -105,7 +103,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editstatuscategoryAction() {
-		if (!$this->init('editstatuscategory', true)) return;
+		if (!$this->init(true)) return;
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -122,7 +120,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editstatusarticleAction() {
-		if (!$this->init('editstatusarticle', true)) return;
+		if (!$this->init(true)) return;
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -139,7 +137,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function deletecategoryAction() {
-		if (!$this->init('deletecategory', true)) return;
+		if (!$this->init(true)) return;
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -156,7 +154,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function deletearticleAction() {
-		if (!$this->init('deletearticle', true)) return;
+		if (!$this->init(true)) return;
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -173,7 +171,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function addcategoryAction() {
-		if (!$this->init('addcategory')) return;
+		if (!$this->init()) return;
 
 		if (sly_post('do_add_category', 'boolean')) {
 			$name     = sly_post('category_name',     'string', '');
@@ -196,7 +194,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function addarticleAction() {
-		if (!$this->init('addarticle')) return;
+		if (!$this->init()) return;
 
 		if (sly_post('do_add_article', 'boolean')) {
 			$name     = sly_post('article_name',     'string', '');
@@ -219,7 +217,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editcategoryAction() {
-		if (!$this->init('editcategory')) return;
+		if (!$this->init()) return;
 
 		$editId = sly_request('edit_id', 'int', 0);
 
@@ -244,7 +242,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editarticleAction() {
-		if (!$this->init('editarticle')) return;
+		if (!$this->init()) return;
 
 		$editId = sly_request('edit_id', 'int', 0);
 
@@ -356,22 +354,22 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if (!$user->hasRight('pages', 'structure')) return false;
 		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
-		if ($this->action === 'index') {
-			$this->canViewCategory($categoryId);
+		if ($action === 'index') {
+			return $this->canViewCategory($categoryId);
 		}
 
-		if (sly_Util_String::startsWith($this->action, 'editstatus')) {
-			if ($this->action === 'editstatuscategory') {
+		if (sly_Util_String::startsWith($action, 'editstatus')) {
+			if ($action === 'editstatuscategory') {
 				return $this->canPublishCategory($editId);
 			}
 			else {
 				return $this->canPublishCategory($categoryId);
 			}
 		}
-		elseif (sly_Util_String::startsWith($this->action, 'edit') || sly_Util_String::startsWith($this->action, 'delete')) {
+		elseif (sly_Util_String::startsWith($action, 'edit') || sly_Util_String::startsWith($action, 'delete')) {
 			return $this->canEditCategory($editId);
 		}
-		elseif (sly_Util_String::startsWith($this->action, 'add')) {
+		elseif (sly_Util_String::startsWith($action, 'add')) {
 			return $this->canEditCategory($categoryId);
 		}
 
