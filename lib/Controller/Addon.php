@@ -184,7 +184,18 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		extract($this->getServices());
 		$addon = $this->getAddOn();
 
-		$manager->$method($addon);
+		switch ($method) {
+			case 'install':
+				$manager->install($addon, true, sly_DB_Persistence::getInstance());
+				break;
+
+			case 'uninstall':
+				$manager->uninstall($addon, sly_DB_Persistence::getInstance());
+				break;
+
+			default:
+				$manager->$method($addon);
+		}
 
 		sly_Core::getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
 	}
