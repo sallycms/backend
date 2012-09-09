@@ -9,8 +9,7 @@
  */
 
 $config    = sly_Core::config();
-$locales   = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
-$locales   = array_combine($locales, $locales);
+$locales   = $this->getBackendLocales();
 $yesNo     = array('true' => t('yes'), 'false' => t('no'));
 $types     = array('' => t('no_articletype'));
 $languages = sly_Util_Language::findAll();
