@@ -179,4 +179,17 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$user = sly_Util_User::getCurrentUser();
 		return $user && $user->isAdmin();
 	}
+
+	protected function getBackendLocales() {
+		$langpath = SLY_SALLYFOLDER.'/backend/lang';
+		$locales  = sly_I18N::getLocales($langpath);
+		$result   = array();
+
+		foreach ($locales as $locale) {
+			$i18n = new sly_I18N($locale, $langpath);
+			$result[$locale] = $i18n->msg('lang');
+		}
+
+		return $result;
+	}
 }
