@@ -45,60 +45,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 
 		if ($chromeless) return true;
 
-		if (count(sly_Util_Language::findAll()) === 0) {
-			sly_Core::getLayout()->pageHeader(t('structure'));
-			print sly_Helper_Message::info(t('no_languages_yet'));
-			return false;
-		}
-
-		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
-
-		$this->render('toolbars/languages.phtml', array(
-			'curClang' => $this->clangId,
-			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
-		), false);
-
-		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
-			'category_id' => $this->categoryId,
-			'clang'       => $this->clangId
-		));
-
 		return true;
 	}
 
 	public function indexAction() {
 		if (!$this->init()) return;
 		$this->view('index');
-	}
-
-	protected function view($action) {
-		// render flash message
-		print sly_Helper_Message::renderFlashMessage();
-
-		$currentCategory = $this->catService->findById($this->categoryId);
-		$categories      = $this->catService->findByParentId($this->categoryId, false);
-		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
-		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
-		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
-
-		$this->render(self::$viewPath.'category_table.phtml', array(
-			'action'          => $action,
-			'categories'      => $categories,
-			'currentCategory' => $currentCategory,
-			'statusTypes'     => $this->catService->getStates(),
-			'maxPosition'     => $maxPosition,
-			'maxCatPosition'  => $maxCatPosition
-		), false);
-
-		$this->render(self::$viewPath.'article_table.phtml', array(
-			'action'         => $action,
-			'articles'       => $articles,
-			'statusTypes'    => $this->artService->getStates(),
-			'canAdd'         => $this->canEditCategory($this->categoryId),
-			'canEdit'        => $this->canEditCategory($this->categoryId),
-			'maxPosition'    => $maxPosition,
-			'maxCatPosition' => $maxCatPosition
-		), false);
 	}
 
 	public function editstatuscategoryAction() {
@@ -373,6 +325,62 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		}
 
 		return true;
+	}
+
+	/**
+	 *
+	 * @param string $action the current action
+	 */
+	protected function view($action) {
+		/* stop the view if no languages are available
+		 * but present a nice message
+		 */
+		if (count(sly_Util_Language::findAll()) === 0) {
+			sly_Core::getLayout()->pageHeader(t('structure'));
+			print sly_Helper_Message::info(t('no_languages_yet'));
+			return;
+		}
+
+		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
+
+		$this->render('toolbars/languages.phtml', array(
+			'curClang' => $this->clangId,
+			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
+		), false);
+
+		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
+			'category_id' => $this->categoryId,
+			'clang'       => $this->clangId
+		));
+
+
+		// render flash message
+		print sly_Helper_Message::renderFlashMessage();
+
+		$currentCategory = $this->catService->findById($this->categoryId);
+		$categories      = $this->catService->findByParentId($this->categoryId, false);
+		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
+		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
+		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
+
+		$this->render(self::$viewPath.'category_table.phtml', array(
+			'action'          => $action,
+			'categories'      => $categories,
+			'currentCategory' => $currentCategory,
+			'statusTypes'     => $this->catService->getStates(),
+			'maxPosition'     => $maxPosition,
+			'maxCatPosition'  => $maxCatPosition
+		), false);
+
+		$this->render(self::$viewPath.'article_table.phtml', array(
+			'action'         => $action,
+			'articles'       => $articles,
+			'statusTypes'    => $this->artService->getStates(),
+			'canAdd'         => $this->canEditCategory($this->categoryId),
+			'canEdit'        => $this->canEditCategory($this->categoryId),
+			'maxPosition'    => $maxPosition,
+			'maxCatPosition' => $maxCatPosition
+		), false);
 	}
 
 	protected function redirectToCat($catID = null, $clang = null) {
