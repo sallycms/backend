@@ -19,7 +19,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected $renderEditArticle  = false;
 	protected $init = false;
 
-	protected static $viewPath;
+	protected static $viewPath = 'structure/';
 
 	public function __construct($dontRedirect = false) {
 		parent::__construct();
@@ -37,8 +37,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected function init($chromeless = false) {
 		if ($this->init) return true;
 		$this->init = true;
-
-		self::$viewPath = 'structure/';
 
 		$this->categoryId = sly_request('category_id', 'int', 0);
 		$this->clangId    = sly_Core::getCurrentClang();
