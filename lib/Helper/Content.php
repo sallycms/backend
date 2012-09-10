@@ -42,7 +42,7 @@ class sly_Helper_Content {
 				$form->add($sliceinput);
 				$form->addClass('sly-slice-form');
 
-				echo $form->render();
+				print $form->render();
 
 				self::focusFirstElement();
 
@@ -79,27 +79,18 @@ class sly_Helper_Content {
 			$form->addHiddenValue('clang', $articleSlice->getClang());
 			$form->addHiddenValue('slice_id', $articleSlice->getId());
 			$form->addHiddenValue('slot', $articleSlice->getSlot());
-			$form->setSubmitButton(null);
-			$form->setResetButton(null);
-
-
+			$form->setSubmitButton(new sly_Form_Input_Button('submit', 'btn_save', t('save')));
+			$form->setApplyButton(new sly_Form_Input_Button('submit', 'btn_update', t('apply')));
+			$form->setResetButton(new sly_Form_Input_Button('reset', 'reset', t('reset')));
 
 			$renderer   = new sly_Slice_Renderer($module, $values);
 			$sliceinput = new sly_Form_Fragment();
 			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput('slicevalue').'</div>');
 
-			$bb = new sly_Form_ButtonBar(array(
-				'submit' => new sly_Form_Input_Button('submit', 'btn_save', t('save')),
-				'apply'  => new sly_Form_Input_Button('submit', 'btn_update', t('apply')),
-				'reset'  => new sly_Form_Input_Button('reset', 'reset', t('reset'))
-			));
-
 			$form->add($sliceinput);
-
-			$form->add($bb);
 			$form->addClass('sly-slice-form');
 
-			echo $form->render();
+			print $form->render();
 
 			self::focusFirstElement();
 
