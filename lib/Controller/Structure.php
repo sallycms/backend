@@ -17,7 +17,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected $renderEditCategory = false;
 	protected $renderAddArticle   = false;
 	protected $renderEditArticle  = false;
-	protected $init = false;
 
 	protected static $viewPath = 'structure/';
 
@@ -34,27 +33,20 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		}
 	}
 
-	protected function init($chromeless = false) {
-		if ($this->init) return true;
-		$this->init = true;
-
+	protected function init() {
 		$this->categoryId = sly_request('category_id', 'int', 0);
 		$this->clangId    = sly_Core::getCurrentClang();
 		$this->artService = sly_Service_Factory::getArticleService();
 		$this->catService = sly_Service_Factory::getCategoryService();
-
-		if ($chromeless) return true;
-
-		return true;
 	}
 
 	public function indexAction() {
-		if (!$this->init()) return;
+		$this->init();
 		$this->view('index');
 	}
 
 	public function editstatuscategoryAction() {
-		if (!$this->init(true)) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -71,7 +63,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editstatusarticleAction() {
-		if (!$this->init(true)) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -88,7 +80,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function deletecategoryAction() {
-		if (!$this->init(true)) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -105,7 +97,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function deletearticleAction() {
-		if (!$this->init(true)) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
@@ -122,7 +114,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function addcategoryAction() {
-		if (!$this->init()) return;
+		$this->init();
 
 		if (sly_post('do_add_category', 'boolean')) {
 			$name     = sly_post('category_name',     'string', '');
@@ -145,7 +137,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function addarticleAction() {
-		if (!$this->init()) return;
+		$this->init();
 
 		if (sly_post('do_add_article', 'boolean')) {
 			$name     = sly_post('article_name',     'string', '');
@@ -168,7 +160,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editcategoryAction() {
-		if (!$this->init()) return;
+		$this->init();
 
 		$editId = sly_request('edit_id', 'int', 0);
 
@@ -193,7 +185,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function editarticleAction() {
-		if (!$this->init()) return;
+		$this->init();
 
 		$editId = sly_request('edit_id', 'int', 0);
 
