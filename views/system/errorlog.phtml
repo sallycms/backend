@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<form method="post" action="index.php" class="errorlog">
+	<div>
+		<input type="hidden" name="page" value="system_errorlog" />
+		<input type="hidden" name="func" value="clear" />
+	</div>
+	<p class="center">
+		<input type="submit" value="<?php echo t('clear_errorlog') ?>" class="sly-form-submit sly-button" />
+	</p>
+</form>
+<?php
+
+$prefix = 'index.php?page=system_errorlog&amp;max=';
+$units  = array(10, 50, 100, 250, 500);
+$links  = array();
+
+if (!in_array($lineCount, $units)) {
+	$units[] = $lineCount;
+	sort($units);
+}
+
+foreach ($units as $unit) {
+	if ($unit > $lineCount) {
+		break;
+	}
+
+	if ($max == $unit) {
+		$links[] = '<strong>'.$unit.'</strong>';
+	}
+	else {
+		$links[] = '<a href="'.$prefix.$unit.'">'.$unit.'</a>';
+	}
+}
+
+?>
+<p>
+	<?php echo t('errorlog_recenterrors', implode(' | ', $links)) ?>
+	<?php echo t('errorlog_total', sly_Util_String::formatNumber($lineCount, 0)) ?>
+</p>
+<?php
+
+$table = new sly_Table('sly-errorlog');
+$table->addColumn(new sly_Table_Column(t('error_details'), '', '', array('colspan' => 2)));
+$table->openBuffer();
+
+foreach ($data as $line) {
+	extract($line);
+	?>
+	<tr>
+		<td class="sly-col-error" colspan="2"><strong><em><?php echo $type ?></em>: <?php echo sly_html($message) ?></strong></td>
+	</tr><tr class="where">
+		<td class="sly-col-location"><?php echo sly_html(sprintf('%s %s, %s %d', t('in_file'), $file, t('in_line'), $line)) ?></td>
+		<td class="sly-col-date"><?php echo sly_html(sly_Util_String::formatDatetime($date)) ?></td>
+	</tr><tr class="request">
+		<td class="sly-col-request" colspan="2"><?php echo sly_html($request) ?></td>
+	</tr>
+	<?php
+}
+
+$table->closeBuffer();
+print $table->render();

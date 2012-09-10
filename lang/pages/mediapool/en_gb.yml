@@ -1,0 +1,42 @@
+affected_files: Affected files
+apply_file: Apply changes
+category_has_children: Category could not be deleted because it still contains sub-categories!'
+category_name: Category name
+edit_medium: Edit medium
+file: File
+file_added: File has been added.
+file_changed: File has been replaced.
+file_delete_error_1: 'File {0} could not be deleted!'
+file_delete_error_2: 'File is still references in the following items:'
+file_info: File info
+file_not_found_maybe_too_big: 'File could not be found, maybe it was to large?'
+filename: Filename
+files_synced: Files have been synchronized.
+height: Height
+invalid_file_data: An error occured while uploading the file.
+max_uploadsize: Maximum upload size
+media_list: Media
+medium_deleted: Medium has been deleted.
+medium_updated: Medium has been updated.
+move_to_category: Move to category
+no_category: no category
+no_file_diffs_found: No differences have been found.
+no_files_selected: No files have been deleted.
+no_media_found: No files have been found in this category.
+no_title: no title
+replacement_file: Replacement file
+select_category: Select category
+selected_category: Selected category
+selected_files_moved: The selected files have been moved.
+selected_media: Selected
+start: Start
+structure_caption: Category list
+sync_files: Synchronize files
+synchronize: Synchronize
+thumbnail: Thumbnail
+types_of_old_and_new_do_not_match: This file cannot be used to replace the existing one because their types do not match!
+an_error_happened_during_upload: An error occured during the upload!
+upload: Upload
+upload_and_use: Upload and use
+upload_file: Upload file
+width: Width

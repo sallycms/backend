@@ -1,0 +1,80 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<form action="index.php" method="post">
+	<fieldset>
+		<input type="hidden" name="page" value="structure" />
+		<input type="hidden" name="category_id" value="<?php echo $this->categoryId ?>" />
+		<input type="hidden" name="clang" value="<?php echo $this->clangId ?>" />
+		<input type="hidden" name="func" value="<?php echo $action ?>" />
+	</fieldset>
+
+	<?php
+	$add_url = '';
+	if ($canAdd) {
+		$add_url = 'index.php?page=structure&category_id='.$this->categoryId.'&clang='.$this->clangId.'&func=addArticle';
+	}
+	$add_article = sly_Util_HTML::getSpriteLink($add_url, t('add_article'), 'article-add');
+
+	$table = new sly_Table('sly-structure-articles');
+	$table->addColumn(new sly_Table_Column($add_article, '', '', array('class' => 'sly-col-icon sly-icon')));
+	$table->addColumn(new sly_Table_Column(t('article_name'), '', '', array('class' => 'sly-col-name')));
+	$table->addColumn(new sly_Table_Column(t('articletype'), '', '', array('class' => 'sly-col-arttype')));
+
+	$isActive = $this->renderAddArticle || $this->renderEditArticle;
+
+	if ($isActive) {
+		$table->addClass('sly-active');
+		$table->addColumn(new sly_Table_Column(t('position_short'), '', '', array('class' => 'sly-col-pos')));
+	}
+
+	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
+	$table->openBuffer();
+
+	if ($this->renderAddArticle) {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
+			array('maxPosition' => $maxPosition),
+			false
+		);
+	}
+
+	foreach ($articles as $article) {
+		if ($this->renderEditArticle && $this->renderEditArticle == $article->getId()) {
+			$this->render(
+				sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
+				array('article' => $article, 'maxPosition' => $maxPosition),
+				false
+			);
+		}
+		elseif ($this->canEditContent($article->getId())) {
+			$this->render(
+				sly_Controller_Structure::$viewPath.'article_table_row.phtml',
+				array(
+					'article' => $article, 'statusTypes' => $statusTypes,
+					'canEdit' => $canEdit, 'isActive' => $isActive
+				),
+				false
+			);
+		}
+	}
+
+	if (!$this->renderAddArticle && empty($articles)) {
+		?>
+		<tr>
+			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_articles_yet') ?></td>
+		</tr>
+		<?php
+	}
+
+	$table->closeBuffer();
+	print $table->render();
+	?>
+</form>
