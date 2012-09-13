@@ -29,7 +29,6 @@ foreach ($this->args as $name => $value) {
 	$form->addHiddenValue('args['.$name.']', $value);
 }
 
-$user    = sly_Util_User::getCurrentUser();
 $isAdmin = $this->isMediaAdmin();
 
 ob_start();
