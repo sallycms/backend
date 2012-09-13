@@ -11,15 +11,15 @@
 <form action="index.php" method="post">
 	<fieldset>
 		<input type="hidden" name="page" value="structure" />
-		<input type="hidden" name="category_id" value="<?php echo $this->categoryId ?>" />
-		<input type="hidden" name="clang" value="<?php echo $this->clangId ?>" />
+		<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+		<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
 		<input type="hidden" name="func" value="<?php echo $action ?>" />
 	</fieldset>
 
 	<?php
 	$add_url = '';
-	if ($this->canEditCategory($this->categoryId)) {
-		$add_url = 'index.php?page=structure&category_id='.$this->categoryId.'&clang='.$this->clangId.'&func=addCategory';
+	if ($canAdd) {
+		$add_url = 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addCategory';
 	}
 	$add_category = sly_Util_HTML::getSpriteLink($add_url, t('add_category'), 'category-add');
 
@@ -27,7 +27,7 @@
 	$table->addColumn(new sly_Table_Column($add_category, '', '', array('class' => 'sly-col-icon sly-icon')));
 	$table->addColumn(new sly_Table_Column(t('category'), '', '', array('class' => 'sly-col-name')));
 
-	$isActive = $this->renderAddCategory || $this->renderEditCategory;
+	$isActive = $renderAddCategory || $renderEditCategory;
 
 	if ($isActive) {
 		$table->addClass('sly-active');
@@ -37,18 +37,18 @@
 	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
 	$table->openBuffer();
 
-	if ($this->categoryId != 0 && $currentCategory) {
+	if ($categoryId != 0 && $currentCategory) {
 		?>
 		<tr>
 			<td class="sly-col-icon sly-icon">&nbsp;</td>
-			<td class="sly-col-name"><a href="index.php?page=structure&amp;category_id=<?php echo $currentCategory->getParentId().'&amp;clang='.$this->clangId ?>">..</a></td>
+			<td class="sly-col-name"><a href="index.php?page=structure&amp;category_id=<?php echo $currentCategory->getParentId().'&amp;clang='.$clangId ?>">..</a></td>
 			<?php if ($isActive): ?><td class="sly-col-pos">&nbsp;</td><?php endif ?>
 			<td class="sly-col-status">&nbsp;</td>
 		</tr>
 		<?php
 	}
 
-	if ($this->renderAddCategory) {
+	if ($renderAddCategory) {
 		$this->render(
 			sly_Controller_Structure::$viewPath.'category_table_row_add.phtml',
 			array('maxCatPosition' => $maxCatPosition),
@@ -57,14 +57,14 @@
 	}
 
 	foreach ($categories as $category) {
-		if ($this->renderEditCategory && $this->renderEditCategory == $category->getId()) {
+		if ($renderEditCategory && $renderEditCategory == $category->getId()) {
 			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row_edit.phtml',
 				array('category' => $category, 'maxCatPosition' => $maxCatPosition),
 				false
 			);
 		}
-		elseif ($this->canViewCategory($category->getId())) {
+		else {
 			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row.phtml',
 				array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive),
@@ -73,7 +73,7 @@
 		}
 	}
 
-	if (!$this->renderAddCategory && !$currentCategory && empty($categories)) {
+	if (!$renderAddCategory && !$currentCategory && empty($categories)) {
 		?>
 		<tr>
 			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_categories_yet') ?></td>

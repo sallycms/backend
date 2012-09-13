@@ -11,15 +11,15 @@
 <form action="index.php" method="post">
 	<fieldset>
 		<input type="hidden" name="page" value="structure" />
-		<input type="hidden" name="category_id" value="<?php echo $this->categoryId ?>" />
-		<input type="hidden" name="clang" value="<?php echo $this->clangId ?>" />
+		<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+		<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
 		<input type="hidden" name="func" value="<?php echo $action ?>" />
 	</fieldset>
 
 	<?php
 	$add_url = '';
 	if ($canAdd) {
-		$add_url = 'index.php?page=structure&category_id='.$this->categoryId.'&clang='.$this->clangId.'&func=addArticle';
+		$add_url = 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addArticle';
 	}
 	$add_article = sly_Util_HTML::getSpriteLink($add_url, t('add_article'), 'article-add');
 
@@ -28,7 +28,7 @@
 	$table->addColumn(new sly_Table_Column(t('article_name'), '', '', array('class' => 'sly-col-name')));
 	$table->addColumn(new sly_Table_Column(t('articletype'), '', '', array('class' => 'sly-col-arttype')));
 
-	$isActive = $this->renderAddArticle || $this->renderEditArticle;
+	$isActive = $renderAddArticle || $renderEditArticle;
 
 	if ($isActive) {
 		$table->addClass('sly-active');
@@ -38,7 +38,7 @@
 	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
 	$table->openBuffer();
 
-	if ($this->renderAddArticle) {
+	if ($renderAddArticle) {
 		$this->render(
 			sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
 			array('maxPosition' => $maxPosition),
@@ -47,14 +47,14 @@
 	}
 
 	foreach ($articles as $article) {
-		if ($this->renderEditArticle && $this->renderEditArticle == $article->getId()) {
+		if ($renderEditArticle && $renderEditArticle == $article->getId()) {
 			$this->render(
 				sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
 				array('article' => $article, 'maxPosition' => $maxPosition),
 				false
 			);
 		}
-		elseif ($this->canEditContent($article->getId())) {
+		else {
 			$this->render(
 				sly_Controller_Structure::$viewPath.'article_table_row.phtml',
 				array(
@@ -66,7 +66,7 @@
 		}
 	}
 
-	if (!$this->renderAddArticle && empty($articles)) {
+	if (!$renderAddArticle && empty($articles)) {
 		?>
 		<tr>
 			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_articles_yet') ?></td>
