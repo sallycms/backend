@@ -49,8 +49,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			}
 		}
 
-		$this->func = 'add';
-		$this->render('user/edit.phtml', array('user' => null), false);
+		$this->render('user/edit.phtml', array('user' => null, 'func' => 'add'), false);
 	}
 
 	public function editAction() {
@@ -113,8 +112,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			}
 		}
 
-		$params     = array('user' => $user);
-		$this->func = 'edit';
+		$params     = array('user' => $user, 'func' => 'edit');
 
 		$this->render('user/edit.phtml', $params, false);
 	}
