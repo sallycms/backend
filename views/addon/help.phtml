@@ -10,8 +10,7 @@
 
 extract($this->getServices());
 
-$service      = sly_Service_Factory::getAddOnService();
-$helpfile     = $pservice->baseDirectory($addon).'/help.php';
+$helpfile     = $pservice->baseDirectory($addon).DIRECTORY_SEPARATOR.'help.php';
 $version      = $pservice->getVersion($addon);
 $author       = $pservice->getAuthor($addon);
 $requirements = $pservice->getRequirements($addon);
