@@ -13,12 +13,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected $clangId;
 	protected $artService;
 	protected $catService;
-	protected $renderAddCategory  = false;
-	protected $renderEditCategory = false;
-	protected $renderAddArticle   = false;
-	protected $renderEditArticle  = false;
 
-	protected static $viewPath = 'structure/';
+	public static $viewPath = 'structure/';
 
 	public function __construct($dontRedirect = false) {
 		parent::__construct();
@@ -132,8 +128,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			}
 		}
 
-		$this->renderAddCategory = true;
-		$this->view('addcategory');
+		$this->view('addcategory', array('renderAddCategory' => true));
 	}
 
 	public function addarticleAction() {
@@ -155,8 +150,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			}
 		}
 
-		$this->renderAddArticle = true;
-		$this->view('addarticle');
+		$this->view('addarticle', array('renderAddArticle' => true));
 	}
 
 	public function editcategoryAction() {
@@ -180,8 +174,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			}
 		}
 
-		$this->renderEditCategory = $editId;
-		$this->view('editcategory');
+		$this->view('editcategory', array('renderEditCategory' => $editId));
 	}
 
 	public function editarticleAction() {
@@ -205,8 +198,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			}
 		}
 
-		$this->renderEditArticle = $editId;
-		$this->view('editarticle');
+		$this->view('editarticle', array('renderEditArticle' => $editId));
 	}
 
 	/**
@@ -323,8 +315,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 *
 	 * @param string $action the current action
 	 */
-	protected function view($action) {
-		/* stop the view if no languages are available
+	protected function view($action, $params = array()) {
+		/**
+		 * stop the view if no languages are available
 		 * but present a nice message
 		 */
 		if (count(sly_Util_Language::findAll()) === 0) {
@@ -355,24 +348,62 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
 		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
 
-		$this->render(self::$viewPath.'category_table.phtml', array(
-			'action'          => $action,
-			'categories'      => $categories,
-			'currentCategory' => $currentCategory,
-			'statusTypes'     => $this->catService->getStates(),
-			'maxPosition'     => $maxPosition,
-			'maxCatPosition'  => $maxCatPosition
-		), false);
+		/**
+		 * filter categories
+		 */
+		foreach($categories as $key => $category) {
+			if(!$this->canViewCategory($category->getId())) {
+				unset($categories[$key]);
+			}
+		}
 
-		$this->render(self::$viewPath.'article_table.phtml', array(
-			'action'         => $action,
-			'articles'       => $articles,
-			'statusTypes'    => $this->artService->getStates(),
-			'canAdd'         => $this->canEditCategory($this->categoryId),
-			'canEdit'        => $this->canEditCategory($this->categoryId),
-			'maxPosition'    => $maxPosition,
-			'maxCatPosition' => $maxCatPosition
-		), false);
+		/**
+		 * filter articles
+		 */
+		foreach($articles as $key => $article) {
+			if(!$this->canEditContent($article->getId())) {
+				unset($articles[$key]);
+			}
+		}
+
+		$params = array_merge(
+						array(
+							'renderAddCategory'  => false,
+							'renderEditCategory' => false,
+							'renderAddArticle'   => false,
+							'renderEditArticle'  => false,
+							'action'             => $action,
+							'maxPosition'        => $maxPosition,
+							'maxCatPosition'     => $maxCatPosition,
+							'categoryId'         => $this->categoryId,
+							'clangId'            => $this->clangId,
+							'canAdd'             => $this->canEditCategory($this->categoryId),
+							'canEdit'            => $this->canEditCategory($this->categoryId),
+						),
+						$params
+					);
+
+		$renderParams = array_merge(
+							$params,
+							array(
+								'categories'      => $categories,
+								'currentCategory' => $currentCategory,
+								'statusTypes'     => $this->catService->getStates(),
+							)
+						);
+
+		$this->render(self::$viewPath.'category_table.phtml', $renderParams, false);
+
+		$renderParams = array_merge(
+							$params,
+							array(
+								'articles'       => $articles,
+								'statusTypes'    => $this->artService->getStates(),
+
+							)
+						);
+
+		$this->render(self::$viewPath.'article_table.phtml', $renderParams, false);
 	}
 
 	protected function redirectToCat($catID = null, $clang = null) {
