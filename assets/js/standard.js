@@ -2,6 +2,8 @@
  * SallyCMS - JavaScript-Bibliothek
  */
 
+/*global window:false, screen:false, document:false, navigator:false, Modernizr:false, jQuery:false, confirm:false, escape:false*/
+
 var sly = sly || {};
 
 (function($, sly, win, undef) {
@@ -18,7 +20,7 @@ var sly = sly || {};
 
 		this.name = name;
 		this.url  = url;
-		this.obj  = window.open(url, name, 'width='+width+',height='+height+extra);
+		this.obj  = win.open(url, name, 'width='+width+',height='+height+extra);
 
 		// Don't position the popup in Chrome 18 and 20.
 		//   bug details: http://code.google.com/p/chromium/issues/detail?id=114762
@@ -72,7 +74,7 @@ var sly = sly || {};
 		if (value) {
 			url += '_detail&file_name='+value;
 		}
-		else if (subpage && (subpage != 'detail' || value)) {
+		else if (subpage && (subpage !== 'detail' || value)) {
 			url += '_' + subpage;
 		}
 
@@ -124,7 +126,7 @@ var sly = sly || {};
 
 	var getCallbackName = function(base) {
 		return base + (new Date()).getTime();
-	}
+	};
 
 	var readLists = function(el, name) {
 		var values = ((el.data(name) || '')+'').split('|'), len = values.length, i = 0, res = [];
@@ -436,7 +438,7 @@ var sly = sly || {};
 		timerElement.html(nextTime + '');
 
 		if (nextTime > 0) {
-			setTimeout(sly.disableLogin, 1000, timerElement);
+			win.setTimeout(sly.disableLogin, 1000, timerElement);
 		}
 		else {
 			$('div.sly-message p span').html($('#sly_login_form').data('message'));
@@ -447,10 +449,10 @@ var sly = sly || {};
 	sly.startLoginTimer = function(message) {
 		var timerElement = $('div.sly-message p span strong');
 
-		if (timerElement.length == 1) {
+		if (timerElement.length === 1) {
 			$('#sly_login_form input:not(:hidden)').prop('disabled', true);
 			$('#sly_login_form').data('message', message);
-			setTimeout(sly.disableLogin, 1000, timerElement);
+			win.setTimeout(sly.disableLogin, 1000, timerElement);
 		}
 	};
 
@@ -553,14 +555,15 @@ var sly = sly || {};
 
 			event.preventDefault();
 
-			if (c == 8 || c == 46 || c == 109 || c == 189 || (c >= 65 && c <= 90) || (c >= 48 && c <= 57)) {
+			if (c === 8 || c === 46 || c === 109 || c === 189 || (c >= 65 && c <= 90) || (c >= 48 && c <= 57)) {
 				var keyword = new RegExp($(this).val(), 'i');
 
 				$('tbody tr', table).each(function() {
-					var $tr = $(this);
-					$('td', $tr).filter(function() {
+					var row = $(this);
+
+					$('td', row).filter(function() {
 						return keyword.test($(this).text());
-					}).length ? $tr.show() : $tr.hide();
+					}).length ? row.show() : row.hide();
 				});
 			}
 		});
@@ -569,7 +572,7 @@ var sly = sly || {};
 
 		$('a.sly-blank').attr('target', '_blank');
 
-	   // open mediapool in popup
+		// open mediapool in popup
 
 		$('#sly-navi-page-mediapool a').click(function() {
 			sly.openMediapool();
@@ -625,23 +628,32 @@ var sly = sly || {};
 			});
 		}
 
-		// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
-		// into lvl-N classes, or else the quick filter function of Chosen will not work
-		// properly.
-		if (typeof $.fn.chosen !== 'undefined') {
-			var options = $('select:not(.sly-no-chosen) option'), len = options.length, i = 0, depth, option;
+		var sly_apply_chosen = function(container) {
+			// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
+			// into lvl-N classes, or else the quick filter function of Chosen will not work
+			// properly.
+			if (typeof $.fn.chosen !== 'undefined') {
+				var options = $('select:not(.sly-no-chosen) option', container), len = options.length, i = 0, depth, option;
 
-			for (; i < len; ++i) {
-				option = $(options[i]);
-				depth  = option.html().match(/^(&nbsp;)*/)[0].length / 6;
+				for (; i < len; ++i) {
+					option = $(options[i]);
+					depth  = option.html().match(/^(&nbsp;)*/)[0].length / 6;
 
-				if (depth > 0) {
-					option.addClass('sly-lvl-'+depth).html(option.html().substr(depth*6));
+					if (depth > 0) {
+						option.addClass('sly-lvl-'+depth).html(option.html().substr(depth*6));
+					}
 				}
-			}
 
-			$('.sly-form-select:not(.sly-no-chosen)').data('placeholder', 'Bitte auswählen').chosen();
-		}
+				$('.sly-form-select:not(.sly-no-chosen)', container).data('placeholder', 'Bitte auswählen').chosen();
+			}
+		};
+
+		sly_apply_chosen($('body'));
+
+		// listen to rowAdded event
+		$('body').bind('rowAdded', function(event) {
+			sly_apply_chosen(event.currentTarget);
+		});
 
 		// Mehrsprachige Formulare initialisieren
 
@@ -719,7 +731,7 @@ var sly = sly || {};
 
 			// clear timeout
 			if (errorHider) {
-				window.clearTimeout(errorHider);
+				win.clearTimeout(errorHider);
 			}
 
 			// show extra div that will contain the loading animation
@@ -730,7 +742,7 @@ var sly = sly || {};
 				for (var key in stati) {
 					if (!stati.hasOwnProperty(key)) continue;
 					var status = stati[key], comp = $('.pkg[data-key="' + key + '"]');
-					comp.attr('class', status['classes'] + ' pkg');
+					comp.attr('class', status.classes + ' pkg');
 					$('.deps', comp).html(status.deps);
 				}
 			};
@@ -749,7 +761,7 @@ var sly = sly || {};
 						row.after(errorrow);
 						$('span', errorrow).html(xhr.message);
 						errorrow.show();
-						errorHider = window.setTimeout(function() { errorrow.slideUp(); }, 10000);
+						errorHider = win.setTimeout(function() { errorrow.slideUp(); }, 10000);
 					}
 				}
 			});
