@@ -16,88 +16,70 @@
 		<p><?php echo t('credits_thankyou') ?></p>
 	</div>
 </div>
+<?php
 
-<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
-	<caption><?php echo t('credits_caption') ?></caption>
-	<thead><tr>
-		<th class="sly-col-icon sly-icon">&nbsp;</th>
-		<th class="sly-col-name" colspan="2"><?php echo t('addon') ?></th>
-		<th class="sly-col-version"><?php echo t('version') ?></th>
-		<th class="sly-col-author"><?php echo t('author') ?></th>
-	</tr></thead>
-	<tbody>
+$service  = sly_Service_Factory::getAddOnService();
+$pservice = $service->getPackageService();
+$addons   = $service->getRegisteredAddOns();
+$skip     = array();
 
-	<?php
+$table = new sly_Table('', array('sly-pkglist'));
+$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-col-icon sly-icon'));
+$table->addColumn(sly_Table_Column::factory(t('addon'), 'sly-col-name', '', array('colspan' => 2)));
+$table->addColumn(sly_Table_Column::factory(t('version'), 'sly-col-version'));
+$table->addColumn(sly_Table_Column::factory(t('author'), 'sly-col-author'));
 
-	$service  = sly_Service_Factory::getAddOnService();
-	$pservice = $service->getPackageService();
-	$addons   = $service->getRegisteredAddOns();
-	$skip     = array();
-	$link     = true;
+$table->setIsEmpty(empty($addons));
+$table->setEmptyNotice(t('no_addons_found'));
+$table->openBuffer();
 
-	foreach ($addons as $addon) {
-		if (in_array($addon, $skip)) continue;
+foreach ($addons as $addon) {
+	if (in_array($addon, $skip)) continue;
 
-		$params['link']        = $link;
-		$params['type']        = 'addon';
-		$params['name']        = $addon;
-		$params['version']     = $service->getVersion($addon);
-		$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
+	$params['link']        = true;
+	$params['type']        = 'addon';
+	$params['name']        = $addon;
+	$params['version']     = $service->getVersion($addon);
+	$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
 
-		$this->render('credits/row.phtml', $params, false);
+	$this->render('credits/row.phtml', $params, false);
 
-		$children = $pservice->getChildren($addon);
+	$children = $pservice->getChildren($addon);
 
-		foreach ($children as $child) {
-			$params['type']        = 'addon-child';
-			$params['name']        = $child;
-			$params['version']     = $service->getVersion($child);
-			$params['supportPage'] = sly_Helper_Package::getSupportPage($child);
-
-			$this->render('credits/row.phtml', $params, false);
-
-			$skip[] = $child;
-		}
-	}
-
-	if (count($addons) === 0) {
-		?>
-		<tr>
-			<td class="sly-col-empty center" colspan="5"><?php echo t('no_addons_found') ?></td>
-		</tr>
-		<?php
-	}
-
-	?>
-	</tbody>
-</table>
-
-<table class="sly-table sly-pkglist" summary="<?php echo t('credits_caption') ?>">
-	<caption><?php echo t('credits_caption') ?></caption>
-	<thead><tr>
-		<th class="sly-col-icon sly-icon">&nbsp;</th>
-		<th class="sly-col-name" colspan="2"><?php echo t('package') ?></th>
-		<th class="sly-col-version"><?php echo t('version') ?></th>
-		<th class="sly-col-author"><?php echo t('author') ?></th>
-	</tr></thead>
-	<tbody>
-
-	<?php
-
-	$service  = sly_Service_Factory::getVendorPackageService();
-	$packages = $service->getPackages();
-	$link     = false;
-
-	foreach ($packages as $package) {
-		$params['link']        = $link;
-		$params['type']        = 'addon';
-		$params['name']        = $package;
-		$params['version']     = $service->getVersion($package);
-		$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+	foreach ($children as $child) {
+		$params['type']        = 'addon-child';
+		$params['name']        = $child;
+		$params['version']     = $service->getVersion($child);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($child);
 
 		$this->render('credits/row.phtml', $params, false);
-	}
 
-	?>
-	</tbody>
-</table>
+		$skip[] = $child;
+	}
+}
+
+$table->closeBuffer();
+print $table->render();
+
+// show vendor packages
+
+$table->getColumn(1)->setContent(t('package'));
+$table->setIsEmpty(false);
+$table->openBuffer();
+
+$service  = sly_Service_Factory::getVendorPackageService();
+$packages = $service->getPackages();
+$link     = false;
+
+foreach ($packages as $package) {
+	$params['link']        = $link;
+	$params['type']        = 'addon';
+	$params['name']        = $package;
+	$params['version']     = $service->getVersion($package);
+	$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+
+	$this->render('credits/row.phtml', $params, false);
+}
+
+$table->closeBuffer();
+print $table->render();
