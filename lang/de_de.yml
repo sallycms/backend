@@ -382,3 +382,4 @@ package: Paket
 operation_requires_user_context: 'Die Operation {0} erfordert einen Nutzerkontext!'
 an_operation_requires_user_context: Diese Operation erfordert einen Nutzerkontext!
 article_slice_not_found: 'Artikel-Slice {0} wurde nicht gefunden!'
+no_users_found: Es wurden keine passenden Benutzer gefunden.
