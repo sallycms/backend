@@ -152,45 +152,28 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function addarticlesliceAction() {
 		$this->init();
 
-		$module      = sly_post('module', 'string');
-		$user        = sly_Util_User::getCurrentUser();
-		$extraparams = array();
-		$slicedata   = $this->preSliceEdit('add');
-		$flash       = sly_Core::getFlashMessage();
+		$module    = sly_post('module', 'string');
+		$params    = array();
+		$slicedata = $this->preSliceEdit('add');
+		$flash     = sly_Core::getFlashMessage();
 
 		if ($slicedata['SAVE'] === true) {
-			$sliceService        = sly_Service_Factory::getSliceService();
-			$articleSliceService = sly_Service_Factory::getArticleSliceService();
-
-			$slice = new sly_Model_Slice();
-			$slice->setModule($module);
-			$slice->setValues($slicedata['VALUES']);
-			$slice = $sliceService->save($slice);
-
-			// create the slice
-			$articleSlice = new sly_Model_ArticleSlice();
-			$articleSlice->setPosition(sly_post('pos', 'int', 0));
-			$articleSlice->setCreateColumns($user->getLogin());
-			$articleSlice->getRevision(0);
-			$articleSlice->setSlice($slice);
-			$articleSlice->setSlot($this->slot);
-			$articleSlice->setArticle($this->article);
-			$articleSlice->setRevision(0);
-
-			$articleSliceService->save($articleSlice);
+			$service  = sly_Service_Factory::getArticleSliceService();
+			$pos      = sly_post('pos', 'int', 0);
+			$instance = $service->add($this->article, $this->slot, $module, $slicedata['VALUES'], $pos);
 
 			$this->localMessages = true;
 			$flash->appendInfo(t('slice_added'));
 
-			$this->postSliceEdit('add', $articleSlice->getId());
+			$this->postSliceEdit('add', $instance->getId());
 		}
 		else {
-			$extraparams['function']    = 'add';
-			$extraparams['module']      = $module;
-			$extraparams['slicevalues'] = $this->getRequestValues(array());
+			$params['function']    = 'add';
+			$params['module']      = $module;
+			$params['slicevalues'] = $this->getRequestValues(array());
 		}
 
-		$this->indexAction($extraparams);
+		$this->indexAction($params);
 	}
 
 	public function editarticlesliceAction() {
