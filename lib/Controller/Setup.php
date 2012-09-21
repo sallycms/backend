@@ -54,7 +54,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$level     = error_reporting(0);
 
 		$results['php_version']    = array('5.2', '5.4', $tester->phpVersion());
-		$results['mysql_version']  = array('5.0', '5.1', $tester->mySQLVersion());
 		$results['php_time_limit'] = array('20s', '60s', $tester->execTime());
 		$results['php_mem_limit']  = array('16MB', '32MB', $tester->memoryLimit());
 		$results['php_pseudo']     = array('translate:none', 'translate:none', $tester->nonsenseSecurity());
@@ -108,29 +107,52 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		}
 
 		if ($isSent) {
-			$data['TABLE_PREFIX'] = sly_post('prefix', 'string');
-			$data['HOST']         = sly_post('host', 'string');
-			$data['LOGIN']        = sly_post('user', 'string');
-			$data['PASSWORD']     = sly_post('pass', 'string');
-			$data['NAME']         = sly_post('dbname', 'string');
-			$data['DRIVER']       = sly_post('driver', 'string');
-			$createDatabase       = sly_post('create_db', 'bool');
+			$TABLE_PREFIX = sly_post('prefix', 'string');
+			$HOST         = sly_post('host', 'string');
+			$LOGIN        = sly_post('user', 'string');
+			$PASSWORD     = sly_post('pass', 'string');
+			$NAME         = sly_post('dbname', 'string');
+			$DRIVER       = sly_post('driver', 'string');
+			$create       = sly_post('create_db', 'bool') && ($DRIVER !== 'sqlite' && $DRIVER !== 'oci');
 
 			try {
-				if (!in_array($data['DRIVER'], $drivers)) {
+				if (!in_array($DRIVER, $drivers)) {
 					throw new sly_Exception(t('setup_invalid_driver'));
 				}
 
-				if ($createDatabase && $data['DRIVER'] !== 'sqlite' && $data['DRIVER'] !== 'oci') {
-					$driverClass = 'sly_DB_PDO_Driver_'.strtoupper($data['DRIVER']);
-					$driver      = new $driverClass('', '', '', '');
-					$db          = new sly_DB_PDO_Persistence($data['DRIVER'], $data['HOST'], $data['LOGIN'], $data['PASSWORD']);
-					$createStmt  = $driver->getCreateDatabaseSQL($data['NAME']);
+				// open connection
 
-					$db->query($createStmt);
+				if ($create) {
+					$db = new sly_DB_PDO_Persistence($DRIVER, $HOST, $LOGIN, $PASSWORD);
 				}
 				else {
-					$db = new sly_DB_PDO_Persistence($data['DRIVER'], $data['HOST'], $data['LOGIN'], $data['PASSWORD'], $data['NAME']);
+					$db = new sly_DB_PDO_Persistence($DRIVER, $HOST, $LOGIN, $PASSWORD, $NAME);
+				}
+
+				// prepare version check, retrieve min versions from driver
+
+				$driverClass = 'sly_DB_PDO_Driver_'.strtoupper($DRIVER);
+				$driverImpl  = new $driverClass('', '', '', '');
+				$constraints = $driverImpl->getVersionConstraints();
+
+				// check version
+
+				$helper = new sly_Util_Requirements();
+				$result = $helper->pdoDriverVersion($db->getConnection(), $constraints);
+
+				// warn only, but continue workflow
+				if ($result['status'] === sly_Util_Requirements::WARNING) {
+					$this->flash->appendWarning($result['text']);
+				}
+
+				// stop further code
+				elseif ($result['status'] === sly_Util_Requirements::FAILED) {
+					throw new sly_Exception($result['text']);
+				}
+
+				if ($create) {
+					$createStmt = $driverImpl->getCreateDatabaseSQL($NAME);
+					$db->query($createStmt);
 				}
 
 				$config->setLocal('DATABASE', $data);
