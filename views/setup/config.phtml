@@ -10,8 +10,6 @@
 
 $this->title(t('setup_step_n', 4, 5));
 
-print sly_Helper_Message::renderFlashMessage();
-
 $form = new sly_Form('index.php', 'POST', t('settings'));
 $this->printHiddens('config', $form);
 
@@ -29,3 +27,7 @@ $form->getSubmitButton()->setAttribute('value', t('setup_continue_to_n', 5));
 
 $form->setFocus('projectname');
 print $form->render();
+
+// render messages
+
+print sly_Helper_Message::renderFlashMessage();

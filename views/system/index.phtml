@@ -119,12 +119,14 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 			<h4><?php print t('database_connection') ?></h4>
 			<p><?php
 			$database = $config->get('DATABASE');
+			$pdo      = sly_DB_Persistence::getInstance()->getPDO();
+			$version  = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
 
 			if (strtolower($database['DRIVER']) === 'sqlite') {
-				print sly_html($database['NAME']).'.sq3';
+				print sly_html(sprintf('%s.sq3 (v%s)', $database['NAME'], $version));
 			}
 			else {
-				print sly_html(sprintf('%s @ %s/%s', $database['LOGIN'], $database['HOST'], $database['NAME']));
+				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['LOGIN'], $database['HOST'], $database['NAME'], $version));
 			}
 
 			if (strtolower($database['DRIVER']) !== 'mysql') {

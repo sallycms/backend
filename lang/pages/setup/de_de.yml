@@ -43,7 +43,6 @@ setup_security_msg: |
 setup_system_requirements: Systemvoraussetzungen
 setup_property: Eigenschaft
 setup_php_version: PHP-Version
-setup_mysql_version: MySQL-Version
 setup_php_time_limit: PHP Laufzeitlimit
 setup_php_mem_limit: PHP Speicherlimit
 setup_php_pseudo: 'PHP Pseudosicherheit (open_basedir, safe_mode)'
@@ -81,3 +80,5 @@ setup_finish_login: Sie können Sich nun <a href="index.php">einloggen</a> und l
 setup_finish_signature: "Viel Spaß und Erfolg,\nDas SallyCMS-Team"
 
 setup_import_dump_not_found: Export-Dateien konnten nicht gefunden werden!
+setup_database_server_too_old: 'Der angegebene Datenbank-Server ist zu alt und inkompatibel mit Sally.<br />Es wird mindestens Version {1} benötigt, es wurde aber {0} ermittelt.'
+setup_database_server_old_but_okay: 'Der angegebene Datenbank-Server ist veraltet, aber noch kompatibel.<br />Version {1}+ wird empfohlen, es wurde aber {0} ermittelt.'

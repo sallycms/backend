@@ -10,9 +10,6 @@
 
 $this->title(t('setup_step_n', 3, 5));
 
-// init page
-print sly_Helper_Message::renderFlashMessage();
-
 if (!in_array($dbInitFunction, $dbInitFunctions)) {
 	$dbInitFunction = 'setup';
 }
@@ -40,3 +37,7 @@ $form->getSubmitButton()->setAttribute('value', t('setup_continue_to_n', 4));
 // render it!
 
 print $form->render();
+
+// render messages
+
+print sly_Helper_Message::renderFlashMessage();
