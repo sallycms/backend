@@ -35,7 +35,8 @@ if ($canDelete) {
 }
 
 $table->enableSearching(true, array('page' => 'user'));
-$table->setIsEmpty(false);
+$table->setIsEmpty(empty($users));
+$table->setEmptyNotice(t('no_users_found'));
 $table->openBuffer();
 
 $tdIcon    = '';
