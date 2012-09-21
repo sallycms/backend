@@ -50,6 +50,9 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			$this->indexAction();
 		}
 		else {
+			// notify system
+			sly_Core::dispatcher()->notify('SLY_BE_LOGIN', $user);
+
 			// if relogin, forward to previous page
 			$referer = sly_post('referer', 'string', false);
 
@@ -58,7 +61,6 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 				$msg = t('redirect_previous_page', $referer);
 			}
 			else {
-				$user = sly_Util_User::getCurrentUser();
 				$base = sly_Util_HTTP::getBaseUrl(true);
 				$url  = $base.'/backend/index.php?page='.$user->getStartPage();
 				$msg  = t('redirect_startpage', $url);
@@ -69,8 +71,15 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function logoutAction() {
-		sly_Service_Factory::getUserService()->logout();
-		sly_Core::getFlashMessage()->appendInfo(t('you_have_been_logged_out'));
+		$user = sly_Util_User::getCurrentUser();
+
+		if ($user) {
+			// notify system
+			sly_Core::dispatcher()->notify('SLY_BE_LOGOUT', $user);
+			sly_Service_Factory::getUserService()->logout();
+			sly_Core::getFlashMessage()->appendInfo(t('you_have_been_logged_out'));
+		}
+
 		$this->indexAction();
 	}
 
