@@ -10,7 +10,7 @@
 
 print sly_Helper_Message::renderFlashMessage();
 
-$base      = 'index.php?page=user&amp;func=';
+$base      = 'index.php?page=user&func=';
 $user      = sly_Util_User::getCurrentUser();
 $isAdmin   = $user->isAdmin();
 $canAdd    = $isAdmin || $user->hasRight('user', 'add');
@@ -18,20 +18,24 @@ $canEdit   = $isAdmin || $user->hasRight('user', 'edit');
 $canDelete = $isAdmin || $user->hasRight('user', 'delete');
 
 if ($canAdd) {
-	$thIcon = '<a href="'.$base.'add"><img class="sly-icon sly-sprite sly-sprite-sly-user-add" alt="" src="assets/empty.png" title="'.t('add_user').'" /></a>';
+	$link  = 'index.php?page=user&func=add';
+	$title = t('add_user');
+	$id    = 'sly-user-add';
 }
 else {
-	$thIcon = '<img class="sly-icon sly-sprite sly-sprite-sly-user" alt="" src="assets/empty.png" />';
+	$link  = '';
+	$title = '';
+	$id    = '';
 }
 
 $table = new sly_Table('users');
-$table->addColumn(new sly_Table_Column($thIcon, '', '', array('class' => 'sly-col-icon sly-icon')));
-$table->addColumn(new sly_Table_Column(t('name'), '', '', array('class' => 'sly-col-name')));
-$table->addColumn(new sly_Table_Column(t('username'), '', '', array('class' => 'sly-col-username')));
-$table->addColumn(new sly_Table_Column(t('last_login'), '', '', array('class' => 'sly-col-last-login')));
+$table->addColumn(sly_Table_Column::sprite($id, $link, $title, 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('name'), 'sly-col-name'));
+$table->addColumn(sly_Table_Column::factory(t('username'), 'sly-col-username'));
+$table->addColumn(sly_Table_Column::factory(t('last_login'), 'sly-col-last-login'));
 
 if ($canDelete) {
-	$table->addColumn(new sly_Table_Column(t('function'), '', '', array('class' => 'sly-col-func')));
+	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 }
 
 $table->enableSearching(true, array('page' => 'user'));
