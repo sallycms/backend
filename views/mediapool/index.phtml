@@ -31,140 +31,141 @@ foreach ($this->args as $name => $value) {
 
 $isAdmin = $this->isMediaAdmin();
 
-ob_start();
+////////////////////////////////////////////////////////
+// prepare table
 
-?>
-<table class="sly-table sly-mediapool-list" summary="">
-	<caption><?php echo t('selected_media') ?></caption>
-	<thead><tr>
-		<th class="sly-col-icon sly-icon">&nbsp;</th>
-		<th class="sly-col-thumbnail"><?php echo t('thumbnail') ?></th>
-		<th class="sly-col-info"><?php echo t('file_info') ?> / <?php echo t('description') ?></th>
-		<th class="sly-col-func"><?php echo t('functions') ?></th>
-	</tr></thead>
+$table = new sly_Table('', array('sly-mediapool-list'));
+
+$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-icon sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('thumbnail'), 'sly-col-thumbnail'));
+$table->addColumn(sly_Table_Column::factory(t('file_info').' / '.t('description'), 'sly-col-info'));
+$table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
+
+$table->setIsEmpty(empty($files));
+$table->setEmptyNotice(t('no_media_found'));
+$table->openBuffer();
+
+////////////////////////////////////////////////////////
+// move and delete selected items
+
+if ($isAdmin) {
+	$inputs = '';
+	$select = $this->getCategorySelect();
+
+	if ($select->getValueCount() > 1) {
+		$select->setAttribute('id', 'sly_dest_category');
+		$select->setAttribute('onchange', '');
+
+		$inputs =
+			'<label for="sly_dest_category">'.t('selected_media').'</label>'.$select->render().
+			'<input class="sly-form-submit-2 sly-button-changecat sly-form-submit" type="submit" name="move" value="'.t('move_to_category').'" />';
+	}
+
+	$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
+
+	?>
+	<tfoot><tr>
+		<td class="sly-col-icon sly-icon">
+			<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
+			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
+		</td>
+		<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
+	</tr></tfoot>
 	<?php
+}
 
-	// move and delete selected items
+////////////////////////////////////////////////////////
+// list files
+
+print '<tbody>';
+
+$argUrl = $this->getArgumentString();
+
+foreach ($files as $file) {
+	$id         = $file->getId();
+	$filename   = $file->getFilename();
+	$title      = $file->getTitle();
+	$updatedate = sly_Util_String::formatDatetime($file->getUpdateDate());
+	$updateuser = $file->getUpdateUser();
+
+	// missing file?
+
+	if (!$file->exists()) {
+		$thumbnail = '<img src="assets/mime-error.png" width="44" height="38" alt="'.ht('file_not_found').'" />';
+	}
+	else {
+		$file_ext = $file->getExtension();
+		$icon_src = 'assets/mime-default.png';
+
+		if ($this->isDocType($file)) {
+			$icon_src = 'assets/mime-'.$file_ext.'.png';
+		}
+
+		$alt       = $file->getTitle();
+		$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
+
+		if ($this->isImage($file)) {
+			$width  = $file->getWidth();
+			$height = $file->getHeight();
+
+			list($width, $height) = $this->getDimensions($width, $height, 80, 70);
+
+			$attrs = array(
+				'alt'    => $alt,
+				'title'  => $alt,
+				'width'  => $width,
+				'height' => $height
+			);
+
+			$encoded   = urlencode($filename);
+			$timestamp = $file->getUpdateDate();
+
+			if ($resize && $width) {
+				$attrs['src'] = '../imageresize/'.$width.'w__'.$height.'h__'.$encoded.'?t='.$timestamp;
+			}
+			else {
+				$attrs['src'] = '../data/mediapool/'.$encoded.'?t='.$timestamp;
+			}
+
+			$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
+		}
+	}
+
+	if ($title == '') $title = '['.t('no_title').']';
+
+	$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected.$argUrl;
+	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {
-		$inputs = '';
-		$select = $this->getCategorySelect();
-
-		if ($select->getValueCount() > 1) {
-			$select->setAttribute('id', 'sly_dest_category');
-			$select->setAttribute('onchange', '');
-
-			$inputs =
-				'<label for="sly_dest_category">'.t('selected_media').'</label>'.$select->render().
-				'<input class="sly-form-submit-2 sly-button-changecat sly-form-submit" type="submit" name="move" value="'.t('move_to_category').'" />';
-		}
-
-		$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
-
-		?>
-		<tfoot><tr>
-			<td class="sly-col-icon sly-icon">
-				<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
-				<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
-			</td>
-			<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
-		</tr></tfoot>
-		<?php
+		$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="selectedmedia[]" value="'.$id.'" /></td>';
 	}
 
-	print '<tbody>';
+	?>
+	<tr>
+		<?php echo $add_td ?>
+		<td class="sly-col-thumbnail"><a href="<?php echo $ilink ?>"><?php echo $thumbnail ?></a></td>
+		<td class="sly-col-info">
+			<span><a href="<?php echo $ilink ?>"><?php echo sly_html($title) ?></a></span><br />
+			<span><span class="sly-suffix"><?php echo sly_html(sly_Util_String::cutText($filename, 35)) ?> [<?php echo $file->getFormattedSize() ?>]</span></span><br />
+			<span><?php echo $updatedate ?> | <?php echo sly_html($updateuser) ?></span>
+		</td>
+		<td class="sly-col-func"><?php
 
-	$argUrl = $this->getArgumentString();
+		$opener_link = $this->getOpenerLink($file);
+		print sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_FUNCTIONS', $opener_link, array('medium' => $file));
 
-	foreach ($files as $file) {
-		$id         = $file->getId();
-		$filename   = $file->getFilename();
-		$title      = $file->getTitle();
-		$updatedate = sly_Util_String::formatDatetime($file->getUpdateDate());
-		$updateuser = $file->getUpdateUser();
+		?></td>
+	</tr>
+	<?php
+}
 
-		// missing file?
+$table->closeBuffer();
 
-		if (!$file->exists()) {
-			$thumbnail = '<img src="assets/mime-error.png" width="44" height="38" alt="'.ht('file_not_found').'" />';
-		}
-		else {
-			$file_ext = $file->getExtension();
-			$icon_src = 'assets/mime-default.png';
-
-			if ($this->isDocType($file)) {
-				$icon_src = 'assets/mime-'.$file_ext.'.png';
-			}
-
-			$alt       = $file->getTitle();
-			$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
-
-			if ($this->isImage($file)) {
-				$width  = $file->getWidth();
-				$height = $file->getHeight();
-
-				list($width, $height) = $this->getDimensions($width, $height, 80, 70);
-
-				$attrs = array(
-					'alt'    => $alt,
-					'title'  => $alt,
-					'width'  => $width,
-					'height' => $height
-				);
-
-				$encoded   = urlencode($filename);
-				$timestamp = $file->getUpdateDate();
-
-				if ($resize && $width) {
-					$attrs['src'] = '../imageresize/'.$width.'w__'.$height.'h__'.$encoded.'?t='.$timestamp;
-				}
-				else {
-					$attrs['src'] = '../data/mediapool/'.$encoded.'?t='.$timestamp;
-				}
-
-				$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
-			}
-		}
-
-		if ($title == '') $title = '['.t('no_title').']';
-
-		$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected.$argUrl;
-		$add_td = '<td>&nbsp;</td>';
-
-		if ($isAdmin) {
-			$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="selectedmedia[]" value="'.$id.'" /></td>';
-		}
-
-		?>
-		<tr>
-			<?php echo $add_td ?>
-			<td class="sly-col-thumbnail"><a href="<?php echo $ilink ?>"><?php echo $thumbnail ?></a></td>
-			<td class="sly-col-info">
-				<span><a href="<?php echo $ilink ?>"><?php echo sly_html($title) ?></a></span><br />
-				<span><span class="sly-suffix"><?php echo sly_html(sly_Util_String::cutText($filename, 35)) ?> [<?php echo $file->getFormattedSize() ?>]</span></span><br />
-				<span><?php echo $updatedate ?> | <?php echo sly_html($updateuser) ?></span>
-			</td>
-			<td class="sly-col-func"><?php
-
-			$opener_link = $this->getOpenerLink($file);
-			print sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_FUNCTIONS', $opener_link, array('medium' => $file));
-
-			?></td>
-		</tr>
-		<?php
-	}
-
-	if (empty($files)): ?>
-		<tr>
-			<td colspan="4" class="sly-col-empty"><?php echo t('no_media_found') ?></td>
-		</tr>
-	<?php endif ?>
-	</tbody>
-</table>
-<?php
+////////////////////////////////////////////////////////
+// putting it all together
 
 $container = new sly_Form_Container();
-$container->setContent(ob_get_clean());
+$container->setContent($table->render());
 
 $form->add($container);
 $form->setResetButton(null);
