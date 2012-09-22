@@ -20,20 +20,21 @@ if ($this->func === 'add' || $this->func === 'edit'): ?>
 
 	<?php
 
-	$base = 'index.php?page=system_languages&func=';
-	$link = sly_Util_HTML::getSpriteLink($base.'add', t('add_language'), 'language-add');
-
+	$base  = 'index.php?page=system_languages&func=';
 	$table = new sly_Table('languages');
-	$table->addColumn(new sly_Table_Column($link, '', '', array('class' => 'sly-col-icon sly-icon')));
-	$table->addColumn(new sly_Table_Column(t('name'), '', '', array('class' => 'sly-col-name')));
-	$table->addColumn(new sly_Table_Column(t('locale'), '', '', array('class' => 'sly-col-locale')));
-	$table->addColumn(new sly_Table_Column(t('function'), '', '', array('class' => 'sly-col-func')));
 
+	$table->addColumn(sly_Table_Column::sprite('language-add', $base.'add', t('add_language'), 'sly-col-icon sly-icon'));
+	$table->addColumn(sly_Table_Column::factory(t('name'), 'sly-col-name'));
+	$table->addColumn(sly_Table_Column::factory(t('locale'), 'sly-col-locale'));
+	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
+
+	$table->setIsEmpty(empty($this->languages) && $this->func !== 'add');
+	$table->setEmptyNotice(t('no_languages_yet'));
 	$table->openBuffer();
 
 	// Das Formular für neue Sprachen erscheint immer vor den anderen Daten.
 
-	if ($this->func == 'add') {
+	if ($this->func === 'add') {
 		$name   = sly_post('clang_name', 'string');
 		$locale = sly_post('clang_locale', 'string');
 
@@ -53,14 +54,6 @@ if ($this->func === 'add' || $this->func === 'edit'): ?>
 			'clangName'   => $language->getName(),
 			'clangLocale' => $language->getLocale()
 		), false);
-	}
-
-	if ($this->func !== 'add' && $this->func !== 'edit' && empty($this->languages)) {
-		?>
-		<tr>
-			<td colspan="4" class="sly-col-empty center"><?php echo t('no_languages_yet') ?></td>
-		</tr>
-		<?php
 	}
 
 	$table->closeBuffer();
