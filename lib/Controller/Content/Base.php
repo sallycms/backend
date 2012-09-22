@@ -59,7 +59,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$cat    = $art->getCategory();
 		$result = '<ul class="sly-navi-path">
 			<li>'.t('path').'</li>
-			<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$clang.'">'.t('home').'</a></li>';
+			<li> : <a href="index.php?page=structure&amp;clang='.$clang.'">'.t('home').'</a></li>';
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
