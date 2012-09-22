@@ -40,4 +40,10 @@ $form->addRow(array($localeSelect, $tzSelect));
 
 $form->getSubmitButton()->setAttribute('value', t('save'));
 $form->setResetButton(null);
-print $form->render();
+
+$eventparams = array('user' => $user);
+$form = sly_Core::dispatcher()->filter('SLY_PROFILE_FORM', $form, $eventparams);
+
+if ($form instanceof sly_Viewable) {
+	print $form->render();
+}
