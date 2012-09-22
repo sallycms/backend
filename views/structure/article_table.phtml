@@ -7,6 +7,24 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  */
+
+$addURI   = $canAdd ? 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addArticle' : '';
+$table    = new sly_Table('sly-structure-articles');
+$isActive = $renderAddArticle || $renderEditArticle;
+
+$table->addColumn(sly_Table_Column::sprite('article-add', $addURI, t('add_article'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('article_name'), 'sly-col-name'));
+$table->addColumn(sly_Table_Column::factory(t('articletype'), 'sly-col-arttype'));
+
+if ($isActive) {
+	$table->addClass('sly-active');
+	$table->addColumn(sly_Table_Column::factory(t('position_short'), 'sly-col-pos'));
+}
+
+$table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
+$table->setIsEmpty(empty($articles) && !$renderAddArticle);
+$table->setEmptyNotice(t('no_articles_yet'));
+
 ?>
 <form action="index.php" method="post">
 	<fieldset>
@@ -17,25 +35,6 @@
 	</fieldset>
 
 	<?php
-	$add_url = '';
-	if ($canAdd) {
-		$add_url = 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addArticle';
-	}
-	$add_article = sly_Util_HTML::getSpriteLink($add_url, t('add_article'), 'article-add');
-
-	$table = new sly_Table('sly-structure-articles');
-	$table->addColumn(new sly_Table_Column($add_article, '', '', array('class' => 'sly-col-icon sly-icon')));
-	$table->addColumn(new sly_Table_Column(t('article_name'), '', '', array('class' => 'sly-col-name')));
-	$table->addColumn(new sly_Table_Column(t('articletype'), '', '', array('class' => 'sly-col-arttype')));
-
-	$isActive = $renderAddArticle || $renderEditArticle;
-
-	if ($isActive) {
-		$table->addClass('sly-active');
-		$table->addColumn(new sly_Table_Column(t('position_short'), '', '', array('class' => 'sly-col-pos')));
-	}
-
-	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
 	$table->openBuffer();
 
 	if ($renderAddArticle) {
@@ -64,14 +63,6 @@
 				false
 			);
 		}
-	}
-
-	if (!$renderAddArticle && empty($articles)) {
-		?>
-		<tr>
-			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_articles_yet') ?></td>
-		</tr>
-		<?php
 	}
 
 	$table->closeBuffer();

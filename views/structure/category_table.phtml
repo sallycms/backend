@@ -7,6 +7,23 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  */
+
+$addURI   = $canAdd ? 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addCategory' : '';
+$table    = new sly_Table('sly-structure-categories');
+$isActive = $renderAddCategory || $renderEditCategory;
+
+$table->addColumn(sly_Table_Column::sprite('category-add', $addURI, t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('category'), 'sly-col-name'));
+
+if ($isActive) {
+	$table->addClass('sly-active');
+	$table->addColumn(sly_Table_Column::factory(t('position_short'), 'sly-col-pos'));
+}
+
+$table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
+$table->setIsEmpty(empty($categories) && !$renderAddCategory && $categoryId === 0);
+$table->setEmptyNotice(t('no_categories_yet'));
+
 ?>
 <form action="index.php" method="post">
 	<fieldset>
@@ -17,27 +34,9 @@
 	</fieldset>
 
 	<?php
-	$add_url = '';
-	if ($canAdd) {
-		$add_url = 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addCategory';
-	}
-	$add_category = sly_Util_HTML::getSpriteLink($add_url, t('add_category'), 'category-add');
-
-	$table = new sly_Table('sly-structure-categories');
-	$table->addColumn(new sly_Table_Column($add_category, '', '', array('class' => 'sly-col-icon sly-icon')));
-	$table->addColumn(new sly_Table_Column(t('category'), '', '', array('class' => 'sly-col-name')));
-
-	$isActive = $renderAddCategory || $renderEditCategory;
-
-	if ($isActive) {
-		$table->addClass('sly-active');
-		$table->addColumn(new sly_Table_Column(t('position_short'), '', '', array('class' => 'sly-col-pos')));
-	}
-
-	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
 	$table->openBuffer();
 
-	if ($categoryId != 0 && $currentCategory) {
+	if ($categoryId !== 0 && $currentCategory) {
 		?>
 		<tr>
 			<td class="sly-col-icon sly-icon">&nbsp;</td>
@@ -71,14 +70,6 @@
 				false
 			);
 		}
-	}
-
-	if (!$renderAddCategory && !$currentCategory && empty($categories)) {
-		?>
-		<tr>
-			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_categories_yet') ?></td>
-		</tr>
-		<?php
 	}
 
 	$table->closeBuffer();
