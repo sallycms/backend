@@ -40,6 +40,7 @@ $form->addRow(array($localeSelect, $tzSelect));
 
 $form->getSubmitButton()->setAttribute('value', t('save'));
 $form->setResetButton(null);
+$form->setFocus('username');
 
 $eventparams = array('user' => $user);
 $form = sly_Core::dispatcher()->filter('SLY_PROFILE_FORM', $form, $eventparams);

@@ -57,6 +57,10 @@ else {
 $name        = new sly_Form_Input_Text('username', t('name'), $user ? $user->getName() : '');
 $description = new sly_Form_Input_Text('userdesc', t('description'), $user ? $user->getDescription() : '');
 
+if ($user) {
+	$form->setFocus('username');
+}
+
 $form->addRow(array($name, $description));
 
 //////////////////////////////////////////////////////////////////
