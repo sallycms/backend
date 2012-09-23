@@ -155,6 +155,8 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 					$db->query($createStmt);
 				}
 
+				$data = compact('DRIVER', 'HOST', 'LOGIN', 'PASSWORD', 'NAME', 'TABLE_PREFIX');
+
 				$config->setLocal('DATABASE', $data);
 				unset($_POST['submit']);
 				$this->initdbAction();
