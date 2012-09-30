@@ -20,7 +20,7 @@ if (!empty($info['author'])) {
 
 ?>
 <li class="name"><?php
-	print '<h2>'.sly_html($name).'</h2>';
+	print '<h2>'.sly_html($addon).'</h2>';
 ?></li>
 <li class="buttons reinit">
 	<span class="reinit"><a class="sly-button" href="<?php echo $base ?>reinit"><?php echo t('reinit_assets') ?></a></span>
@@ -28,7 +28,7 @@ if (!empty($info['author'])) {
 <li class="buttons installer">
 	<span class="reinstall"><a class="sly-button" href="<?php echo $base ?>install"><?php echo t('reinstall') ?></a></span>
 	<span class="install"><a class="sly-button" href="<?php echo $base ?>install"><?php echo t('install') ?></a></span>
-	<span class="incompatible">(<?php echo t('component_incompatible_with_this_version') ?>)</span>
+	<span class="incompatible">(<?php echo t('addon_incompatible_with_this_version') ?>)</span>
 	<span class="unusable">(<?php echo t('not_all_requirements_met') ?>)</span>
 	<?php if ($info['requirements']): ?><span class="fullinstall"><a class="sly-button" href="<?php echo $base ?>fullinstall"><?php echo t('install_including_requirements') ?></a></span><?php endif ?>
 </li>
@@ -44,5 +44,5 @@ if (!empty($info['author'])) {
 </li>
 <li class="buttons depsinfo">
 	<?php if (!empty($subline)) print '<span class="version">('.implode(', ', $subline).')</span>'; ?>
-	<span class="deps"><?php echo $stati[$key]['deps'] ?></span>
+	<span class="deps"><?php echo $stati[$addon]['deps'] ?></span>
 </li>

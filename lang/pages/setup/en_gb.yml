@@ -3,6 +3,27 @@ setup_continue_to_n: 'Continue with step {0}'
 
 setup_license_title: Setup: License
 setup_license_header: Welcome to SallyCMS setup.
+setup_license_link: License agreement (<a href="http://www.opensource.org/licenses/MIT" class="sly-blank">MIT license</a>)
+setup_license_text: |
+  Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
 setup_license_steps: What happens next:
 setup_license_step_1: The file permissions are checked.
 setup_license_step_2: The database access will be configured.
@@ -21,7 +42,6 @@ setup_security_msg: |
 setup_system_requirements: System requirements
 setup_property: Property
 setup_php_version: PHP version
-setup_mysql_version: MySQL version
 setup_php_time_limit: PHP time limit
 setup_php_mem_limit: PHP memory limit
 setup_php_pseudo: 'PHP pseudo security (open_basedir, safe_mode)'
@@ -59,3 +79,5 @@ setup_finish_login: 'You can <a href="index.php">log in</a> and start using it r
 setup_finish_signature: "Good luck and have fun,\nThe SallyCMS Team"
 
 setup_import_dump_not_found: Export files could not be found!
+setup_database_server_too_old: 'The target database server is too old and incompatible with Sally.<br />You need at least version {1}, but {0} has been detected.'
+setup_database_server_old_but_okay: 'The target database server is out of date but still compatible.<br />Version {1}+ is recommended, but {0} has been detected.'

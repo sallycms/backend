@@ -4,7 +4,7 @@
 
 /*global window:false, screen:false, document:false, navigator:false, Modernizr:false, jQuery:false, confirm:false, escape:false*/
 
-var sly = {};
+var sly = sly || {};
 
 (function($, sly, win, undef) {
 	/////////////////////////////////////////////////////////////////////////////
@@ -484,36 +484,6 @@ var sly = {};
 		document.cookie = 'sly_modernizr='+escape(JSON.stringify(copy));
 	};
 
-	sly.addDatepickerToggler = function(picker, value) {
-		var name     = picker.attr('name');
-		var input    = $('<input type="hidden" value="" />').attr('name', (value === 0 ? '' : '_')+name);
-		var span     = $('<span class="sly-date-disabled" style="cursor:pointer">(&hellip;)</span>');
-		var checkbox = $('<input type="checkbox" value="1" class="sly-form-checkbox" />');
-
-		span.click(function() {
-			$(this).prevAll().click();
-		});
-
-		checkbox.change(function() {
-			var on = this.checked;
-
-			picker.toggle(on).attr('name', (on?'':'_')+name);
-			span.toggle(!on);
-			input.attr('name', (on?'_':'')+name);
-		});
-
-		picker.before(checkbox).after(input).after(span);
-
-		if (value !== 0) {
-			checkbox.prop('checked', true);
-			span.hide();
-		}
-		else {
-			checkbox.prop('checked', false);
-			picker.hide();
-		}
-	};
-
 	sly.initWidgets = function(context) {
 		$('.sly-widget:not(.sly-initialized)', context).each(function() {
 			var self = $(this), init = false;
@@ -630,37 +600,33 @@ var sly = {};
 			}
 
 			// Fallback-Implementierung für autofocus
-
 			if (!Modernizr.input.autofocus) {
 				$('*[autofocus]').focus();
 			}
 		}
 
-		// Fallback-Implementierung für type=range via jQuery UI Slider
-
-		$('input[type=range]:not(.ua-supported)').each(function() {
-			var input  = $(this);
-			var slider = $('<div></div>').attr('id', input.attr('id') + '-slider');
-			var hidden = $('<input type="hidden" value="" />');
-
-			// remove the old input element and replace it with a new, hidden one
-			input.after(hidden);
-			hidden.val(input.val()).attr('name', input.attr('name')).attr('id', input.attr('id'));
-
-			// create a new div that will be the slider
-			input.after(slider);
-			slider.addClass('sly-slider').slider({
-				min:    input.attr('min'),
-				max:    input.attr('max'),
-				value:  input.val(),
-				change: function() {
-					hidden.val(slider.slider('value'));
+		if (typeof $.fn.rangeinput !== 'undefined') {
+			// Fallback-Implementierung für type=range via jQuery Tools Slider
+			$('input[type="range"]:not(.ua-supported)').rangeinput({
+				css: {
+					input:    'sly-range-range',
+					slider:   'sly-range-slider',
+					progress: 'sly-range-progress',
+					handle:   'sly-jqt-handle'
 				}
 			});
 
-			// remove it
-			input.remove();
-		});
+			// Fallback-Implementierung für type=date
+			$('input[type*="date"]').slyDateTime({
+				lngNoDateSelected:   sly.locale.noDateSelected,
+				lngDeleteDate:       sly.locale.deleteDate,
+				lngClickToInputDate: sly.locale.clickToInputDate,
+				lngMonths:           sly.locale.months.join(','),
+				lngShortMonths:      sly.locale.shortMonths.join(','),
+				lngDays:             sly.locale.days.join(','),
+				lngShortDays:        sly.locale.shortDays.join(','),
+			});
+		}
 
 		var sly_apply_chosen = function(container) {
 			// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
@@ -756,8 +722,8 @@ var sly = {};
 			var
 				link     = $(this),
 				list     = $('.sly-addonlist'),
-				rows     = $('.component', list),
-				row      = link.closest('.component'),
+				rows     = $('.pkg', list),
+				row      = link.closest('.pkg'),
 				errorrow = $('.error', list);
 
 			// hide error row
@@ -775,8 +741,8 @@ var sly = {};
 			var updateAddOnStatus = function(stati) {
 				for (var key in stati) {
 					if (!stati.hasOwnProperty(key)) continue;
-					var status = stati[key], comp = $('.component[data-key="' + key + '"]');
-					comp.attr('class', status.classes + ' component');
+					var status = stati[key], comp = $('.pkg[data-key="' + key + '"]');
+					comp.attr('class', status.classes + ' pkg');
 					$('.deps', comp).html(status.deps);
 				}
 			};

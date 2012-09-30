@@ -7,48 +7,55 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  */
-?>
-<div class="sly-content-header">
-	<?php
-	// navigation
-	print $this->render('content/_slotmenu.phtml');
-	print $this->render('content/_subpagemenu.phtml');
-	?>
-</div>
-<?php
-// messages
-print $this->render('content/_messages.phtml');
 
-$params = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
-$form   = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_form');
+$messages    = sly_Helper_Message::renderFlashMessage();
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
+$form        = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_form');
+$hasType     = $article->hasType();
+$hasTemplate = $article->hasTemplate();
 
 /////////////////////////////////////////////////////////////////
 // init form
 
 $form->setEncType('multipart/form-data');
 $form->addHiddenValue('page', 'content');
-$form->addHiddenValue('article_id', $this->article->getId());
+$form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('func', 'setArticleType');
-$form->addHiddenValue('clang', $this->article->getClang());
+$form->addHiddenValue('clang', $article->getClang());
 
 /////////////////////////////////////////////////////////////////
-// articletype
+// article type
 
 $type = new sly_Form_Select_DropDown('article_type', t('articletype'), $article->getType(), $articletypes, 'article_type');
 $form->add($type);
 
-//additional form elements
-$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
-
-//buttons
+// buttons
 $button = new sly_Form_Input_Button('submit', 'save_article', t('submit'));
 $button->addClass('sly-form-submit');
 $form->setSubmitButton($button);
 
-print $form->render();
+// additional form elements
+$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
 
-$hasType     = $article->hasType();
-$hasTemplate = $article->hasTemplate();
+/////////////////////////////////////////////////////////////////
+// header
+
+?>
+<div class="sly-content-header">
+	<?php
+	// navigation
+	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
+	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
+	?>
+</div>
+<?php
+if (!$this->localMessages) {
+	print $messages;
+}
+
+if ($form instanceof sly_Viewable) {
+	print $form->render();
+}
 
 if (!$hasType) {
 	print sly_Helper_Message::warn(t('select_type_first'));
@@ -62,20 +69,21 @@ elseif ($slot === null) {
 elseif (empty($modules)) {
 	print sly_Helper_Message::info(t('no_modules_allowed'));
 }
-else {
+
+$nocontent     = !$hasType || !$hasTemplate || $slot === null || empty($modules);
+$articleSlices = $article->getSlices($slot);
+
+if ($nocontent && !empty($articleSlices)) {
+	print sly_Helper_Message::warn(t('slices_left'));
+}
+
+if (!$nocontent) {
 	print '<div class="sly-content-editmode">';
 
-	$articleSlices = sly_Util_ArticleSlice::findByArticle($this->article->getId(), $this->article->getClang(), $this->slot);
-
-	for ($i = 0; $i <= count($articleSlices); $i++) {
+	for ($i = 0; $i <= count($articleSlices); ++$i) {
 		try {
-			if ($pos === $i) {
-				if (!empty($this->localInfo)) {
-					print sly_Helper_Message::info($this->localInfo);
-				}
-				if (!empty($this->localWarning)) {
-					print sly_Helper_Message::warn($this->localWarning);
-				}
+			if ($pos === $i && $this->localMessages) {
+				print $messages;
 			}
 
 			if ($function === 'add' && $pos === $i) {
@@ -86,12 +94,13 @@ else {
 					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $slot, isset($slicevalues) ? $slicevalues : array());
 				}
 			}
-			else {
-				print $this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules));
+			elseif (!$nocontent) {
+				$this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules), false);
 			}
 
 			if (isset($articleSlices[$i])) {
 				$artslice = $articleSlices[$i];
+
 				if ($function === 'edit' && $slice_id === $artslice->getId()) {
 					if (!$this->checkPermission('editarticleslice', $artslice->getModule())) {
 						print sly_Helper_Message::warn(t('no_rights_to_this_module'));
@@ -100,12 +109,13 @@ else {
 						if (!isset($slicevalues)) {
 							$slicevalues = $artslice->getSlice()->getValues();
 						}
+
 						sly_Helper_Content::printEditSliceForm($artslice, $slicevalues);
 					}
 				}
 				else {
-					print $this->render('content/_slice_toolbar.phtml', array('articleSlice' => $artslice));
-					print $this->render('content/_slice_content.phtml', array('articleSlice' => $artslice));
+					$this->render('content/_slice_toolbar.phtml', array('slice' => $artslice, 'nocontent' => $nocontent), false);
+					$this->render('content/_slice_content.phtml', array('slice' => $artslice), false);
 				}
 			}
 		}

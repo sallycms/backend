@@ -1,19 +1,20 @@
 <?php
 /*
- * Copyright (C) 2009 REDAXO
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License Version 2 as published by the
- * Free Software Foundation.
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
  */
 
 ////////////////////////////////////////////////////////
 // print breadcrumb path
 
-$base     = 'index.php?page=mediapool_structure&amp;cat_id=';
-$textpath = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
-$catID    = sly_request('cat_id', 'int');
-$cat      = sly_Util_MediaCategory::findById($catID);
+$base  = 'index.php?page=mediapool_structure&amp;cat_id=';
+$path  = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
+$catID = sly_request('cat_id', 'int');
+$cat   = sly_Util_MediaCategory::findById($catID);
 
 if ($cat === null) {
 	$categories = sly_Util_MediaCategory::getRootCategories();
@@ -24,17 +25,17 @@ else {
 	$parents    = $cat->getParentTree();
 
 	foreach ($parents as $parent) {
-		$textpath .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
+		$path .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
 	}
 
-	$textpath .= '<li> : <a href="'.$base.$catID.'">'.sly_html($cat->getName()).'</a></li>';
+	$path .= '<li> : <a href="'.$base.$catID.'">'.sly_html($cat->getName()).'</a></li>';
 }
 
 ?>
 <div class="sly-navi-path">
 	<ul>
 		<li><?php echo t('path') ?></li>
-		<?php echo $textpath ?>
+		<?php echo $path ?>
 	</ul>
 </div>
 <?php
@@ -42,7 +43,7 @@ else {
 ////////////////////////////////////////////////////////
 // info and error messages
 
-print $this->render('mediapool/notices.phtml');
+$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // start form if needed
@@ -69,68 +70,56 @@ if ($this->action == 'add' || $this->action == 'edit') {
 		<?php
 }
 
-$rawBase   = 'index.php?page=mediapool_structure&cat_id=';
-$addSprite = sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=add', t('add_category'), 'mediacat-add');
+$rawBase = 'index.php?page=mediapool_structure&cat_id=';
+$table   = new sly_Table('sly-mediapool-structure');
 
-?>
-<table class="sly-table" id="sly-mediapool-structure">
-	<caption><?php echo sly_html(t('structure_caption')) ?></caption>
-	<thead><tr>
-		<th class="sly-col-icon sly-icon"><?php echo $addSprite ?></th>
-		<th class="sly-col-name"><?php echo t('category_name') ?></th>
-		<th class="sly-col-func"><?php echo t('function') ?></th>
-	</tr></thead>
-	<tbody><?php
+$table->addColumn(sly_Table_Column::sprite('mediacat-add', $rawBase.$catID.'&func=add', t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('category_name'), 'sly-col-name'));
+$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 
-	if ($this->action == 'add') {
+$table->setIsEmpty(empty($categories) && $this->action !== 'add');
+$table->setEmptyNotice(t('no_categories_yet'));
+$table->openBuffer();
+
+if ($this->action === 'add') {
+	?>
+	<tr class="sly-active">
+		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', t('add_category'), 'mediacat') ?></td>
+		<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" size="10" id="sly-form-field-name" name="catname" value="" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
+		<td class="sly-col-func sly-has-input"><div><input type="submit" class="sly-form-submit" value="<?php echo t('add') ?>" /></div></td>
+	</tr>
+	<?php
+}
+
+foreach ($categories as $cat) {
+	$id = $cat->getId();
+
+	if ($this->action == 'edit' && $editID == $id) {
 		?>
 		<tr class="sly-active">
-			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', t('add_category'), 'mediacat') ?></td>
-			<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" size="10" id="sly-form-field-name" name="catname" value="" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
-			<td class="sly-col-func sly-has-input"><div><input type="submit" class="sly-form-submit" value="<?php echo t('add') ?>" /></div></td>
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $cat->getName(), 'mediacat') ?></td>
+			<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" id="sly-form-field-name" name="catname" value="<?php echo sly_html($cat->getName()) ?>" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
+			<td class="sly-col-func sly-has-input" colspan="2"><div><input type="submit" class="sly-form-submit" value="<?php echo t('save') ?>" /></div></td>
 		</tr>
 		<?php
 	}
-
-	foreach ($categories as $cat) {
-		$id = $cat->getId();
-
-		if ($this->action == 'edit' && $editID == $id) {
-			?>
-			<tr class="sly-active">
-				<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $cat->getName(), 'mediacat') ?></td>
-				<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" id="sly-form-field-name" name="catname" value="<?php echo sly_html($cat->getName()) ?>" autofocus="autofocus" required="required" placeholder="<?php echo ht('category_name') ?>" /></div></td>
-				<td class="sly-col-func sly-has-input" colspan="2"><div><input type="submit" class="sly-form-submit" value="<?php echo t('save') ?>" /></div></td>
-			</tr>
-			<?php
-		}
-		else {
-			?>
-			<tr>
-				<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=edit&edit_id='.$id, $cat->getName(), 'mediacat') ?></td>
-				<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
-				<td class="sly-col-func">
-					<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
-					<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
-				</td>
-			</tr>
-			<?php
-		}
-	}
-
-	if (empty($categories) && $this->action !== 'add' && $this->action !== 'edit') {
+	else {
 		?>
 		<tr>
-			<td colspan="3" class="center"><?php echo t('no_categories_yet') ?></td>
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=edit&edit_id='.$id, $cat->getName(), 'mediacat') ?></td>
+			<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
+			<td class="sly-col-func">
+				<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
+				<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
+			</td>
 		</tr>
 		<?php
 	}
+}
 
-	?></tbody>
-</table>
+$table->closeBuffer();
+print $table->render();
 
-<?php
-
-if ($this->action == 'add' || $this->action == 'edit') {
+if ($this->action === 'add' || $this->action === 'edit') {
 	print '</form>';
 }

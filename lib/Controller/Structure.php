@@ -9,20 +9,12 @@
  */
 
 class sly_Controller_Structure extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $action;
 	protected $categoryId;
 	protected $clangId;
-	protected $info;
-	protected $warning;
 	protected $artService;
 	protected $catService;
-	protected $renderAddCategory  = false;
-	protected $renderEditCategory = false;
-	protected $renderAddArticle   = false;
-	protected $renderEditArticle  = false;
-	protected $init = false;
 
-	protected static $viewPath;
+	public static $viewPath = 'structure/';
 
 	public function __construct($dontRedirect = false) {
 		parent::__construct();
@@ -32,256 +24,181 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$allowed = $user->getAllowedCLangs();
 
 			if (!empty($user) && !empty($allowed) && !isset($_REQUEST['clang']) && !in_array(sly_Core::getDefaultClangId(), $allowed)) {
-				sly_Util_HTTP::redirect(sly_Util_HTTP::getBaseUrl(true).'/backend/index.php?page=structure&clang='.reset($allowed), '&', 302);
+				$this->redirect(array('clang' => reset($allowed)));
 			}
 		}
 	}
 
-	protected function init($action = null) {
-		if ($this->init) return true;
-		$this->init = true;
-
-		self::$viewPath = 'structure/';
-
-		$this->action     = $action;
+	protected function init() {
 		$this->categoryId = sly_request('category_id', 'int', 0);
 		$this->clangId    = sly_Core::getCurrentClang();
 		$this->artService = sly_Service_Factory::getArticleService();
 		$this->catService = sly_Service_Factory::getCategoryService();
-
-		if (count(sly_Util_Language::findAll()) === 0) {
-			sly_Core::getLayout()->pageHeader(t('structure'));
-			print sly_Helper_Message::info(t('no_languages_yet'));
-			return false;
-		}
-
-		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
-
-		print $this->render('toolbars/languages.phtml', array(
-			'curClang' => $this->clangId,
-			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
-		));
-
-		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
-			'category_id' => $this->categoryId,
-			'clang'       => $this->clangId
-		));
-
-		return true;
 	}
 
 	public function indexAction() {
-		$this->viewAction();
-	}
-
-	public function viewAction() {
-		if (!$this->init('view')) return;
-
-		$currentCategory = $this->catService->findById($this->categoryId, $this->clangId);
-		$categories      = $this->catService->findByParentId($this->categoryId, false, $this->clangId);
-		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false, $this->clangId);
-		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
-		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
-
-		if (!empty($this->info))    print sly_Helper_Message::info($this->info);
-		if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
-
-		print $this->render(self::$viewPath.'category_table.phtml', array(
-			'categories'      => $categories,
-			'currentCategory' => $currentCategory,
-			'statusTypes'     => $this->catService->getStates(),
-			'maxPosition'     => $maxPosition,
-			'maxCatPosition'  => $maxCatPosition
-		));
-
-		print $this->render(self::$viewPath.'article_table.phtml', array(
-			'articles'       => $articles,
-			'statusTypes'    => $this->artService->getStates(),
-			'canAdd'         => $this->canEditCategory($this->categoryId),
-			'canEdit'        => $this->canEditCategory($this->categoryId),
-			'maxPosition'    => $maxPosition,
-			'maxCatPosition' => $maxCatPosition
-		));
+		$this->init();
+		$this->view('index');
 	}
 
 	public function editstatuscategoryAction() {
-		if (!$this->init('editstatuscategory')) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
+		$flash  = sly_Core::getFlashMessage();
 
-		if ($editId) {
-			try {
-				$this->catService->changeStatus($editId, $this->clangId);
-				$this->info = t('category_status_updated');
-			}
-			catch (sly_Exception $e) {
-				$this->warning = $e->getMessage();
-			}
+		try {
+			$this->catService->changeStatus($editId, $this->clangId);
+			$flash->prependInfo(t('category_status_updated'), true);
 		}
-		else {
-			$this->warning = t('category_not_found');
+		catch (Exception $e) {
+			$flash->prependWarning($e->getMessage(), true);
 		}
 
- 		$this->viewAction();
+		return $this->redirectToCat();
 	}
 
 	public function editstatusarticleAction() {
-		if (!$this->init('editstatusarticle')) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
+		$flash  = sly_Core::getFlashMessage();
 
-		if ($editId) {
-			try {
-				$this->artService->changeStatus($editId, $this->clangId);
-				$this->info = t('article_status_updated');
-			}
-			catch (sly_Exception $e) {
-				$this->warning = $e->getMessage();
-			}
+		try {
+			$this->artService->changeStatus($editId, $this->clangId);
+			$flash->prependInfo(t('article_status_updated'), true);
 		}
-		else {
-			$this->warning = t('article_not_found');
+		catch (Exception $e) {
+			$flash->prependWarning($e->getMessage());
 		}
 
- 		$this->viewAction();
+		return $this->redirectToCat();
 	}
 
 	public function deletecategoryAction() {
-		if (!$this->init('deletecategory')) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
+		$flash  = sly_Core::getFlashMessage();
 
-		if ($editId) {
-			try {
-				$this->catService->delete($editId);
-				$this->info = t('category_deleted');
-			}
-			catch (sly_Exception $e) {
-				$this->warning = $e->getMessage();
-			}
+		try {
+			$this->catService->deleteById($editId);
+			$flash->prependInfo(t('category_deleted'), true);
 		}
-		else {
-			$this->warning = t('category_not_found');
+		catch (Exception $e) {
+			$flash->prependWarning($e->getMessage());
 		}
 
- 		$this->viewAction();
+		return $this->redirectToCat();
 	}
 
 	public function deletearticleAction() {
-		if (!$this->init('deletearticle')) return;
+		$this->init();
 
 		$editId = sly_get('edit_id', 'int', 0);
+		$flash  = sly_Core::getFlashMessage();
 
-		if ($editId) {
-			try {
-				$this->artService->delete($editId);
-				$this->info = t('article_deleted');
-			}
-			catch (sly_Exception $e) {
-				$this->warning = $e->getMessage();
-			}
+		try {
+			$this->artService->deleteById($editId);
+			$flash->prependInfo(t('article_deleted'), true);
 		}
-		else {
-			$this->warning = t('article_not_found');
+		catch (Exception $e) {
+			$flash->prependWarning($e->getMessage());
 		}
 
- 		$this->viewAction();
+		return $this->redirectToCat();
 	}
 
 	public function addcategoryAction() {
-		if (!$this->init('addcategory')) return;
+		$this->init();
 
 		if (sly_post('do_add_category', 'boolean')) {
-			$name     = sly_post('category_name',     'string');
-			$position = sly_post('category_position', 'int', 0);
+			$name     = sly_post('category_name',     'string', '');
+			$position = sly_post('category_position', 'int',    0);
+			$flash    = sly_Core::getFlashMessage();
 
 			try {
 				$this->catService->add($this->categoryId, $name, 0, $position);
-				$this->info = t('category_added');
+				$flash->prependInfo(t('category_added'), true);
+
+				return $this->redirectToCat();
 			}
-			catch (sly_Exception $e) {
-				$this->warning           = $e->getMessage();
-				$this->renderAddCategory = true;
+			catch (Exception $e) {
+				$flash->prependWarning($e->getMessage(), true);
 			}
-		}
-		else {
-			$this->renderAddCategory = true;
 		}
 
-		$this->viewAction();
+		$this->view('addcategory', array('renderAddCategory' => true));
 	}
 
 	public function addarticleAction() {
-		if (!$this->init('addarticle')) return;
+		$this->init();
 
 		if (sly_post('do_add_article', 'boolean')) {
-			$name     = sly_post('article_name',     'string');
-			$position = sly_post('article_position', 'int', 0);
+			$name     = sly_post('article_name',     'string', '');
+			$position = sly_post('article_position', 'int',    0);
+			$flash    = sly_Core::getFlashMessage();
 
 			try {
 				$this->artService->add($this->categoryId, $name, 0, $position);
-				$this->info = t('article_added');
+				$flash->prependInfo(t('article_added'), true);
+
+				return $this->redirectToCat();
 			}
-			catch (sly_Exception $e) {
-				$this->warning          = $e->getMessage();
-				$this->renderAddArticle = true;
+			catch (Exception $e) {
+				$flash->prependWarning($e->getMessage(), true);
 			}
-		}
-		else {
-			$this->renderAddArticle = true;
 		}
 
-		$this->viewAction();
+		$this->view('addarticle', array('renderAddArticle' => true));
 	}
 
 	public function editcategoryAction() {
-		if (!$this->init('editcategory')) return;
+		$this->init();
 
-		$editId = sly_request('edit_id', 'int');
+		$editId = sly_request('edit_id', 'int', 0);
 
 		if (sly_post('do_edit_category', 'boolean')) {
-			$name     = sly_post('category_name',     'string');
-			$position = sly_post('category_position', 'int');
+			$name     = sly_post('category_name',     'string', '');
+			$position = sly_post('category_position', 'int',    0);
+			$flash    = sly_Core::getFlashMessage();
 
 			try {
 				$this->catService->edit($editId, $this->clangId, $name, $position);
-				$this->info = t('category_updated');
+				$flash->prependInfo(t('category_updated'), true);
+
+				return $this->redirectToCat();
 			}
-			catch (sly_Exception $e) {
-				$this->warning            = $e->getMessage();
-				$this->renderEditCategory = $editId;
+			catch (Exception $e) {
+				$flash->prependWarning($e->getMessage(), true);
 			}
-		}
-		else {
-			$this->renderEditCategory = $editId;
 		}
 
-		$this->viewAction();
+		$this->view('editcategory', array('renderEditCategory' => $editId));
 	}
 
 	public function editarticleAction() {
-		if (!$this->init('editarticle')) return;
+		$this->init();
 
-		$editId = sly_request('edit_id', 'int');
+		$editId = sly_request('edit_id', 'int', 0);
 
 		if (sly_post('do_edit_article', 'boolean')) {
-			$name     = sly_post('article_name',     'string');
-			$position = sly_post('article_position', 'integer');
+			$name     = sly_post('article_name',     'string', '');
+			$position = sly_post('article_position', 'int',    0);
+			$flash    = sly_Core::getFlashMessage();
 
 			try {
 				$this->artService->edit($editId, $this->clangId, $name, $position);
-				$this->info = t('article_updated');
+				$flash->prependInfo(t('article_updated'), true);
+
+				return $this->redirectToCat();
 			}
-			catch (sly_Exception $e) {
-				$this->warning           = $e->getMessage();
-				$this->renderEditArticle = $editId;
+			catch (Exception $e) {
+				$flash->prependWarning($e->getMessage(), true);
 			}
-		}
-		else {
-			$this->renderEditArticle = $editId;
 		}
 
-		$this->viewAction();
+		$this->view('editarticle', array('renderEditArticle' => $editId));
 	}
 
 	/**
@@ -304,7 +221,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$result = '
 			<ul class="sly-navi-path">
 				<li>'.t('path').'</li>
-				<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$this->clangId.'">'.t('home').'</a></li>
+				<li> : <a href="index.php?page=structure&amp;clang='.$this->clangId.'">'.t('home').'</a></li>
 				'.$result.'
 			</ul>
 			';
@@ -367,9 +284,10 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$clang      = sly_Core::getCurrentClang();
 		$user       = sly_Util_User::getCurrentUser();
 
-		if ($user === null || !sly_Util_Language::hasPermissionOnLanguage($user, $clang)) {
-			return false;
-		}
+		if ($user === null) return false;
+		if ($user->isAdmin()) return true;
+		if (!$user->hasRight('pages', 'structure')) return false;
+		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
 		if ($action === 'index') {
 			return $this->canViewCategory($categoryId);
@@ -391,5 +309,108 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		}
 
 		return true;
+	}
+
+	/**
+	 *
+	 * @param string $action the current action
+	 */
+	protected function view($action, $params = array()) {
+		/**
+		 * stop the view if no languages are available
+		 * but present a nice message
+		 */
+		if (count(sly_Util_Language::findAll()) === 0) {
+			sly_Core::getLayout()->pageHeader(t('structure'));
+			print sly_Helper_Message::info(t('no_languages_yet'));
+			return;
+		}
+
+		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
+
+		$this->render('toolbars/languages.phtml', array(
+			'curClang' => $this->clangId,
+			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
+		), false);
+
+		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
+			'category_id' => $this->categoryId,
+			'clang'       => $this->clangId
+		));
+
+
+		// render flash message
+		print sly_Helper_Message::renderFlashMessage();
+
+		$currentCategory = $this->catService->findById($this->categoryId);
+		$categories      = $this->catService->findByParentId($this->categoryId, false);
+		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
+		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
+		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
+
+		/**
+		 * filter categories
+		 */
+		foreach($categories as $key => $category) {
+			if(!$this->canViewCategory($category->getId())) {
+				unset($categories[$key]);
+			}
+		}
+
+		/**
+		 * filter articles
+		 */
+		foreach($articles as $key => $article) {
+			if(!$this->canEditContent($article->getId())) {
+				unset($articles[$key]);
+			}
+		}
+
+		$params = array_merge(
+						array(
+							'renderAddCategory'  => false,
+							'renderEditCategory' => false,
+							'renderAddArticle'   => false,
+							'renderEditArticle'  => false,
+							'action'             => $action,
+							'maxPosition'        => $maxPosition,
+							'maxCatPosition'     => $maxCatPosition,
+							'categoryId'         => $this->categoryId,
+							'clangId'            => $this->clangId,
+							'canAdd'             => $this->canEditCategory($this->categoryId),
+							'canEdit'            => $this->canEditCategory($this->categoryId),
+						),
+						$params
+					);
+
+		$renderParams = array_merge(
+							$params,
+							array(
+								'categories'      => $categories,
+								'currentCategory' => $currentCategory,
+								'statusTypes'     => $this->catService->getStates(),
+							)
+						);
+
+		$this->render(self::$viewPath.'category_table.phtml', $renderParams, false);
+
+		$renderParams = array_merge(
+							$params,
+							array(
+								'articles'       => $articles,
+								'statusTypes'    => $this->artService->getStates(),
+
+							)
+						);
+
+		$this->render(self::$viewPath.'article_table.phtml', $renderParams, false);
+	}
+
+	protected function redirectToCat($catID = null, $clang = null) {
+		$clang  = $clang === null ? $this->clangId    : (int) $clang;
+		$catID  = $catID === null ? $this->categoryId : (int) $catID;
+		$params = array('category_id' => $catID, 'clang' => $clang);
+
+		return $this->redirectResponse($params);
 	}
 }

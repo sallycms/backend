@@ -10,28 +10,41 @@
 
 abstract class sly_Controller_Content_Base extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $article;
-	protected $info;
-	protected $warning;
+	protected $slot;
 
 	protected function init() {
-		$clang = sly_Core::getCurrentClang();
-		$id    = sly_request('article_id', 'int');
+		$id = sly_request('article_id', 'int');
 
-		$this->article = sly_Util_Article::findById($id, $clang);
+		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
 
-		if (is_null($this->article)) {
-			sly_Core::getLayout()->pageHeader(t('content'));
-			throw new sly_Exception(t('no_articles_available'));
+		$this->article = sly_Util_Article::findById($id);
+
+		if ($this->article === null) {
+			throw new sly_Exception(t('article_not_found', $id), 404);
 		}
+
+		$this->slot = sly_request('slot', 'string', sly_Util_Session::get('contentpage_slot', ''));
+
+		// validate slot
+		if ($this->article->hasTemplate()) {
+			$templateName = $this->article->getTemplateName();
+			$tplService   = sly_Service_Factory::getTemplateService();
+
+			if (!$tplService->hasSlot($templateName, $this->slot)) {
+				$this->slot = $tplService->getFirstSlot($templateName);
+			}
+		}
+
+		sly_Util_Session::set('contentpage_slot', $this->slot);
 
 		sly_Core::setCurrentArticleId($id);
 	}
 
 	protected function renderLanguageBar() {
-		print $this->render('toolbars/languages.phtml', array('curClang' => $this->article->getClang(), 'params' => array(
+		$this->render('toolbars/languages.phtml', array('params' => array(
 			'page'       => $this->getPageName(),
 			'article_id' => $this->article->getId()
-		)));
+		)), false);
 	}
 
 	/**
@@ -41,23 +54,23 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	 */
 	protected function getBreadcrumb() {
 		$art    = $this->article;
+		$clang  = $art->getClang();
 		$user   = sly_Util_User::getCurrentUser();
 		$cat    = $art->getCategory();
 		$result = '<ul class="sly-navi-path">
 			<li>'.t('path').'</li>
-			<li> : <a href="index.php?page=structure&amp;category_id=0&amp;clang='.$art->getClang().'">'.t('home').'</a></li>';
-
+			<li> : <a href="index.php?page=structure&amp;clang='.$clang.'">'.t('home').'</a></li>';
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if (sly_Util_Category::canReadCategory($user, $parent->getId())) {
-					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$art->getClang().'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$clang.'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
 
 		$result .= '<li> | '.($art->isStartArticle() ? t('startarticle') : t('article')).'</li>';
-		$result .= '<li> : <a href="index.php?page='.$this->getPageName().'&amp;article_id='.$art->getId().'&amp;clang='.$art->getClang().'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
+		$result .= '<li> : <a href="index.php?page='.$this->getPageName().'&amp;article_id='.$art->getId().'&amp;clang='.$clang.'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
 		$result .= '</ul>';
 
 		return $result;
@@ -89,13 +102,13 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		if (is_null($user)) return false;
+		if ($user === null) return false;
 
 		$articleId = sly_request('article_id', 'int');
 		$article   = sly_Util_Article::findById($articleId);
 
 		// all users are allowed to see the error message in init()
-		if (is_null($article)) return true;
+		if ($article === null) return true;
 
 		$clang   = sly_Core::getCurrentClang();
 		$clangOk = sly_Util_Language::hasPermissionOnLanguage($user, $clang);
