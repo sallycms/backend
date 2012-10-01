@@ -1,0 +1,32 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$this->title(t('setup_license_title'));
+
+?>
+<div class="sly-area">
+	<h2><?php print t('setup_license_header') ?></h2>
+
+	<div class="sly-area-content">
+		<h3><?php print t('setup_license_steps') ?></h3>
+		<ul>
+			<li><?php print t('setup_license_step_1') ?></li>
+			<li><?php print t('setup_license_step_2') ?></li>
+			<li><?php print t('setup_license_step_3') ?></li>
+			<li><?php print t('setup_license_step_4') ?></li>
+		</ul>
+		<h3><?php print t('setup_license_link') ?></h3>
+		<p><?php print str_replace("\n\n", "</p><p>", t('setup_license_text')) ?></p>
+	</div>
+
+	<div class="sly-area-footer">
+		<p class="right"><a href="index.php?page=setup&amp;func=fsperms&amp;lang=<?php print urlencode($this->lang) ?>">&raquo; <?php print t('setup_license_accept') ?></a></p>
+	</div>
+</div>
