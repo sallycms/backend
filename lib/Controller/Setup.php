@@ -97,6 +97,11 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$this->init();
 
 		$config  = sly_Core::config();
+
+		// just load defaults and this should be the only time to do so
+		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
+		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
+
 		$data    = $config->get('DATABASE');
 		$isSent  = isset($_POST['submit']);
 		$drivers = sly_DB_PDO_Driver::getAvailable();
@@ -290,10 +295,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$this->init();
 
 		$config      = sly_Core::config();
-
-		// just load defaults and this should be the only time to do so
-		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
-		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
 
 		$prefix      = $config->get('DATABASE/TABLE_PREFIX');
 		$pdo         = sly_DB_Persistence::getInstance();
