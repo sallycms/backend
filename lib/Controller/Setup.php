@@ -295,7 +295,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$this->init();
 
 		$config      = sly_Core::config();
-
 		$prefix      = $config->get('DATABASE/TABLE_PREFIX');
 		$pdo         = sly_DB_Persistence::getInstance();
 		$usersExist  = $pdo->listTables($prefix.'user') && $pdo->magicFetch('user', 'id') !== false;

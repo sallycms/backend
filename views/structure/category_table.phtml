@@ -38,7 +38,7 @@ $table->setEmptyNotice(t('no_categories_yet'));
 
 	if ($categoryId !== 0 && $currentCategory) {
 		?>
-		<tr>
+		<tr data-slyid="<?php echo $currentCategory->getParentId() ?>">
 			<td class="sly-col-icon sly-icon">&nbsp;</td>
 			<td class="sly-col-name"><a href="index.php?page=structure&amp;category_id=<?php echo $currentCategory->getParentId().'&amp;clang='.$clangId ?>">..</a></td>
 			<?php if ($isActive): ?><td class="sly-col-pos">&nbsp;</td><?php endif ?>
