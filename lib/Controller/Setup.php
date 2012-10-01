@@ -420,6 +420,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function checkPermission($action) {
-		return sly_Core::config()->get('SETUP') === true;
+		return sly_Core::isSetup();
 	}
 }

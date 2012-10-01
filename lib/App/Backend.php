@@ -35,7 +35,7 @@ class sly_App_Backend extends sly_App_Base {
 		$config->loadStatic(SLY_SALLYFOLDER.'/backend/config/static.yml');
 
 		// are we in setup mode?
-		$isSetup = $config->get('SETUP');
+		$isSetup = sly_Core::isSetup();
 
 		// init timezone and locale
 		$this->initUserSettings($isSetup);
@@ -56,8 +56,7 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	public function run() {
-		$config  = sly_Core::config();
-		$isSetup = $config->get('SETUP');
+		$isSetup = sly_Core::isSetup();
 		$layout  = sly_Core::getLayout();
 
 		// get the most probably already prepared response object
