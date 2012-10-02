@@ -49,4 +49,5 @@ authorisation:
       add: 'translate:add'
       edit: 'translate:edit'
       delete: 'translate:delete'
-
+backend:
+  favicon: backend/assets/favicon.ico
