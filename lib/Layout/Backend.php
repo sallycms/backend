@@ -16,7 +16,6 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	private $navigation;
 
 	public function __construct() {
-		$config = sly_Core::config();
 		$locale = sly_Core::getI18N()->getLocale();
 
 		$this->addCSSFile('assets/css/import.less');
@@ -33,7 +32,6 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 
 		$this->setTitle(sly_Core::getProjectName().' - ');
 
-		$config = sly_Core::config();
 		$this->addMeta('robots', 'noindex,nofollow');
 		$this->setBase(sly_Util_HTTP::getBaseUrl(true).'/backend/');
 
