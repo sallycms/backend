@@ -43,7 +43,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		$this->render('setup/license.phtml', array(), false);
 	}
 
-	public function fspermsAction() {
+	public function syscheckAction() {
 		$this->init();
 
 		$errors    = false;
@@ -90,7 +90,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		}
 
 		$params = compact('sysErrors', 'results', 'protects', 'errors', 'cantCreate', 'tester');
-		$this->render('setup/fsperms.phtml', $params, false);
+		$this->render('setup/syscheck.phtml', $params, false);
 	}
 
 	public function dbconfigAction() {
