@@ -138,7 +138,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$flash->appendWarning(t('invalid_caching_strategy_selected'));
 		}
 		else {
-			$conf->set('CACHING_STRATEGY', $cachingStrategy);
+			$conf->setLocal('CACHING_STRATEGY', $cachingStrategy);
 		}
 
 		// timezone
@@ -160,7 +160,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		}
 
 		// misc
-		$conf->set('DEVELOPER_MODE', $developerMode);
+		$conf->setLocal('DEVELOPER_MODE', $developerMode);
 		$conf->set('PROJECTNAME', $projectName);
 
 		// notify system
