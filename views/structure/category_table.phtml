@@ -7,75 +7,69 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  */
+
+$addURI   = $canAdd ? 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addCategory' : '';
+$table    = new sly_Table('sly-structure-categories');
+$isActive = $renderAddCategory || $renderEditCategory;
+
+$table->addColumn(sly_Table_Column::sprite('category-add', $addURI, t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('category'), 'sly-col-name'));
+
+if ($isActive) {
+	$table->addClass('sly-active');
+	$table->addColumn(sly_Table_Column::factory(t('position_short'), 'sly-col-pos'));
+}
+
+$table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
+$table->setIsEmpty(empty($categories) && !$renderAddCategory && $categoryId === 0);
+$table->setEmptyNotice(t('no_categories_yet'));
+
 ?>
 <form action="index.php" method="post">
 	<fieldset>
 		<input type="hidden" name="page" value="structure" />
-		<input type="hidden" name="category_id" value="<?php echo $this->categoryId ?>" />
-		<input type="hidden" name="clang" value="<?php echo $this->clangId ?>" />
-		<input type="hidden" name="func" value="<?php echo $this->action ?>" />
+		<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+		<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
+		<input type="hidden" name="func" value="<?php echo $action ?>" />
 	</fieldset>
 
 	<?php
-	$add_url = '';
-	if ($this->canEditCategory($this->categoryId)) {
-		$add_url = 'index.php?page=structure&category_id='.$this->categoryId.'&clang='.$this->clangId.'&func=addCategory';
-	}
-	$add_category = sly_Util_HTML::getSpriteLink($add_url, t('add_category'), 'category-add');
-
-	$table = new sly_Table('sly-structure-categories');
-	$table->addColumn(new sly_Table_Column($add_category, '', '', array('class' => 'sly-col-icon sly-icon')));
-	$table->addColumn(new sly_Table_Column(t('category'), '', '', array('class' => 'sly-col-name')));
-
-	$isActive = $this->renderAddCategory || $this->renderEditCategory;
-
-	if ($isActive) {
-		$table->addClass('sly-active');
-		$table->addColumn(new sly_Table_Column(t('position_short'), '', '', array('class' => 'sly-col-pos')));
-	}
-
-	$table->addColumn(new sly_Table_Column(t('status'), '', '', array('class' => 'sly-col-status')));
 	$table->openBuffer();
 
-	if ($this->categoryId != 0 && $currentCategory) {
+	if ($categoryId !== 0 && $currentCategory) {
 		?>
 		<tr data-slyid="<?php echo $currentCategory->getParentId() ?>">
 			<td class="sly-col-icon sly-icon">&nbsp;</td>
-			<td class="sly-col-name"><a href="index.php?page=structure&amp;category_id=<?php echo $currentCategory->getParentId().'&amp;clang='.$this->clangId ?>">..</a></td>
+			<td class="sly-col-name"><a href="index.php?page=structure&amp;category_id=<?php echo $currentCategory->getParentId().'&amp;clang='.$clangId ?>">..</a></td>
 			<?php if ($isActive): ?><td class="sly-col-pos">&nbsp;</td><?php endif ?>
 			<td class="sly-col-status">&nbsp;</td>
 		</tr>
 		<?php
 	}
 
-	if ($this->renderAddCategory) {
-		print $this->render(
+	if ($renderAddCategory) {
+		$this->render(
 			sly_Controller_Structure::$viewPath.'category_table_row_add.phtml',
-			array('maxCatPosition' => $maxCatPosition)
+			array('maxCatPosition' => $maxCatPosition),
+			false
 		);
 	}
 
 	foreach ($categories as $category) {
-		if ($this->renderEditCategory && $this->renderEditCategory == $category->getId()) {
-			print $this->render(
+		if ($renderEditCategory && $renderEditCategory == $category->getId()) {
+			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row_edit.phtml',
-				array('category' => $category, 'maxCatPosition' => $maxCatPosition)
+				array('category' => $category, 'maxCatPosition' => $maxCatPosition),
+				false
 			);
 		}
-		elseif ($this->canViewCategory($category->getId())) {
-			print $this->render(
+		else {
+			$this->render(
 				sly_Controller_Structure::$viewPath.'category_table_row.phtml',
-				array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive)
+				array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive),
+				false
 			);
 		}
-	}
-
-	if (!$this->renderAddCategory && !$currentCategory && empty($categories)) {
-		?>
-		<tr data-slyid="0">
-			<td colspan="<?php echo $isActive ? 5 : 4 ?>" class="sly-col-empty center"><?php echo t('no_categories_yet') ?></td>
-		</tr>
-		<?php
 	}
 
 	$table->closeBuffer();

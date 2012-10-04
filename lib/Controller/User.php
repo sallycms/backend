@@ -27,6 +27,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$login    = sly_post('userlogin', 'string');
 			$timezone = sly_post('timezone', 'string');
 			$service  = sly_Service_Factory::getUserService();
+			$flash    = sly_Core::getFlashMessage();
 			$params   = array(
 				'login'       => $login,
 				'name'        => sly_post('username', 'string'),
@@ -39,17 +40,16 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 			try {
 				$service->create($params);
-				print sly_Helper_Message::info(t('user_added'));
-				$this->listUsers();
-				return;
+				$flash->prependInfo(t('user_added'), true);
+
+				return $this->redirectResponse();
 			}
 			catch (Exception $e) {
-				print sly_Helper_Message::warn($e->getMessage());
+				$flash->prependWarning($e->getMessage(), true);
 			}
 		}
 
-		$this->func = 'add';
-		$this->render('user/edit.phtml', array('user' => null), false);
+		$this->render('user/edit.phtml', array('user' => null, 'func' => 'add'), false);
 	}
 
 	public function editAction() {
@@ -92,26 +92,27 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$user->setRights($this->getRightsFromForm($user));
 
 			// save it
+			$apply = sly_post('apply', 'string');
+			$flash = sly_Core::getFlashMessage();
 
 			try {
 				$user = $service->save($user);
-				$goon = sly_post('apply', 'string');
+				$flash->prependInfo(t('user_updated'), true);
 
-				print sly_Helper_Message::info(t('user_updated'));
+				return $this->redirectResponse($apply ? array('func' => 'edit', 'id' => $user->getId()) : '');
 			}
 			catch (Exception $e) {
-				print sly_Helper_Message::warn($e->getMessage());
-				$goon = true;
+				$flash->prependWarning($e->getMessage(), true);
+				$apply = true;
 			}
 
-			if (!$goon) {
+			if (!$apply) {
 				$this->listUsers();
 				return true;
 			}
 		}
 
-		$params     = array('user' => $user);
-		$this->func = 'edit';
+		$params     = array('user' => $user, 'func' => 'edit');
 
 		$this->render('user/edit.phtml', $params, false);
 	}
@@ -122,26 +123,30 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$user = $this->getUser();
 
 		if ($user === null) {
-			return $this->listUsers();
+			return $this->redirectResponse();
 		}
 
 		$service = sly_Service_Factory::getUserService();
 		$current = sly_Util_User::getCurrentUser();
+		$flash   = sly_Core::getFlashMessage();
 
-		if ($current->getId() == $user->getId()) {
-			print sly_Helper_Message::warn(t('you_cannot_delete_yourself'));
-			return false;
+		try {
+			if ($current->getId() == $user->getId()) {
+				throw new sly_Exception(t('you_cannot_delete_yourself'));
+			}
+
+			if ($user->isAdmin() && !$current->isAdmin()) {
+				throw new sly_Exception(t('you_cannot_delete_admins'));
+			}
+
+			$user->delete();
+			$flash->prependInfo(t('user_deleted'), true);
+		}
+		catch (Exception $e) {
+			$flash->preprendWarning($e->getMessage(), true);
 		}
 
-		if ($user->isAdmin() && !$current->isAdmin()) {
-			print sly_Helper_Message::warn(t('you_cannot_delete_admins'));
-			return false;
-		}
-
-		$user->delete();
-		print sly_Helper_Message::info(t('user_deleted'));
-
-		$this->listUsers();
+		return $this->redirectResponse();
 	}
 
 	public function viewAction() {
@@ -223,15 +228,15 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 	protected function getPossibleStartpages() {
 		$service = sly_Service_Factory::getAddOnService();
-		$addons  = $service->getAvailableAddons();
+		$addons  = $service->getAvailableAddOns();
 
 		$startpages = array();
 		$startpages['structure'] = t('structure');
 		$startpages['profile']   = t('profile');
 
 		foreach ($addons as $addon) {
-			$page = $service->getProperty($addon, 'page', null);
-			$name = $service->getProperty($addon, 'name', $addon);
+			$page = $service->getComposerKey($addon, 'page', null);
+			$name = $service->getComposerKey($addon, 'name', $addon);
 
 			if ($page) {
 				$startpages[$page] = sly_translate($name);

@@ -8,9 +8,11 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+print sly_Helper_Message::renderFlashMessage();
+
 // Daten vorbereiten
 
-$label     = t($this->func == 'edit' ? 'edit_user' : 'add_user');
+$label     = t($func == 'edit' ? 'edit_user' : 'add_user');
 $curUser   = sly_Util_User::getCurrentUser();
 $currentID = $curUser->getId();
 $safeMode  = $user && $user->isAdmin() && !$curUser->isAdmin();
@@ -21,7 +23,7 @@ $safeMode  = $user && $user->isAdmin() && !$curUser->isAdmin();
 $form = new sly_Form('index.php', 'POST', '');
 $form->addHiddenValue('page', 'user');
 $form->addHiddenValue('save', '1');
-$form->addHiddenValue('func', $this->func);
+$form->addHiddenValue('func', $func);
 $form->addHiddenValue('id', $user ? $user->getId() : 0);
 
 //////////////////////////////////////////////////////////////////
@@ -54,6 +56,10 @@ else {
 
 $name        = new sly_Form_Input_Text('username', t('name'), $user ? $user->getName() : '');
 $description = new sly_Form_Input_Text('userdesc', t('description'), $user ? $user->getDescription() : '');
+
+if ($user) {
+	$form->setFocus('username');
+}
 
 $form->addRow(array($name, $description));
 

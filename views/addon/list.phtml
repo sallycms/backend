@@ -8,8 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-if (!empty($info))    print sly_Helper_Message::info($info);
-if (!empty($warning)) print sly_Helper_Message::warn($warning);
+print sly_Helper_Message::renderFlashMessage();
 
 $sublist = dirname(__FILE__).'/sublist.phtml';
 
@@ -20,39 +19,30 @@ else {
 	?>
 	<ul class="sly-addonlist">
 		<?php
-		foreach ($tree as $addon => $aInfo) {
+		foreach ($tree as $addon => $info) {
 			$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
-			$info    = $aInfo;
-			$key     = $addon;
-			$name    = $addon;
-			$classes = $stati[$key]['classes'];
-
-			if (in_array('pa1', explode(' ', $classes))) {
-				foreach (array_keys($aInfo['plugins']) as $plugin) {
-					$info['requirements'][] = $addon.'/'.$plugin;
-				}
-			}
+			$classes = $stati[$addon]['classes'];
 
 			?>
-			<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
+			<li class="<?php echo $classes ?> pkg" data-key="<?php echo $addon ?>">
 				<ul class="details">
 					<?php include $sublist; ?>
 				</ul>
 				<?php
-				if (!empty($aInfo['plugins'])) print '<ul class="plugins">';
+				if (!empty($info['children'])) {
+					print '<ul class="children">';
+					$close = 1;
+				}
+				else {
+					$close = 0;
+				}
 
-				foreach ($aInfo['plugins'] as $plugin => $pInfo) {
-					$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;plugin='.urlencode($plugin).'&amp;func=';
-					$info    = $pInfo;
-					$key     = $addon.'/'.$plugin;
-					$name    = $plugin;
-					$classes = $stati[$key]['classes'];
-
-					$info['requirements'][] = $addon;
-					$info['requirements'] = array_unique($info['requirements']);
+				foreach ($info['children'] as $addon => $info) {
+					$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
+					$classes = $stati[$addon]['classes'];
 
 					?>
-					<li class="<?php echo $classes ?> component" data-key="<?php echo $key ?>">
+					<li class="<?php echo $classes ?> pkg" data-key="<?php echo $addon ?>">
 						<ul class="details">
 							<?php include $sublist; ?>
 						</ul>
@@ -60,7 +50,7 @@ else {
 					<?php
 				}
 
-				if (!empty($aInfo['plugins'])) print '</ul>';
+				if ($close) print '</ul>';
 				?>
 			</li>
 			<?php

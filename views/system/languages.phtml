@@ -8,10 +8,9 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-if (!empty($this->warning)) print sly_Helper_Message::warn($this->warning);
-if (!empty($this->info))    print sly_Helper_Message::info($this->info);
+print sly_Helper_Message::renderFlashMessage();
 
-if ($this->func == 'add' || $this->func == 'edit'): ?>
+if ($this->func === 'add' || $this->func === 'edit'): ?>
 <div class="sly-form">
 	<form action="index.php" method="post">
 		<input type="hidden" name="page" value="system_languages" />
@@ -21,20 +20,21 @@ if ($this->func == 'add' || $this->func == 'edit'): ?>
 
 	<?php
 
-	$base = 'index.php?page=system_languages&func=';
-	$link = sly_Util_HTML::getSpriteLink($base.'add', t('add_language'), 'language-add');
-
+	$base  = 'index.php?page=system_languages&func=';
 	$table = new sly_Table('languages');
-	$table->addColumn(new sly_Table_Column($link, '', '', array('class' => 'sly-col-icon sly-icon')));
-	$table->addColumn(new sly_Table_Column(t('name'), '', '', array('class' => 'sly-col-name')));
-	$table->addColumn(new sly_Table_Column(t('locale'), '', '', array('class' => 'sly-col-locale')));
-	$table->addColumn(new sly_Table_Column(t('function'), '', '', array('class' => 'sly-col-func')));
 
+	$table->addColumn(sly_Table_Column::sprite('language-add', $base.'add', t('add_language'), 'sly-col-icon sly-icon'));
+	$table->addColumn(sly_Table_Column::factory(t('name'), 'sly-col-name'));
+	$table->addColumn(sly_Table_Column::factory(t('locale'), 'sly-col-locale'));
+	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
+
+	$table->setIsEmpty(empty($this->languages) && $this->func !== 'add');
+	$table->setEmptyNotice(t('no_languages_yet'));
 	$table->openBuffer();
 
 	// Das Formular für neue Sprachen erscheint immer vor den anderen Daten.
 
-	if ($this->func == 'add') {
+	if ($this->func === 'add') {
 		$name   = sly_post('clang_name', 'string');
 		$locale = sly_post('clang_locale', 'string');
 
@@ -49,19 +49,11 @@ if ($this->func == 'add' || $this->func == 'edit'): ?>
 	}
 
 	foreach ($this->languages as $language) {
-		print $this->render('system/languages_row.phtml', array(
+		$this->render('system/languages_row.phtml', array(
 			'clangID'     => $language->getId(),
 			'clangName'   => $language->getName(),
 			'clangLocale' => $language->getLocale()
-		));
-	}
-
-	if ($this->func !== 'add' && $this->func !== 'edit' && empty($this->languages)) {
-		?>
-		<tr>
-			<td colspan="4" class="sly-col-empty center"><?php echo t('no_languages_yet') ?></td>
-		</tr>
-		<?php
+		), false);
 	}
 
 	$table->closeBuffer();

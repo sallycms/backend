@@ -8,14 +8,11 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-if (!empty($this->message)) {
-	print sly_Helper_Message::warn($this->message);
-}
+print sly_Helper_Message::renderFlashMessage();
 
 $form = new sly_Form('index.php', 'POST', t('login_title'), '', 'sly_login_form');
 $form->addHiddenValue('page', 'login');
 $form->addHiddenValue('func', 'login');
-$form->addHiddenValue('javascript', 0, 'javascript');
 $form->addHiddenValue('referer', isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
 
 $form->add(new sly_Form_Input_Text('username', t('username')));
@@ -29,5 +26,5 @@ print $form->render();
 
 $layout = sly_Core::getLayout();
 
-$layout->addJavaScript('sly.startLoginTimer(\''.addslashes(t('login_welcome')).'\');');
+$layout->addJavaScript('sly.startLoginTimer('.json_encode(t('login_welcome')).');');
 $layout->addJavaScript('sly.setModernizrCookie();');

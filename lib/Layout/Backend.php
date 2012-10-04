@@ -16,23 +16,32 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	private $navigation;
 
 	public function __construct() {
-		$config = sly_Core::config();
+		$locale  = sly_Core::getI18N()->getLocale();
+		$favicon = sly_Core::config()->get('backend/favicon');
+		$base    = sly_Util_HTTP::getBaseUrl(true).'/';
 
-		$this->addCSSFile('assets/css/import.css');
+		$this->addCSSFile('assets/css/import.less');
 
+		$this->addJavaScriptFile('assets/js/modernizr.min.js');
+		$this->addJavaScriptFile('assets/js/iso8601.min.js', 'if lt IE 8');
 		$this->addJavaScriptFile('assets/js/jquery.min.js');
 		$this->addJavaScriptFile('assets/js/json2.min.js');
 		$this->addJavaScriptFile('assets/js/jquery.chosen.min.js');
-		$this->addJavaScriptFile('assets/js/modernizr.min.js');
+		$this->addJavaScriptFile('assets/js/jquery.tools.min.js');
+		$this->addJavaScriptFile('assets/js/jquery.datetime.min.js');
+		$this->addJavaScriptFile('assets/js/locales/'.$locale.'.min.js');
 		$this->addJavaScriptFile('assets/js/standard.min.js');
 
 		$this->setTitle(sly_Core::getProjectName().' - ');
 
-		$config = sly_Core::config();
 		$this->addMeta('robots', 'noindex,nofollow');
-		$this->setBase(sly_Util_HTTP::getBaseUrl(true).'/backend/');
+		$this->setBase($base.'backend/');
 
-		$locale = explode('_', sly_Core::getI18N()->getLocale(), 2);
+		if ($favicon) {
+			$this->setFavIcon($base.$favicon);
+		}
+
+		$locale = explode('_', $locale, 2);
 		$locale = reset($locale);
 
 		if (strlen($locale) === 2) {
@@ -106,7 +115,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$result     = array();
 		$curPage    = sly_Core::getCurrentControllerName();
 		$numPages   = count($subPages);
-		$format     = '<a href="?page=%s%s"%s>%s</a>';
+		$format     = '<a href="index.php?page=%s%s"%s>%s</a>';
 		$activePage = false;
 
 		foreach ($subPages as $idx => $sp) {
