@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$messages    = sly_Helper_Message::renderFlashMessage();
+$messages    = '<div id="messages">'.sly_Helper_Message::renderFlashMessage().'</div>';
 $params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
 $form        = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_form');
 $hasType     = $article->hasType();
@@ -49,7 +49,7 @@ $form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
 	?>
 </div>
 <?php
-if (!$this->localMessages) {
+if (!$localmsg) {
 	print $messages;
 }
 
@@ -82,10 +82,6 @@ if (!$nocontent) {
 
 	for ($i = 0; $i <= count($articleSlices); ++$i) {
 		try {
-			if ($pos === $i && $this->localMessages) {
-				print $messages;
-			}
-
 			if ($function === 'add' && $pos === $i) {
 				if (!$this->checkPermission('addarticleslice', $module)) {
 					print sly_Helper_Message::warn(t('no_rights_to_this_module'));
@@ -96,6 +92,10 @@ if (!$nocontent) {
 			}
 			elseif (!$nocontent) {
 				$this->render('content/_add_slice_form.phtml', array('article' => $article, 'pos' => $i, 'slot' => $slot, 'modules' => $modules), false);
+			}
+
+			if ($pos === $i && $localmsg) {
+				print $messages;
 			}
 
 			if (isset($articleSlices[$i])) {

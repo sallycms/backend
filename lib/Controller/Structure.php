@@ -338,7 +338,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			'clang'       => $this->clangId
 		));
 
-
 		// render flash message
 		print sly_Helper_Message::renderFlashMessage();
 
@@ -351,8 +350,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		/**
 		 * filter categories
 		 */
-		foreach($categories as $key => $category) {
-			if(!$this->canViewCategory($category->getId())) {
+		foreach ($categories as $key => $category) {
+			if (!$this->canViewCategory($category->getId())) {
 				unset($categories[$key]);
 			}
 		}
@@ -360,48 +359,38 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		/**
 		 * filter articles
 		 */
-		foreach($articles as $key => $article) {
-			if(!$this->canEditContent($article->getId())) {
+		foreach ($articles as $key => $article) {
+			if (!$this->canEditContent($article->getId())) {
 				unset($articles[$key]);
 			}
 		}
 
-		$params = array_merge(
-						array(
-							'renderAddCategory'  => false,
-							'renderEditCategory' => false,
-							'renderAddArticle'   => false,
-							'renderEditArticle'  => false,
-							'action'             => $action,
-							'maxPosition'        => $maxPosition,
-							'maxCatPosition'     => $maxCatPosition,
-							'categoryId'         => $this->categoryId,
-							'clangId'            => $this->clangId,
-							'canAdd'             => $this->canEditCategory($this->categoryId),
-							'canEdit'            => $this->canEditCategory($this->categoryId),
-						),
-						$params
-					);
+		$params = array_merge(array(
+			'renderAddCategory'  => false,
+			'renderEditCategory' => false,
+			'renderAddArticle'   => false,
+			'renderEditArticle'  => false,
+			'action'             => $action,
+			'maxPosition'        => $maxPosition,
+			'maxCatPosition'     => $maxCatPosition,
+			'categoryId'         => $this->categoryId,
+			'clangId'            => $this->clangId,
+			'canAdd'             => $this->canEditCategory($this->categoryId),
+			'canEdit'            => $this->canEditCategory($this->categoryId),
+		),	$params);
 
-		$renderParams = array_merge(
-							$params,
-							array(
-								'categories'      => $categories,
-								'currentCategory' => $currentCategory,
-								'statusTypes'     => $this->catService->getStates(),
-							)
-						);
+		$renderParams = array_merge($params, array(
+			'categories'      => $categories,
+			'currentCategory' => $currentCategory,
+			'statusTypes'     => $this->catService->getStates(),
+		));
 
 		$this->render(self::$viewPath.'category_table.phtml', $renderParams, false);
 
-		$renderParams = array_merge(
-							$params,
-							array(
-								'articles'       => $articles,
-								'statusTypes'    => $this->artService->getStates(),
-
-							)
-						);
+		$renderParams = array_merge($params, array(
+			'articles'       => $articles,
+			'statusTypes'    => $this->artService->getStates(),
+		));
 
 		$this->render(self::$viewPath.'article_table.phtml', $renderParams, false);
 	}

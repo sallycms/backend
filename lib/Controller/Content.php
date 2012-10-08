@@ -9,8 +9,6 @@
  */
 
 class sly_Controller_Content extends sly_Controller_Content_Base {
-	protected $localMessages = false;
-
 	public function indexAction($extraparams = array()) {
 		$this->init();
 		if ($this->header() !== true) return;
@@ -40,9 +38,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			'modules'      => $modules,
 			'slot'         => $this->slot,
 			'slice_id'     => sly_request('slice_id', 'int', 0),
-			'pos'          => sly_request('pos', 'int', 0),
+			'pos'          => sly_request('msgloc', 'int', 0),
 			'function'     => sly_request('function', 'string'),
-			'module'       => sly_request('add_module', 'string')
+			'module'       => sly_request('add_module', 'string'),
+			'localmsg'     => sly_request('msgloc', 'int', null) !== null
 		);
 
 		$params = array_merge($params, $extraparams);
@@ -109,8 +108,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$service->setType($this->article, $type);
 		$flash->appendInfo(t('article_updated'));
 
-		$this->article = $service->findById($this->article->getId());
-		$this->indexAction();
+		return $this->redirectToArticle('', null);
 	}
 
 	public function movesliceAction() {
@@ -132,7 +130,6 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			// check permission
 			if ($user->isAdmin() || $user->hasRight('module', 'move', $module) || $user->hasRight('module', 'move', sly_Authorisation_ModuleListProvider::ALL)) {
 				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $direction);
-				$this->localMessages = true;
 
 				if ($success) {
 					$flash->appendInfo(t('slice_moved'));
@@ -146,7 +143,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			}
 		}
 
-		$this->indexAction();
+		return $this->redirectToArticle('#messages', sly_Util_ArticleSlice::findById($slice_id));
 	}
 
 	public function addarticlesliceAction() {
@@ -162,10 +159,11 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$pos      = sly_post('pos', 'int', 0);
 			$instance = $service->add($this->article, $this->slot, $module, $slicedata['VALUES'], $pos);
 
-			$this->localMessages = true;
 			$flash->appendInfo(t('slice_added'));
 
 			$this->postSliceEdit('add', $instance->getId());
+
+			return $this->redirectToArticle('#messages', $instance);
 		}
 		else {
 			$params['function']    = 'add';
@@ -173,7 +171,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$params['slicevalues'] = $this->getRequestValues(array());
 		}
 
-		$this->indexAction($params);
+		return $this->indexAction($params);
 	}
 
 	public function editarticlesliceAction() {
@@ -195,9 +193,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$articleSlice->setUpdateColumns();
 			$articleSliceService->save($articleSlice);
 
-			$this->localMessages = true;
 			$flash->appendInfo(t('slice_updated'));
 			$this->postSliceEdit('edit', $slice_id);
+
+			return $this->redirectToArticle('#messages', $articleSlice);
 		}
 
 		$extraparams = array();
@@ -218,11 +217,9 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$slice   = sly_Util_ArticleSlice::findById($sliceID);
 		$flash   = sly_Core::getFlashMessage();
 
-		$this->localMessages = true;
-
 		if (!$slice) {
 			$flash->appendWarning(t('module_not_found', $sliceID));
-			return $this->indexAction();
+			return $this->redirectToArticle('#messages', $slice);
 		}
 
 		$module = $slice->getModule();
@@ -230,7 +227,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 		if (!$user->isAdmin() && !$user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) && !$user->hasRight('module', 'edit', $module)) {
 			$flash->appendWarning(t('no_rights_to_this_module'));
-			return $this->indexAction();
+			return $this->redirectToArticle('#messages', $slice);
 		}
 
 		if ($this->preSliceEdit('delete') !== false) {
@@ -245,16 +242,16 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$flash->appendWarning(t('cannot_delete_slice'));
 		}
 
-		$this->indexAction();
+		return $this->redirectToArticle('#messages', $slice);
 	}
 
 	private function preSliceEdit($function) {
 		if (!$this->article->hasTemplate()) return false;
 
-		if ($function == 'delete' || $function == 'edit') {
+		if ($function === 'delete' || $function === 'edit') {
 			$slice_id = sly_request('slice_id', 'int', 0);
 			if (!sly_Util_ArticleSlice::exists($slice_id)) return false;
-			$module = sly_Util_ArticleSlice::getModuleNameForSlice($slice_id );
+			$module = sly_Util_ArticleSlice::getModuleNameForSlice($slice_id);
 		}
 		else {
 			$module = sly_post('module', 'string');
@@ -315,5 +312,20 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	private function getRequestValues(array $slicedata) {
 		$slicedata['VALUES'] = sly_post('slicevalue', 'array', array());
 		return $slicedata;
+	}
+
+	protected function redirectToArticle($anchor, sly_Model_ArticleSlice $slice = null) {
+		$artID   = $this->article->getId();
+		$clang   = $this->article->getClang();
+		$params  = array('article_id' => $artID, 'clang' => $clang, 'slot' => $this->slot);
+
+		if ($slice) {
+			$params['msgloc'] = $slice->getPosition();
+		}
+
+		$params  = http_build_query($params, '', '&');
+		$params .= $anchor;
+
+		return $this->redirectResponse($params);
 	}
 }
