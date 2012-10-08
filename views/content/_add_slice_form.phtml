@@ -21,6 +21,10 @@ foreach ($modules as $module => $moduleTitle) {
 	}
 }
 
+if ($moduleSelect->getValueCount() === 1) {
+	return;
+}
+
 $form = new sly_Form('index.php#addslice', 'GET', t('add_slice'));
 $form->addClass('sly-form-add-slice');
 $form->addHiddenValue('page', 'content');
