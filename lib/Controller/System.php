@@ -186,7 +186,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$result   = array();
 
 		foreach ($locales as $locale) {
-			$i18n = new sly_I18N($locale, $langpath);
+			$i18n = new sly_I18N($locale, $langpath, false);
 			$result[$locale] = $i18n->msg('lang');
 		}
 
