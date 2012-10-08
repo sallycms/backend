@@ -28,7 +28,8 @@ if ($this->isDocType($medium)) {
 ////////////////////////////////////////////////////////
 // info and error messages
 
-print $this->render('mediapool/notices.phtml');
+$this->render('mediapool/javascript.phtml', array(), false);
+$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // start forms
@@ -59,7 +60,7 @@ $isImage = $this->isImage($medium);
 
 if ($isImage) {
 	$imgn    = '../data/mediapool/'.$encoded.'?t='.$updatedate;
-	$resize  = sly_Service_Factory::getAddOnService()->isAvailable('image_resize');
+	$resize  = sly_Util_AddOn::isAvailable('sallycms/image-resize');
 	$fwidth  = $medium->getWidth();
 	$fheight = $medium->getHeight();
 
@@ -103,7 +104,7 @@ if ($this->canAccessFile($medium)) {
 
 	$select = $this->getCategorySelect();
 	$select->setLabel(t('category'));
-	$select->setAttribute('id', 'rex_file_new_category');
+	$select->setAttribute('id', 'new_category');
 	$select->setAttribute('onchange', '');
 	$select->setAttribute('value', $categoryID);
 	$form->add($select);

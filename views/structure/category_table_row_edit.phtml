@@ -9,14 +9,16 @@
  */
 
 $base_url = 'index.php?page=structure&category_id='.$category->getId().'&clang='.$this->clangId;
+$name     = sly_post('category_name', 'string', $category->getCatName());
+$pos      = sly_post('category_position', 'int', $category->getCatPosition());
 ?>
 <tr class="sly-active" data-slyid="<?php echo $category->getId() ?>" data-slystatus="<?php echo $category->getStatus() ?>">
 	<td class="sly-col-icon sly-icon">
 		<input type="hidden" name="edit_id" value="<?php echo $category->getId() ?>" />
 		<?php echo sly_Util_HTML::getSpriteLink($base_url, $category->getCatName(), 'category') ?>
 	</td>
-	<td class="sly-col-name sly-has-input"><div><input type="text" class="sly-form-text" name="category_name" autofocus="autofocus" required="required" placeholder="<?php echo ht('category') ?>" value="<?php echo sly_html($category->getCatName()) ?>" /></div></td>
-	<td class="sly-col-pos sly-has-input"><div><input type="number" class="sly-form-text" name="category_position" value="<?php echo sly_html($category->getCatPosition()) ?>" required="required" min="1" max="<?php echo $maxCatPosition ?>" /></div></td>
+	<td class="sly-col-name sly-has-input"><div><input type="text" class="sly-form-text" name="category_name" autofocus="autofocus" required="required" placeholder="<?php echo ht('category') ?>" value="<?php echo sly_html($name) ?>" /></div></td>
+	<td class="sly-col-pos sly-has-input"><div><input type="number" class="sly-form-text" name="category_position" value="<?php echo sly_html($pos) ?>" required="required" min="1" max="<?php echo $maxCatPosition ?>" /></div></td>
 	<td class="sly-col-status sly-has-input"><div><input type="submit" name="do_edit_category" class="sly-form-submit" value="<?php echo t('save') ?>" /></div></td>
 </tr>
 <?php

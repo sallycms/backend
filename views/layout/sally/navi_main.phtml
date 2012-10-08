@@ -15,7 +15,7 @@ $nav    = $this->getNavigation();
 $groups = $nav->getGroups();
 
 // give addons a way to alter the menu a last time
-$nav = sly_Core::dispatcher()->filter('SLY_LAYOUT_NAVI', $nav);
+$nav = sly_Core::dispatcher()->filter('SLY_LAYOUT_NAVI', $nav, array('layout' => $this));
 
 foreach ($groups as $group) {
 	$topic    = $group->getName();

@@ -138,13 +138,13 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	public function indexAction() {
 		$this->init();
 
-		print $this->render('linkmap/javascript.phtml');
-		print $this->render('linkmap/index.phtml');
+		$this->render('linkmap/javascript.phtml', array(), false);
+		$this->render('linkmap/index.phtml', array(), false);
 	}
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return !empty($user) && $user->hasStructureRight();
+		return $user && ($user->isAdmin() || $user->hasRight('pages', 'structure'));
 	}
 
 	protected function url($local = array()) {

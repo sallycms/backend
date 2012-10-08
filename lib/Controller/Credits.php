@@ -16,7 +16,7 @@ class sly_Controller_Credits extends sly_Controller_Backend implements sly_Contr
 
 		if (sly_Util_User::getCurrentUser()->isAdmin()) {
 			$subline = array(
-				array('page' => 'credits', 'label' => ht('credits')),
+				array('page' => 'credits',           'label' => ht('credits')),
 				array('page' => 'credits_bugreport', 'label' => 'Fehler gefunden?')
 			);
 		}
@@ -27,7 +27,7 @@ class sly_Controller_Credits extends sly_Controller_Backend implements sly_Contr
 
 	public function indexAction() {
 		$this->init();
-		print $this->render('credits/index.phtml');
+		$this->render('credits/index.phtml', array(), false);
 	}
 
 	public function checkPermission($action) {
