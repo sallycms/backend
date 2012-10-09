@@ -31,30 +31,30 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		try {
 			// save metadata
 			if (sly_post('save_meta', 'boolean', false)) {
-				$this->saveMeta();
+				return $this->saveMeta();
 			}
 
 			// make article the startarticle
 			elseif (sly_post('to_startarticle', 'boolean', false) && $this->canConvertToStartArticle()) {
-				$this->convertToStartArticle();
+				return $this->convertToStartArticle();
 			}
 
 			// copy content to another language
 			elseif (sly_post('copy_content', 'boolean', false)) {
-				$this->copyContent();
+				return $this->copyContent();
 			}
 
 			// move article to other category
 			elseif (sly_post('move_article', 'boolean', false)) {
-				$this->moveArticle();
+				return $this->moveArticle();
 			}
 
 			elseif (sly_post('copy_article', 'boolean', false)) {
-				$this->copyArticle();
+				return $this->copyArticle();
 			}
 
 			elseif (sly_post('move_category', 'string')) {
-				$this->moveCategory();
+				return $this->moveCategory();
 			}
 		}
 		catch (Exception $e) {
@@ -78,7 +78,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			'clang' => $this->article->getClang() // deprecated
 		));
 
-		$this->article = sly_Util_Article::findById($this->article->getId());
+		return $this->redirectToArticle();
 	}
 
 	private function convertToStartArticle() {
@@ -88,12 +88,12 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		try {
 			$service->convertToStartArticle($this->article->getId());
 			$flash->appendInfo(t('article_converted_to_startarticle'));
-
-			$this->article = sly_Util_Article::findById($this->article->getId());
 		}
 		catch (sly_Exception $e) {
 			$flash->appendWarning(t('cannot_convert_to_startarticle').': '.$e->getMessage());
 		}
+
+		return $this->redirectToArticle();
 	}
 
 	private function copyContent() {
@@ -151,6 +151,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		foreach ($infos as $msg) $flash->appendInfo($info);
 		foreach ($errs  as $msg) $flash->appendWarning($msg);
+
+		return $this->redirectToArticle();
 	}
 
 	private function moveArticle() {
@@ -162,8 +164,6 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			try {
 				$service->move($this->article->getId(), $target);
 				$flash->appendInfo(t('article_moved'));
-
-				$this->article = sly_Util_Article::findById($this->article->getId());
 			}
 			catch (sly_Exception $e) {
 				$flash->appendWarning(t('cannot_move_article').': '.$e->getMessage());
@@ -172,6 +172,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		else {
 			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
+
+		return $this->redirectToArticle();
 	}
 
 	private function copyArticle() {
@@ -193,6 +195,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		else {
 			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
+
+		return $this->redirectToArticle();
 	}
 
 	private function moveCategory() {
@@ -205,8 +209,6 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			try {
 				$service->move($this->article->getCategoryId(), $target);
 				$flash->appendInfo(t('category_moved'));
-
-				$this->article = sly_Util_Article::findById($this->article->getCategoryId());
 			}
 			catch (sly_Exception $e) {
 				$flash->appendWarning(t('cannot_move_category').': '.$e->getMessage());
@@ -215,6 +217,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		else {
 			$flash->appendWarning(t('no_rights_to_this_function'));
 		}
+
+		return $this->redirectToArticle();
 	}
 
 	/**
@@ -261,5 +265,13 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		if (!$this->article->isStartArticle()) return false;
 		$user = sly_Util_User::getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('article', 'move', sly_Authorisation_ArticleListProvider::ALL) || $user->hasRight('article', 'move', $this->article->getId());
+	}
+
+	protected function redirectToArticle() {
+		$artID   = $this->article->getId();
+		$clang   = $this->article->getClang();
+		$params  = array('article_id' => $artID, 'clang' => $clang);
+
+		return $this->redirectResponse($params);
 	}
 }
