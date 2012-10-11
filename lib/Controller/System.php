@@ -166,6 +166,10 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		// notify system
 		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
 
+		// create/remove bootcache
+		sly_Util_BootCache::recreate('frontend');
+		sly_Util_BootCache::recreate('backend');
+
 		$this->indexAction();
 	}
 
