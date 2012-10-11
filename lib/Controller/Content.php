@@ -38,10 +38,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			'modules'      => $modules,
 			'slot'         => $this->slot,
 			'slice_id'     => sly_request('slice_id', 'int', 0),
-			'pos'          => sly_request('msgloc', 'int', 0),
+			'pos'          => sly_request('pos', 'int', 0),
 			'function'     => sly_request('function', 'string'),
 			'module'       => sly_request('add_module', 'string'),
-			'localmsg'     => sly_request('msgloc', 'int', null) !== null
+			'localmsg'     => sly_request('pos', 'int', null) !== null
 		);
 
 		$params = array_merge($params, $extraparams);
@@ -320,7 +320,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$params  = array('article_id' => $artID, 'clang' => $clang, 'slot' => $this->slot);
 
 		if ($slice) {
-			$params['msgloc'] = $slice->getPosition();
+			$params['pos'] = $slice->getPosition();
 		}
 
 		$params  = http_build_query($params, '', '&');
