@@ -72,7 +72,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$notFoundArticle = sly_post('notfound_article', 'int');
 		$defaultClang    = sly_post('default_clang',    'int');
 		$defaultType     = sly_post('default_type',     'string');
-		$developerMode   = sly_post('developer_mode',   'boolean');
+		$developerMode   = sly_post('developer_mode',   'boolean', false);
 		$backendLocale   = sly_post('backend_locale',   'string');
 		$projectName     = sly_post('projectname',      'string');
 		$cachingStrategy = sly_post('caching_strategy', 'string');
