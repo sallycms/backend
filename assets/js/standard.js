@@ -655,6 +655,28 @@ var sly = sly || {};
 			sly_apply_chosen(event.currentTarget);
 		});
 
+		$('body').delegate('a.sly-postlink', 'click', function() {
+			var
+				p      = $(this).attr('href').split('?'),
+				action = p[0],
+				params = p[1].split('&'),
+				form   = $('<form>').attr('action', action).attr('method', 'post'),
+				i, tmp, key, value;
+
+				$('body').append(form);
+
+			for (i in params) {
+				tmp   = params[i].split('=');
+				key   = tmp[0];
+				value = tmp[1];
+
+				$('<input>').attr('type', 'hidden').attr('name', key).attr('value', value).appendTo(form);
+			}
+
+			$(form).submit();
+			return false;
+		});
+
 		// Mehrsprachige Formulare initialisieren
 
 		// Checkboxen erzeugen

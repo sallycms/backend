@@ -74,7 +74,7 @@ foreach ($users as $user) {
 		<?php if ($canDelete && ($id === $currentID || (!$isAdmin && $user->isAdmin()))): ?>
 		<td class="sly-col-func"><span class="sly-na"><?php echo t('delete') ?></span></td>
 		<?php elseif ($canDelete): ?>
-		<td class="sly-col-func"><a class="sly-action sly-delete" href="<?php echo $base ?>delete&amp;id=<?php echo $id ?>"><?php echo t('delete') ?></a></td>
+		<td class="sly-col-func"><a class="sly-action sly-delete sly-postlink" href="<?php echo $base ?>delete&amp;id=<?php echo $id ?>"><?php echo t('delete') ?></a></td>
 		<?php endif ?>
 	</tr>
 	<?php
