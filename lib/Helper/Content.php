@@ -12,8 +12,6 @@
  * @author zozi@webvariants.de
  */
 class sly_Helper_Content {
-
-	// ----- ADD Slice
 	public static function printAddSliceForm($module, $position, $articleId, $clang, $slot) {
 		$moduleService = sly_Service_Factory::getModuleService();
 
