@@ -23,7 +23,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			throw new sly_Exception(t('article_not_found', $id), 404);
 		}
 
-		$this->slot = sly_request('slot', 'string', sly_Util_Session::get('contentpage_slot', ''));
+		$session    = sly_Core::getSession();
+		$this->slot = sly_request('slot', 'string', $session->get('contentpage_slot', 'string', ''));
 
 		// validate slot
 		if ($this->article->hasTemplate()) {
@@ -35,7 +36,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			}
 		}
 
-		sly_Util_Session::set('contentpage_slot', $this->slot);
+		$session->set('contentpage_slot', $this->slot);
 
 		sly_Core::setCurrentArticleId($id);
 	}

@@ -92,9 +92,10 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		if ($this->category === null) {
 			$category = sly_request('category', 'int', -1);
 			$service  = sly_Service_Factory::getMediaCategoryService();
+			$session  = sly_Core::getSession();
 
-			if ($category == -1) {
-				$category = sly_Util_Session::get('media[category]', 'int');
+			if ($category === -1) {
+				$category = $session->get('sly-media-category', 'int', 0);
 			}
 
 			// respect category filter
@@ -105,7 +106,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 			$category = $service->findById($category);
 			$category = $category ? $category->getId() : 0;
 
-			sly_util_Session::set('media[category]', $category);
+			$session->set('sly-media-category', $category);
 			$this->category = $category;
 		}
 
