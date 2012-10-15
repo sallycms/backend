@@ -21,7 +21,6 @@ $safeMode  = $user && $user->isAdmin() && !$curUser->isAdmin();
 // start the form
 
 $form = new sly_Form('index.php', 'POST', '');
-$form->setCsrfEnabled(true);
 $form->addHiddenValue('page', 'user');
 $form->addHiddenValue('save', '1');
 $form->addHiddenValue('func', $func);
