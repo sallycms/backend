@@ -32,7 +32,7 @@ else {
 }
 
 if ($this->canPublishCategory($this->categoryId) && $this->categoryId != $article->getId()) {
-	$status = '<a href="'.$edit_url.'&amp;func=editStatusArticle" class="'.$status_class.'">'.$status.'</a>';
+	$status = '<a href="'.$edit_url.'&amp;func=editStatusArticle" class="'.$status_class.' sly-postlink">'.$status.'</a>';
 }
 else {
 	$status_class .= ' sly-na';
@@ -56,7 +56,7 @@ else {
 		}
 
 		if ($canEdit && !$article->isStartArticle()) {
-			echo '<a href="'.$edit_url.'&amp;func=deleteArticle" class="sly-delete">'.t('delete').'</a>';
+			echo '<a href="'.$edit_url.'&amp;func=deleteArticle" class="sly-delete sly-postlink">'.t('delete').'</a>';
 		}
 		else {
 			echo '<span class="sly-na">'.t('delete').'</span>';

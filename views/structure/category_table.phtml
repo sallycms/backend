@@ -32,6 +32,7 @@ if ($isActive) {
 			<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
 			<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
 			<input type="hidden" name="func" value="<?php echo $action ?>" />
+			<?php print sly_Util_Csrf::renderInputTag() ?>
 		</fieldset>
 		<?php
 }
