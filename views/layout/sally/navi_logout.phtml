@@ -16,8 +16,8 @@ if ($user && $this->hasNavigation()) {
 	<ul class="sly-meta">
 		<li class="sly-first"><span><?php echo t('logged_in_as').' '.sly_html($user_name) ?></span></li>
 		<li><a href="index.php?page=profile"><?php echo t('my_profile') ?></a></li>
-		<li><a href="index.php?page=login&amp;func=logout"><?php echo t('logout') ?></a></li>
-		<li><a href="../"><?php echo t('to_website') ?></a></li>
+		<li><a href="index.php?page=login&amp;func=logout" class="sly-postlink"><?php echo t('logout') ?></a></li>
+		<li><a href="../" class="sly-blank"><?php echo t('to_website') ?></a></li>
 	</ul>
 	<?php
 }
