@@ -41,7 +41,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 		$this->init('edit');
 
 		if (!empty($_POST)) {
-			$editID   = sly_request('edit_id', 'int');
+			$editID   = sly_post('edit_id', 'int');
 			$service  = sly_Service_Factory::getMediaCategoryService();
 			$category = $service->findById($editID);
 
@@ -67,7 +67,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 	public function deleteAction() {
 		$this->init('delete');
 
-		$editID   = sly_request('edit_id', 'int');
+		$editID   = sly_post('edit_id', 'int');
 		$service  = sly_Service_Factory::getMediaCategoryService();
 		$category = $service->findById($editID);
 
@@ -82,5 +82,15 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 		}
 
 		$this->indexAction();
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, array('add', 'edit', 'delete'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 }

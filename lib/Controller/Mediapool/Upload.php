@@ -18,7 +18,7 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 		$this->init('upload');
 
 		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
-			$title = sly_request('ftitle', 'string');
+			$title = sly_post('ftitle', 'string');
 			$cat   = $this->getCurrentCategory();
 
 			if (!$this->canAccessCategory($cat)) {
@@ -45,6 +45,16 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 		}
 
 		$this->indexAction();
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($action === 'upload') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function saveMedium(array $fileData, $category, $title) {

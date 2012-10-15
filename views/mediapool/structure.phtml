@@ -62,7 +62,7 @@ if ($this->action == 'add' || $this->action == 'edit') {
 			<?php	if ($this->action): ?>
 			<input type="hidden" name="edit_id" value="<?php echo $editID ?>" />
 			<?php endif ?>
-
+			<?php print sly_Util_Csrf::renderInputTag() ?>
 			<?php foreach ($this->args as $name => $value): ?>
 			<input type="hidden" name="args[<?php echo $name ?>]" value="<?php echo sly_html($value) ?>" />
 			<?php endforeach ?>
@@ -110,7 +110,7 @@ foreach ($categories as $cat) {
 			<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
 			<td class="sly-col-func">
 				<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
-				<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete"><?php echo t('delete') ?></a>
+				<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete sly-postlink"><?php echo t('delete') ?></a>
 			</td>
 		</tr>
 		<?php
