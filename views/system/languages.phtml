@@ -16,6 +16,7 @@ if ($this->func === 'add' || $this->func === 'edit'): ?>
 		<input type="hidden" name="page" value="system_languages" />
 		<input type="hidden" name="clang_id" value="<?php echo (int) $this->id ?>" />
 		<input type="hidden" name="func" value="<?php echo $this->func ?>" />
+		<?php print sly_Util_Csrf::renderInputTag() ?>
 	<?php endif ?>
 
 	<?php

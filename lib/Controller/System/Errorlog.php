@@ -20,6 +20,17 @@ class sly_Controller_System_Errorlog extends sly_Controller_System {
 		}
 	}
 
+	public function checkPermission($action) {
+		$user = sly_Util_User::getCurrentUser();
+		if (!$user) return false;
+
+		if ($action === 'clear') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return parent::checkPermission($action);
+	}
+
 	public function indexAction() {
 		$this->init();
 
