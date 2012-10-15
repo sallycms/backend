@@ -37,7 +37,17 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 			}
 		}
 
-		$this->indexAction();
+		return $this->redirectResponse();
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($action === 'sync') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function syncMedium($filename, $category, $title) {
@@ -46,7 +56,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 
 		// get cleaned filename
 		$filename = sly_Util_Directory::fixWindowsDisplayFilename($filename);
-		if(empty($title)) $title = $filename;
+		if (empty($title)) $title = $filename;
 		$newName  = SLY_MEDIAFOLDER.'/'.sly_Util_Medium::createFilename($filename, false);
 
 		if ($newName !== $absFile) {

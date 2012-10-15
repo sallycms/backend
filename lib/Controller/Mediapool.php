@@ -284,7 +284,16 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return $user && ($user->isAdmin() || $user->hasRight('pages', 'mediapool'));
+
+		if (!$user || (!$user->isAdmin() && !$user->hasRight('pages', 'mediapool'))) {
+			return false;
+		}
+
+		if (in_array($action, array('batch', 'move', 'delete'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function isMediaAdmin() {

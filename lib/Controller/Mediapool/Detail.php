@@ -16,21 +16,18 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 
 		$fileID = $this->getCurrentFile();
 
-		$this->render('mediapool/toolbar.phtml', array(), false);
-
-		if ($fileID == -1) {
-			$this->warning = t('file_not_found');
-			$this->render('mediapool/index.phtml', array(), false);
-			return;
+		if ($fileID === -1) {
+			return $this->redirectResponse(null, 'mediapool');
 		}
 
+		$this->render('mediapool/toolbar.phtml', array(), false);
 		$this->render('mediapool/detail.phtml', array(), false);
 	}
 
-	protected function getCurrentFile() {
+	protected function getCurrentFile($forcePost = false) {
 		if ($this->file === null) {
-			$fileID   = sly_request('file_id', 'int', -1);
-			$fileName = sly_request('file_name', 'string', '');
+			$fileID   = $forcePost ? sly_post('file_id', 'int', -1)      : sly_request('file_id', 'int', -1);
+			$fileName = $forcePost ? sly_post('file_name', 'string', '') : sly_request('file_name', 'string', '');
 			$service  = sly_Service_Factory::getMediumService();
 
 			if (mb_strlen($fileName) > 0) {
@@ -68,9 +65,9 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 	public function updateAction() {
 		$this->init('update');
 
-		$fileID = $this->getCurrentFile();
+		$fileID = $this->getCurrentFile(true);
 		$medium = sly_Util_Medium::findById($fileID);
-		$target = sly_request('category', 'int', 0);
+		$target = sly_post('category', 'int', -1);
 
 		// only continue if a file was found, we can access it and have access
 		// to the target category
@@ -82,7 +79,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 
 		// update our file
 
-		$title = sly_request('title', 'string');
+		$title = sly_post('title', 'string');
 		$msg   = t('medium_updated');
 		$ok    = true;
 
@@ -118,7 +115,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 	public function deleteAction() {
 		$this->init('delete');
 
-		$fileID = $this->getCurrentFile();
+		$fileID = $this->getCurrentFile(true);
 		$media  = sly_Util_Medium::findById($fileID);
 
 		// only continue if a file was found and we can access it
@@ -129,6 +126,16 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 		}
 
 		$this->deleteMedia($media);
-		parent::indexAction();
+		return $this->redirectResponse(null, 'mediapool');
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 }
