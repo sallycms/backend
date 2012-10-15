@@ -657,10 +657,12 @@ var sly = sly || {};
 
 		$('body').delegate('a.sly-postlink', 'click', function() {
 			var
-				p      = $(this).attr('href').split('?'),
-				action = p[0],
-				params = p[1].split('&'),
-				form   = $('<form>').attr('action', action).attr('method', 'post'),
+				parts     = $(this).attr('href').split('?'),
+				action    = parts[0],
+				params    = parts[1].split('&'),
+				form      = $('<form>').attr('action', action).attr('method', 'post'),
+				tokenName = 'sly-csrf-token',
+				token     = $('meta[name="'+tokenName+'"]'),
 				i, tmp, key, value;
 
 				$('body').append(form);
@@ -670,7 +672,19 @@ var sly = sly || {};
 				key   = tmp[0];
 				value = tmp[1];
 
-				$('<input>').attr('type', 'hidden').attr('name', key).attr('value', value).appendTo(form);
+				$('<input>')
+					.attr('type', 'hidden')
+					.attr('name', key)
+					.attr('value', value)
+					.appendTo(form);
+			}
+
+			if (token.length > 0 && !$(this).is('.sly-no-csrf')) {
+				$('<input>')
+					.attr('type', 'hidden')
+					.attr('name', tokenName)
+					.attr('value', token.attr('content'))
+					.appendTo(form);
 			}
 
 			$(form).submit();
