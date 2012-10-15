@@ -12,6 +12,7 @@
 	<div>
 		<input type="hidden" name="page" value="system_errorlog" />
 		<input type="hidden" name="func" value="clear" />
+		<?php print sly_Util_Csrf::renderInputTag() ?>
 	</div>
 	<p class="center">
 		<input type="submit" value="<?php echo t('clear_errorlog') ?>" class="sly-form-submit sly-button" />
