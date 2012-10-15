@@ -166,8 +166,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		if (!$user) return false;
 
 		if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, array('add', 'edit', 'delete'))) {
-			$session = sly_Core::getSession();
-			if (!$session->checkCsrfToken()) return false;
+			sly_Util_Csrf::checkToken();
 		}
 
 		if ($user->isAdmin()) {
