@@ -68,7 +68,14 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 	}
 
 	public function checkPermission($action) {
-		return $this->getUser() !== null;
+		$user = $this->getUser();
+		if (!$user) return false;
+
+		if ($action === 'update') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function getBackendLocales() {
