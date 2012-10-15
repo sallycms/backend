@@ -659,13 +659,19 @@ var sly = sly || {};
 			var
 				parts     = $(this).attr('href').split('?'),
 				action    = parts[0],
-				params    = parts[1].split('&'),
+				params    = parts[1],
 				form      = $('<form>').attr('action', action).attr('method', 'post'),
 				tokenName = 'sly-csrf-token',
 				token     = $('meta[name="'+tokenName+'"]'),
 				i, tmp, key, value;
 
 				$('body').append(form);
+
+			if (params.indexOf('#') >= 0) {
+				params = params.split('#')[0];
+			}
+
+			params = params.split('&');
 
 			for (i in params) {
 				tmp   = params[i].split('=');
