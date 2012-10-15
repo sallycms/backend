@@ -25,6 +25,18 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		return 'contentmeta';
 	}
 
+	public function checkPermission($action) {
+		if (parent::checkPermission($action)) {
+			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+				sly_Util_Csrf::checkToken();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public function processmetaformAction() {
 		$this->init();
 
