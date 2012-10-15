@@ -64,7 +64,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		sly_Core::getFlashMessage()->appendInfo(t('profile_updated'));
 		print sly_Helper_Message::renderFlashMessage();
 
-		return $this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function checkPermission($action) {

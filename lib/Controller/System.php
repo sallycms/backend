@@ -170,7 +170,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		sly_Util_BootCache::recreate('frontend');
 		sly_Util_BootCache::recreate('backend');
 
-		$this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function setupAction() {
