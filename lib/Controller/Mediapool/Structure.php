@@ -10,12 +10,12 @@
 
 class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 	public function indexAction() {
-		$this->init('index');
-		$this->render('mediapool/structure.phtml', array(), false);
+		$this->init();
+		$this->indexView();
 	}
 
 	public function addAction() {
-		$this->init('add');
+		$this->init();
 
 		if (!empty($_POST)) {
 			$service  = sly_Service_Factory::getMediaCategoryService();
@@ -34,11 +34,11 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('add');
 	}
 
 	public function editAction() {
-		$this->init('edit');
+		$this->init();
 
 		if (!empty($_POST)) {
 			$editID   = sly_post('edit_id', 'int');
@@ -61,11 +61,11 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('edit');
 	}
 
 	public function deleteAction() {
-		$this->init('delete');
+		$this->init();
 
 		$editID   = sly_post('edit_id', 'int');
 		$service  = sly_Service_Factory::getMediaCategoryService();
@@ -81,7 +81,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('delete');
 	}
 
 	public function checkPermission($action) {
@@ -92,5 +92,9 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
 		}
 
 		return true;
+	}
+
+	protected function indexView($action = '') {
+		$this->render('mediapool/structure.phtml', array('action' => $action), false);
 	}
 }

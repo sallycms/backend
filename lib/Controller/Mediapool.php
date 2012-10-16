@@ -14,11 +14,10 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	protected $category;
 	protected $selectBox;
 	protected $categories;
-	protected $action;
 
 	private $init = false;
 
-	protected function init($action = '') {
+	protected function init() {
 		if ($this->init) return;
 		$this->init = true;
 
@@ -29,7 +28,6 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 		$this->warning    = sly_request('warning', 'string', '');
 		$this->args       = sly_requestArray('args', 'string');
 		$this->categories = array();
-		$this->action     = $action;
 
 		// init category filter
 		if (isset($this->args['categories'])) {
@@ -155,7 +153,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function indexAction() {
-		$this->init('index');
+		$this->init();
 
 		$files = $this->getFiles();
 
@@ -170,7 +168,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function batchAction() {
-		$this->init('batch');
+		$this->init();
 
 		if (!empty($_POST['delete'])) {
 			return $this->deleteAction();
@@ -180,7 +178,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function moveAction() {
-		$this->init('move');
+		$this->init();
 
 		if (!$this->isMediaAdmin()) {
 			return $this->indexAction();
@@ -211,7 +209,7 @@ class sly_Controller_Mediapool extends sly_Controller_Backend implements sly_Con
 	}
 
 	public function deleteAction() {
-		$this->init('delete');
+		$this->init();
 
 		if (!$this->isMediaAdmin()) {
 			return $this->indexAction();
