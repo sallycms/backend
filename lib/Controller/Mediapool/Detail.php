@@ -8,124 +8,90 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
-	protected $file;
+class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
+	protected $medium = false;
 
 	public function indexAction() {
-		$this->init('index');
+		// look for a valid medium via GET/POST
+		$retval = $this->checkMedium(false);
+		if ($retval) return $retval;
 
-		$fileID = $this->getCurrentFile();
-
-		if ($fileID === -1) {
-			return $this->redirectResponse(null, 'mediapool');
-		}
-
-		$this->render('mediapool/toolbar.phtml', array(), false);
-		$this->render('mediapool/detail.phtml', array(), false);
-	}
-
-	protected function getCurrentFile($forcePost = false) {
-		if ($this->file === null) {
-			$fileID   = $forcePost ? sly_post('file_id', 'int', -1)      : sly_request('file_id', 'int', -1);
-			$fileName = $forcePost ? sly_post('file_name', 'string', '') : sly_request('file_name', 'string', '');
-			$service  = sly_Service_Factory::getMediumService();
-
-			if (mb_strlen($fileName) > 0) {
-				$files = $service->find(array('filename' => $fileName), null, null, 'LIMIT 1');
-
-				if (!empty($files)) {
-					$file   = reset($files);
-					$fileID = $file->getID();
-				}
-				else {
-					$fileID = -1;
-				}
-			}
-			elseif (!empty($fileID)) {
-				$file = $service->findById($fileID);
-				if (!$file) $fileID = -1;
-			}
-
-			$this->file = (int) $fileID;
-		}
-
-		return $this->file;
+		return $this->indexView();
 	}
 
 	public function saveAction() {
-		$this->init('save');
+		// look for a valid medium via POST only
+		$retval = $this->checkMedium(true);
+		if ($retval) return $retval;
 
-		if (!empty($_POST['delete'])) {
-			return $this->deleteAction();
+		if (!$this->canAccessFile($this->medium)) {
+			sly_Core::getFlashMessage()->appendWarning(t('no_permission'));
+			return $this->indexView();
 		}
 
-		return $this->updateAction();
+		if (!empty($_POST['delete'])) {
+			return $this->performDelete();
+		}
+
+		return $this->performUpdate();
 	}
 
-	public function updateAction() {
-		$this->init('update');
-
-		$fileID = $this->getCurrentFile(true);
-		$medium = sly_Util_Medium::findById($fileID);
-		$target = sly_post('category', 'int', -1);
+	protected function performUpdate() {
+		$medium = $this->medium;
+		$target = sly_post('category', 'int', $medium->getCategoryId());
+		$flash  = sly_Core::getFlashMessage();
 
 		// only continue if a file was found, we can access it and have access
 		// to the target category
 
-		if (!$medium || !$this->canAccessFile($medium) || !$this->canAccessCategory($target)) {
-			$this->warning = t('you_have_no_access_to_this_medium');
-			return $this->indexAction();
+		if (!$this->canAccessCategory($target)) {
+			$flash->appendWarning(t('you_have_no_access_to_this_medium'));
+			return $this->indexView();
 		}
 
 		// update our file
 
 		$title = sly_post('title', 'string');
-		$msg   = t('medium_updated');
-		$ok    = true;
 
 		// upload new file or just change file properties?
 
 		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
 			try {
 				sly_Util_Medium::upload($_FILES['file_new'], $target, $title, $medium);
-				$msg = t('file_changed');
+
+				$flash->appendInfo(t('file_changed'));
+
+				return $this->redirectResponse(array('file_id' => $medium->getId()));
 			}
 			catch (Exception $e) {
-				$ok   = false;
 				$code = $e->getCode();
 				$msg  = t($code === sly_Util_Medium::ERR_TYPE_MISMATCH ? 'types_of_old_and_new_do_not_match' : 'an_error_happened_during_upload');
+
+				$flash->appendWarning($msg);
 			}
 		}
 		else {
-			$medium->setTitle($title);
-			$medium->setCategoryId($target);
+			try {
+				$medium->setTitle($title);
+				$medium->setCategoryId($target);
 
-			$service = sly_Service_Factory::getMediumService();
-			$service->update($medium);
+				$service = sly_Service_Factory::getMediumService();
+				$service->update($medium);
+
+				$flash->appendInfo(t('medium_updated'));
+
+				return $this->redirectResponse(array('file_id' => $medium->getId()));
+			}
+			catch (Exception $e) {
+				$flash->appendWarning($e->getMessage());
+			}
 		}
 
-		// setup messages
-		if ($ok) $this->info = $msg;
-		else $this->warning = $msg;
-
-		// show details page again
-		$this->indexAction();
+		return $this->indexView();
 	}
 
-	public function deleteAction() {
-		$this->init('delete');
-
-		$fileID = $this->getCurrentFile(true);
-		$media  = sly_Util_Medium::findById($fileID);
-
-		// only continue if a file was found and we can access it
-
-		if (!$media || !$this->canAccessFile($media)) {
-			$this->warning = t('no_permission');
-			return $this->indexAction();
-		}
-
-		$this->deleteMedia($media);
+	protected function performDelete() {
+		$this->deleteMedium($this->medium, sly_Core::getFlashMessage());
 		return $this->redirectResponse(null, 'mediapool');
 	}
 
@@ -137,5 +103,39 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool {
 		}
 
 		return true;
+	}
+
+	protected function checkMedium($requirePost) {
+		$this->medium = $this->getCurrentMedium($requirePost);
+
+		if (!$this->medium) {
+			return $this->redirectResponse(null, 'mediapool');
+		}
+	}
+
+	protected function getCurrentMedium($forcePost = false) {
+		$fileID   = $forcePost ? sly_post('file_id', 'int', -1)      : sly_request('file_id', 'int', -1);
+		$fileName = $forcePost ? sly_post('file_name', 'string', '') : sly_request('file_name', 'string', '');
+		$service  = sly_Service_Factory::getMediumService();
+
+		if (mb_strlen($fileName) > 0) {
+			$media = $service->find(array('filename' => $fileName), null, null, 'LIMIT 1');
+
+			if (!empty($media)) {
+				return reset($media);
+			}
+		}
+		elseif ($fileID > 0) {
+			return $service->findById($fileID);
+		}
+
+		return null;
+	}
+
+	protected function indexView() {
+		$this->init();
+		$this->render('mediapool/detail.phtml', array(
+			'medium' => $this->medium
+		), false);
 	}
 }

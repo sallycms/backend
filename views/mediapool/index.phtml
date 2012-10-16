@@ -12,11 +12,6 @@ $resize   = sly_Util_AddOn::isAvailable('sallycms/image-resize');
 $selected = $this->getCurrentCategory();
 
 ////////////////////////////////////////////////////////
-// info and error messages
-
-$this->render('mediapool/notices.phtml', array(), false);
-
-////////////////////////////////////////////////////////
 // list all files in the current category
 
 $form = new sly_Form('index.php', 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
@@ -133,7 +128,7 @@ foreach ($files as $file) {
 
 	if ($title == '') $title = '['.t('no_title').']';
 
-	$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.'&amp;category='.$selected.$argUrl;
+	$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.$argUrl;
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {

@@ -8,14 +8,16 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
+class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 	public function indexAction() {
-		$this->init('index');
+		$this->init();
 		$this->render('mediapool/upload.phtml', array(), false);
 	}
 
 	public function uploadAction() {
-		$this->init('upload');
+		$this->init();
+
+		$flash = sly_Core::getFlashMessage();
 
 		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
 			$title = sly_post('ftitle', 'string');
@@ -37,11 +39,11 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 				exit;
 			}
 			elseif ($file !== null) {
-				sly_Core::getCurrentApp()->redirect('mediapool', array('info' => $this->info));
+				return $this->redirectResponse(null, 'mediapool');
 			}
 		}
 		else {
-			$this->warning = t('file_not_found_maybe_too_big');
+			$flash->appendWarning(t('file_not_found_maybe_too_big'));
 		}
 
 		$this->indexAction();
@@ -58,14 +60,15 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool {
 	}
 
 	protected function saveMedium(array $fileData, $category, $title) {
-		$file = null;
+		$file  = null;
+		$flash = sly_Core::getFlashMessage();
 
 		try {
-			$file       = sly_Util_Medium::upload($fileData, $category, $title);
-			$this->info = t('file_added');
+			$file = sly_Util_Medium::upload($fileData, $category, $title);
+			$flash->appendInfo(t('file_added'));
 		}
 		catch (sly_Exception $e) {
-			$this->warning = $e->getMessage();
+			$flash->appendWarning($e->getMessage());
 		}
 
 		return $file;
