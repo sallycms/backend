@@ -13,18 +13,13 @@
 
 $base    = 'index.php?page=mediapool_structure&amp;cat_id=';
 $path    = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
-$catID   = sly_request('cat_id', 'int');
-$cat     = sly_Util_MediaCategory::findById($catID);
 $isForm  = $action === 'add' || $action === 'edit';
 $addMode = $action === 'add';
+$catID   = $cat    ? $cat->getId()    : 0;
+$editID  = $active ? $active->getId() : 0;
 
-if ($cat === null) {
-	$categories = sly_Util_MediaCategory::getRootCategories();
-	$catID      = 0;
-}
-else {
-	$categories = $cat->getChildren();
-	$parents    = $cat->getParentTree();
+if ($cat) {
+	$parents = $cat->getParentTree();
 
 	foreach ($parents as $parent) {
 		$path .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
@@ -42,15 +37,10 @@ else {
 </div>
 <?php
 
-////////////////////////////////////////////////////////
-// info and error messages
-
-$this->render('mediapool/notices.phtml', array(), false);
+print sly_Helper_Message::renderFlashMessage();
 
 ////////////////////////////////////////////////////////
 // start form if needed
-
-$editID = sly_request('edit_id', 'int');
 
 if ($isForm) {
 	?>
@@ -59,11 +49,11 @@ if ($isForm) {
 			<input type="hidden" name="page" value="mediapool_structure" />
 			<input type="hidden" name="cat_id" value="<?php echo $catID ?>" />
 			<input type="hidden" name="func" value="<?php echo $action ?>" />
-			<?php	if ($action): ?>
-			<input type="hidden" name="edit_id" value="<?php echo $editID ?>" />
+			<?php	if ($active): ?>
+			<input type="hidden" name="edit_id" value="<?php echo $active->getId() ?>" />
 			<?php endif ?>
 			<?php print sly_Util_Csrf::renderInputTag() ?>
-			<?php foreach ($this->args as $name => $value): ?>
+			<?php foreach ($args as $name => $value): ?>
 			<input type="hidden" name="args[<?php echo $name ?>]" value="<?php echo sly_html($value) ?>" />
 			<?php endforeach ?>
 		</fieldset>
@@ -77,7 +67,7 @@ $table->addColumn(sly_Table_Column::sprite('mediacat-add', $rawBase.$catID.'&fun
 $table->addColumn(sly_Table_Column::factory(t('category_name'), 'sly-col-name'));
 $table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 
-$table->setIsEmpty(empty($categories) && $action !== 'add');
+$table->setIsEmpty(empty($children) && $action !== 'add');
 $table->setEmptyNotice(t('no_categories_yet'));
 $table->openBuffer();
 
@@ -91,7 +81,7 @@ if ($addMode) {
 	<?php
 }
 
-foreach ($categories as $cat) {
+foreach ($children as $cat) {
 	$id = $cat->getId();
 
 	if ($action === 'edit' && $editID === $id) {
