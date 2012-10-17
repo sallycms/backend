@@ -15,7 +15,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	protected function init() {
 		if ($this->init++) return;
 
-		if (!sly_get('json', 'boolean', false)) {
+		if (!sly_post('json', 'boolean', false)) {
 			$layout = sly_Core::getLayout();
 			$layout->pageHeader(t('addons'));
 		}
@@ -163,7 +163,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 				// redirect to the next addOn
 				if (count($todo) > 1) {
-					sly_Util_HTTP::redirect($_SERVER['REQUEST_URI'], array(), '', 302);
+					return $this->sendResponse(false);
 				}
 			}
 		}
@@ -190,7 +190,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 		// check token here instead of in checkPermission() to handle the exception
 		// ourselves and send a proper JSON response
-		#sly_Util_Csrf::checkToken();
+		sly_Util_Csrf::checkToken();
 
 		switch ($method) {
 			case 'install':
@@ -210,8 +210,8 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		}
 	}
 
-	private function sendResponse() {
-		if (sly_get('json', 'boolean')) {
+	private function sendResponse($finished = true) {
+		if (sly_post('json', 'boolean', false)) {
 			header('Content-Type: application/json; charset=UTF-8');
 			while (ob_get_level()) ob_end_clean();
 			ob_start('ob_gzhandler');
@@ -226,9 +226,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			}
 
 			$response = array(
-				'status'  => empty($msgs),
-				'stati'   => $this->buildStatusList($data),
-				'message' => implode('<br />', $msgs)
+				'status'   => empty($msgs),
+				'stati'    => $this->buildStatusList($data),
+				'message'  => implode('<br />', $msgs),
+				'finished' => $finished
 			);
 
 			$flash->clear();
