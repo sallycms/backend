@@ -196,7 +196,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$flash->appendInfo(t('slice_updated'));
 			$this->postSliceEdit('edit', $slice_id);
 
-			return $this->redirectToArticle('#messages', $articleSlice);
+			$apply = sly_post('btn_update', 'string') !== null;
+			return $this->redirectToArticle('#messages', $articleSlice, $apply);
 		}
 
 		$extraparams = array();
@@ -314,12 +315,18 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		return $slicedata;
 	}
 
-	protected function redirectToArticle($anchor, sly_Model_ArticleSlice $slice = null) {
+	protected function redirectToArticle($anchor, sly_Model_ArticleSlice $slice = null, $edit = false) {
 		$artID   = $this->article->getId();
 		$clang   = $this->article->getClang();
 		$params  = array('article_id' => $artID, 'clang' => $clang, 'slot' => $this->slot);
 
-		if ($slice) {
+		if ($edit) {
+			$params['slice_id'] = $slice->getId();
+			$params['pos']      = $slice->getPosition();
+			$params['function'] = 'edit';
+			$anchor             = '#editslice';
+		}
+		elseif ($slice) {
 			$params['pos'] = $slice->getPosition();
 		}
 
