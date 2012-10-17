@@ -62,13 +62,19 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		$service->save($user);
 
 		sly_Core::getFlashMessage()->appendInfo(t('profile_updated'));
-		print sly_Helper_Message::renderFlashMessage();
 
-		return $this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function checkPermission($action) {
-		return $this->getUser() !== null;
+		$user = $this->getUser();
+		if (!$user) return false;
+
+		if ($action === 'update') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function getBackendLocales() {

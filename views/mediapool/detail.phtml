@@ -8,9 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$fileID = $this->getCurrentFile();
-$medium = sly_Util_Medium::findById($fileID);
-
+$fileID     = $medium->getId();
 $title      = $medium->getTitle();
 $filename   = $medium->getFilename();
 $filetype   = $medium->getFiletype();
@@ -28,8 +26,8 @@ if ($this->isDocType($medium)) {
 ////////////////////////////////////////////////////////
 // info and error messages
 
+print sly_Helper_Message::renderFlashMessage();
 $this->render('mediapool/javascript.phtml', array(), false);
-$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // start forms

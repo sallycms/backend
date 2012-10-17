@@ -254,6 +254,7 @@ addon_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kom
 addon_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
 addon_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0})!'
 addon_not_found: 'Das AddOn {0} wurde nicht gefunden!'
+addon_not_given: 'Es wurde kein AddOn angegeben!'
 no_dependencies: keine Abhängigkeiten
 
 addon_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0})!'

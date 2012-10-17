@@ -112,15 +112,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			}
 		}
 
-		$params     = array('user' => $user, 'func' => 'edit');
-
+		$params = array('user' => $user, 'func' => 'edit');
 		$this->render('user/edit.phtml', $params, false);
 	}
 
 	public function deleteAction() {
 		$this->init();
 
-		$user = $this->getUser();
+		$user = $this->getUser(true);
 
 		if ($user === null) {
 			return $this->redirectResponse();
@@ -166,6 +165,10 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$user = sly_Util_User::getCurrentUser();
 		if (!$user) return false;
 
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, array('add', 'edit', 'delete'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
 		if ($user->isAdmin()) {
 			return true;
 		}
@@ -205,8 +208,8 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$this->render('user/list.phtml', compact('users', 'total'), false);
 	}
 
-	protected function getUser() {
-		$userID  = sly_request('id', 'int', 0);
+	protected function getUser($forcePost = false) {
+		$userID  = $forcePost ? sly_post('id', 'int', 0) : sly_request('id', 'int', 0);
 		$service = sly_Service_Factory::getUserService();
 		$user    = $service->findById($userID);
 

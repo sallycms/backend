@@ -8,79 +8,112 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool {
+class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 	public function indexAction() {
-		$this->init('index');
-		$this->render('mediapool/structure.phtml', array(), false);
+		$this->init();
+		$this->indexView();
 	}
 
 	public function addAction() {
-		$this->init('add');
-
 		if (!empty($_POST)) {
 			$service  = sly_Service_Factory::getMediaCategoryService();
-			$name     = sly_post('catname', 'string');
-			$parentID = sly_post('cat_id', 'int');
+			$name     = sly_post('catname', 'string', '');
+			$parentID = sly_post('cat_id', 'int', 0);
+			$flash    = sly_Core::getFlashMessage();
 
 			try {
 				$parent = $service->findById($parentID); // may be null
 				$service->add($name, $parent);
 
-				$this->info   = t('category_added', $name);
-				$this->action = '';
+				$flash->appendInfo(t('category_added', $name));
+				return $this->redirectResponse(array('cat_id' => $parentID));
 			}
 			catch (Exception $e) {
-				$this->warning = $e->getMessage();
+				$flash->appendWarning($e->getMessage());
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('add');
 	}
 
 	public function editAction() {
-		$this->init('edit');
-
 		if (!empty($_POST)) {
-			$editID   = sly_request('edit_id', 'int');
+			$editID   = sly_post('edit_id', 'int', 0);
 			$service  = sly_Service_Factory::getMediaCategoryService();
 			$category = $service->findById($editID);
 
 			if ($category) {
-				$name = sly_post('catname', 'string');
+				$name  = sly_post('catname', 'string', '');
+				$flash = sly_Core::getFlashMessage();
 
 				try {
 					$category->setName($name);
 					$service->update($category);
 
-					$this->info   = t('category_updated', $name);
-					$this->action = '';
+					$flash->appendInfo(t('category_updated', $name));
+					return $this->redirectResponse(array('cat_id' => $category->getParentId()));
 				}
 				catch (Exception $e) {
-					$this->warning = $e->getMessage();
+					$flash->appendWarning($e->getMessage());
 				}
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('edit');
 	}
 
 	public function deleteAction() {
-		$this->init('delete');
-
-		$editID   = sly_request('edit_id', 'int');
+		$editID   = sly_post('edit_id', 'int', 0);
 		$service  = sly_Service_Factory::getMediaCategoryService();
 		$category = $service->findById($editID);
 
 		if ($category) {
+			$parent = $category->getParentId();
+			$flash  = sly_Core::getFlashMessage();
+
 			try {
 				$service->deleteByCategory($category);
-				$this->info = t('category_deleted');
+				$flash->appendInfo(t('category_deleted'));
+				return $this->redirectResponse(array('cat_id' => $parent));
 			}
 			catch (Exception $e) {
-				$this->warning = $e->getMessage();
+				$flash->appendWarning($e->getMessage());
 			}
 		}
 
-		$this->indexAction();
+		$this->indexView('delete');
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, array('add', 'edit', 'delete'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
+	}
+
+	protected function indexView($action = '') {
+		$cat    = sly_request('cat_id', 'int', 0);
+		$active = sly_request('edit_id', 'int', 0);
+		$cat    = sly_Util_MediaCategory::findById($cat);
+		$active = sly_Util_MediaCategory::findById($active);
+
+		if ($cat === null) {
+			$children = sly_Util_MediaCategory::getRootCategories();
+		}
+		else {
+			$children = $cat->getChildren();
+		}
+
+		$this->init();
+		$this->render('mediapool/structure.phtml', array(
+			'action'   => $action,
+			'cat'      => $cat,
+			'children' => $children,
+			'active'   => $active,
+			'args'     => $this->args
+		), false);
 	}
 }

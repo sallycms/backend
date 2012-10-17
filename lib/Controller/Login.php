@@ -74,6 +74,9 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		$user = sly_Util_User::getCurrentUser();
 
 		if ($user) {
+			// check access here to avoid layout problems
+			sly_Util_Csrf::checkToken();
+
 			// notify system
 			sly_Core::dispatcher()->notify('SLY_BE_LOGOUT', $user);
 			sly_Service_Factory::getUserService()->logout();

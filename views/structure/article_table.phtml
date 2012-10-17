@@ -25,47 +25,54 @@ $table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
 $table->setIsEmpty(empty($articles) && !$renderAddArticle);
 $table->setEmptyNotice(t('no_articles_yet'));
 
-?>
-<form action="index.php" method="post">
-	<fieldset>
-		<input type="hidden" name="page" value="structure" />
-		<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
-		<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
-		<input type="hidden" name="func" value="<?php echo $action ?>" />
-	</fieldset>
+if ($isActive) {
+	?>
+	<form action="index.php" method="post">
+		<fieldset>
+			<input type="hidden" name="page" value="structure" />
+			<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+			<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
+			<input type="hidden" name="func" value="<?php echo $action ?>" />
+			<?php print sly_Util_Csrf::renderInputTag() ?>
+		</fieldset>
+		<?php
+}
 
-	<?php
-	$table->openBuffer();
+$table->openBuffer();
 
-	if ($renderAddArticle) {
+if ($renderAddArticle) {
+	$this->render(
+		sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
+		array('maxPosition' => $maxPosition),
+		false
+	);
+}
+
+foreach ($articles as $article) {
+	if ($renderEditArticle && $renderEditArticle == $article->getId()) {
 		$this->render(
-			sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
-			array('maxPosition' => $maxPosition),
+			sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
+			array('article' => $article, 'maxPosition' => $maxPosition),
 			false
 		);
 	}
-
-	foreach ($articles as $article) {
-		if ($renderEditArticle && $renderEditArticle == $article->getId()) {
-			$this->render(
-				sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
-				array('article' => $article, 'maxPosition' => $maxPosition),
-				false
-			);
-		}
-		else {
-			$this->render(
-				sly_Controller_Structure::$viewPath.'article_table_row.phtml',
-				array(
-					'article' => $article, 'statusTypes' => $statusTypes,
-					'canEdit' => $canEdit, 'isActive' => $isActive
-				),
-				false
-			);
-		}
+	else {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'article_table_row.phtml',
+			array(
+				'article' => $article, 'statusTypes' => $statusTypes,
+				'canEdit' => $canEdit, 'isActive' => $isActive
+			),
+			false
+		);
 	}
+}
 
-	$table->closeBuffer();
-	print $table->render();
+$table->closeBuffer();
+print $table->render();
+
+if ($isActive) {
 	?>
-</form>
+	</form>
+	<?php
+}

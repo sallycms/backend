@@ -14,7 +14,7 @@ $status       = $statusTypes[$category->getStatus()][0];
 $status_class = $statusTypes[$category->getStatus()][1];
 
 if ($this->canPublishCategory($category->getId())) {
-	$status = '<a href="'.$edit_url.'&amp;func=editStatusCategory" class="'.$status_class.'">'.$status.'</a>';
+	$status = '<a href="'.$edit_url.'&amp;func=editStatusCategory" class="'.$status_class.' sly-postlink">'.$status.'</a>';
 }
 else {
 	$status_class .= ' sly-na';
@@ -31,7 +31,7 @@ else {
 		<?php
 		if ($this->canEditCategory($category->getId())) {
 			echo '<a href="'.$edit_url.'&amp;func=editCategory">'.t('change').'</a>&nbsp;';
-			echo '<a href="'.$edit_url.'&amp;func=deleteCategory" class="sly-delete">'.t('delete').'</a>';
+			echo '<a href="'.$edit_url.'&amp;func=deleteCategory" class="sly-delete sly-postlink">'.t('delete').'</a>';
 		}
 		else {
 			echo '<span class="sly-na">'.t('change').'</span>&nbsp;';

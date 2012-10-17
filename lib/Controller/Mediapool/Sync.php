@@ -10,13 +10,12 @@
 
 class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	public function indexAction() {
-		$this->init('index');
+		$this->init();
 
 		$diff = $this->getFileDiff();
 
 		if (empty($diff)) {
-			$this->info = t('no_file_diffs_found');
-			$this->render('mediapool/notices.phtml', array(), false);
+			print sly_Helper_Message::info(t('no_file_diffs_found'));
 		}
 		else {
 			$this->render('mediapool/sync.phtml', array('diffFiles' => $diff), false);
@@ -24,20 +23,37 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	public function syncAction() {
-		$this->init('sync');
-
 		$selected = sly_postArray('sync_files', 'string');
-		$title    = sly_post('ftitle', 'string');
-		$diff     = $this->getFileDiff();
-		$cat      = $this->getCurrentCategory();
+		$flash    = sly_Core::getFlashMessage();
 
-		foreach ($selected as $hash) {
-			if (isset($diff[$hash]) && $this->syncMedium($diff[$hash], $cat, $title)) {
-				$this->info = t('files_synced');
+		if (!empty($selected)) {
+			$title = sly_post('ftitle', 'string');
+			$diff  = $this->getFileDiff();
+			$cat   = $this->getCurrentCategory();
+			$count = 0;
+
+			foreach ($selected as $hash) {
+				if (isset($diff[$hash]) && $this->syncMedium($diff[$hash], $cat, $title)) {
+					++$count;
+				}
 			}
+
+			$flash->appendInfo(t('files_synced', $count));
+			return $this->redirectResponse();
 		}
 
-		$this->indexAction();
+		$flash->appendWarning(t('no_files_selected'));
+		return $this->indexAction();
+	}
+
+	public function checkPermission($action) {
+		if (!parent::checkPermission($action)) return false;
+
+		if ($action === 'sync') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function syncMedium($filename, $category, $title) {
@@ -46,7 +62,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 
 		// get cleaned filename
 		$filename = sly_Util_Directory::fixWindowsDisplayFilename($filename);
-		if(empty($title)) $title = $filename;
+		if (empty($title)) $title = $filename;
 		$newName  = SLY_MEDIAFOLDER.'/'.sly_Util_Medium::createFilename($filename, false);
 
 		if ($newName !== $absFile) {

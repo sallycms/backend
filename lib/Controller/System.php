@@ -170,7 +170,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		sly_Util_BootCache::recreate('frontend');
 		sly_Util_BootCache::recreate('backend');
 
-		$this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function setupAction() {
@@ -181,6 +181,12 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
+		if (!$user) return false;
+
+		if (in_array($action, array('setup', 'update', 'clearcache'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
 		return $user && $user->isAdmin();
 	}
 
