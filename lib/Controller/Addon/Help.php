@@ -11,13 +11,13 @@
 class sly_Controller_Addon_Help extends sly_Controller_Addon implements sly_Controller_Interface {
 	public function indexAction() {
 		$this->init();
-		$addon = $this->getAddOn();
 
-		if ($addon) {
+		try {
+			$addon = $this->getAddOn();
 			$this->render('addon/help.phtml', array('addon' => $addon), false);
 		}
-		else {
-			print sly_Helper_Message::warn(t('addon_not_found', $addon));
+		catch (Exception $e) {
+			print sly_Helper_Message::warn($e->getMessage());
 		}
 	}
 

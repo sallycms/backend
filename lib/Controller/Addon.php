@@ -15,7 +15,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	protected function init() {
 		if ($this->init++) return;
 
-		if (!sly_get('json', 'boolean')) {
+		if (!sly_get('json', 'boolean', false)) {
 			$layout = sly_Core::getLayout();
 			$layout->pageHeader(t('addons'));
 		}
@@ -30,8 +30,17 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		if ($this->addon === false) {
 			extract($this->getServices());
 
-			$addon       = sly_request('addon', 'string', '');
-			$this->addon = $aservice->isRegistered($addon) ? $addon : null;
+			$addon = sly_request('addon', 'string', '');
+
+			if (empty($addon)) {
+				throw new sly_Exception(t('addon_not_given'));
+			}
+
+			if (!$aservice->isRegistered($addon)) {
+				throw new sly_Exception(t('addon_not_found', $addon));
+			}
+
+			$this->addon = $addon;
 		}
 
 		return $this->addon;
@@ -75,10 +84,8 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function installAction() {
-		$this->init();
-
 		try {
-			$this->call('install', 'installed');
+			$this->call('install', 'installed', true);
 			$this->call('activate', 'activated');
 		}
 		catch (Exception $e) {
@@ -89,8 +96,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function uninstallAction() {
-		$this->init();
-
 		try {
 			$this->call('uninstall', 'uninstalled');
 		}
@@ -102,8 +107,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function activateAction() {
-		$this->init();
-
 		try {
 			$this->call('activate', 'activated');
 		}
@@ -115,8 +118,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function deactivateAction() {
-		$this->init();
-
 		try {
 			$this->call('deactivate', 'deactivated');
 		}
@@ -128,8 +129,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function reinitAction() {
-		$this->init();
-
 		try {
 			$this->call('copyAssets', 'assets_copied');
 		}
@@ -143,18 +142,18 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	public function fullinstallAction() {
 		$this->init();
 
-		$todo = $this->getInstallList($this->getAddOn());
-		extract($this->getServices());
+		try {
+			$todo = $this->getInstallList($this->getAddOn());
+			extract($this->getServices());
 
-		if (!empty($todo)) {
-			// pretend that we're about to work on this now
-			$addon = reset($todo);
-			$this->setAddOn($addon);
+			if (!empty($todo)) {
+				// pretend that we're about to work on this now
+				$addon = reset($todo);
+				$this->setAddOn($addon);
 
-			try {
 				// if not installed, install it
 				if (!$aservice->isInstalled($addon)) {
-					$this->call('install', 'installed');
+					$this->call('install', 'installed', true);
 				}
 
 				// if not activated and install went OK, activate it
@@ -167,9 +166,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 					sly_Util_HTTP::redirect($_SERVER['REQUEST_URI'], array(), '', 302);
 				}
 			}
-			catch (Exception $e) {
-				sly_Core::getFlashMessage()->appendWarning($e->getMessage());
-			}
+		}
+		catch (Exception $e) {
+			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -177,12 +176,21 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
-		return $user && ($user->isAdmin() || $user->hasRight('pages', 'addons'));
+
+		if (!$user || (!$user->isAdmin() && !$user->hasRight('pages', 'addons'))) {
+			return false;
+		}
+
+		return true;
 	}
 
-	protected function call($method, $i18n) {
+	protected function call($method, $i18n, $silent = false) {
 		extract($this->getServices());
 		$addon = $this->getAddOn();
+
+		// check token here instead of in checkPermission() to handle the exception
+		// ourselves and send a proper JSON response
+		#sly_Util_Csrf::checkToken();
 
 		switch ($method) {
 			case 'install':
@@ -197,7 +205,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 				$manager->$method($addon);
 		}
 
-		sly_Core::getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
+		if (!$silent) {
+			sly_Core::getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
+		}
 	}
 
 	private function sendResponse() {
@@ -227,7 +237,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			die;
 		}
 
-		return $this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	/**
