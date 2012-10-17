@@ -22,12 +22,20 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 		$this->render('system/languages.phtml', array(), false);
 	}
 
+	public function checkPermission($action) {
+		$user = sly_Util_User::getCurrentUser();
+		if (!$user) return false;
+
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return parent::checkPermission($action);
+	}
+
 	public function addAction() {
-		$this->init();
-
 		if (sly_post('sly-submit', 'boolean', false)) {
-			$this->id = sly_post('clang_id', 'int', -1);
-
+			$this->id    = sly_post('clang_id', 'int', -1);
 			$clangName   = sly_post('clang_name', 'string');
 			$clangLocale = sly_post('clang_locale', 'string');
 			$flash       = sly_Core::getFlashMessage();
@@ -42,6 +50,8 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 				catch (Exception $e) {
 					$flash->appendWarning($e->getMessage());
 				}
+
+				return $this->redirectResponse();
 			}
 			else {
 				$flash->appendWarning(t('plase_enter_a_name'));
@@ -52,12 +62,10 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 			$this->func = 'add';
 		}
 
-		$this->indexAction();
+		return $this->indexAction();
 	}
 
 	public function editAction() {
-		$this->init();
-
 		$this->id = sly_request('clang_id', 'int', -1);
 
 		if (sly_post('sly-submit', 'boolean', false)) {
@@ -72,6 +80,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 				$languageService->save($clang);
 
 				sly_Core::getFlashMessage()->appendInfo(t('language_updated'));
+				return $this->redirectResponse();
 			}
 		}
 		else {
@@ -82,16 +91,14 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 	}
 
 	public function deleteAction() {
-		$this->init();
-
-		$clangID   = sly_request('clang_id', 'int', -1);
+		$clangID   = sly_post('clang_id', 'int', -1);
 		$languages = sly_Util_Language::findAll();
 		$flash     = sly_Core::getFlashMessage();
 
 		if (isset($languages[$clangID])) {
-			$ok = sly_Service_Factory::getLanguageService()->deleteById($clangID);
+			$deleted = sly_Service_Factory::getLanguageService()->deleteById($clangID);
 
-			if ($ok > 0) {
+			if ($deleted > 0) {
 				$flash->appendInfo(t('language_deleted'));
 			}
 			else {
@@ -99,6 +106,6 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 			}
 		}
 
-		$this->indexAction();
+		return $this->redirectResponse();
 	}
 }

@@ -10,7 +10,7 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Popups
 
-	var openPopups = [];
+	var openPopups = [], tokenName = 'sly-csrf-token';
 
 	sly.Popup = function(name, url, posx, posy, width, height, extra) {
 		var ua = navigator.userAgent;
@@ -655,6 +655,47 @@ var sly = sly || {};
 			sly_apply_chosen(event.currentTarget);
 		});
 
+		$('body').delegate('a.sly-postlink', 'click', function() {
+			var
+				parts  = $(this).attr('href').split('?'),
+				action = parts[0],
+				params = parts[1],
+				form   = $('<form>').attr('action', action).attr('method', 'post'),
+				token  = $('meta[name="'+tokenName+'"]'),
+				i, tmp, key, value;
+
+				$('body').append(form);
+
+			if (params.indexOf('#') >= 0) {
+				params = params.split('#')[0];
+			}
+
+			params = params.split('&');
+
+			for (i in params) {
+				tmp   = params[i].split('=');
+				key   = tmp[0];
+				value = tmp[1];
+
+				$('<input>')
+					.attr('type', 'hidden')
+					.attr('name', key)
+					.attr('value', value)
+					.appendTo(form);
+			}
+
+			if (token.length > 0 && !$(this).is('.sly-no-csrf')) {
+				$('<input>')
+					.attr('type', 'hidden')
+					.attr('name', tokenName)
+					.attr('value', token.attr('content'))
+					.appendTo(form);
+			}
+
+			$(form).submit();
+			return false;
+		});
+
 		// Mehrsprachige Formulare initialisieren
 
 		// Checkboxen erzeugen
@@ -724,7 +765,20 @@ var sly = sly || {};
 				list     = $('.sly-addonlist'),
 				rows     = $('.pkg', list),
 				row      = link.closest('.pkg'),
+				token    = $('meta[name="'+tokenName+'"]').attr('content'),
+				href     = link.attr('href'),
+				func     = decodeURI((RegExp('func=(.+?)(&|$)').exec(href)||[,null])[1]),
 				errorrow = $('.error', list);
+
+			// build POST data
+			var postData = {
+				page: 'addon',
+				func: func,
+				addon: row.data('key'),
+				json: 1
+			};
+
+			postData[tokenName] = token;
 
 			// hide error row
 			errorrow.hide();
@@ -747,12 +801,11 @@ var sly = sly || {};
 				}
 			};
 
-			$.ajax({
-				url: link.attr('href')+'&json=1',
-				cache: false,
-				dataType: 'json',
-				type: 'POST',
-				success: function(xhr) {
+			var successHandler = function(xhr) {
+				if (xhr.finished === false) {
+					performRequest();
+				}
+				else {
 					updateAddOnStatus(xhr.stati);
 					row.removeClass('working');
 					$('.blocker').remove();
@@ -764,8 +817,20 @@ var sly = sly || {};
 						errorHider = win.setTimeout(function() { errorrow.slideUp(); }, 10000);
 					}
 				}
-			});
+			};
 
+			var performRequest = function() {
+				$.ajax({
+					url: 'index.php',
+					data: postData,
+					cache: false,
+					dataType: 'json',
+					type: 'POST',
+					success: successHandler
+				});
+			};
+
+			performRequest();
 			return false;
 		});
 

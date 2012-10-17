@@ -13,6 +13,8 @@
 
 unset($_POST['password']);
 
+print sly_Helper_Message::renderFlashMessage();
+
 $form = new sly_Form('index.php', 'POST', '');
 $form->addHiddenValue('page', 'profile');
 $form->addHiddenValue('func', 'update');

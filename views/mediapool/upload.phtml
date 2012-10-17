@@ -8,10 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-////////////////////////////////////////////////////////
-// info and error messages
-
-$this->render('mediapool/notices.phtml', array(), false);
+print sly_Helper_Message::renderFlashMessage();
 
 ////////////////////////////////////////////////////////
 // init form

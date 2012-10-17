@@ -60,6 +60,12 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 				'sly-'.sly_Core::getVersion('X_Y'),
 				'sly-'.sly_Core::getVersion('X_Y_Z')
 			)));
+
+			$token = sly_Util_Csrf::getToken();
+
+			if (!empty($token)) {
+				$this->addMeta(sly_Util_Csrf::TOKEN_NAME, $token);
+			}
 		}
 	}
 
