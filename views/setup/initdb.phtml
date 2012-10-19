@@ -1,0 +1,45 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$this->title(t('setup_step_n', 3, 5));
+
+if (!in_array($dbInitFunction, $dbInitFunctions)) {
+	$dbInitFunction = 'setup';
+}
+
+// create form
+$form = new sly_Form('index.php', 'POST', t('setup_initdb_header'), '', 'sly-setup-initdb');
+$form->setCsrfEnabled(false);
+$this->printHiddens('initdb', $form);
+
+// create radios for possible init functions
+
+foreach (array('setup', 'drop', 'nop') as $func) {
+	$label         = t('setup_initdb_func_'.$func);
+	$inputs[$func] = new sly_Form_Input_Radio('db_init_function', '', $func, $label, 'func_'.$func);
+}
+
+$inputs[$dbInitFunction]->setChecked(true);
+
+$form->addElements($inputs);
+
+// button config
+
+$form->setResetButton(null);
+$form->getSubmitButton()->setAttribute('value', t('setup_continue_to_n', 4));
+
+// render it!
+
+$form->setFocus('func_setup');
+print $form->render();
+
+// render messages
+
+print sly_Helper_Message::renderFlashMessage();
