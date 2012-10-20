@@ -13,6 +13,7 @@ $this->title(t('setup_step_n', 2, 5));
 print sly_Helper_Message::renderFlashMessage();
 
 $form = new sly_Form('index.php', 'POST', t('setup_database_config'), '', 'sly-setup-dbsetup');
+$form->setCsrfEnabled(false);
 $this->printHiddens('dbconfig', $form);
 
 // database driver
