@@ -19,7 +19,8 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	protected $category   = null;
 
 	protected function init() {
-		$this->args = sly_requestArray('args', 'string');
+		$request    = $this->getRequest();
+		$this->args = $request->requestArray('args', 'string');
 
 		// init category filter
 		if (isset($this->args['categories'])) {
@@ -122,7 +123,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 		if ($this->globals === null) {
 			$this->globals = array(
 				'page'        => 'linkmap',
-				'category_id' => sly_request('category_id', 'int'),
+				'category_id' => $this->getRequest()->request('category_id', 'int', 0),
 				'clang'       => sly_Core::getCurrentClang(),
 				'args'        => $this->args
 			);

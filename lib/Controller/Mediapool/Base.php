@@ -25,7 +25,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->init) return;
 		$this->init = true;
 
-		$this->args       = sly_requestArray('args', 'string');
+		$request          = $this->getRequest();
+		$this->args       = $request->requestArray('args', 'string');
 		$this->categories = array();
 
 		// init category filter
@@ -87,7 +88,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 	protected function getCurrentCategory() {
 		if ($this->category === null) {
-			$category = sly_request('category', 'int', -1);
+			$request  = $this->getRequest();
+			$category = $request->request('category', 'int', -1);
 			$service  = sly_Service_Factory::getMediaCategoryService();
 			$session  = sly_Core::getSession();
 
@@ -111,7 +113,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function getOpenerLink(sly_Model_Medium $file) {
-		$callback = sly_request('callback', 'string');
+		$request  = $this->getRequest();
+		$callback = $request->request('callback', 'string');
 		$link     = '';
 
 		if (!empty($callback)) {

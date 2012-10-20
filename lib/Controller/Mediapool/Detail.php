@@ -29,7 +29,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 			return $this->indexView();
 		}
 
-		if (!empty($_POST['delete'])) {
+		if ($this->getRequest()->post->has('delete')) {
 			return $this->performDelete();
 		}
 
@@ -37,9 +37,10 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 	}
 
 	protected function performUpdate() {
-		$medium = $this->medium;
-		$target = sly_post('category', 'int', $medium->getCategoryId());
-		$flash  = sly_Core::getFlashMessage();
+		$medium  = $this->medium;
+		$request = $this->getRequest();
+		$target  = $request->post('category', 'int', $medium->getCategoryId());
+		$flash   = sly_Core::getFlashMessage();
 
 		// only continue if a file was found, we can access it and have access
 		// to the target category
@@ -51,7 +52,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 
 		// update our file
 
-		$title = sly_post('title', 'string');
+		$title = $request->post('title', 'string');
 
 		// upload new file or just change file properties?
 
@@ -98,7 +99,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 	public function checkPermission($action) {
 		if (!parent::checkPermission($action)) return false;
 
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		if ($this->getRequest()->isMethod('POST')) {
 			sly_Util_Csrf::checkToken();
 		}
 
@@ -114,8 +115,9 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 	}
 
 	protected function getCurrentMedium($forcePost = false) {
-		$fileID   = $forcePost ? sly_post('file_id', 'int', -1)      : sly_request('file_id', 'int', -1);
-		$fileName = $forcePost ? sly_post('file_name', 'string', '') : sly_request('file_name', 'string', '');
+		$request  = $this->getRequest();
+		$fileID   = $forcePost ? $request->post('file_id', 'int', -1)      : $request->request('file_id', 'int', -1);
+		$fileName = $forcePost ? $request->post('file_name', 'string', '') : $request->request('file_name', 'string', '');
 		$service  = sly_Service_Factory::getMediumService();
 
 		if (mb_strlen($fileName) > 0) {

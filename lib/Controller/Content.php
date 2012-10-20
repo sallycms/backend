@@ -32,16 +32,17 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		uasort($types, 'strnatcasecmp');
 		uasort($modules, 'strnatcasecmp');
 
-		$params = array(
+		$request = $this->getRequest();
+		$params  = array(
 			'article'      => $this->article,
 			'articletypes' => $types,
 			'modules'      => $modules,
 			'slot'         => $this->slot,
-			'slice_id'     => sly_request('slice_id', 'int', 0),
-			'pos'          => sly_request('pos', 'int', 0),
-			'function'     => sly_request('function', 'string'),
-			'module'       => sly_request('add_module', 'string'),
-			'localmsg'     => sly_request('pos', 'int', null) !== null
+			'slice_id'     => $request->request('slice_id', 'int', 0),
+			'pos'          => $request->request('pos', 'int', 0),
+			'function'     => $request->request('function', 'string'),
+			'module'       => $request->request('add_module', 'string'),
+			'localmsg'     => $request->request('pos', 'int', null) !== null
 		);
 
 		$params = array_merge($params, $extraparams);
@@ -56,14 +57,15 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->action = $action;
 
 		if (parent::checkPermission($this->action)) {
-			$user = sly_Util_User::getCurrentUser();
+			$user    = sly_Util_User::getCurrentUser();
+			$request = $this->getRequest();
 
-			if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($action, array('setarticletype', 'moveslice', 'addarticleslice', 'editarticleslice', 'deletearticleslice'))) {
+			if ($request->isMethod('POST') && in_array($action, array('setarticletype', 'moveslice', 'addarticleslice', 'editarticleslice', 'deletearticleslice'))) {
 				sly_Util_Csrf::checkToken();
 			}
 
 			if ($this->action === 'moveslice') {
-				$slice_id = sly_post('slice_id', 'int', null);
+				$slice_id = $request->post('slice_id', 'int');
 
 				if ($slice_id) {
 					$slice = sly_Util_ArticleSlice::findById($slice_id);
@@ -74,7 +76,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			}
 
 			if ($action === 'addarticleslice') {
-				$module = $forceModule === null ? sly_post('module', 'string') : $forceModule;
+				$module = $forceModule === null ? $request->post('module', 'string', '') : $forceModule;
 				return ($user->isAdmin() || $user->hasRight('module', 'add', sly_Authorisation_ModuleListProvider::ALL) || $user->hasRight('module', 'add', $module));
 			}
 
@@ -84,7 +86,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 				if ($forceModule === null) {
 					$sliceservice = sly_Service_Factory::getArticleSliceService();
-					$slice_id     = sly_post('slice_id', 'int', 0);
+					$slice_id     = $request->post('slice_id', 'int', 0);
 					$slice        = $sliceservice->findById($slice_id);
 					$module       = $slice ? $slice->getModule() : null;
 				}
@@ -104,7 +106,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function setarticletypeAction() {
 		$this->init();
 
-		$type    = sly_post('article_type', 'string', '');
+		$type    = $this->getRequest()->post('article_type', 'string', '');
 		$service = sly_Service_Factory::getArticleTypeService();
 
 		if (!empty($type) && $service->exists($type, true)) {
@@ -122,8 +124,9 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function movesliceAction() {
 		$this->init();
 
-		$slice_id  = sly_post('slice_id', 'int');
-		$direction = sly_post('direction', 'string');
+		$request   = $this->getRequest();
+		$slice_id  = $request->post('slice_id', 'int');
+		$direction = $request->post('direction', 'string');
 		$flash     = sly_Core::getFlashMessage();
 
 		// check of module exists
@@ -157,14 +160,15 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function addarticlesliceAction() {
 		$this->init();
 
-		$module    = sly_post('module', 'string');
+		$request   = $this->getRequest();
+		$module    = $request->post('module', 'string');
 		$params    = array();
 		$slicedata = $this->preSliceEdit('add');
 		$flash     = sly_Core::getFlashMessage();
 
 		if ($slicedata['SAVE'] === true) {
 			$service  = sly_Service_Factory::getArticleSliceService();
-			$pos      = sly_post('pos', 'int', 0);
+			$pos      = $request->post('pos', 'int', 0);
 			$instance = $service->add($this->article, $this->slot, $module, $slicedata['VALUES'], $pos);
 
 			$flash->appendInfo(t('slice_added'));
@@ -185,9 +189,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function editarticlesliceAction() {
 		$this->init();
 
+		$request             = $this->getRequest();
 		$articleSliceService = sly_Service_Factory::getArticleSliceService();
 		$sliceService        = sly_Service_Factory::getSliceService();
-		$slice_id            = sly_post('slice_id', 'int', 0);
+		$slice_id            = $request->post('slice_id', 'int', 0);
 		$articleSlice        = $articleSliceService->findById($slice_id);
 		$flash               = sly_Core::getFlashMessage();
 
@@ -213,7 +218,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			$extraparams = array();
 
-			if (sly_post('btn_update', 'string') || $slicedata['SAVE'] !== true) {
+			if ($request->post->has('btn_update') || $slicedata['SAVE'] !== true) {
 				$extraparams['slicevalues'] = $slicedata['VALUES'];
 				$extraparams['function']    = 'edit';
 			}
@@ -226,7 +231,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->init();
 
 		$ok      = false;
-		$sliceID = sly_post('slice_id', 'int', 0);
+		$sliceID = $this->getRequest()->post('slice_id', 'int', 0);
 		$slice   = sly_Util_ArticleSlice::findById($sliceID);
 		$flash   = sly_Core::getFlashMessage();
 
@@ -261,13 +266,15 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	private function preSliceEdit($function) {
 		if (!$this->article->hasTemplate()) return false;
 
+		$request = $this->getRequest();
+
 		if ($function === 'delete' || $function === 'edit') {
-			$slice_id = sly_request('slice_id', 'int', 0);
+			$slice_id = $request->request('slice_id', 'int', 0);
 			if (!sly_Util_ArticleSlice::exists($slice_id)) return false;
 			$module = sly_Util_ArticleSlice::getModuleNameForSlice($slice_id);
 		}
 		else {
-			$module = sly_post('module', 'string');
+			$module = $request->post('module', 'string');
 		}
 
 		$flash = sly_Core::getFlashMessage();
@@ -323,7 +330,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	}
 
 	private function getRequestValues(array $slicedata) {
-		$slicedata['VALUES'] = sly_post('slicevalue', 'array', array());
+		$slicedata['VALUES'] = $this->getRequest()->post('slicevalue', 'array', array());
 		return $slicedata;
 	}
 

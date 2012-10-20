@@ -23,11 +23,12 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	public function syncAction() {
-		$selected = sly_postArray('sync_files', 'string');
+		$request  = $this->getRequest();
+		$selected = $request->postArray('sync_files', 'string');
 		$flash    = sly_Core::getFlashMessage();
 
 		if (!empty($selected)) {
-			$title = sly_post('ftitle', 'string');
+			$title = $request->post('ftitle', 'string', '');
 			$diff  = $this->getFileDiff();
 			$cat   = $this->getCurrentCategory();
 			$count = 0;

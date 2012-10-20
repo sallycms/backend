@@ -17,9 +17,10 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	protected function init() {
 		if ($this->init) return;
 
+		$request     = $this->getRequest();
 		$this->flash = sly_Core::getFlashMessage();
 		$this->init  = true;
-		$this->lang  = sly_request('lang', 'string');
+		$this->lang  = $request->request('lang', 'string');
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/setup/');
 	}
@@ -96,14 +97,15 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	public function dbconfigAction() {
 		$this->init();
 
-		$config  = sly_Core::config();
+		$config = sly_Core::config();
 
 		// just load defaults and this should be the only time to do so
 		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
 		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
 
 		$data    = $config->get('DATABASE');
-		$isSent  = isset($_POST['submit']);
+		$request = $this->getRequest();
+		$isSent  = $request->isMethod('POST');
 		$drivers = sly_DB_PDO_Driver::getAvailable();
 
 		if (empty($drivers)) {
@@ -112,13 +114,13 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		}
 
 		if ($isSent) {
-			$TABLE_PREFIX = sly_post('prefix', 'string');
-			$HOST         = sly_post('host', 'string');
-			$LOGIN        = sly_post('user', 'string');
-			$PASSWORD     = sly_post('pass', 'string');
-			$NAME         = sly_post('dbname', 'string');
-			$DRIVER       = sly_post('driver', 'string');
-			$create       = sly_post('create_db', 'bool') && ($DRIVER !== 'sqlite' && $DRIVER !== 'oci');
+			$TABLE_PREFIX = $request->post('prefix', 'string');
+			$HOST         = $request->post('host', 'string');
+			$LOGIN        = $request->post('user', 'string');
+			$PASSWORD     = $request->post('pass', 'string');
+			$NAME         = $request->post('dbname', 'string');
+			$DRIVER       = $request->post('driver', 'string');
+			$create       = $request->post('create_db', 'bool') && ($DRIVER !== 'sqlite' && $DRIVER !== 'oci');
 
 			try {
 				if (!in_array($DRIVER, $drivers)) {
@@ -161,11 +163,9 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 				}
 
 				$data = compact('DRIVER', 'HOST', 'LOGIN', 'PASSWORD', 'NAME', 'TABLE_PREFIX');
-
 				$config->setLocal('DATABASE', $data);
-				unset($_POST['submit']);
-				$this->initdbAction();
-				return;
+
+				return $this->initdbAction();
 			}
 			catch (sly_DB_PDO_Exception $e) {
 				$this->flash->appendWarning($e->getMessage());
@@ -183,39 +183,14 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		), false);
 	}
 
-	public function configAction() {
-		$this->init();
-
-		$config = sly_Core::config();
-		$isSent = isset($_POST['submit']);
-
-		if ($isSent) {
-			$uid = sha1(microtime(true).mt_rand(10000, 90000));
-			$uid = substr($uid, 0, 20);
-
-			$config->set('PROJECTNAME', sly_post('projectname', 'string'));
-			$config->setLocal('INSTNAME', 'sly'.$uid);
-
-			$config->set('TIMEZONE', sly_post('timezone', 'string', null));
-			$config->set('DEFAULT_LOCALE', $this->lang);
-
-			unset($_POST['submit']);
-			$this->createuserAction();
-			return;
-		}
-
-		$this->render('setup/config.phtml', array(
-			'projectName' => $config->get('PROJECTNAME'),
-			'timezone'    => @date_default_timezone_get()
-		), false);
-	}
-
 	public function initdbAction() {
 		$this->init();
 
-		$dbInitFunction = sly_post('db_init_function', 'string', '');
+		$request        = $this->getRequest();
+		$dbInitFunction = $request->post('db_init_function', 'string', '');
 
-		if (isset($_POST['submit'])) {
+		// do not just check for POST, since we may have been forwarded from the previous action
+		if ($dbInitFunction) {
 			$config  = sly_Core::config();
 			$prefix  = $config->get('DATABASE/TABLE_PREFIX');
 			$driver  = $config->get('DATABASE/DRIVER');
@@ -275,14 +250,10 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			}
 
 			if ($success) {
-				// redirect
-				unset($_POST['submit']);
-				$this->configAction();
-				return;
+				return $this->configAction();
 			}
-			else {
-				$this->flash->appendWarning(t('setup_initdb_reinit'));
-			}
+
+			$this->flash->appendWarning(t('setup_initdb_reinit'));
 		}
 
 		$this->render('setup/initdb.phtml', array(
@@ -291,19 +262,47 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		), false);
 	}
 
-	public function createuserAction() {
+	public function configAction() {
 		$this->init();
 
 		$config      = sly_Core::config();
+		$request     = $this->getRequest();
+		$projectname = $request->post('projectname', 'string', '');
+		$timezone    = $request->post('timezone', 'string', 'UTC');
+
+		// do not just check for POST, since we may have been forwarded from the previous action
+		if ($timezone) {
+			$uid = sha1(sly_Util_Password::getRandomData(40));
+			$uid = substr($uid, 0, 20);
+
+			$config->set('PROJECTNAME', $projectname);
+			$config->set('TIMEZONE', $timezone);
+			$config->set('DEFAULT_LOCALE', $this->lang);
+			$config->setLocal('INSTNAME', 'sly'.$uid);
+
+			return $this->createuserAction(true);
+		}
+
+		$this->render('setup/config.phtml', array(
+			'projectName' => $config->get('PROJECTNAME'),
+			'timezone'    => @date_default_timezone_get()
+		), false);
+	}
+
+	public function createuserAction($redirected = false) {
+		$this->init();
+
+		$config      = sly_Core::config();
+		$request     = $this->getRequest();
 		$prefix      = $config->get('DATABASE/TABLE_PREFIX');
 		$pdo         = sly_DB_Persistence::getInstance();
 		$usersExist  = $pdo->listTables($prefix.'user') && $pdo->magicFetch('user', 'id') !== false;
-		$createAdmin = !sly_post('no_admin', 'boolean', false);
-		$adminUser   = sly_post('admin_user', 'string');
-		$adminPass   = sly_post('admin_pass', 'string');
+		$createAdmin = !$request->post('no_admin', 'boolean', false);
+		$adminUser   = $request->post('admin_user', 'string');
+		$adminPass   = $request->post('admin_pass', 'string');
 		$success     = true;
 
-		if (isset($_POST['submit'])) {
+		if ($request->isMethod('POST') && !$redirected) {
 			if ($createAdmin) {
 				if (empty($adminUser)) {
 					$this->flash->appendWarning(t('setup_createuser_no_admin_given'));
@@ -311,7 +310,6 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 				}
 
 				if (empty($adminPass)) {
-					if (!empty($error)) $error .= ' ';
 					$this->flash->appendWarning(t('setup_createuser_no_password_given'));
 					$success = false;
 				}
@@ -349,10 +347,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 			}
 
 			if ($success) {
-				// redirect
-				unset($_POST['submit']);
-				$this->finishAction();
-				return;
+				return $this->finishAction();
 			}
 		}
 

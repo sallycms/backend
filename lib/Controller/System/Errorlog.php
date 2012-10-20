@@ -48,7 +48,7 @@ class sly_Controller_System_Errorlog extends sly_Controller_System {
 
 		// get last N lines
 
-		$max = sly_get('max', 'int', 50);
+		$max = $this->getRequest()->get('max', 'int', 50);
 
 		if ($max <= 0) {
 			$max = 50;
