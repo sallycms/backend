@@ -1,0 +1,47 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$editID  = sly_request('clang_id', 'int');
+$add_td  = '';
+$add_td  = '';
+$delLink = t('delete');
+
+if ($clangID == 0) {
+	$delLink = '<span class="sly-na">'.$delLink.'</span>';
+}
+else {
+	$delLink = '<a href="index.php?page=system_languages&amp;func=delete&amp;clang_id='.$clangID.'" class="sly-action sly-delete sly-postlink">'.$delLink.'</a>';
+}
+
+// Edit form
+if ($this->func == 'edit' && $editID == $clangID) {
+	$name   = sly_post('clang_name', 'string', $clangName);
+	$locale = sly_post('clang_locale', 'string', $clangLocale);
+	?>
+	<tr class="sly-active">
+		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, 'language') ?></td>
+		<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" name="clang_name" value="<?php echo sly_html($name) ?>" autofocus="autofocus" /></div></td>
+		<td class="sly-col-locale sly-has-input"><div><input class="sly-form-text" type="text" name="clang_locale" value="<?php echo sly_html($locale) ?>" /></div></td>
+		<td class="sly-col-func sly-has-input"><div><input type="submit" class="sly-form-submit" name="sly-submit" value="<?php echo t('save') ?>" /></div></td>
+	</tr>
+	<?php
+}
+else {
+	$editLink = 'index.php?page=system_languages&func=edit&clang_id='.$clangID.'#languages';
+
+	?>
+	<tr>
+		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($editLink, $clangName, 'language') ?></td>
+		<td class="sly-col-name"><a href="<?php echo sly_html($editLink) ?>"><?php echo sly_html($clangName) ?></a></td>
+		<td class="sly-col-locale"><?php echo sly_html($clangLocale) ?></td>
+		<td class="sly-col-func"><?php echo $delLink ?></td>
+	</tr>
+	<?php
+}

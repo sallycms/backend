@@ -1,0 +1,186 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$fileID     = $medium->getId();
+$title      = $medium->getTitle();
+$filename   = $medium->getFilename();
+$filetype   = $medium->getFiletype();
+$filesize   = $medium->getFormattedSize();
+$updatedate = $medium->getUpdateDate();
+$categoryID = $medium->getCategoryId();
+$encoded    = urlencode($filename);
+$file_ext   = $medium->getExtension();
+$icon_src   = 'assets/mime-default.png';
+
+if ($this->isDocType($medium)) {
+	$icon_src = 'assets/mime-'.$file_ext.'.png';
+}
+
+////////////////////////////////////////////////////////
+// info and error messages
+
+print sly_Helper_Message::renderFlashMessage();
+$this->render('mediapool/javascript.phtml', array(), false);
+
+////////////////////////////////////////////////////////
+// start forms
+
+if ($this->canAccessFile($medium)) {
+	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+	$form->setEncType('multipart/form-data');
+
+	$form->addHiddenValue('page', 'mediapool_detail');
+	$form->addHiddenValue('func', 'save');
+	$form->addHiddenValue('file_id', $fileID);
+	$form->addHiddenValue('callback', sly_request('callback', 'string'));
+
+	// additional arguments
+
+	foreach (sly_requestArray('args', 'string') as $name => $value) {
+		$form->addHiddenValue('args['.$name.']', $value);
+	}
+}
+else {
+	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+}
+
+////////////////////////////////////////////////////////
+// image container (same for both forms)
+
+$isImage = $this->isImage($medium);
+
+if ($isImage) {
+	$imgn    = '../data/mediapool/'.$encoded.'?t='.$updatedate;
+	$resize  = sly_Util_AddOn::isAvailable('sallycms/image-resize');
+	$fwidth  = $medium->getWidth();
+	$fheight = $medium->getHeight();
+
+	if (!$medium->exists()) {
+		$imgn = 'assets/mime-error.png';
+	}
+	elseif ($fwidth > 115 || $fheight > 60) {
+		list($rwidth, $rheight) = $this->getDimensions($fwidth, $fheight, 115, 60);
+
+		if ($resize) {
+			$imgn = '../imageresize/'.$rwidth.'w__'.$rheight.'h__'.$encoded.'?t='.$updatedate;
+		}
+	}
+
+	$attrs = array(
+		'src'    => $imgn,
+		'alt'    => $title,
+		'title'  => $title,
+		'width'  => isset($rwidth) ? $rwidth : '',
+		'height' => isset($rheight) ? $rheight : ''
+	);
+
+	$imageContainer = new sly_Form_Container();
+	$imageContainer->setContent('<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />');
+	$imageContainer->addFormRowClass('sly-mediapool-detail-image');
+	$form->add($imageContainer);
+}
+
+////////////////////////////////////////////////////////
+// add more elements to our forms
+
+if ($this->canAccessFile($medium)) {
+	// title
+
+	$title = new sly_Form_Input_Text('title', t('title'), $title);
+	$title->addFormRowClass('sly-mediapool-detail-title');
+	$title->setRequired();
+	$form->add($title);
+
+	// category
+
+	$select = $this->getCategorySelect();
+	$select->setLabel(t('category'));
+	$select->setAttribute('id', 'new_category');
+	$select->setAttribute('onchange', '');
+	$select->setAttribute('value', $categoryID);
+	$form->add($select);
+
+	// extensions
+
+	$form = sly_Core::dispatcher()->filter('SLY_MEDIA_FORM_EDIT', $form, array(
+		'file_id' => $fileID,
+		'medium'  => $medium,
+		'media'   => $medium /* BC compat */
+	));
+
+	// setup buttons
+
+	$submit = $form->getSubmitButton();
+	$submit->setAttribute('value', t('update'));
+	$submit->setAttribute('name', 'update');
+
+	$delete = new sly_Form_Input_Button('submit', 'delete', t('delete'));
+	$delete->addClass('sly-button-delete');
+
+	$form->setApplyButton($delete);
+	$form->setResetButton(null);
+}
+else {
+	$catname = t('no_category');
+	$cat     = $categoryID != 0 ? sly_Util_MediaCategory::findById($categoryID) : null;
+	$user    = sly_Util_User::getCurrentUser();
+
+	if ($cat) {
+		$catname = $cat->getName();
+	}
+
+	// title & cat
+
+	$title = new sly_Form_Text(t('title'), $title);
+	$title->addFormRowClass('sly-mediapool-detail-title');
+
+	$form->add($title);
+	$form->add(new sly_Form_Text(t('category'), $catname));
+
+	// setup buttons
+
+	$form->setSubmitButton(null);
+	$form->setResetButton(null);
+}
+
+// file dimensions, if image
+
+if ($isImage) {
+	$label      = t('width').' / '.t('height');
+	$dimensions = $fwidth.' px / '.$fheight.' px';
+	$dimensions = new sly_Form_Text($label, $dimensions);
+	$form->add($dimensions);
+}
+
+// display filename
+
+$filename = '<a href="../data/mediapool/'.$encoded.'">'.sly_html(sly_Util_String::cutText($filename, 55)).'</a> ['.$filesize.']';
+$filename = new sly_Form_Text(t('filename'), $filename);
+$filename->setIsHTML(true);
+$form->add($filename);
+
+// display update date
+
+$updated = sly_Util_String::formatDatetime($medium->getUpdateDate()).' ['.$medium->getUpdateUser().']';
+$updated = new sly_Form_Text(t('updated_at'), $updated);
+$form->add($updated);
+
+// display creation date
+
+$created = sly_Util_String::formatDatetime($medium->getCreateDate()).' ['.$medium->getCreateUser().']';
+$created = new sly_Form_Text(t('created_at'), $created);
+$form->add($created);
+
+if ($this->canAccessFile($medium)) {
+	$file = new sly_Form_Input_File('file_new', t('replacement_file'));
+	$form->add($file);
+}
+
+print $form->render();

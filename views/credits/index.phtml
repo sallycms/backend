@@ -1,0 +1,85 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div class="sly-area sly-credits">
+	<h2>SallyCMS <?php echo sly_Core::getVersion() ?></h2>
+
+	<div class="sly-area-content">
+		<p><?php echo t('credits_text') ?></p>
+		<p><?php echo t('credits_thankyou') ?></p>
+	</div>
+</div>
+<?php
+
+$service  = sly_Service_Factory::getAddOnService();
+$pservice = $service->getPackageService();
+$addons   = $service->getRegisteredAddOns();
+$skip     = array();
+
+$table = new sly_Table('', array('sly-pkglist'));
+$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-col-icon sly-icon'));
+$table->addColumn(sly_Table_Column::factory(t('addon'), 'sly-col-name', '', array('colspan' => 2)));
+$table->addColumn(sly_Table_Column::factory(t('version'), 'sly-col-version'));
+$table->addColumn(sly_Table_Column::factory(t('author'), 'sly-col-author'));
+
+$table->setIsEmpty(empty($addons));
+$table->setEmptyNotice(t('no_addons_found'));
+$table->openBuffer();
+
+foreach ($addons as $addon) {
+	if (in_array($addon, $skip)) continue;
+
+	$params['link']        = true;
+	$params['type']        = 'addon';
+	$params['name']        = $addon;
+	$params['version']     = $service->getVersion($addon);
+	$params['supportPage'] = sly_Helper_Package::getSupportPage($addon);
+
+	$this->render('credits/row.phtml', $params, false);
+
+	$children = $pservice->getChildren($addon);
+
+	foreach ($children as $child) {
+		$params['type']        = 'addon-child';
+		$params['name']        = $child;
+		$params['version']     = $service->getVersion($child);
+		$params['supportPage'] = sly_Helper_Package::getSupportPage($child);
+
+		$this->render('credits/row.phtml', $params, false);
+
+		$skip[] = $child;
+	}
+}
+
+$table->closeBuffer();
+print $table->render();
+
+// show vendor packages
+
+$table->getColumn(1)->setContent(t('package'));
+$table->setIsEmpty(false);
+$table->openBuffer();
+
+$service  = sly_Service_Factory::getVendorPackageService();
+$packages = $service->getPackages();
+$link     = false;
+
+foreach ($packages as $package) {
+	$params['link']        = $link;
+	$params['type']        = 'addon';
+	$params['name']        = $package;
+	$params['version']     = $service->getVersion($package);
+	$params['supportPage'] = sly_Helper_Package::getSupportPage($package);
+
+	$this->render('credits/row.phtml', $params, false);
+}
+
+$table->closeBuffer();
+print $table->render();

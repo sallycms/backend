@@ -1,0 +1,78 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$addURI   = $canAdd ? 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addArticle' : '';
+$table    = new sly_Table('sly-structure-articles');
+$isActive = $renderAddArticle || $renderEditArticle;
+
+$table->addColumn(sly_Table_Column::sprite('article-add', $addURI, t('add_article'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('article_name'), 'sly-col-name'));
+$table->addColumn(sly_Table_Column::factory(t('articletype'), 'sly-col-arttype'));
+
+if ($isActive) {
+	$table->addClass('sly-active');
+	$table->addColumn(sly_Table_Column::factory(t('position_short'), 'sly-col-pos'));
+}
+
+$table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
+$table->setIsEmpty(empty($articles) && !$renderAddArticle);
+$table->setEmptyNotice(t('no_articles_yet'));
+
+if ($isActive) {
+	?>
+	<form action="index.php" method="post">
+		<fieldset>
+			<input type="hidden" name="page" value="structure" />
+			<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+			<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
+			<input type="hidden" name="func" value="<?php echo $action ?>" />
+			<?php print sly_Util_Csrf::renderInputTag() ?>
+		</fieldset>
+		<?php
+}
+
+$table->openBuffer();
+
+if ($renderAddArticle) {
+	$this->render(
+		sly_Controller_Structure::$viewPath.'article_table_row_add.phtml',
+		array('maxPosition' => $maxPosition),
+		false
+	);
+}
+
+foreach ($articles as $article) {
+	if ($renderEditArticle && $renderEditArticle == $article->getId()) {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'article_table_row_edit.phtml',
+			array('article' => $article, 'maxPosition' => $maxPosition),
+			false
+		);
+	}
+	else {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'article_table_row.phtml',
+			array(
+				'article' => $article, 'statusTypes' => $statusTypes,
+				'canEdit' => $canEdit, 'isActive' => $isActive
+			),
+			false
+		);
+	}
+}
+
+$table->closeBuffer();
+print $table->render();
+
+if ($isActive) {
+	?>
+	</form>
+	<?php
+}
