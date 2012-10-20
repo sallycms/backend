@@ -14,12 +14,16 @@ class sly_App_Backend extends sly_App_Base {
 
 	protected $controller = null;
 	protected $action     = null;
+	protected $request    = null;
 
 	public function initialize() {
 		$config = sly_Core::config();
 
+		// init request
+		$this->request = sly_Core::getRequest();
+
 		// init the current language
-		$clangID = sly_request('clang', 'int');
+		$clangID = $this->request->request('clang', 'int', 0);
 
 		if ($clangID <= 0 || !sly_Util_Language::exists($clangID)) {
 			$clangID = sly_Core::getDefaultClangId();
@@ -120,7 +124,7 @@ class sly_App_Backend extends sly_App_Base {
 		if (!SLY_IS_TESTING && $isSetup) {
 			$locale        = sly_Core::getDefaultLocale();
 			$locales       = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
-			$requestLocale = sly_request('lang', 'string');
+			$requestLocale = $this->request->request('lang', 'string', '');
 			$timezone      = @date_default_timezone_get();
 			$user          = null;
 
@@ -164,7 +168,7 @@ class sly_App_Backend extends sly_App_Base {
 	 * @return string           the page param
 	 */
 	public function getControllerParam($default = '') {
-		return strtolower(sly_request(self::CONTROLLER_PARAM, 'string', $default));
+		return strtolower($this->request->request(self::CONTROLLER_PARAM, 'string', $default));
 	}
 
 	/**
@@ -176,7 +180,7 @@ class sly_App_Backend extends sly_App_Base {
 	 * @return string           the action param
 	 */
 	public function getActionParam($default = '') {
-		return strtolower(sly_request(self::ACTION_PARAM, 'string', $default));
+		return strtolower($this->request->request(self::ACTION_PARAM, 'string', $default));
 	}
 
 	/**
