@@ -13,7 +13,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected $slot;
 
 	protected function init() {
-		$id = sly_request('article_id', 'int');
+		$request = $this->getRequest();
+		$id      = $request->request('article_id', 'int', 0);
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
 
@@ -24,7 +25,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		}
 
 		$session    = sly_Core::getSession();
-		$this->slot = sly_request('slot', 'string', $session->get('contentpage_slot', 'string', ''));
+		$this->slot = $request->request('slot', 'string', $session->get('contentpage_slot', 'string', ''));
 
 		// validate slot
 		if ($this->article->hasTemplate()) {
@@ -105,7 +106,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$user = sly_Util_User::getCurrentUser();
 		if ($user === null) return false;
 
-		$articleId = sly_request('article_id', 'int');
+		$request   = $this->getRequest();
+		$articleId = $request->request('article_id', 'int', 0);
 		$article   = sly_Util_Article::findById($articleId);
 
 		// all users are allowed to see the error message in init()

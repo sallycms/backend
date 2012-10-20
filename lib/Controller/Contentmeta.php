@@ -27,7 +27,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 	public function checkPermission($action) {
 		if (parent::checkPermission($action)) {
-			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			if ($this->getRequest()->isMethod('POST')) {
 				sly_Util_Csrf::checkToken();
 			}
 
@@ -40,32 +40,34 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	public function processmetaformAction() {
 		$this->init();
 
+		$post = $this->getRequest()->post;
+
 		try {
 			// save metadata
-			if (sly_post('save_meta', 'boolean', false)) {
+			if ($post->has('save_meta')) {
 				return $this->saveMeta();
 			}
 
 			// make article the startarticle
-			elseif (sly_post('to_startarticle', 'boolean', false) && $this->canConvertToStartArticle()) {
+			elseif ($post->has('to_startarticle') && $this->canConvertToStartArticle()) {
 				return $this->convertToStartArticle();
 			}
 
 			// copy content to another language
-			elseif (sly_post('copy_content', 'boolean', false)) {
+			elseif ($post->has('copy_content')) {
 				return $this->copyContent();
 			}
 
 			// move article to other category
-			elseif (sly_post('move_article', 'boolean', false)) {
+			elseif ($post->has('move_article')) {
 				return $this->moveArticle();
 			}
 
-			elseif (sly_post('copy_article', 'boolean', false)) {
+			elseif ($post->has('copy_article')) {
 				return $this->copyArticle();
 			}
 
-			elseif (sly_post('move_category', 'string')) {
+			elseif ($post->has('move_category')) {
 				return $this->moveCategory();
 			}
 		}
@@ -77,7 +79,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function saveMeta() {
-		$name  = sly_post('meta_article_name', 'string');
+		$name  = $this->getRequest()->post('meta_article_name', 'string');
 		$flash = sly_Core::getFlashMessage();
 
 		sly_Service_Factory::getArticleService()->edit($this->article->getId(), $this->article->getClang(), $name);
@@ -109,8 +111,9 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function copyContent() {
-		$srcClang  = sly_post('clang_a', 'int', 0);
-		$dstClangs = array_unique(sly_postArray('clang_b', 'int'));
+		$request   = $this->getRequest();
+		$srcClang  = $request->post('clang_a', 'int', 0);
+		$dstClangs = array_unique($request->postArray('clang_b', 'int'));
 		$user      = sly_Util_User::getCurrentUser();
 		$infos     = array();
 		$errs      = array();
@@ -168,7 +171,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function moveArticle() {
-		$target  = sly_post('category_id_new', 'int', 0);
+		$target  = $this->getRequest()->post('category_id_new', 'int', 0);
 		$flash   = sly_Core::getFlashMessage();
 		$service = sly_Service_Factory::getArticleService();
 
@@ -189,7 +192,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function copyArticle() {
-		$target  = sly_post('category_copy_id_new', 'int', 0);
+		$target  = $this->getRequest()->post('category_copy_id_new', 'int', 0);
 		$flash   = sly_Core::getFlashMessage();
 		$service = sly_Service_Factory::getArticleService();
 
@@ -212,7 +215,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function moveCategory() {
-		$target  = sly_post('category_id_new', 'int');
+		$target  = $this->getRequest()->post('category_id_new', 'int');
 		$user    = sly_Util_User::getCurrentUser();
 		$flash   = sly_Core::getFlashMessage();
 		$service = sly_Service_Factory::getCategoryService();

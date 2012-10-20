@@ -26,7 +26,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 		$user = sly_Util_User::getCurrentUser();
 		if (!$user) return false;
 
-		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		if ($this->getRequest()->isMethod('POST')) {
 			sly_Util_Csrf::checkToken();
 		}
 
@@ -34,10 +34,12 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 	}
 
 	public function addAction() {
-		if (sly_post('sly-submit', 'boolean', false)) {
-			$this->id    = sly_post('clang_id', 'int', -1);
-			$clangName   = sly_post('clang_name', 'string');
-			$clangLocale = sly_post('clang_locale', 'string');
+		$request = $this->getRequest();
+
+		if ($request->isMethod('POST')) {
+			$this->id    = $request->post('clang_id', 'int', -1);
+			$clangName   = $request->post('clang_name', 'string');
+			$clangLocale = $request->post('clang_locale', 'string');
 			$flash       = sly_Core::getFlashMessage();
 
 			if (!empty($clangName)) {
@@ -55,22 +57,20 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 			}
 			else {
 				$flash->appendWarning(t('plase_enter_a_name'));
-				$this->func = 'add';
 			}
 		}
-		else {
-			$this->func = 'add';
-		}
 
+		$this->func = 'add';
 		return $this->indexAction();
 	}
 
 	public function editAction() {
-		$this->id = sly_request('clang_id', 'int', -1);
+		$request  = $this->getRequest();
+		$this->id = $request->request('clang_id', 'int', -1);
 
-		if (sly_post('sly-submit', 'boolean', false)) {
-			$clangName       = sly_post('clang_name', 'string');
-			$clangLocale     = sly_post('clang_locale', 'string');
+		if ($request->isMethod('POST')) {
+			$clangName       = $request->post('clang_name', 'string', '');
+			$clangLocale     = $request->post('clang_locale', 'string', '');
 			$languageService = sly_Service_Factory::getLanguageService();
 			$clang           = $languageService->findById($this->id);
 
@@ -83,15 +83,13 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 				return $this->redirectResponse();
 			}
 		}
-		else {
-			$this->func = 'edit';
-		}
 
+		$this->func = 'edit';
 		$this->indexAction();
 	}
 
 	public function deleteAction() {
-		$clangID   = sly_post('clang_id', 'int', -1);
+		$clangID   = $this->getRequest()->post('clang_id', 'int', -1);
 		$languages = sly_Util_Language::findAll();
 		$flash     = sly_Core::getFlashMessage();
 

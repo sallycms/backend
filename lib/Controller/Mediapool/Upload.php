@@ -17,10 +17,11 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 	public function uploadAction() {
 		$this->init();
 
-		$flash = sly_Core::getFlashMessage();
+		$flash   = sly_Core::getFlashMessage();
+		$request = $this->getRequest();
 
 		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
-			$title = sly_post('ftitle', 'string');
+			$title = $request->post('ftitle', 'string');
 			$cat   = $this->getCurrentCategory();
 
 			if (!$this->canAccessCategory($cat)) {
@@ -32,9 +33,9 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 
 			// close the popup, if requested
 
-			$callback = sly_request('callback', 'string');
+			$callback = $request->request('callback', 'string');
 
-			if ($callback && sly_post('saveandexit', 'boolean', false) && $file !== null) {
+			if ($callback && $request->post('saveandexit', 'boolean', false) && $file !== null) {
 				$this->render('mediapool/upload_js.phtml', compact('file', 'callback'), false);
 				exit;
 			}

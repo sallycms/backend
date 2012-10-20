@@ -33,7 +33,8 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 			return $this->indexAction();
 		}
 
-		$media   = sly_postArray('selectedmedia', 'int');
+		$request = $this->getRequest();
+		$media   = $request->postArray('selectedmedia', 'int');
 		$flash   = sly_Core::getFlashMessage();
 		$service = sly_Service_Factory::getMediumService();
 
@@ -60,7 +61,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 
 		// perform actual work
 
-		if (!empty($_POST['delete'])) {
+		if ($request->post->has('delete')) {
 			foreach ($media as $medium) {
 				$this->deleteMedium($medium, $flash, false);
 			}
