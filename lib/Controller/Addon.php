@@ -212,10 +212,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 	private function sendResponse($finished = true) {
 		if (sly_post('json', 'boolean', false)) {
-			header('Content-Type: application/json; charset=UTF-8');
-			while (ob_get_level()) ob_end_clean();
-			ob_start('ob_gzhandler');
-
 			$data  = $this->buildDataList();
 			$data  = $this->resolveParentRelationships($data);
 			$flash = sly_Core::getFlashMessage();
@@ -225,7 +221,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 				$msgs[$idx] = is_array($list) ? implode('<br />', $list) : $list;
 			}
 
-			$response = array(
+			$content = array(
 				'status'   => empty($msgs),
 				'stati'    => $this->buildStatusList($data),
 				'message'  => implode('<br />', $msgs),
@@ -234,8 +230,11 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 			$flash->clear();
 
-			print json_encode($response);
-			die;
+			$response = sly_Core::getResponse();
+			$response->setContentType('application/json', 'UTF-8');
+			$response->setContent(json_encode($content));
+
+			return $response;
 		}
 
 		return $this->redirectResponse();
