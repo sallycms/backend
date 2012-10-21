@@ -14,10 +14,14 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		if ($this->header() !== true) return;
 
+		$request = $this->getRequest()->post;
+
 		$this->render('content/meta/index.phtml', array(
 			'article' => $this->article,
 			'slot'    => $this->slot,
-			'user'    => sly_Util_User::getCurrentUser()
+			'user'    => sly_Util_User::getCurrentUser(),
+			'clangA'  => $request->post('clang_a', 'int', sly_Core::getCurrentClang()),
+			'clangB'  => $request->post('clang_b', 'int')
 		), false);
 	}
 

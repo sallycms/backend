@@ -36,8 +36,9 @@ if ($this->func === 'add' || $this->func === 'edit'): ?>
 	// Das Formular für neue Sprachen erscheint immer vor den anderen Daten.
 
 	if ($this->func === 'add') {
-		$name   = sly_post('clang_name', 'string');
-		$locale = sly_post('clang_locale', 'string');
+		$request = $this->getRequest();
+		$name    = $request->post('clang_name', 'string', '');
+		$locale  = $request->post('clang_locale', 'string', '');
 
 		?>
 		<tr class="sly-active">

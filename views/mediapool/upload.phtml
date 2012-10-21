@@ -13,12 +13,14 @@ print sly_Helper_Message::renderFlashMessage();
 ////////////////////////////////////////////////////////
 // init form
 
+$callback = $this->getRequest()->request('callback', 'string', '');
+
 $form = new sly_Form('index.php', 'POST', t('upload_medium'), '', 'sly-form-mediapool-other');
 $form->setEncType('multipart/form-data');
 
 $form->addHiddenValue('page', 'mediapool_upload');
 $form->addHiddenValue('func', 'upload');
-$form->addHiddenValue('callback', sly_request('callback', 'string'));
+$form->addHiddenValue('callback', $callback);
 
 ////////////////////////////////////////////////////////
 // file title
@@ -58,7 +60,7 @@ $submit->setAttribute('value', t('upload'));
 
 $form->setResetButton(null);
 
-if (sly_request('callback', 'string') != '') {
+if ($callback !== '') {
 	$apply = new sly_Form_Input_Button('submit', 'saveandexit', t('upload_and_use'));
 	$form->setApplyButton($apply);
 }
