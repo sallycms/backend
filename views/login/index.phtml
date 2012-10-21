@@ -14,7 +14,7 @@ $form = new sly_Form('index.php', 'POST', t('login_title'), '', 'sly_login_form'
 $form->setCsrfEnabled(false);
 $form->addHiddenValue('page', 'login');
 $form->addHiddenValue('func', 'login');
-$form->addHiddenValue('referer', isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+$form->addHiddenValue('referer', $requestUri);
 
 $form->add(new sly_Form_Input_Text('username', t('username')));
 $form->add(new sly_Form_Input_Password('password', t('password')));
