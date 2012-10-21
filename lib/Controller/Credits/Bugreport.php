@@ -11,9 +11,8 @@
 class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements sly_Controller_Interface {
 	public function indexAction() {
 		$request = $this->getRequest();
-		$server  = $request->server;
+		$server  = $request->server('SERVER_SOFTWARE', 'N/A');
 		$ua      = $request->getUserAgent() ? $request->getUserAgent() : 'N/A';
-		$server  = $server->get('SERVER_SOFTWARE', 'string', 'N/A');
 
 		$this->init();
 		$this->render('credits/bugreport.phtml', array('server' => $server, 'ua' => $ua), false);
