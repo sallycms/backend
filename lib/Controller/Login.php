@@ -30,7 +30,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function indexAction() {
-		$this->render('login/index.phtml', array(), false);
+		$requestUri = $this->getRequest()->getRequestUri();
+		$this->render('login/index.phtml', compact('requestUri'), false);
 	}
 
 	public function loginAction() {
