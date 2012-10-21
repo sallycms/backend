@@ -66,8 +66,8 @@ if ($baseSelect->getValueCount() > 1) {
 	$langA->setAttribute('name', 'clang_a');
 	$langB->setAttribute('name', 'clang_b');
 
-	$langA->setSelected(sly_request('clang_a', 'int', sly_Core::getCurrentClang()));
-	$langB->setSelected(sly_request('clang_b', 'int', null));
+	$langA->setSelected($clangA);
+	$langB->setSelected($clangB);
 
 	$langB->setMultiple(true);
 

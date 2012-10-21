@@ -15,9 +15,10 @@ else {
 	$sprite = 'article';
 }
 
+$request  = $this->getRequest();
 $base_url = 'index.php?page=structure&category_id='.$article->getId().'&clang='.$this->clangId;
-$name     = sly_post('article_name', 'string', $article->getName());
-$pos      = sly_post('article_position', 'int', $article->getPosition());
+$name     = $request->post('article_name', 'string', $article->getName());
+$pos      = $request->post('article_position', 'int', $article->getPosition());
 ?>
 
 <tr class="sly-active" data-slyid="<?php echo $article->getId() ?>" data-slystatus="<?php echo $article->getStatus() ?>" data-slytype="<?php echo $article->getType() ?>">
