@@ -17,10 +17,11 @@ class sly_App_Backend extends sly_App_Base {
 	protected $request    = null;
 
 	public function initialize() {
-		$config = sly_Core::config();
+		$container = $this->getContainer();
+		$config    = $container->getConfig();
 
 		// init request
-		$this->request = sly_Core::getRequest();
+		$this->request = $container->getRequest();
 
 		// init the current language
 		$clangID = $this->request->request('clang', 'int', 0);
@@ -30,7 +31,7 @@ class sly_App_Backend extends sly_App_Base {
 		}
 
 		// the following article API calls require to know a language
-		sly_Core::setCurrentClang($clangID);
+		$container->setCurrentLanguageId($clangID);
 
 		// only start session if not running unit tests
 		if (!SLY_IS_TESTING) sly_Util_Session::start();
@@ -45,28 +46,29 @@ class sly_App_Backend extends sly_App_Base {
 		$this->initUserSettings($isSetup);
 
 		// make sure our layout is used later on
-		sly_Core::setLayout(new sly_Layout_Backend());
+		$container->setLayout(new sly_Layout_Backend());
 
 		// be the first to init the layout later on, after the possibly available
 		// auth provider has been setup by external addOns / frontend code.
-		sly_Core::dispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
+		$container->getDispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
 
 		// instantiate asset service before addOns are loaded to make sure
 		// the CSS processing is first in the line for CSS files
-		sly_Service_Factory::getAssetService();
+		$container->getAssetService();
 
 		// and now init the rest (addOns, listeners, ...)
 		parent::initialize();
 	}
 
 	public function run() {
-		$isSetup = sly_Core::isSetup();
-		$layout  = sly_Core::getLayout();
+		$container = $this->getContainer();
+		$isSetup   = sly_Core::isSetup();
+		$layout    = $container->getLayout();
 
 		// get the most probably already prepared response object
 		// (addOns had a shot at modifying it)
-		$response = sly_Core::getResponse();
-		$user     = sly_Util_User::getCurrentUser();
+		$response = $container->getResponse();
+		$user     = $isSetup ? null : $container->getUserService()->getCurrentUser();
 
 		// force login controller if no login is found
 		if (!$isSetup && ($user === null || (!$user->isAdmin() && !$user->hasRight('apps', 'backend')))) {
@@ -97,7 +99,7 @@ class sly_App_Backend extends sly_App_Base {
 
 		// do it, baby
 		$content  = $this->dispatch($page, $action);
-		$response = sly_Core::getResponse(); // re-fetch the current global response
+		$response = $container->getResponse(); // re-fetch the current global response
 
 		// if we got a string, wrap it in the layout and then in the response object
 		if (is_string($content)) {
@@ -121,6 +123,8 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function initUserSettings($isSetup) {
+		$container = $this->getContainer();
+
 		if (!SLY_IS_TESTING && $isSetup) {
 			$locale        = sly_Core::getDefaultLocale();
 			$locales       = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
@@ -138,7 +142,7 @@ class sly_App_Backend extends sly_App_Base {
 		else {
 			$locale   = '';
 			$timezone = '';
-			$user     = sly_Util_User::getCurrentUser();
+			$user     = $container->getUserService()->getCurrentUser();
 
 			// get user values
 			if ($user instanceof sly_Model_User) {
@@ -153,7 +157,7 @@ class sly_App_Backend extends sly_App_Base {
 
 		// set the i18n object
 		$i18n = new sly_I18N($locale, SLY_SALLYFOLDER.'/backend/lang');
-		sly_Core::setI18N($i18n);
+		$container->setI18N($i18n);
 
 		// set timezone
 		date_default_timezone_set($timezone);
@@ -198,14 +202,15 @@ class sly_App_Backend extends sly_App_Base {
 	 * @return string  the currently active page
 	 */
 	protected function findPage() {
-		$config = sly_Core::config();
-		$page   = $this->getControllerParam();
+		$container = $this->getContainer();
+		$config    = $container->getConfig();
+		$page      = $this->getControllerParam();
 
 		// Erst normale Startseite, dann User-Startseite, dann System-Startseite und
 		// zuletzt auf die Profilseite zurückfallen.
 
 		if (strlen($page) === 0 || !$this->isControllerAvailable($page)) {
-			$user = sly_Util_User::getCurrentUser();
+			$user = $container->getUserService()->getCurrentUser();
 			$page = $user ? $user->getStartpage() : null;
 
 			if ($page === null || !$this->isControllerAvailable($page)) {
@@ -239,7 +244,7 @@ class sly_App_Backend extends sly_App_Base {
 
 	public function redirectResponse($page, $params = array(), $code = 302) {
 		$url      = $this->prepareRedirectUrl($page, $params);
-		$response = sly_Core::getResponse();
+		$response = $this->getContainer()->getResponse();
 
 		$response->setStatusCode($code);
 		$response->setHeader('Location', $url);
@@ -249,7 +254,7 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function prepareRedirectUrl($page, $params) {
-		$base = sly_Util_HTTP::getBaseUrl(true).'/backend/index.php';
+		$base = $this->getContainer()->getRequest()->getBaseUrl(true).'/backend/index.php';
 
 		if ($page === null) {
 			$page = $this->getCurrentControllerName();
@@ -291,7 +296,7 @@ class sly_App_Backend extends sly_App_Base {
 	 * Event handler
 	 */
 	public function initNavigation(array $params) {
-		$layout = sly_Core::getLayout();
+		$layout = $this->getContainer()->getLayout();
 		$layout->getNavigation()->init();
 	}
 }
