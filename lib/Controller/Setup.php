@@ -28,6 +28,12 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	public function indexAction()	{
 		$this->init();
 
+		// just load defaults and this should be the only time to do so
+		$config = $this->getContainer()->getConfig();
+		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
+		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
+		$this->getContainer()->getI18N()->setLocale($config->get('DEFAULT_LOCALE'));
+
 		$languages = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
 
 		// forward if only one locale available
@@ -97,12 +103,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	public function dbconfigAction() {
 		$this->init();
 
-		$config = sly_Core::config();
-
-		// just load defaults and this should be the only time to do so
-		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
-		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
-
+		$config  = sly_Core::config();
 		$data    = $config->get('DATABASE');
 		$request = $this->getRequest();
 		$isSent  = $request->isMethod('POST');
