@@ -1,6 +1,9 @@
 setup_step_n: 'Setup: Step {0} of {1}'
 setup_continue_to_n: 'Continue with step {0}'
 
+setup_language_title: 'Setup: Language'
+setup_language_choose_a_language: Please select a language.
+
 setup_license_title: Setup: License
 setup_license_header: Welcome to SallyCMS setup.
 setup_license_link: License agreement (<a href="http://www.opensource.org/licenses/MIT" class="sly-blank">MIT license</a>)
