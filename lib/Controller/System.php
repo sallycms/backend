@@ -35,8 +35,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		sly_Loader::clearCache();
 
 		// create bootcache
-		sly_Util_BootCache::recreate('frontend');
-		sly_Util_BootCache::recreate('backend');
+		sly_Util_BootCache::recreate();
 
 		// clear our own data caches
 		if ($this->isCacheSelected('sly_core')) {
@@ -168,8 +167,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
 
 		// create/remove bootcache
-		sly_Util_BootCache::recreate('frontend');
-		sly_Util_BootCache::recreate('backend');
+		sly_Util_BootCache::recreate();
 
 		return $this->redirectResponse();
 	}
