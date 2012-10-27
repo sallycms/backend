@@ -8,9 +8,6 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-// load core system
-require '../core/master.php';
-
 // add the backend app
 sly_Loader::addLoadPath(SLY_SALLYFOLDER.'/backend/lib/', 'sly_');
 
