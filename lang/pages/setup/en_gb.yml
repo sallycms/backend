@@ -1,0 +1,86 @@
+setup_step_n: 'Setup: Step {0} of {1}'
+setup_continue_to_n: 'Continue with step {0}'
+
+setup_language_title: 'Setup: Language'
+setup_language_choose_a_language: Please select a language.
+
+setup_license_title: Setup: License
+setup_license_header: Welcome to SallyCMS setup.
+setup_license_link: License agreement (<a href="http://www.opensource.org/licenses/MIT" class="sly-blank">MIT license</a>)
+setup_license_text: |
+  Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+setup_license_steps: What happens next:
+setup_license_step_1: The file permissions are checked.
+setup_license_step_2: The database access will be configured.
+setup_license_step_3: The database will be (re-)created.
+setup_license_step_4: The first user account will be created.
+setup_license_not_found: The license file could not be found.
+setup_license_accept: Accept license agreement and start setup
+
+no_mysql_mysqli: neither MySQL nor MySQLi
+exec_time: '{0}s, variable'
+memory: '{0}B, variable'
+
+setup_security_msg: |
+  The directory sally/core is insecure. Please prevent access to it and restart
+  the setup procedure!
+setup_system_requirements: System requirements
+setup_property: Property
+setup_php_version: PHP version
+setup_php_time_limit: PHP time limit
+setup_php_mem_limit: PHP memory limit
+setup_php_pseudo: 'PHP pseudo security (open_basedir, safe_mode)'
+setup_filesystem_problems: Filesystem problems
+setup_please_fix_problems: Please fix the problems above to continue.
+setup_cannot_create_dirs: The following directories do not exist and could not be created:
+setup_cannot_protect_dirs: The following directory could not protected against HTTP access:
+
+setup_database_config: Database configuration
+setup_dbconfig_driver_notice: All drivers except for MySQL are highly experimental and only for testing purposes.
+setup_invalid_driver: The chosen database driver is not supported by your system.
+setup_no_drivers_available: No database driver is available.
+setup_dbconfig_prefix_notice: Allows you to install multiple SallyCMS installations in one database.
+
+setup_initdb_header: Create database
+setup_initdb_reinit: Please re-initialize your database.
+setup_initdb_func_setup: Initialize database
+setup_initdb_func_drop: Initialize database and overwrite an existing one
+setup_initdb_func_nop: 'Database already exists [skip this step]'
+setup_initdb_table_not_found: 'Table {0} could not be found!'
+
+setup_createuser_header: Create admin account
+setup_createuser_no_admin: Do not create an account.
+setup_createuser_no_admin_notice: Enter the login of an existing user to reset the password.
+setup_createuser_continue: Finish setup
+setup_createuser_no_admin_given: Please enter a login name for the admin account.
+setup_createuser_no_password_given: Please enter a password for the admin account.
+setup_createuser_cant_create_admin: The admin account could not be created.
+setup_createuser_no_users_found: No users were found. Please create one.
+
+setup_finish_title: 'Setup: All Done!'
+setup_finish_header: 'Congratulations to your SallyCMS installation!'
+setup_finish_done: 'The installation of your CMS is now done.'
+setup_finish_login: 'You can <a href="index.php">log in</a> and start using it right now.'
+setup_finish_signature: "Good luck and have fun,\nThe SallyCMS Team"
+
+setup_import_dump_not_found: Export files could not be found!
+setup_database_server_too_old: 'The target database server is too old and incompatible with Sally.<br />You need at least version {1}, but {0} has been detected.'
+setup_database_server_old_but_okay: 'The target database server is out of date but still compatible.<br />Version {1}+ is recommended, but {0} has been detected.'

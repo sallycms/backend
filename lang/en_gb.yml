@@ -1,0 +1,387 @@
+lang: English
+htmllang: en
+yes: yes
+no: no
+month: month
+year: year
+days: days
+hours: hours
+minutes: minutes
+seconds: seconds
+milliseconds: milliseconds
+days_short: d
+hours_short: h
+minutes_short: m
+seconds_short: s
+milliseconds_short: ms
+never: never
+all: all
+general: General
+dateformat: '%Y-%b-%d'
+timeformat: '%H:%M'
+datetimeformat: '%Y-%b-%d %H:%M'
+setlocale: 'en_GB,en_UK,en_US,en_EN,en_AU,en_CA,American,ENG,English'
+
+home: Home
+input: Input
+output: Output
+title: Title
+grant_access: Grant access
+
+save: Save
+apply: Apply
+reset: Reset
+delete: Delete
+edit: Edit
+submit: Submit
+add: Add
+remove: Remove
+show: Show
+login: Login
+logout: Logout
+change: Change
+update: Update
+search: Search
+move: Move
+publish: Publish
+enabled: enabled
+
+available: available
+unavailable: unavailable
+required: required
+requires: requires
+is_required: 'is required by {0}'
+required_by: required by
+activated: activated
+optional: optional
+deactivated: deactivated
+allowed: allowed
+disallowed: disallowed
+any: any
+none: none
+recommended: recommended
+unknown: unknown
+
+from: from
+to: to
+by: by
+
+select_all: select all
+select_none: select none
+
+sort_asc: Sort ascending
+sort_desc: Sort descending
+sort_none: No sorting
+pages: Pages
+filter: Filter
+begin_sorting: Sort table
+end_sorting: End sorting mode
+
+redirect_previous_page: 'You are being redirected to your <a href="{0}">previous page</a>.'
+redirect_startpage: 'You are being redirected to your <a href="{0}">homepage</a>.'
+unknown_controller: 'Unknown controller {0}'
+unknown_page: Unknown Page
+unknown_action: 'Method {0} in {1} not found!'
+page_not_allowed: 'Access to {0} in {1} not allowed!'
+security_violation: Security Violation
+controller_error: Controller Error
+unexpected_exception: Unexpected Exception
+system: System
+user: User
+users: Users
+mediapool: Mediapool
+content: Article
+structure: Structure
+addons: AddOns
+profile: Profile
+my_profile: My Profile
+login_title: Login
+base_navigation: Base Navigation
+
+username: Username
+password: Password
+new_password: New password
+
+media: Media
+medium: Medium
+
+logged_out: not signed in
+logged_in_as: Logged in as
+
+no_articles_available: No articles available.
+no_categories_available: No categories available.
+
+article_moved: Article has been moved.
+article_deleted: Article has been deleted.
+cannot_move_article: Article could not be moved.
+category_deleted: Category has been deleted.
+category_not_found: 'Category {0} could not be found!'
+cannot_delete_start_article: Cannot delete the site homepage!
+cannot_delete_not_found_article: Cannot delete the not found article!
+
+no_rights_to_this_function: Improper permissions for this function!
+
+file_not_found: 'File {0} could not be found!'
+error_moving_uploaded_file: 'An error occured while moving the file {0}.'
+description: Description
+
+copy_content: 'Copy contents'
+copy_article: 'Copy article'
+move_category: Move category
+startarticle: Start article
+article_is_startarticle: This article is a start article.
+convert_to_startarticle: This article cannot be converted to a start article.
+root_articles_cannot_be_startarticles: Articles in the root level cannot be converted to start articles.
+cannot_convert_to_startarticle: Article could not be converted to start article!
+article_converted_to_startarticle: Article has been successfully converted to start article.
+category_moved: Category has been moved.
+articletype: Article type
+articletypes: Article types
+change_articletype: Change article type
+edit_contents: Edit contents
+
+category_updated: Category has been updated.
+category_is_not_empty: Category still contains contents.
+category_status_updated: Category status has been updated.
+category_added: Category has been added.
+article_status_updated: Article status has been updated.
+article_updated: Article has been updated.
+article_added: Article has been added.
+category: Category
+position: Position
+position_short: Pos
+status: Status
+id: ID
+add_article: Add article
+add_category: Add category
+save_category: Save category
+status_online: online
+status_offline: offline
+no_articletype: No article type
+article_name: Article name
+created_at: created at
+updated_at: updated at
+article: Article
+publish_category: Publish category
+
+start_article: Homepage
+path: Path
+function: Function
+functions: Functions
+
+profile_updated: Your profile has been updated.
+user_updated: User has been updated.
+user_deleted: User has been deleted.
+user_added: User has been added.
+user_not_found: 'User {0} could not be found!'
+edit_user: Edit user
+add_user: Add user
+user_login_already_exists: The chosen username already exists!
+admin: Administrator
+you_cannot_delete_yourself: You cannot delete yourself!
+you_cannot_delete_admins: You cannot delete administrators!
+categories: Categories
+modules: Modules
+last_login: Last login
+name: Name
+permissions: Permissions
+backend_locale: Backend locale
+startpage: Startpage
+
+plase_enter_a_name: Please enter a name!
+configuration_updated: System configuration has been updated.
+delete_cache: Delete cache
+delete_cache_description: 'With this function you can clear the temporary storage holding frequently used data. The cache will be re automatically rebuilt during the next visits to your website.'
+delete_cache_message: Cache has been cleared.
+features: Features
+settings: Settings
+invalid_start_article_selected: The selected site homepage is invalid.
+invalid_not_found_article_selected: The selected not found article is invalid.
+invalid_default_language_selected: The selected default language is invalid.
+invalid_default_articletype_selected: The selected default article type is invalid.
+invalid_caching_strategy_selected: The selected caching strategy is invalid.
+invalid_timezone_selected: The selected timezone is invalid.
+invalid_locale_selected: The selected backend locale is invalid.
+languages: Languages
+add_language: Add language
+edit_language: Edit language
+language_added: Language has been added.
+language_updated: Language has been updated.
+language_deleted: Language has been deleted.
+cannot_delete_language: Language could not be deleted!
+locale: Locale
+version: Version
+host: Host
+database: Database
+database_connection: Database connection
+caching_strategy: Caching strategy
+developer_mode: Developer mode
+project_name: Project name
+default_articletype: Default article type
+timezone: Timezone
+not_found_article: Not found article
+default_language: Default language
+
+setup: Setup
+setup_text: 'You can initiate the setup process here. This is only for emergency and not required under normal circumstances.'
+
+back: back
+addon: AddOn
+install: install
+install_including_requirements: install incl. requirements
+activate_including_requirements: activate incl. requirements
+reinstall: re-install
+uninstall: uninstall
+deactivate: deactivate
+activate: activate
+reinit_assets: re-initialize assets
+addon_help: 'Help for {0}'
+addon_help_file_not_found: The help file (help.php) could not be found!
+addon_config_not_found: The startup script (boot.php) could not be found!
+addon_install_failed: '{0} could not be installed for the following reason:<br /> {1}'
+addon_install_sql_failed: '{0} could not be installed for the following errors while running the installation queries:<br /> {1}'
+addon_uninstall_failed: '{0} could not be uninstalled for the following reason:<br /> {1}'
+addon_uninstall_sql_failed: '{0} could not be installed for the following errors while running the uninstallation queries:<br /> {1}'
+addon_activate_failed: '{0} could not be activated because it is not yet installed!'
+addon_installed: '{0} has been installed.'
+addon_activated: '{0} has been activated.'
+addon_deactivated: '{0} has been deactivated.'
+addon_uninstalled: '{0} has been uninstalled.'
+addon_assets_copied: Assets have been re-initialized.
+addon_requires_addon: '{1} requires {0}.'
+addon_incompatible: '{0} is not compatible with this Sally version ({1}).'
+addon_incompatible_with_this_version: not compatible with this Sally version
+addon_has_no_sally_version_info: '{0} has no compatibility information and can therefore not be installed.'
+addon_assets_failed: 'An error occured while copying the assets directory ({0}).'
+addon_not_found: 'AddOn {0} could not be found!'
+addon_not_given: 'No addOn given!'
+no_dependencies: no dependencies
+
+addon_cleanup_failed: 'An error occured while cleaning up the assets directory ({0}).'
+no_addons_found: No addOns found. Put new addOns in the directory sally/addons.
+
+credits: Credits
+author: Author
+supportpage: Website
+credits_caption: List of used addOns and plugIns
+credits_text: |
+  <strong>The webvariants team</strong>, <a href="mailto:info@webvariants.de">info@webvariants</a><br />
+  Core Development<br />
+  webvariants GbR, <a href="http://www.webvariants.de/" class="sly-blank">www.webvariants.de</a>
+credits_thankyou: |
+  We thank all external developers and users that have contributed to the Sally development.
+
+linkmap: Linkmap
+
+select_medium: Select medium
+upload_medium: Upload new medium
+remove_medium: Remove medium
+
+select_link: Select article
+remove_link: Remove article
+
+you_have_no_access_to_this_language: 'You have no access to language {0}!'
+you_have_no_access_to_this_medium: You have no access to this medium!
+articletype_not_found: 'Article type {0} could not be found.'
+
+no_articletype_set: "This article's type has not yet been set."
+no_startarticle: 'No homepage given. Please select one in the <a href="{0}">backend</a>.'
+used_ressources: '{0} in {1} classes'
+to_website: Go to website
+
+errorlog: Error Log
+cant_work_with_foreign_errorhandler: 'Cannot display protocol because the current error handler ({0}) has an unknown type.'
+errorlog_is_empty: The error log is empty.
+errorlog_recenterrors: 'Here you can see the last {0} errors.'
+errorlog_total: 'Your error log contains <strong>{0}</strong> errors.'
+clear_errorlog: Clear Log
+error_details: Error details
+in_file: in file
+in_line: in line
+errorlog_cleared: The log has been cleared.
+errorlog_not_cleared: The log could not be cleared!
+
+use_default_locale: '(project default)'
+unnamed_article: unnamed article
+
+no_categories_yet: There are no categories yet.
+no_articles_yet: There are no articles yet.
+no_languages_yet: There are no languages yet.
+
+login_error: 'Login has failed. Please wait {0} before trying again.'
+you_have_been_logged_out: You have been logged out.
+
+articles: Articles
+articleslice_must_contain_slice_id_or_module: Articles slices must contain at least a slice ID or a module!
+article_not_found: 'Article {0} could not be found!'
+cannot_insert_multilingual_element_in_multicolumn_fieldset: Multicolumn fieldsets cannot contain multilingual form elements!
+cannot_move_category_into_child: A category cannot be moved into one of its children!
+cannot_render_slices: Blocks could not be rendered!
+slots: Slots
+could_not_find_log_dir: Could not find log directory!
+create: create
+db_driver: Database type
+db_prefix: Table prefix
+develop_file_not_found: 'The development resource {0} could not be found!'
+does_not_implement: 'The class {0} does not implement the interface {0}!'
+email_is_invalid: The email address is invalid!
+error_rendering_slice: 'An error occured while rendering the block:<br />{0}'
+error_sending_mail: An error occured while sending the email!
+exec_time: '{0}s, variable'
+fieldset_contains_multilingual_elements_has_to_be_singlecolumn: Fieldset cannot be multicolumn because it already contains multilingual form elements.
+file_has_no_internal_name: 'File {0} has no internal name!'
+from_language: from language
+to_language: to language
+importer_database_imported: 'The database dump has been successfully imported, {0} queries have been executed.'
+importer_no_valid_import_file_prefix: Import file is invalid: Table prefix could not be found!
+importer_no_valid_import_file_version: Import file is invalid: Version stamp could not be found!
+invalid_develop_param: 'Detected invalid parameter {0}.'
+language_not_found: 'Language {0} could not be found!'
+login_welcome: Please log in.
+medium_not_found: 'Medium {0} could not be found!'
+move_bottom: move to the bottom
+move_down: move down
+move_top: move to the top
+move_up: move up
+condition_handlers_result_ambiguous: 'More than one resource left over after applying the condition handlers for "{0}": {1}'
+condition_handlers_empty_result: 'By applying all condititions handlers for "{0}" all possible resources have been removed.'
+name_contains_invalid_characters: The internal name contains invalid characters!
+not_all_requirements_met: Not all requirements have been met!
+no_password_given: No password given!
+no_permission: No permission!
+no_recipients_given: No recipients given!
+no_username_given: No username given!
+parent_category_not_found: Parent category could not be found!
+password_needs_valid_createdate: Hashing requires a valid createdate to be present!
+redirect_to: 'You are being <a href="{0}">redirected</a>.'
+service_not_found: 'The {0} service could not be found!'
+slice_could_not_be_generated: 'Slice cache could not be created!'
+sort_function_not_found: 'Sort function {0} could not be found!'
+source_and_target_are_equal: Source and target are identical!
+table_is_empty: This table contains not content yet.
+target_category: Target category
+target_category_not_found: Target category could not be found!
+template_not_found: 'Template {0} could not be found!'
+title_cannot_be_empty: The title may not be empty!
+unknown_log_level: 'Unknown log level {0} given.'
+unsupported_direction: 'Unsupported direction {0} given.'
+use_category_service_to_copy_categories: Use the category service to copy categories.
+use_category_service_to_move_categories: Use the category service to move categories.
+view_not_found: 'View {0} could not be found!'
+safemode_openbasedir: safe_mode and open_basedir
+layout_has_not_been_set: The layout has not yet been set via ::setLayout().
+media_categories: Medienkategorien
+move: move
+query_uses_forbidden_storage_engine: 'The {0}. query does not use InnoDB, but rather {1} as the storage engine. If you are absolutely sure to use {1}, you can set the key allow_non_innodb to true in the addOns''s static.yml.'
+no_language_selected: No languages have been selected.
+sally_core_cache: 'SallyCMS cache (articles, contents)'
+sally_assetcache: Asset cache
+sally_develop_content: 'Synchronize templates & modules'
+slice_not_found: 'Block {0} could not be found!'
+applications: Applications
+backend: Backend
+package: Package
+operation_requires_user_context: 'The operation {0} requires a user context!'
+an_operation_requires_user_context: This operation requires a user context!
+article_slice_not_found: 'Article slice {0} could not be found!'
+no_users_found: No matching users were found.
