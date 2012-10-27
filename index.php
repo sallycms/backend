@@ -8,8 +8,6 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-define('IS_SALLY_BACKEND', true);
-
 // load core system
 require '../core/master.php';
 

@@ -16,6 +16,10 @@ class sly_App_Backend extends sly_App_Base {
 	protected $action     = null;
 	protected $request    = null;
 
+	public function isBackend() {
+		return true;
+	}
+
 	public function initialize() {
 		$container = $this->getContainer();
 		$config    = $container->getConfig();
