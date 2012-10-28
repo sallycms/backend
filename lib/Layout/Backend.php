@@ -123,6 +123,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$numPages   = count($subPages);
 		$format     = '<a href="index.php?page=%s%s"%s>%s</a>';
 		$activePage = false;
+		$nav        = $this->getNavigation();
 
 		foreach ($subPages as $idx => $sp) {
 			if (!is_array($sp) && !($sp instanceof sly_Layout_Navigation_Subpage)) continue;
@@ -131,8 +132,8 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 
 			if (is_array($sp)) {
 				if ($activePage === false) {
-					$activePage = $this->getNavigation()->getActivePage();
-					if ($activePage === null) $activePage = $this->getNavigation()->find($curPage);
+					$activePage = $nav->getActivePage();
+					if ($activePage === null) $activePage = $nav->find($curPage);
 					// It is still possible for $activePage to be null (for pages not in the
 					// navigation, like the credits).
 				}
