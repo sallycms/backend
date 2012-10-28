@@ -16,7 +16,7 @@ $uname    = php_uname('s').' '.php_uname('r').' '.php_uname('v').' '.php_uname('
 // put it all together
 
 $sysinfo = array(
-	'<pre>',
+	':::',
 	'Versionen',
 	'---------',
 	'',
@@ -53,6 +53,7 @@ $sysinfo = array(
 $service  = sly_Service_Factory::getAddOnService();
 $pservice = $service->getPackageService();
 $list     = $service->getRegisteredAddOns();
+$isEmpty  = true;
 
 foreach ($list as $addon) {
 	if (!$service->isInstalled($addon)) continue;
@@ -60,15 +61,15 @@ foreach ($list as $addon) {
 	$status    = $service->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
 	$version   = '('.$pservice->getVersion($addon).')';
 	$sysinfo[] = sprintf('%-40s %-9s [%s]', $addon, $version, $status);
+	$isEmpty   = false;
 }
 
-if (empty($list)) {
+if ($isEmpty) {
 	$sysinfo[] = '(keine)';
 }
 
-$sysinfo[] = '</pre>';
-$sysinfo   = sly_html(implode("\n", $sysinfo));
-$height    = substr_count($sysinfo, "\n") + 1;
+$sysinfo = sly_html('    '.rtrim(implode("\n    ", $sysinfo)));
+$height  = substr_count($sysinfo, "\n") + 1;
 
 ?>
 <div class="sly-area sly-credits">
@@ -87,14 +88,14 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			<li>Tritt der Fehler auch auf, wenn du das Caching abschaltest (heißt,
 			den Blackhole-Cache benutzt)?</li>
 			<li>Stelle sicher, dass du die
-			<a href="https://projects.webvariants.de/projects/sallycms/files">aktuellste
+			<a href="https://bitbucket.org/SallyCMS/trunk/downloads" class="sly-blank">aktuellste
 			Sally-Version</a> einsetzt.</li>
 			<li>Stelle sicher, dass die von dir eingesetzten Pakete aktuell sind.</li>
 		</ol>
 
 		<p>
 			Wenn die obigen Tipps nicht helfen, kannst du einen
-			<a href="https://projects.webvariants.de/projects/sallycms/issues/new">Bugreport
+			<a href="https://bitbucket.org/SallyCMS/trunk/issues/new" class="sly-blank">Bugreport
 			erstellen</a>. Um dem SallyCMS-Team zu ermöglichen, den Fehler schnell
 			zu identifizieren	und zu lösen, beachte bitte unbedingt die folgenden
 			Hinweise.
@@ -108,14 +109,14 @@ $height    = substr_count($sysinfo, "\n") + 1;
 			nicht weiter.</li>
 			<li>Tritt das Problem im Frontend, Backend oder in beiden auf?</li>
 			<li>Handelt es sich wirklich um einen Sally-Fehler oder liegt das Problem
-			bei einem Paket? Für Pakete gibt es eigene Bugtracker.</li>
+			bei einem AddOn? AddOns haben üblicherweise ihre eigenen Bugtracker.</li>
 		</ul>
 
 		<p>
 			Wir empfehlen, die folgenden Informationen direkt in den Bugreport zu
 			kopieren. Projektspezifische Details können auf Wunsch natürlich
-			entfernt werden, wenn nötig. (Bitte kopiere ebenfalls das &lt;pre&gt;-Tag,
-			damit die Daten auch im Bugtracker richtig eingerückt werden.)
+			entfernt werden, wenn nötig. (Bitte kopiere den Text inklusive der
+			Einrückung, damit er im Bugtracker korrekt angezeigt wird.)
 		</p>
 
 		<textarea class="sly-sysinfo" rows="<?php echo $height ?>" cols="50"><?php echo $sysinfo ?></textarea>
