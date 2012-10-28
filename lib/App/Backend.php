@@ -22,7 +22,6 @@ class sly_App_Backend extends sly_App_Base {
 
 	public function initialize() {
 		$container = $this->getContainer();
-		$config    = $container->getConfig();
 
 		// init request
 		$this->request = $container->getRequest();
@@ -41,7 +40,7 @@ class sly_App_Backend extends sly_App_Base {
 		if (!SLY_IS_TESTING) sly_Util_Session::start();
 
 		// load static config
-		$config->loadStatic(SLY_SALLYFOLDER.'/backend/config/static.yml');
+		$this->loadStaticConfig($container);
 
 		// are we in setup mode?
 		$isSetup = sly_Core::isSetup();
@@ -50,7 +49,7 @@ class sly_App_Backend extends sly_App_Base {
 		$this->initUserSettings($isSetup);
 
 		// make sure our layout is used later on
-		$container->setLayout(new sly_Layout_Backend());
+		$this->initLayout($container);
 
 		// be the first to init the layout later on, after the possibly available
 		// auth provider has been setup by external addOns / frontend code.
@@ -66,26 +65,10 @@ class sly_App_Backend extends sly_App_Base {
 
 	public function run() {
 		$container = $this->getContainer();
-		$isSetup   = sly_Core::isSetup();
 		$layout    = $container->getLayout();
 
-		// get the most probably already prepared response object
-		// (addOns had a shot at modifying it)
-		$response = $container->getResponse();
-		$user     = $isSetup ? null : $container->getUserService()->getCurrentUser();
-
-		// force login controller if no login is found
-		if (!$isSetup && ($user === null || (!$user->isAdmin() && !$user->hasRight('apps', 'backend')))) {
-			// send a 403 header to prevent robots from including the login page
-			// and to help ajax requests that were fired a long time after the last
-			// interaction with the backend to easily detect the expired session
-
-			if ($this->getControllerParam('login') !== 'login') {
-				$response->setStatusCode(403);
-			}
-
-			$this->controller = 'login';
-		}
+		// force login controller if not logged in
+		$this->checkController($container);
 
 		// get page and action from the current request
 		$page   = $this->controller === null ? $this->findPage() : $this->controller;
@@ -109,7 +92,7 @@ class sly_App_Backend extends sly_App_Base {
 		if (is_string($content)) {
 			$layout->setContent($content);
 			$payload = $layout->render();
-			$this->handleStringResponse($response, $payload, 'backend');
+			$this->handleStringResponse($response, $payload);
 		}
 
 		// if we got a response, use that one
@@ -160,8 +143,7 @@ class sly_App_Backend extends sly_App_Base {
 		}
 
 		// set the i18n object
-		$i18n = new sly_I18N($locale, SLY_SALLYFOLDER.'/backend/lang');
-		$container->setI18N($i18n);
+		$this->initI18N($container, $locale);
 
 		// set timezone
 		date_default_timezone_set($timezone);
@@ -258,7 +240,9 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function prepareRedirectUrl($page, $params) {
-		$base = $this->getContainer()->getRequest()->getBaseUrl(true).'/backend/index.php';
+		$cont = $this->getContainer();
+		$app  = $cont->getApplicationName();
+		$base = $cont->getRequest()->getBaseUrl(true).'/'.$app.'/index.php';
 
 		if ($page === null) {
 			$page = $this->getCurrentControllerName();
@@ -302,5 +286,37 @@ class sly_App_Backend extends sly_App_Base {
 	public function initNavigation(array $params) {
 		$layout = $this->getContainer()->getLayout();
 		$layout->getNavigation()->init();
+	}
+
+	protected function checkController(sly_Container $container) {
+		$response = $container->getResponse();
+		$isSetup  = sly_Core::isSetup();
+		$user     = $isSetup ? null : $container->getUserService()->getCurrentUser();
+
+		// force login controller if no login is found
+		if (!$isSetup && ($user === null || (!$user->isAdmin() && !$user->hasRight('apps', 'backend')))) {
+			// send a 403 header to prevent robots from including the login page
+			// and to help ajax requests that were fired a long time after the last
+			// interaction with the backend to easily detect the expired session
+
+			if ($this->getControllerParam('login') !== 'login') {
+				$response->setStatusCode(403);
+			}
+
+			$this->controller = 'login';
+		}
+	}
+
+	protected function loadStaticConfig(sly_Container $container) {
+		$container->getConfig()->loadStatic(SLY_SALLYFOLDER.'/backend/config/static.yml');
+	}
+
+	protected function initLayout(sly_Container $container) {
+		$container->setLayout(new sly_Layout_Backend());
+	}
+
+	protected function initI18N(sly_Container $container, $locale) {
+		$i18n = new sly_I18N($locale, SLY_SALLYFOLDER.'/backend/lang');
+		$container->setI18N($i18n);
 	}
 }
