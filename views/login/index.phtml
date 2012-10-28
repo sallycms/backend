@@ -1,0 +1,31 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form = new sly_Form('index.php', 'POST', t('login_title'), '', 'sly_login_form');
+$form->setCsrfEnabled(false);
+$form->addHiddenValue('page', 'login');
+$form->addHiddenValue('func', 'login');
+$form->addHiddenValue('referer', $requestUri);
+
+$form->add(new sly_Form_Input_Text('username', t('username')));
+$form->add(new sly_Form_Input_Password('password', t('password')));
+
+$form->setResetButton(null);
+$form->getSubmitButton()->setAttribute('value', t('login'));
+$form->setFocus('username');
+
+print $form->render();
+
+$layout = sly_Core::getLayout();
+
+$layout->addJavaScript('sly.startLoginTimer('.json_encode(t('login_welcome')).');');
+$layout->addJavaScript('sly.setModernizrCookie();');

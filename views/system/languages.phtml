@@ -1,0 +1,67 @@
+<?php
+/*
+ * Copyright (c) 2012, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+if ($this->func === 'add' || $this->func === 'edit'): ?>
+<div class="sly-form">
+	<form action="index.php" method="post">
+		<input type="hidden" name="page" value="system_languages" />
+		<input type="hidden" name="clang_id" value="<?php echo (int) $this->id ?>" />
+		<input type="hidden" name="func" value="<?php echo $this->func ?>" />
+		<?php print sly_Util_Csrf::renderInputTag() ?>
+	<?php endif ?>
+
+	<?php
+
+	$base  = 'index.php?page=system_languages&func=';
+	$table = new sly_Table('languages');
+
+	$table->addColumn(sly_Table_Column::sprite('language-add', $base.'add', t('add_language'), 'sly-col-icon sly-icon'));
+	$table->addColumn(sly_Table_Column::factory(t('name'), 'sly-col-name'));
+	$table->addColumn(sly_Table_Column::factory(t('locale'), 'sly-col-locale'));
+	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
+
+	$table->setIsEmpty(empty($this->languages) && $this->func !== 'add');
+	$table->setEmptyNotice(t('no_languages_yet'));
+	$table->openBuffer();
+
+	// Das Formular für neue Sprachen erscheint immer vor den anderen Daten.
+
+	if ($this->func === 'add') {
+		$request = $this->getRequest();
+		$name    = $request->post('clang_name', 'string', '');
+		$locale  = $request->post('clang_locale', 'string', '');
+
+		?>
+		<tr class="sly-active">
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, 'language') ?></td>
+			<td class="sly-col-name sly-has-input"><div><input class="sly-form-text" type="text" name="clang_name" value="<?php echo sly_html($name) ?>" autofocus="autofocus" required="required" placeholder="<?php echo ht('name') ?>" /></div></td>
+			<td class="sly-col-locale sly-has-input"><div><input class="sly-form-text" type="text" name="clang_locale" value="<?php echo sly_html($locale) ?>" required="required" placeholder="<?php echo ht('locale') ?>" /></div></td>
+			<td class="sly-col-func sly-has-input"><div><input type="submit" name="sly-submit" class="sly-form-submit" value="<?php echo t('add') ?>" /></div></td>
+		</tr>
+		<?php
+	}
+
+	foreach ($this->languages as $language) {
+		$this->render('system/languages_row.phtml', array(
+			'clangID'     => $language->getId(),
+			'clangName'   => $language->getName(),
+			'clangLocale' => $language->getLocale()
+		), false);
+	}
+
+	$table->closeBuffer();
+	print $table->render();
+
+	if ($this->func === 'add' || $this->func === 'edit'): ?>
+	</form>
+</div>
+<?php endif ?>
