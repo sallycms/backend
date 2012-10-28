@@ -26,6 +26,7 @@ if ($moduleSelect->getValueCount() === 1) {
 }
 
 $form = new sly_Form('index.php#addslice', 'GET', t('add_slice'));
+$form->setCsrfEnabled(false);
 $form->addClass('sly-form-add-slice');
 $form->addHiddenValue('page', 'content');
 $form->addHiddenValue('article_id', $article->getId());

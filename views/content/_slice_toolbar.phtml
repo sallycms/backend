@@ -28,15 +28,15 @@ else {
 }
 
 if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=deleteArticleSlice', 'messages').'" class="sly-delete">'.t('delete').'</a>';
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=deleteArticleSlice', 'messages').'" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
 if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=up', 'messages').'" title="'.$moveUp.'" class="sly-up"></a>';
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=down', 'messages').'" title="'.$moveDown.'" class="sly-down"></a>';
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=up', 'messages').'" title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
+	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=down', 'messages').'" title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
 
 	$dispatcher   = sly_Core::dispatcher();
 	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(

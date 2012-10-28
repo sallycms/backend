@@ -16,6 +16,7 @@ if (!in_array($dbInitFunction, $dbInitFunctions)) {
 
 // create form
 $form = new sly_Form('index.php', 'POST', t('setup_initdb_header'), '', 'sly-setup-initdb');
+$form->setCsrfEnabled(false);
 $this->printHiddens('initdb', $form);
 
 // create radios for possible init functions

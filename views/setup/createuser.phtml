@@ -13,6 +13,7 @@ $this->title(t('setup_step_n', 5, 5));
 print sly_Helper_Message::renderFlashMessage();
 
 $form = new sly_Form('index.php', 'POST', t('setup_createuser_header'));
+$form->setCsrfEnabled(false);
 $this->printHiddens('createuser', $form);
 
 // fields

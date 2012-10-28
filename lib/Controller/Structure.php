@@ -22,15 +22,16 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if (!$dontRedirect) {
 			$user    = sly_Util_User::getCurrentUser();
 			$allowed = $user->getAllowedCLangs();
+			$request = sly_Core::getRequest(); // has not yet been set by dispatcher
 
-			if (!empty($user) && !empty($allowed) && !isset($_REQUEST['clang']) && !in_array(sly_Core::getDefaultClangId(), $allowed)) {
+			if (!empty($user) && !empty($allowed) && $request->request('clang', 'int', -1) === -1 && !in_array(sly_Core::getDefaultClangId(), $allowed)) {
 				$this->redirect(array('clang' => reset($allowed)));
 			}
 		}
 	}
 
 	protected function init() {
-		$this->categoryId = sly_request('category_id', 'int', 0);
+		$this->categoryId = $this->getRequest()->request('category_id', 'int', 0);
 		$this->clangId    = sly_Core::getCurrentClang();
 		$this->artService = sly_Service_Factory::getArticleService();
 		$this->catService = sly_Service_Factory::getCategoryService();
@@ -44,7 +45,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editstatuscategoryAction() {
 		$this->init();
 
-		$editId = sly_get('edit_id', 'int', 0);
+		$editId = $this->getRequest()->post('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
@@ -61,7 +62,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editstatusarticleAction() {
 		$this->init();
 
-		$editId = sly_get('edit_id', 'int', 0);
+		$editId = $this->getRequest()->post('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
@@ -78,7 +79,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function deletecategoryAction() {
 		$this->init();
 
-		$editId = sly_get('edit_id', 'int', 0);
+		$editId = $this->getRequest()->post('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
@@ -95,7 +96,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function deletearticleAction() {
 		$this->init();
 
-		$editId = sly_get('edit_id', 'int', 0);
+		$editId = $this->getRequest()->post('edit_id', 'int', 0);
 		$flash  = sly_Core::getFlashMessage();
 
 		try {
@@ -112,9 +113,11 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function addcategoryAction() {
 		$this->init();
 
-		if (sly_post('do_add_category', 'boolean')) {
-			$name     = sly_post('category_name',     'string', '');
-			$position = sly_post('category_position', 'int',    0);
+		$request = $this->getRequest();
+
+		if ($request->isMethod('POST')) {
+			$name     = $request->post('category_name',     'string', '');
+			$position = $request->post('category_position', 'int',    0);
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
@@ -134,9 +137,11 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function addarticleAction() {
 		$this->init();
 
-		if (sly_post('do_add_article', 'boolean')) {
-			$name     = sly_post('article_name',     'string', '');
-			$position = sly_post('article_position', 'int',    0);
+		$request = $this->getRequest();
+
+		if ($request->isMethod('POST')) {
+			$name     = $request->post('article_name',     'string', '');
+			$position = $request->post('article_position', 'int',    0);
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
@@ -156,11 +161,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editcategoryAction() {
 		$this->init();
 
-		$editId = sly_request('edit_id', 'int', 0);
+		$request = $this->getRequest();
+		$editId  = $request->request('edit_id', 'int', 0);
 
-		if (sly_post('do_edit_category', 'boolean')) {
-			$name     = sly_post('category_name',     'string', '');
-			$position = sly_post('category_position', 'int',    0);
+		if ($request->isMethod('POST')) {
+			$name     = $request->post('category_name',     'string', '');
+			$position = $request->post('category_position', 'int',    0);
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
@@ -180,11 +186,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editarticleAction() {
 		$this->init();
 
-		$editId = sly_request('edit_id', 'int', 0);
+		$request = $this->getRequest();
+		$editId  = $request->request('edit_id', 'int', 0);
 
-		if (sly_post('do_edit_article', 'boolean')) {
-			$name     = sly_post('article_name',     'string', '');
-			$position = sly_post('article_position', 'int',    0);
+		if ($request->isMethod('POST')) {
+			$name     = $request->post('article_name',     'string', '');
+			$position = $request->post('article_position', 'int',    0);
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
@@ -279,12 +286,20 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 * @return boolean
 	 */
 	public function checkPermission($action) {
-		$categoryId = sly_request('category_id', 'int');
-		$editId     = sly_request('edit_id', 'int');
+		$request    = $this->getRequest();
+		$categoryId = $request->request('category_id', 'int');
+		$editId     = $request->request('edit_id', 'int');
 		$clang      = sly_Core::getCurrentClang();
 		$user       = sly_Util_User::getCurrentUser();
 
-		if ($user === null) return false;
+		if ($user === null) {
+			return false;
+		}
+
+		if ($request->isMethod('POST')) {
+			sly_Util_Csrf::checkToken();
+		}
+
 		if ($user->isAdmin()) return true;
 		if (!$user->hasRight('pages', 'structure')) return false;
 		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;

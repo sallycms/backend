@@ -8,13 +8,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$callback = sly_get('callback', '');
+$callback = $this->getRequest()->request('callback', 'string', '');
 $callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
 
 if ($callback) {
 	ob_start();
 	?>
-$(function() {
+jQuery(function($) {
 	$('.articlelist').delegate('a', 'click', function() {
 		var self     = $(this);
 		var id       = self.data('id');

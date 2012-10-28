@@ -61,22 +61,23 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	}
 
 	public function isCacheSelected($name) {
-		$caches = sly_postArray('caches', 'string', array());
+		$caches = $this->getRequest()->postArray('caches', 'string');
 		return in_array($name, $caches);
 	}
 
 	public function updateAction() {
 		$this->init();
 
-		$startArticle    = sly_post('start_article',    'int');
-		$notFoundArticle = sly_post('notfound_article', 'int');
-		$defaultClang    = sly_post('default_clang',    'int');
-		$defaultType     = sly_post('default_type',     'string');
-		$developerMode   = sly_post('developer_mode',   'boolean', false);
-		$backendLocale   = sly_post('backend_locale',   'string');
-		$projectName     = sly_post('projectname',      'string');
-		$cachingStrategy = sly_post('caching_strategy', 'string');
-		$timezone        = sly_post('timezone',         'string');
+		$request         = $this->getRequest();
+		$startArticle    = $request->post('start_article',    'int');
+		$notFoundArticle = $request->post('notfound_article', 'int');
+		$defaultClang    = $request->post('default_clang',    'int');
+		$defaultType     = $request->post('default_type',     'string');
+		$developerMode   = $request->post('developer_mode',   'boolean', false);
+		$backendLocale   = $request->post('backend_locale',   'string');
+		$projectName     = $request->post('projectname',      'string');
+		$cachingStrategy = $request->post('caching_strategy', 'string');
+		$timezone        = $request->post('timezone',         'string');
 
 		$keys = array(
 			'START_ARTICLE_ID', 'NOTFOUND_ARTICLE_ID', 'DEFAULT_CLANG_ID', 'DEFAULT_ARTICLE_TYPE',
@@ -170,7 +171,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		sly_Util_BootCache::recreate('frontend');
 		sly_Util_BootCache::recreate('backend');
 
-		$this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function setupAction() {
@@ -181,6 +182,12 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function checkPermission($action) {
 		$user = sly_Util_User::getCurrentUser();
+		if (!$user) return false;
+
+		if (in_array($action, array('setup', 'update', 'clearcache'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
 		return $user && $user->isAdmin();
 	}
 

@@ -25,15 +25,16 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 	public function updateAction() {
 		$this->init();
 
-		$user = $this->getUser();
+		$user    = $this->getUser();
+		$request = $this->getRequest();
 
-		$user->setName(sly_post('username', 'string'));
-		$user->setDescription(sly_post('description', 'string'));
+		$user->setName($request->post('username', 'string'));
+		$user->setDescription($request->post('description', 'string'));
 		$user->setUpdateColumns();
 
 		// Backend-Sprache
 
-		$backendLocale  = sly_post('locale', 'string');
+		$backendLocale  = $request->post('locale', 'string');
 		$backendLocales = $this->getBackendLocales();
 
 		if (isset($backendLocales[$backendLocale]) || strlen($backendLocale) === 0) {
@@ -45,12 +46,12 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		}
 
 		// timezone
-		$timezone  = sly_post('timezone', 'string');
+		$timezone  = $request->post('timezone', 'string');
 		$user->setTimezone($timezone ? $timezone : null);
 
 		// Passwort ändern?
 
-		$password = sly_post('password', 'string');
+		$password = $request->post('password', 'string');
 		$service  = sly_Service_Factory::getUserService();
 
 		if (!empty($password)) {
@@ -62,13 +63,19 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		$service->save($user);
 
 		sly_Core::getFlashMessage()->appendInfo(t('profile_updated'));
-		print sly_Helper_Message::renderFlashMessage();
 
-		return $this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function checkPermission($action) {
-		return $this->getUser() !== null;
+		$user = $this->getUser();
+		if (!$user) return false;
+
+		if ($action === 'update') {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return true;
 	}
 
 	protected function getBackendLocales() {

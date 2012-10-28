@@ -8,9 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$fileID = $this->getCurrentFile();
-$medium = sly_Util_Medium::findById($fileID);
-
+$fileID     = $medium->getId();
 $title      = $medium->getTitle();
 $filename   = $medium->getFilename();
 $filetype   = $medium->getFiletype();
@@ -28,8 +26,8 @@ if ($this->isDocType($medium)) {
 ////////////////////////////////////////////////////////
 // info and error messages
 
+print sly_Helper_Message::renderFlashMessage();
 $this->render('mediapool/javascript.phtml', array(), false);
-$this->render('mediapool/notices.phtml', array(), false);
 
 ////////////////////////////////////////////////////////
 // start forms
@@ -38,14 +36,16 @@ if ($this->canAccessFile($medium)) {
 	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
 	$form->setEncType('multipart/form-data');
 
+	$request = $this->getRequest();
+
 	$form->addHiddenValue('page', 'mediapool_detail');
 	$form->addHiddenValue('func', 'save');
 	$form->addHiddenValue('file_id', $fileID);
-	$form->addHiddenValue('callback', sly_request('callback', 'string'));
+	$form->addHiddenValue('callback', $request->request('callback', 'string', ''));
 
 	// additional arguments
 
-	foreach (sly_requestArray('args', 'string') as $name => $value) {
+	foreach ($request->requestArray('args', 'string') as $name => $value) {
 		$form->addHiddenValue('args['.$name.']', $value);
 	}
 }

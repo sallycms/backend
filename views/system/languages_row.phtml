@@ -8,7 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$editID  = sly_request('clang_id', 'int');
+$request = $this->getRequest();
+$editID  = $request->request('clang_id', 'int', 0);
 $add_td  = '';
 $add_td  = '';
 $delLink = t('delete');
@@ -17,13 +18,13 @@ if ($clangID == 0) {
 	$delLink = '<span class="sly-na">'.$delLink.'</span>';
 }
 else {
-	$delLink = '<a href="index.php?page=system_languages&amp;func=delete&amp;clang_id='.$clangID.'" class="sly-action sly-delete">'.$delLink.'</a>';
+	$delLink = '<a href="index.php?page=system_languages&amp;func=delete&amp;clang_id='.$clangID.'" class="sly-action sly-delete sly-postlink">'.$delLink.'</a>';
 }
 
 // Edit form
 if ($this->func == 'edit' && $editID == $clangID) {
-	$name   = sly_post('clang_name', 'string', $clangName);
-	$locale = sly_post('clang_locale', 'string', $clangLocale);
+	$name   = $request->post('clang_name', 'string', $clangName);
+	$locale = $request->post('clang_locale', 'string', $clangLocale);
 	?>
 	<tr class="sly-active">
 		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $name, 'language') ?></td>

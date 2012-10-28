@@ -30,12 +30,14 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function indexAction() {
-		$this->render('login/index.phtml', array(), false);
+		$requestUri = $this->getRequest()->getRequestUri();
+		$this->render('login/index.phtml', compact('requestUri'), false);
 	}
 
 	public function loginAction() {
-		$username = sly_post('username', 'string');
-		$password = sly_post('password', 'string');
+		$request  = $this->getRequest();
+		$username = $request->post('username', 'string');
+		$password = $request->post('password', 'string');
 		$loginOK  = sly_Service_Factory::getUserService()->login($username, $password);
 
 		// login was only successful if the user is either admin or has apps/backend permission
@@ -54,7 +56,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			sly_Core::dispatcher()->notify('SLY_BE_LOGIN', $user);
 
 			// if relogin, forward to previous page
-			$referer = sly_post('referer', 'string', false);
+			$referer = $request->post('referer', 'string', false);
 
 			if ($referer && !sly_Util_String::startsWith(basename($referer), 'index.php?page=login')) {
 				$url = $referer;
@@ -74,6 +76,9 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		$user = sly_Util_User::getCurrentUser();
 
 		if ($user) {
+			// check access here to avoid layout problems
+			sly_Util_Csrf::checkToken();
+
 			// notify system
 			sly_Core::dispatcher()->notify('SLY_BE_LOGOUT', $user);
 			sly_Service_Factory::getUserService()->logout();

@@ -22,17 +22,19 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	public function addAction() {
 		$this->init();
 
-		if (sly_post('save', 'boolean', false)) {
-			$password = sly_post('userpsw', 'string');
-			$login    = sly_post('userlogin', 'string');
-			$timezone = sly_post('timezone', 'string');
+		$request = $this->getRequest();
+
+		if ($request->isMethod('POST')) {
+			$password = $request->post('userpsw', 'string');
+			$login    = $request->post('userlogin', 'string');
+			$timezone = $request->post('timezone', 'string');
 			$service  = sly_Service_Factory::getUserService();
 			$flash    = sly_Core::getFlashMessage();
 			$params   = array(
 				'login'       => $login,
-				'name'        => sly_post('username', 'string'),
-				'description' => sly_post('userdesc', 'string'),
-				'status'      => sly_post('userstatus', 'boolean', false),
+				'name'        => $request->post('username', 'string'),
+				'description' => $request->post('userdesc', 'string'),
+				'status'      => $request->post('userstatus', 'boolean', false),
 				'timezone'    => $timezone ? $timezone : null,
 				'psw'         => $password,
 				'rights'      => $this->getRightsFromForm(null)
@@ -61,29 +63,30 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			return $this->listUsers();
 		}
 
-		$save        = sly_post('save', 'boolean', false);
+		$request     = $this->getRequest();
+		$save        = $request->isMethod('POST');
 		$service     = sly_Service_Factory::getUserService();
 		$currentUser = sly_Util_User::getCurrentUser();
 		$isSelf      = $currentUser->getId() === $user->getId();
 		$safeMode    = $user->isAdmin() && !$currentUser->isAdmin();
 
 		if ($save) {
-			$status = sly_post('userstatus', 'boolean', false) ? 1 : 0;
-			$tz     = sly_post('timezone', 'string', '');
+			$status = $request->post('userstatus', 'boolean', false) ? 1 : 0;
+			$tz     = $request->post('timezone', 'string', '');
 
 			if ($isSelf || $safeMode) {
 				$status = $user->getStatus();
 			}
 
-			$user->setName(sly_post('username', 'string'));
-			$user->setDescription(sly_post('userdesc', 'string'));
+			$user->setName($request->post('username', 'string'));
+			$user->setDescription($request->post('userdesc', 'string'));
 			$user->setStatus($status);
 			$user->setUpdateColumns();
 			$user->setTimezone($tz ? $tz : null);
 
 			// change password
 
-			$password = sly_post('userpsw', 'string');
+			$password = $request->post('userpsw', 'string');
 
 			if (!empty($password) && $password != $user->getPassword()) {
 				$user->setPassword($password);
@@ -92,7 +95,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$user->setRights($this->getRightsFromForm($user));
 
 			// save it
-			$apply = sly_post('apply', 'string');
+			$apply = $request->post('apply', 'string');
 			$flash = sly_Core::getFlashMessage();
 
 			try {
@@ -112,15 +115,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			}
 		}
 
-		$params     = array('user' => $user, 'func' => 'edit');
-
+		$params = array('user' => $user, 'func' => 'edit');
 		$this->render('user/edit.phtml', $params, false);
 	}
 
 	public function deleteAction() {
 		$this->init();
 
-		$user = $this->getUser();
+		$user = $this->getUser(true);
 
 		if ($user === null) {
 			return $this->redirectResponse();
@@ -166,6 +168,10 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$user = sly_Util_User::getCurrentUser();
 		if (!$user) return false;
 
+		if ($this->getRequest()->isMethod('POST') && in_array($action, array('add', 'edit', 'delete'))) {
+			sly_Util_Csrf::checkToken();
+		}
+
 		if ($user->isAdmin()) {
 			return true;
 		}
@@ -205,8 +211,9 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$this->render('user/list.phtml', compact('users', 'total'), false);
 	}
 
-	protected function getUser() {
-		$userID  = sly_request('id', 'int', 0);
+	protected function getUser($forcePost = false) {
+		$request = $this->getRequest();
+		$userID  = $forcePost ? $request->post('id', 'int', 0) : $request->request('id', 'int', 0);
 		$service = sly_Service_Factory::getUserService();
 		$user    = $service->findById($userID);
 
@@ -248,6 +255,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 	protected function getRightsFromForm($user) {
 		$permissions = array();
+		$request     = $this->getRequest();
 		$curUser     = sly_Util_User::getCurrentUser();
 		$isAdmin     = $curUser->isAdmin();
 		$isSelfEdit  = $user !== null && $curUser->getId() === $user->getId();
@@ -255,15 +263,15 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		// admin status
 
-		if ($safeMode || ($isAdmin && ($isSelfEdit || sly_post('is_admin', 'boolean', false)))) {
+		if ($safeMode || ($isAdmin && ($isSelfEdit || $request->post('is_admin', 'boolean', false)))) {
 			$permissions[] = 'admin[]';
 		}
 
 		// backend locale and startpage
 
-		$backendLocale  = sly_post('userperm_mylang', 'string');
+		$backendLocale  = $request->post('userperm_mylang', 'string');
 		$backendLocales = $this->getBackendLocales();
-		$startpage      = sly_post('userperm_startpage', 'string');
+		$startpage      = $request->post('userperm_startpage', 'string');
 		$startpages     = $this->getPossibleStartpages();
 
 		if (isset($backendLocales[$backendLocale])) {
