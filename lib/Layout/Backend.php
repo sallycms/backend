@@ -71,11 +71,11 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 
 	public function printHeader() {
 		parent::printHeader();
-		print $this->renderView('layout/sally/top.phtml');
+		print $this->renderView('top.phtml');
 	}
 
 	public function printFooter() {
-		print $this->renderView('layout/sally/bottom.phtml');
+		print $this->renderView('bottom.phtml');
 		parent::printFooter();
 	}
 
@@ -218,7 +218,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	}
 
 	protected function getViewFile($file) {
-		$full = SLY_SALLYFOLDER.'/backend/views/'.$file;
+		$full = SLY_SALLYFOLDER.'/backend/views/layout/'.$file;
 		if (file_exists($full)) return $full;
 
 		return parent::getViewFile($file);
