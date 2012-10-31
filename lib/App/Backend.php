@@ -242,8 +242,7 @@ class sly_App_Backend extends sly_App_Base {
 
 	protected function prepareRedirectUrl($page, $params) {
 		$cont = $this->getContainer();
-		$app  = $cont->getApplicationName();
-		$base = $cont->getRequest()->getBaseUrl(true).'/'.$app.'/index.php';
+		$base = $cont->getRequest()->getAppBaseUrl(null, $cont).'/index.php';
 
 		if ($page === null) {
 			$page = $this->getCurrentControllerName();
