@@ -85,7 +85,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			sly_Core::getFlashMessage()->appendInfo(t('you_have_been_logged_out'));
 		}
 
-		$this->indexAction();
+		return $this->redirectResponse();
 	}
 
 	public function checkPermission($action) {
