@@ -15,10 +15,10 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	private $hasNavigation = true;
 	private $navigation;
 
-	public function __construct() {
-		$locale  = sly_Core::getI18N()->getLocale();
-		$favicon = sly_Core::config()->get('backend/favicon');
-		$base    = sly_Util_HTTP::getBaseUrl(true).'/';
+	public function __construct(sly_I18N $i18n, sly_Configuration $config, sly_Request $request) {
+		$locale  = $i18n->getLocale();
+		$favicon = $config->get('backend/favicon');
+		$base    = $request->getBaseUrl(true).'/';
 
 		$this->addCSSFile('assets/css/import.less');
 
@@ -35,7 +35,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$this->setTitle(sly_Core::getProjectName().' - ');
 
 		$this->addMeta('robots', 'noindex,nofollow');
-		$this->setBase($base.'backend/');
+		$this->setBase($request->getAppBaseUrl().'/');
 
 		if ($favicon) {
 			$this->setFavIcon($base.$favicon);
@@ -49,12 +49,12 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		}
 	}
 
-	public function setCurrentPage($page) {
+	public function setCurrentPage($page, sly_Model_User $user = null) {
 		$bodyID = str_replace('_', '-', $page);
 		$this->setBodyAttr('id', 'sly-page-'.$bodyID);
 
 		// put some helpers on the body tag (now that we definitly know whether someone is logged in)
-		if (sly_Util_User::getCurrentUser() !== null) {
+		if ($user) {
 			$this->setBodyAttr('class', implode(' ', array(
 				'sly-'.sly_Core::getVersion('X'),
 				'sly-'.sly_Core::getVersion('X_Y'),
