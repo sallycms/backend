@@ -79,7 +79,8 @@ class sly_App_Backend extends sly_App_Base {
 		$this->action     = $action;
 
 		// let the layout know as well
-		$layout->setCurrentPage($page);
+		$user = sly_Core::isSetup() ? null : $container->getUserService()->getCurrentUser();
+		$layout->setCurrentPage($page, $user);
 
 		// notify the addOns
 		$this->notifySystemOfController(true);
@@ -312,7 +313,11 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function initLayout(sly_Container $container) {
-		$container->setLayout(new sly_Layout_Backend());
+		$i18n    = $container->getI18N();
+		$config  = $container->getConfig();
+		$request = $container->getRequest();
+
+		$container->setLayout(new sly_Layout_Backend($i18n, $config, $request));
 	}
 
 	protected function initI18N(sly_Container $container, $locale) {
