@@ -133,9 +133,18 @@ class sly_App_Backend extends sly_App_Base {
 			$this->controller = 'setup';
 		}
 		else {
-			$locale   = '';
-			$timezone = '';
-			$user     = sly_Util_User::getCurrentUser();
+			$timezone = $isSetup ? @date_default_timezone_get() : sly_Core::getTimezone();
+
+			// fix badly configured servers where the get function doesn't even return a guessed default timezone
+			if (empty($timezone)) {
+				$timezone = sly_Core::getTimezone();
+			}
+
+			// set the determined timezone
+			date_default_timezone_set($timezone);
+
+			$locale = '';
+			$user   = sly_Util_User::getCurrentUser();
 
 			// get user values
 			if ($user instanceof sly_Model_User) {
