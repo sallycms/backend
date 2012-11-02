@@ -111,6 +111,8 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function initUserSettings($isSetup) {
+		$container = $this->getContainer();
+
 		// set timezone
 		$this->setDefaultTimezone($isSetup);
 
