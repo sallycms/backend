@@ -111,13 +111,13 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function initUserSettings($isSetup) {
-		$container = $this->getContainer();
+		// set timezone
+		$this->setDefaultTimezone($isSetup);
 
 		if (!SLY_IS_TESTING && $isSetup) {
 			$locale        = sly_Core::getDefaultLocale();
 			$locales       = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
 			$requestLocale = $this->request->request('lang', 'string', '');
-			$timezone      = @date_default_timezone_get();
 			$user          = null;
 
 			if (in_array($requestLocale, $locales)) {
@@ -128,26 +128,21 @@ class sly_App_Backend extends sly_App_Base {
 			$this->controller = 'setup';
 		}
 		else {
-			$locale   = '';
-			$timezone = '';
-			$user     = $container->getUserService()->getCurrentUser();
+			$locale = sly_Core::getDefaultLocale();
+			$user   = $container->getUserService()->getCurrentUser();
 
 			// get user values
 			if ($user instanceof sly_Model_User) {
-				$locale   = $user->getBackendLocale();
+				$locale   = $user->getBackendLocale() ? $user->getBackendLocale() : $locale;
 				$timezone = $user->getTimeZone();
-			}
 
-			// re-set the values if the user profile has no value (meaning 'default')
-			if (empty($locale))   $locale   = sly_Core::getDefaultLocale();
-			if (empty($timezone)) $timezone = sly_Core::getTimezone();
+				// set user's timezone
+				if ($timezone) date_default_timezone_set($timezone);
+			}
 		}
 
 		// set the i18n object
 		$this->initI18N($container, $locale);
-
-		// set timezone
-		date_default_timezone_set($timezone);
 	}
 
 	/**
