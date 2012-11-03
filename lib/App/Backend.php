@@ -15,6 +15,7 @@ class sly_App_Backend extends sly_App_Base {
 	protected $controller = null;
 	protected $action     = null;
 	protected $request    = null;
+	protected $router     = null;
 
 	public function isBackend() {
 		return true;
@@ -67,16 +68,18 @@ class sly_App_Backend extends sly_App_Base {
 		$container = $this->getContainer();
 		$layout    = $container->getLayout();
 
-		// force login controller if not logged in
-		$this->checkController($container);
+		try {
+			$this->performRouting();
 
-		// get page and action from the current request
-		$page   = $this->controller === null ? $this->findPage() : $this->controller;
-		$action = $this->getActionParam('index');
-
-		// let the core know where we are
-		$this->controller = $page;
-		$this->action     = $action;
+			$controller = $this->controller;
+			$action     = $this->action;
+			$page       = $controller;
+		}
+		catch (Exception $e) {
+			$page       = 'error';
+			$controller = new sly_Controller_Error($e);
+			$action     = 'index';
+		}
 
 		// let the layout know as well
 		$user = sly_Core::isSetup() ? null : $container->getUserService()->getCurrentUser();
@@ -87,7 +90,7 @@ class sly_App_Backend extends sly_App_Base {
 
 		// do it, baby
 		$dispatcher = $this->getDispatcher();
-		$response   = $dispatcher->dispatch($page, $action);
+		$response   = $dispatcher->dispatch($controller, $action);
 
 		// send the response :)
 		$response->send();
@@ -287,8 +290,10 @@ class sly_App_Backend extends sly_App_Base {
 				$response->setStatusCode(403);
 			}
 
-			$this->controller = 'login';
+			return 'login';
 		}
+
+		return null;
 	}
 
 	protected function loadStaticConfig(sly_Container $container) {
@@ -306,5 +311,35 @@ class sly_App_Backend extends sly_App_Base {
 	protected function initI18N(sly_Container $container, $locale) {
 		$i18n = new sly_I18N($locale, SLY_SALLYFOLDER.'/backend/lang');
 		$container->setI18N($i18n);
+	}
+
+	protected function performRouting() {
+		// force login controller if not logged in
+		$container        = $this->getContainer();
+		$forcedController = $this->checkController($container);
+
+		if ($forcedController) {
+			$this->controller = $forcedController;
+			$this->action     = $this->getActionFromRequest($container->getRequest());
+		}
+		else {
+			parent::performRouting();
+		}
+	}
+
+	protected function getControllerFromRequest(sly_Request $request) {
+		return $request->request(self::CONTROLLER_PARAM, 'string', 'structure');
+	}
+
+	protected function getActionFromRequest(sly_Request $request) {
+		return $request->request(self::ACTION_PARAM, 'string', 'index');
+	}
+
+	protected function prepareRouter(sly_Container $container) {
+		// use the basic router
+		$router = new sly_Router_Backend(array(), $this);
+
+		// let addOns extend our router rule set
+		return $container->getDispatcher()->filter('SLY_BACKEND_ROUTER', $router, array('app' => $this));
 	}
 }
