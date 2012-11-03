@@ -83,31 +83,27 @@ class sly_App_Backend extends sly_App_Base {
 		$layout->setCurrentPage($page, $user);
 
 		// notify the addOns
-		$this->notifySystemOfController(true);
+		$this->notifySystemOfController();
 
 		// do it, baby
-		$content  = $this->dispatch($page, $action);
-		$response = $container->getResponse(); // re-fetch the current global response
-
-		// if we got a string, wrap it in the layout and then in the response object
-		if (is_string($content)) {
-			$layout->setContent($content);
-			$payload = $layout->render();
-			$this->handleStringResponse($response, $payload);
-		}
-
-		// if we got a response, use that one
-		elseif ($content instanceof sly_Response) {
-			$response = $content;
-		}
-
-		// everything else is a bug
-		else {
-			throw new LogicException('Controllers must return either content as a string or a Response, got '.gettype($content).'.');
-		}
+		$dispatcher = $this->getDispatcher();
+		$response   = $dispatcher->dispatch($page, $action);
 
 		// send the response :)
 		$response->send();
+	}
+
+	/**
+	 * get request dispatcher
+	 *
+	 * @return sly_Dispatcher
+	 */
+	protected function getDispatcher() {
+		if ($this->dispatcher === null) {
+			$this->dispatcher = new sly_Dispatcher_Backend($this->getContainer(), $this->getControllerClassPrefix());
+		}
+
+		return $this->dispatcher;
 	}
 
 	protected function initUserSettings($isSetup) {
@@ -186,21 +182,22 @@ class sly_App_Backend extends sly_App_Base {
 	 * @return string  the currently active page
 	 */
 	protected function findPage() {
-		$container = $this->getContainer();
-		$config    = $container->getConfig();
-		$page      = $this->getControllerParam();
+		$container  = $this->getContainer();
+		$config     = $container->getConfig();
+		$page       = $this->getControllerParam();
+		$dispatcher = $this->getDispatcher();
 
 		// Erst normale Startseite, dann User-Startseite, dann System-Startseite und
 		// zuletzt auf die Profilseite zurückfallen.
 
-		if (strlen($page) === 0 || !$this->isControllerAvailable($page)) {
+		if (strlen($page) === 0 || !$dispatcher->isControllerAvailable($page)) {
 			$user = $container->getUserService()->getCurrentUser();
 			$page = $user ? $user->getStartpage() : null;
 
-			if ($page === null || !$this->isControllerAvailable($page)) {
+			if ($page === null || !$dispatcher->isControllerAvailable($page)) {
 				$page = strtolower($config->get('START_PAGE'));
 
-				if (!$this->isControllerAvailable($page)) {
+				if (!$dispatcher->isControllerAvailable($page)) {
 					$page = 'profile';
 				}
 			}
@@ -265,17 +262,6 @@ class sly_App_Backend extends sly_App_Base {
 		}
 
 		return $base.'?'.$params;
-	}
-
-	protected function handleControllerError(Exception $e, $controller, $action) {
-		// throw away all content (including notices and warnings)
-		while (ob_get_level()) ob_end_clean();
-
-		// manually create the error controller to pass the exception
-		$controller = new sly_Controller_Error($e);
-
-		// forward to the error page
-		return new sly_Response_Forward($controller, 'index');
 	}
 
 	/**
