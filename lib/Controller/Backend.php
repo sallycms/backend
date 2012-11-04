@@ -18,6 +18,25 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 		return SLY_SALLYFOLDER.'/backend/views/';
 	}
 
+	/**
+	 * Render a view
+	 *
+	 * This method renders a view, making all keys in $params available as
+	 * variables.
+	 *
+	 * @param  string  $filename      the filename to include, relative to the view folder
+	 * @param  array   $params        additional parameters (become variables)
+	 * @param  boolean $returnOutput  set to false to not use an output buffer
+	 * @return string                 the generated output if $returnOutput, else null
+	 */
+	protected function render($filename, array $params = array(), $returnOutput = true) {
+		// make router available to all controller views
+		$router = $this->getContainer()->getApplication()->getRouter();
+		$params = array_merge(array('_router' => $router), $params);
+
+		return parent::render($filename, $params, $returnOutput);
+	}
+
 	protected function redirect($params = array(), $page = null, $code = 302) {
 		sly_Core::getCurrentApp()->redirect($page, $params, $code);
 	}
