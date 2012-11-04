@@ -28,11 +28,15 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 	public function indexAction()	{
 		$this->init();
 
-		// just load defaults and this should be the only time to do so
+		// Just load defaults and this should be the only time to do so.
+		// Beware that when restarting the setup, the configuration is already present.
 		$config = $this->getContainer()->getConfig();
-		$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
-		$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
-		$this->getContainer()->getI18N()->setLocale($config->get('DEFAULT_LOCALE'));
+
+		if (!$config->has('DEFAULT_LOCALE')) {
+			$config->loadProjectDefaults(SLY_COREFOLDER.'/config/sallyProjectDefaults.yml');
+			$config->loadLocalDefaults(SLY_COREFOLDER.'/config/sallyLocalDefaults.yml');
+			$this->getContainer()->getI18N()->setLocale($config->get('DEFAULT_LOCALE'));
+		}
 
 		$languages = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
 
