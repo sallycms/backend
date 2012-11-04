@@ -24,6 +24,9 @@ class sly_Router_Backend extends sly_Router_Base {
 
 		$this->app        = $app;
 		$this->dispatcher = $dispatcher;
+
+		$this->addRoute('/:page/?',         array('action' => 'index'));
+		$this->addRoute('/:page/:action/?', array());
 	}
 
 	/**
@@ -41,10 +44,12 @@ class sly_Router_Backend extends sly_Router_Base {
 	 * @return string  the currently active page
 	 */
 	public function match(sly_Request $request) {
-		if (parent::match($request)) return true;
-
 		if (sly_Core::isSetup()) {
 			$request->get->set(self::CONTROLLER_PARAM, 'setup');
+			return true;
+		}
+
+		if (parent::match($request)) {
 			return true;
 		}
 
