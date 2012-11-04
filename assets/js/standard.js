@@ -659,7 +659,7 @@ var sly = sly || {};
 			var
 				parts  = $(this).attr('href').split('?'),
 				action = parts[0],
-				params = parts[1],
+				params = parts[1] || '',
 				form   = $('<form>').attr('action', action).attr('method', 'post'),
 				token  = $('meta[name="'+tokenName+'"]'),
 				i, tmp, key, value;
@@ -767,7 +767,7 @@ var sly = sly || {};
 				row      = link.closest('.pkg'),
 				token    = $('meta[name="'+tokenName+'"]').attr('content'),
 				href     = link.attr('href'),
-				func     = decodeURI((RegExp('func=(.+?)(&|$)').exec(href)||[,null])[1]),
+				func     = decodeURI((RegExp('addon/(.+?)(\\?|$)').exec(href)||[,null])[1]),
 				errorrow = $('.error', list);
 
 			// build POST data
