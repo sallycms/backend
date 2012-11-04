@@ -95,6 +95,10 @@ class sly_App_Backend extends sly_App_Base {
 		return $this->action;
 	}
 
+	public function getRouter() {
+		return $this->router;
+	}
+
 	public function redirect($page, $params = array(), $code = 302) {
 		$url = $this->router->getAbsoluteUrl($page, null, $params, '&');
 		sly_Util_HTTP::redirect($url, '', '', $code);
@@ -218,6 +222,7 @@ class sly_App_Backend extends sly_App_Base {
 		$page      = $this->controller instanceof sly_Controller_Error ? 'error' : $this->controller;
 
 		$layout->setCurrentPage($page, $user);
+		$layout->setRouter($this->getRouter());
 	}
 
 	protected function prepareRouter(sly_Container $container) {

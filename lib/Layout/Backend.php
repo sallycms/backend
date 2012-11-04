@@ -14,6 +14,7 @@
 class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	private $hasNavigation = true;
 	private $navigation;
+	private $router;
 
 	public function __construct(sly_I18N $i18n, sly_Configuration $config, sly_Request $request) {
 		$locale  = $i18n->getLocale();
@@ -67,6 +68,10 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 				$this->addMeta(sly_Util_Csrf::TOKEN_NAME, $token);
 			}
 		}
+	}
+
+	public function setRouter(sly_Router_Backend $router) {
+		$this->router = $router;
 	}
 
 	public function printHeader() {
@@ -222,5 +227,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		if (file_exists($full)) return $full;
 
 		return parent::getViewFile($file);
+	}
+
+	/**
+	 * @param  string $filename
+	 * @param  array  $params
+	 * @return string
+	 */
+	protected function renderView($filename, $params = array()) {
+		// make router available to all controller views
+		$params = array_merge(array('_router' => $this->router), $params);
+
+		return parent::renderView($filename, $params);
 	}
 }
