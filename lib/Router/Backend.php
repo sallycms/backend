@@ -106,7 +106,7 @@ class sly_Router_Backend extends sly_Router_Base {
 			$params = http_build_query($params, '', '&');
 		}
 
-		return $url.'?'.$params;
+		return rtrim($url.'?'.$params, '&?');
 	}
 
 	public function getAbsoluteUrl($controller, $action = 'index', $params = '', $sep = '&', $forceProtocol = null) {
