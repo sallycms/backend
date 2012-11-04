@@ -96,12 +96,12 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	public function redirect($page, $params = array(), $code = 302) {
-		$url = $this->prepareRedirectUrl($page, $params);
+		$url = $this->router->getAbsoluteUrl($page, null, $params, '&');
 		sly_Util_HTTP::redirect($url, '', '', $code);
 	}
 
 	public function redirectResponse($page, $params = array(), $code = 302) {
-		$url      = $this->prepareRedirectUrl($page, $params);
+		$url      = $this->router->getAbsoluteUrl($page, null, $params, '&');
 		$response = $this->getContainer()->getResponse();
 
 		$response->setStatusCode($code);
@@ -171,36 +171,6 @@ class sly_App_Backend extends sly_App_Base {
 
 		// set the i18n object
 		$this->initI18N($container, $locale);
-	}
-
-	protected function prepareRedirectUrl($page, $params) {
-		$cont = $this->getContainer();
-		$app  = $cont->getApplicationName();
-		$base = $cont->getRequest()->getBaseUrl(true).'/'.$app.'/index.php';
-
-		if ($page === null) {
-			$page = $this->getCurrentControllerName();
-		}
-
-		if (is_string($params)) {
-			if ($params[0] === '?') $params = substr($params, 1);
-			if ($params[0] === '&') $params = substr($params, 1);
-
-			if (strlen($page) !== 0) {
-				$params = 'page='.urlencode($page).'&'.$params;
-			}
-
-			$params = rtrim($params, '&?');
-		}
-		else {
-			if (strlen($page) !== 0) {
-				$params['page'] = $page;
-			}
-
-			$params = http_build_query($params, '', '&');
-		}
-
-		return $base.'?'.$params;
 	}
 
 	protected function loadStaticConfig(sly_Container $container) {

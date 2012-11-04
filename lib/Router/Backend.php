@@ -86,7 +86,7 @@ class sly_Router_Backend extends sly_Router_Base {
 	}
 
 	public function getUrl($controller, $action = 'index', $params = '', $sep = '&') {
-		$url    = sprintf('./');
+		$url    = './';
 		$action = strtolower($action);
 
 		if ($controller === null) {
@@ -100,24 +100,21 @@ class sly_Router_Backend extends sly_Router_Base {
 		}
 
 		if (is_string($params)) {
-			if ($params[0] === '?') $params = substr($params, 1);
-			if ($params[0] === '&') $params = substr($params, 1);
-
-			if (strlen($page) !== 0) {
-				$params = 'page='.urlencode($page).'&'.$params;
-			}
-
-			$params = rtrim($params, '&?');
+			$params = trim($params, '&?');
 		}
 		else {
-			if (strlen($page) !== 0) {
-				$params['page'] = $page;
-			}
-
 			$params = http_build_query($params, '', '&');
 		}
 
 		return $url.'?'.$params;
+	}
+
+	public function getAbsoluteUrl($controller, $action = 'index', $params = '', $sep = '&', $forceProtocol = null) {
+		$base = $this->app->getBaseUrl($forceProtocol);
+		$url  = $this->getUrl($controller, $action, $params, $sep);
+
+		// $url always starts with './' and $base never as a trailing slash.
+		return $base.substr($url, 1);
 	}
 
 	public function getControllerFromRequest(sly_Request $request) {
