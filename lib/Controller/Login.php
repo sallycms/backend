@@ -57,15 +57,20 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 
 			// if relogin, forward to previous page
 			$referer = $request->post('referer', 'string', false);
+			$refbase = basename($referer);
+			$valid   =
+				$referer &&
+				!sly_Util_String::startsWith($refbase, 'index.php?page=login') &&
+				strpos($referer, '/login/logout') === false;
 
-			if ($referer && !sly_Util_String::startsWith(basename($referer), 'index.php?page=login')) {
+			if ($valid) {
 				$url = $referer;
 				$msg = t('redirect_previous_page', $referer);
 			}
 			else {
-				$base = sly_Util_HTTP::getBaseUrl(true);
-				$url  = $base.'/backend/index.php?page='.$user->getStartPage();
-				$msg  = t('redirect_startpage', $url);
+				$router = $this->getContainer()->getApplication()->getRouter();
+				$url    = $router->getAbsoluteUrl($user->getStartPage());
+				$msg    = t('redirect_startpage', $url);
 			}
 
 			sly_Util_HTTP::redirect($url, array(), $msg, 302);
