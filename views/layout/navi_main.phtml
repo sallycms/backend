@@ -54,7 +54,7 @@ foreach ($groups as $group) {
 			'id'    => 'sly-navi-page-'.$page->getPageParam()
 		);
 
-		$a = array('href' => $_router->getUrl($page->getPageParam()));
+		$a = array('href' => $_router->getPlainUrl($page->getPageParam()));
 
 		if ($first) {
 			$li['class'] .= ' sly-first';
@@ -78,7 +78,7 @@ foreach ($groups as $group) {
 				$param = $sp->getPageParam();
 				$class = 'sly-navigation-level-2';
 				$id    = 'sly-navi-'.$p.'-subpage-'.$param;
-				$href  = $_router->getUrl($param, '', $sp->getExtraParams(), '', '&');
+				$href  = $_router->getPlainUrl($param, '', $sp->getExtraParams());
 
 				if ($first)          $class .= ' sly-first';
 				if ($sp->isActive()) $class .= ' sly-active';

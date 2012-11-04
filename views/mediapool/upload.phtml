@@ -15,11 +15,8 @@ print sly_Helper_Message::renderFlashMessage();
 
 $callback = $this->getRequest()->request('callback', 'string', '');
 
-$form = new sly_Form('index.php', 'POST', t('upload_medium'), '', 'sly-form-mediapool-other');
+$form = new sly_Form($_router->getUrl(null, 'upload'), 'POST', t('upload_medium'), '', 'sly-form-mediapool-other');
 $form->setEncType('multipart/form-data');
-
-$form->addHiddenValue('page', 'mediapool_upload');
-$form->addHiddenValue('func', 'upload');
 $form->addHiddenValue('callback', $callback);
 
 ////////////////////////////////////////////////////////

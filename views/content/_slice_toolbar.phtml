@@ -12,7 +12,7 @@ $user         = sly_Util_User::getCurrentUser();
 $module       = $slice->getModule();
 $slot         = $slice->getSlot();
 $service      = sly_Service_Factory::getModuleService();
-$sliceUrl     = 'index.php?page=content&amp;article_id='.$slice->getArticleId().'&amp;slice_id='.$slice->getId().'&amp;clang='.$slice->getClang().'%s#%s';
+$urlParams    = array('article_id' => $slice->getArticleId(), 'slice_id' => $slice->getId(), 'clang' => $slice->getClang());
 $listElements = array();
 $allowed      = sly_Service_Factory::getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
 
@@ -23,20 +23,20 @@ if (!$service->exists($module)) {
 else {
 	$moduleName = $service->getTitle($module);
 	if ($user->isAdmin() || $user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) || $user->hasRight('module', 'edit', $module)) {
-		$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;function=edit', 'editslice').'" class="sly-edit">'.t('edit').'</a>';
+		$listElements[] = '<a href="'.$_router->getUrl(null, null, array_merge(array('function' => 'edit'), $urlParams)).'#editslice" class="sly-edit">'.t('edit').'</a>';
 	}
 }
 
 if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=deleteArticleSlice', 'messages').'" class="sly-delete sly-postlink">'.t('delete').'</a>';
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
 if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=up', 'messages').'" title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
-	$listElements[] = '<a href="'.sprintf($sliceUrl, '&amp;func=moveSlice&amp;direction=down', 'messages').'" title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'up'))).'#messages" title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'down'))).'#messages" title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
 
 	$dispatcher   = sly_Core::dispatcher();
 	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(

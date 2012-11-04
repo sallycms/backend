@@ -15,8 +15,8 @@ else {
 	$sprite = 'article';
 }
 
-$base_url     = 'index.php?page=content&article_id='.$article->getId().'&clang='.$this->clangId;
-$edit_url     = 'index.php?page=structure&amp;category_id='.$article->getCategoryId().'&amp;clang='.$this->clangId.'&amp;edit_id='.$article->getId();
+$viewURL      = $_router->getPlainUrl('content', null, array('article_id' => $article->getId(), 'clang' => $this->clangId));
+$editParams   = array('category_id' => $article->getCategoryId(), 'clang' => $this->clangId, 'edit_id' => $article->getId());
 $status       = $statusTypes[$article->getStatus()][0];
 $status_class = $statusTypes[$article->getStatus()][1];
 
@@ -32,7 +32,7 @@ else {
 }
 
 if ($this->canPublishCategory($this->categoryId) && $this->categoryId != $article->getId()) {
-	$status = '<a href="'.$edit_url.'&amp;func=editStatusArticle" class="'.$status_class.' sly-postlink">'.$status.'</a>';
+	$status = '<a href="'.$_router->getUrl(null, 'editStatusArticle', $editParams).'" class="'.$status_class.' sly-postlink">'.$status.'</a>';
 }
 else {
 	$status_class .= ' sly-na';
@@ -40,8 +40,8 @@ else {
 }
 ?>
 <tr data-slyid="<?php echo $article->getId() ?>" data-slystatus="<?php echo $article->getStatus() ?>" data-slytype="<?php echo $article->getType() ?>">
-	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($base_url, $article->getName(), $sprite) ?></td>
-	<td class="sly-col-name"><a href="<?php echo sly_html($base_url) ?>"><?php echo sly_html($article->getName()) ?></a></td>
+	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $article->getName(), $sprite) ?></td>
+	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($article->getName()) ?></a></td>
 	<td class="sly-col-arttype"><?php echo sly_html($type) ?></td>
 	<?php if ($isActive): ?>
 	<td class="sly-col-pos"><?php echo sly_html($article->getPosition()) ?></td>
@@ -49,14 +49,14 @@ else {
 	<td class="sly-col-status">
 		<?php
 		if ($canEdit) {
-			echo '<a href="'.$edit_url.'&amp;func=editArticle">'.t('change').'</a>&nbsp;';
+			echo '<a href="'.$_router->getUrl(null, 'editArticle', $editParams).'">'.t('change').'</a>&nbsp;';
 		}
 		else {
 			echo '<span class="sly-na">'.t('change').'</span>&nbsp;';
 		}
 
 		if ($canEdit && !$article->isStartArticle()) {
-			echo '<a href="'.$edit_url.'&amp;func=deleteArticle" class="sly-delete sly-postlink">'.t('delete').'</a>';
+			echo '<a href="'.$_router->getUrl(null, 'deleteArticle', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>';
 		}
 		else {
 			echo '<span class="sly-na">'.t('delete').'</span>';

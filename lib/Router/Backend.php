@@ -111,19 +111,26 @@ class sly_Router_Backend extends sly_Router_Base {
 		if (is_string($params)) {
 			$params = trim($params, '&?');
 		}
-		else {
+		elseif ($params !== null) {
 			$params = http_build_query($params, '', $sep);
+		}
+		else {
+			$params = '';
 		}
 
 		return rtrim($url.'?'.$params, '&?');
 	}
 
-	public function getAbsoluteUrl($controller, $action = 'index', $params = '', $sep = '&', $forceProtocol = null) {
+	public function getAbsoluteUrl($controller, $action = 'index', $params = '', $sep = '&amp;', $forceProtocol = null) {
 		$base = $this->app->getBaseUrl($forceProtocol);
 		$url  = $this->getUrl($controller, $action, $params, $sep);
 
 		// $url always starts with './' and $base never as a trailing slash.
 		return $base.substr($url, 1);
+	}
+
+	public function getPlainUrl($controller, $action = 'index', $params = '') {
+		return $this->getUrl($controller, $action, $params, '&');
 	}
 
 	public function getControllerFromRequest(sly_Request $request) {

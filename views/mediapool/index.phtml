@@ -14,7 +14,7 @@ $selected = $this->getCurrentCategory();
 ////////////////////////////////////////////////////////
 // list all files in the current category
 
-$form = new sly_Form('index.php', 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
+$form = new sly_Form($_router->getPlainUrl(null, 'batch'), 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
 $form->addHiddenValue('page', 'mediapool');
 $form->addHiddenValue('func', 'batch');
 
@@ -128,7 +128,7 @@ foreach ($files as $file) {
 
 	if ($title == '') $title = '['.t('no_title').']';
 
-	$ilink  = 'index.php?page=mediapool_detail&amp;file_id='.$id.$argUrl;
+	$ilink  = $_router->getUrl('mediapool_detail', null, 'file_id='.$id.'&amp;'.$argUrl);
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {
