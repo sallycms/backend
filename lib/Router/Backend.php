@@ -25,8 +25,8 @@ class sly_Router_Backend extends sly_Router_Base {
 		$this->app        = $app;
 		$this->dispatcher = $dispatcher;
 
-		$this->addRoute('/:page/?',         array('action' => 'index'));
-		$this->addRoute('/:page/:action/?', array());
+		$this->addRoute('/:page/?',       array('func' => 'index'));
+		$this->addRoute('/:page/:func/?', array());
 	}
 
 	/**
