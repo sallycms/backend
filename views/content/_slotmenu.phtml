@@ -16,32 +16,26 @@ $slots           = $templateService->getSlots($templateName);
 
 if (count($slots) < 2) return;
 
+$params['article_id'] = $article->getId();
+$params['clang']      = $article->getClang();
+$listElements         = array();
+
+foreach ($slots as $tmpSlot) {
+	$params['slot'] = $tmpSlot;
+	$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
+	$slotTitle      = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
+	$listElements[] = '<a href="'.$_router->getUrl('content', null, $params).'"'.$class.'>'.$slotTitle.'</a>';
+}
+
+$listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $listElements, array(
+	'article_id' => $article->getId(),
+	'clang'      => $article->getClang()
+));
+
 ?>
 <ul class="sly-navi-slots">
 	<li><?php echo t('slots') ?></li>
-	<?php
-	$params['page']       = 'content';
-	$params['article_id'] = $article->getId();
-	$params['clang']      = $article->getClang();
-	$listElements = array();
-
-	foreach ($slots as $tmpSlot) {
-		$params['slot'] = $tmpSlot;
-		$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
-		$slotTitle      = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
-		$listElements[] = '<a href="index.php?'.http_build_query($params, '', '&amp;').'"'.$class.'>'.$slotTitle.'</a>';
-	}
-
-	$listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $listElements, array(
-		'article_id' => $article->getId(),
-		'clang'      => $article->getClang()
-	));
-
-
-	foreach ($listElements as $idx => $listElement) {
-		?>
-		<li><?php echo $listElement ?></li>
-		<?php
-	}
-	?>
+	<?php foreach ($listElements as $idx => $listElement): ?>
+	<li><?php echo $listElement ?></li>
+	<?php endforeach ?>
 </ul>

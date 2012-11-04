@@ -126,7 +126,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$result     = array();
 		$curPage    = sly_Core::getCurrentControllerName();
 		$numPages   = count($subPages);
-		$format     = '<a href="index.php?page=%s%s"%s>%s</a>';
+		$format     = '<a href="%s"%s>%s</a>';
 		$activePage = false;
 		$nav        = $this->getNavigation();
 
@@ -163,7 +163,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 				$className = '';
 			}
 
-			$params    = !empty($extra) ? sly_Util_HTTP::queryString($extra) : '';
+			$params    = !empty($extra) ? sly_Util_HTTP::queryString($extra, '&amp;', false) : '';
 			$active    = is_string($sp) ? $curPage === $sp : $sp->isActive();
 			$linkClass = array();
 			$liClass   = array();
@@ -188,7 +188,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 			$linkAttr  = ' rel="page-'.urlencode($page).'"';
 			$linkAttr .= empty($linkClass) ? '' : ' class="'.implode(' ', $linkClass).'"';
 			$liAttr    = empty($liClass)   ? '' : ' class="'.implode(' ', $liClass).'"';
-			$link      = sprintf($format, urlencode($page), $params, $linkAttr, $label);
+			$link      = sprintf($format, $this->router->getUrl($page, null, $params), $linkAttr, $label);
 
 			$result[] = '<li'.$liAttr.'>'.$link.'</li>';
 		}

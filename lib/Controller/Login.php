@@ -66,7 +66,9 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			$valid   =
 				$referer &&
 				!sly_Util_String::startsWith($refbase, 'index.php?page=login') &&
-				strpos($referer, '/login') === false;
+				strpos($referer, '/login') === false &&
+				strpos($referer, '/setup') === false
+			;
 
 			if ($valid) {
 				$url = $referer;

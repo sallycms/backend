@@ -8,17 +8,9 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-// don't put the password back in the input field (but still use a normal
-// input field, since we don't offer a "retype your new pass" field)
-
-unset($_POST['password']);
-
 print sly_Helper_Message::renderFlashMessage();
 
-$form = new sly_Form('index.php', 'POST', '');
-$form->addHiddenValue('page', 'profile');
-$form->addHiddenValue('func', 'update');
-
+$form         = new sly_Form($_router->getPlainUrl(null, 'update'), 'POST', '');
 $login        = new sly_Form_Text(t('username'), $user->getLogin());
 $password     = new sly_Form_Input_Text('password', t('new_password'), '');
 $username     = new sly_Form_Input_Text('username', t('name'), $user->getName());

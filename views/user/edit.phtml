@@ -20,10 +20,8 @@ $safeMode  = $user && $user->isAdmin() && !$curUser->isAdmin();
 //////////////////////////////////////////////////////////////////
 // start the form
 
-$form = new sly_Form('index.php', 'POST', '');
-$form->addHiddenValue('page', 'user');
+$form = new sly_Form($_router->getPlainUrl(null, $func), 'POST', '');
 $form->addHiddenValue('save', '1');
-$form->addHiddenValue('func', $func);
 $form->addHiddenValue('id', $user ? $user->getId() : 0);
 
 //////////////////////////////////////////////////////////////////

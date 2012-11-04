@@ -11,8 +11,7 @@
 ////////////////////////////////////////////////////////
 // print breadcrumb path
 
-$base    = 'index.php?page=mediapool_structure&amp;cat_id=';
-$path    = '<li> : <a href="'.$base.'0">'.ht('start').'</a></li>';
+$path    = '<li> : <a href="'.$_router->getUrl(null).'">'.ht('start').'</a></li>';
 $isForm  = $action === 'add' || $action === 'edit';
 $addMode = $action === 'add';
 $catID   = $cat    ? $cat->getId()    : 0;
@@ -22,10 +21,10 @@ if ($cat) {
 	$parents = $cat->getParentTree();
 
 	foreach ($parents as $parent) {
-		$path .= '<li> : <a href="'.$base.$parent->getId().'">'.sly_html($parent->getName()).'</a></li>';
+		$path .= '<li> : <a href="'.$_router->getUrl(null, null, array('cat_id' => $parent->getId())).'">'.sly_html($parent->getName()).'</a></li>';
 	}
 
-	$path .= '<li> : <a href="'.$base.$catID.'">'.sly_html($cat->getName()).'</a></li>';
+	$path .= '<li> : <a href="'.$_router->getUrl(null, null, array('cat_id' => $catID)).'">'.sly_html($cat->getName()).'</a></li>';
 }
 
 ?>
@@ -44,11 +43,9 @@ print sly_Helper_Message::renderFlashMessage();
 
 if ($isForm) {
 	?>
-	<form action="index.php" method="post">
+	<form action="<?php print $_router->getUrl(null, $action) ?>" method="post">
 		<fieldset>
-			<input type="hidden" name="page" value="mediapool_structure" />
 			<input type="hidden" name="cat_id" value="<?php echo $catID ?>" />
-			<input type="hidden" name="func" value="<?php echo $action ?>" />
 			<?php	if ($active): ?>
 			<input type="hidden" name="edit_id" value="<?php echo $active->getId() ?>" />
 			<?php endif ?>
@@ -60,10 +57,10 @@ if ($isForm) {
 		<?php
 }
 
-$rawBase = 'index.php?page=mediapool_structure&cat_id=';
+$addLink = $_router->getPlainUrl(null, 'add', array('cat_id' => $catID));
 $table   = new sly_Table('sly-mediapool-structure');
 
-$table->addColumn(sly_Table_Column::sprite('mediacat-add', $rawBase.$catID.'&func=add', t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::sprite('mediacat-add', $addLink, t('add_category'), 'sly-col-icon'));
 $table->addColumn(sly_Table_Column::factory(t('category_name'), 'sly-col-name'));
 $table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 
@@ -94,13 +91,17 @@ foreach ($children as $cat) {
 		<?php
 	}
 	else {
+		$params  = array('cat_id' => $catID, 'edit_id' => $id);
+		$rawEdit = $_router->getUrl(null, 'edit', $params, '&');
+		$delete  = $_router->getUrl(null, 'delete', $params);
+		$visit   = $_router->getUrl(null, null, array('cat_id' => $id));
 		?>
 		<tr>
-			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawBase.$catID.'&func=edit&edit_id='.$id, $cat->getName(), 'mediacat') ?></td>
-			<td class="sly-col-name"><a href="<?php echo $base.$id ?>"><?php echo sly_html($cat->getName()) ?></a></td>
+			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($rawEdit, $cat->getName(), 'mediacat') ?></td>
+			<td class="sly-col-name"><a href="<?php echo $visit ?>"><?php echo sly_html($cat->getName()) ?></a></td>
 			<td class="sly-col-func">
-				<a href="<?php echo $base.$catID ?>&amp;func=edit&amp;edit_id=<?php echo $id ?>"><?php echo t('change')?></a>
-				<a href="<?php echo $base.$catID ?>&amp;func=delete&amp;edit_id=<?php echo $id ?>" class="sly-action sly-delete sly-postlink"><?php echo t('delete') ?></a>
+				<a href="<?php echo sly_html($rawEdit) ?>"><?php echo t('change')?></a>
+				<a href="<?php echo $delete ?>" class="sly-action sly-delete sly-postlink"><?php echo t('delete') ?></a>
 			</td>
 		</tr>
 		<?php

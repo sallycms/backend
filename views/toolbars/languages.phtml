@@ -11,6 +11,14 @@
 $languages = array_values(sly_Util_Language::findAll());
 $user      = sly_Util_User::getCurrentUser();
 
+if (!isset($controller)) {
+	$controller = null;
+}
+
+if (!isset($action)) {
+	$action = null;
+}
+
 if (!isset($curClang) || !sly_Util_Language::exists($curClang)) {
 	$curClang = sly_Core::getCurrentClang();
 }
@@ -37,7 +45,7 @@ if (count($languages) > 1) {
 			$params['clang'] = $clangID;
 
 			$aclass  = $active ? ' class="sly-active"' : '';
-			$content = '<a'.$aclass.' href="index.php?'.http_build_query($params, '', '&amp;').'">'.sly_html($name).'</a>';
+			$content = '<a'.$aclass.' href="'.$_router->getUrl($controller, $action, $params).'">'.sly_html($name).'</a>';
 		}
 
 		$links[] = '<li class="'.$class.'">'.$content.'</li>';

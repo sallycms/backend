@@ -394,9 +394,7 @@ class sly_Controller_Setup extends sly_Controller_Backend implements sly_Control
 		return $errors;
 	}
 
-	protected function printHiddens($func, $form) {
-		$form->addHiddenValue('page', 'setup');
-		$form->addHiddenValue('func', $func);
+	protected function printHiddens($form) {
 		$form->addHiddenValue('lang', $this->lang);
 	}
 

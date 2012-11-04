@@ -20,12 +20,10 @@
 print sly_Helper_Message::renderFlashMessage();
 
 $category_id = $article->getCategoryId();
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
+$form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POST', t('general'));
 
-$params = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
-$form = new sly_Form('index.php', 'POST', t('general'));
 $form->setEncType('multipart/form-data');
-$form->addHiddenValue('page', 'contentmeta');
-$form->addHiddenValue('func', 'processmetaform');
 $form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('clang', $article->getClang());
 $form->setSubmitButton(null);
@@ -37,12 +35,13 @@ $form->setResetButton(null);
 $name = new sly_Form_Input_Text('meta_article_name', t('article_name'), $article->getName());
 $form->add($name);
 
-$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
+$dispatcher = sly_Core::dispatcher();
+$form       = $dispatcher->filter('SLY_ART_META_FORM', $form, $params);
 
 $button = new sly_Form_Input_Button('submit', 'save_meta', t('save'));
 $form->add(new sly_Form_ButtonBar(array('submit' => $button)));
 
-$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
+$form = $dispatcher->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
 
 /////////////////////////////////////////////////////////////////
 // misc
@@ -130,5 +129,5 @@ if ($this->canConvertToStartarticle()) {
 	}
 }
 
-$form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
+$form = $dispatcher->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
 if ($form instanceof sly_Viewable) print $form->render();

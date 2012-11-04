@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$addURI   = $canAdd ? 'index.php?page=structure&category_id='.$categoryId.'&clang='.$clangId.'&func=addArticle' : '';
+$addURI   = $canAdd ? $_router->getPlainUrl(null, 'addArticle', array('category_id' => $categoryId, 'clang' => $clangId)) : '';
 $table    = new sly_Table('sly-structure-articles');
 $isActive = $renderAddArticle || $renderEditArticle;
 
@@ -27,12 +27,10 @@ $table->setEmptyNotice(t('no_articles_yet'));
 
 if ($isActive) {
 	?>
-	<form action="index.php" method="post">
+	<form action="<?php print $_router->getUrl(null, $action) ?>" method="post">
 		<fieldset>
-			<input type="hidden" name="page" value="structure" />
 			<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
 			<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
-			<input type="hidden" name="func" value="<?php echo $action ?>" />
 			<?php print sly_Util_Csrf::renderInputTag() ?>
 		</fieldset>
 		<?php

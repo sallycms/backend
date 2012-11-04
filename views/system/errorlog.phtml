@@ -8,21 +8,16 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 ?>
-<form method="post" action="index.php" class="errorlog">
-	<div>
-		<input type="hidden" name="page" value="system_errorlog" />
-		<input type="hidden" name="func" value="clear" />
-		<?php print sly_Util_Csrf::renderInputTag() ?>
-	</div>
+<form method="post" action="<?php print $_router->getUrl(null, 'clear') ?>" class="errorlog">
 	<p class="center">
+		<?php print sly_Util_Csrf::renderInputTag() ?>
 		<input type="submit" value="<?php echo t('clear_errorlog') ?>" class="sly-form-submit sly-button" />
 	</p>
 </form>
 <?php
 
-$prefix = 'index.php?page=system_errorlog&amp;max=';
-$units  = array(10, 50, 100, 250, 500);
-$links  = array();
+$units = array(10, 50, 100, 250, 500);
+$links = array();
 
 if (!in_array($lineCount, $units)) {
 	$units[] = $lineCount;
@@ -38,7 +33,7 @@ foreach ($units as $unit) {
 		$links[] = '<strong>'.$unit.'</strong>';
 	}
 	else {
-		$links[] = '<a href="'.$prefix.$unit.'">'.$unit.'</a>';
+		$links[] = '<a href="'.$_router->getUrl(null, null, array('max' => $unit)).'">'.$unit.'</a>';
 	}
 }
 

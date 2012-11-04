@@ -14,6 +14,7 @@
 class sly_Helper_Content {
 	public static function printAddSliceForm($module, $position, $articleId, $clang, $slot) {
 		$moduleService = sly_Service_Factory::getModuleService();
+		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
 		if (!$moduleService->exists($module)) {
 			$slice_content = sly_Helper_Message::warn(ht('module_not_found', $module));
@@ -22,10 +23,8 @@ class sly_Helper_Content {
 			try {
 				ob_start();
 				$moduleTitle = $moduleService->getTitle($module);
-				$form = new sly_Form('index.php', 'post', t('add_slice').': '.sly_translate($moduleTitle, true), '', 'addslice');
+				$form = new sly_Form($router->getPlainUrl('content', 'addArticleSlice'), 'post', t('add_slice').': '.sly_translate($moduleTitle, true), '', 'addslice');
 				$form->setEncType('multipart/form-data');
-				$form->addHiddenValue('page', 'content');
-				$form->addHiddenValue('func', 'addArticleSlice');
 				$form->addHiddenValue('article_id', $articleId);
 				$form->addHiddenValue('clang', $clang);
 				$form->addHiddenValue('slot', $slot);
@@ -66,13 +65,12 @@ class sly_Helper_Content {
 		$moduleService = sly_Service_Factory::getModuleService();
 		$module        = $articleSlice->getModule();
 		$moduleTitle   = $moduleService->getTitle($module);
+		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
 		try {
 			ob_start();
-			$form = new sly_Form('index.php', 'post', t('edit_slice').': '.sly_translate($moduleTitle, true), '', 'editslice');
+			$form = new sly_Form($router->getPlainUrl('content', 'editArticleSlice'), 'post', t('edit_slice').': '.sly_translate($moduleTitle, true), '', 'editslice');
 			$form->setEncType('multipart/form-data');
-			$form->addHiddenValue('page', 'content');
-			$form->addHiddenValue('func', 'editArticleSlice');
 			$form->addHiddenValue('article_id', $articleSlice->getArticleId());
 			$form->addHiddenValue('clang', $articleSlice->getClang());
 			$form->addHiddenValue('slice_id', $articleSlice->getId());

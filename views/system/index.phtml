@@ -22,9 +22,7 @@ print sly_Helper_Message::renderFlashMessage();
 
 // build form
 
-$form = new sly_Form('index.php', 'POST', '', '', 'sly-form-system-setup');
-$form->addHiddenValue('page', 'system');
-$form->addHiddenValue('func', 'update');
+$form = new sly_Form($_router->getPlainUrl(null, 'update'), 'POST', '', '', 'sly-form-system-setup');
 $form->setSubmitButton(new sly_Form_Input_Button('submit', 'sendit', t('update')));
 $form->setApplyButton();
 $form->setResetButton();
@@ -96,10 +94,8 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 			<h4><?php print t('delete_cache') ?></h4>
 			<p><?php print t('delete_cache_description') ?></p>
 
-			<form method="post" action="index.php">
+			<form method="post" action="<?php print $_router->getUrl(null, 'clearcache') ?>">
 				<p>
-					<input type="hidden" name="page" value="system" />
-					<input type="hidden" name="func" value="clearcache" />
 					<?php print sly_Util_Csrf::renderInputTag() ?>
 					<input type="submit" class="sly-button" value="<?php print t('delete_cache') ?>" />
 					<a href="#" id="sly-system-toggle-cache">(&hellip;)</a>
@@ -112,7 +108,7 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 
 			<h4><?php print t('setup') ?></h4>
 			<p><?php print t('setup_text') ?></p>
-			<p class="button"><a class="sly-button sly-postlink" href="index.php?page=system&amp;func=setup" onclick="return confirm('<?php print addslashes(t('setup')) ?>?');"><?php print t('setup') ?></a></p>
+			<p class="button"><a class="sly-button sly-postlink" href="<?php print $_router->getUrl(null, 'setup') ?>" onclick="return confirm('<?php print addslashes(t('setup')) ?>?');"><?php print t('setup') ?></a></p>
 
 			<h4><?php print t('version') ?></h4>
 			<p>SallyCMS <?php print sly_Core::getVersion() ?> &ndash; PHP <?php print PHP_VERSION ?></p>
