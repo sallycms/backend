@@ -44,12 +44,15 @@ class sly_Router_Backend extends sly_Router_Base {
 	 * @return string  the currently active page
 	 */
 	public function match(sly_Request $request) {
+		$matched = parent::match($request);
+
 		if (sly_Core::isSetup()) {
+			// do not reset the action, but only the controller
 			$request->get->set(self::CONTROLLER_PARAM, 'setup');
 			return true;
 		}
 
-		if (parent::match($request)) {
+		if ($matched) {
 			return true;
 		}
 
