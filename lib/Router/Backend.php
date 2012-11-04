@@ -53,7 +53,7 @@ class sly_Router_Backend extends sly_Router_Base {
 			return true;
 		}
 
-		if ($request->get->has(self::CONTROLLER_PARAM)) {
+		if ($request->request(self::CONTROLLER_PARAM, 'string') !== null) {
 			return true;
 		}
 
@@ -71,11 +71,8 @@ class sly_Router_Backend extends sly_Router_Base {
 			'profile'
 		));
 
-		// force login (is done by app as well, but do it here explicitely so the request contains the proper controller value)
-		if (!$user) {
-			$request->get->set(self::CONTROLLER_PARAM, 'login');
-			return true;
-		}
+		// do not try to fetch an alternative if we're going to use the login controller anyway
+		if (!$user) return true;
 
 		foreach ($alternatives as $alt) {
 			try {
