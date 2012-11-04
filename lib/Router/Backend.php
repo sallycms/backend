@@ -85,7 +85,7 @@ class sly_Router_Backend extends sly_Router_Base {
 		return false;
 	}
 
-	public function getUrl($controller, $action = 'index', $params = '', $sep = '&') {
+	public function getUrl($controller, $action = 'index', $params = '', $sep = '&amp;') {
 		$url    = './';
 		$action = strtolower($action);
 
@@ -103,7 +103,7 @@ class sly_Router_Backend extends sly_Router_Base {
 			$params = trim($params, '&?');
 		}
 		else {
-			$params = http_build_query($params, '', '&');
+			$params = http_build_query($params, '', $sep);
 		}
 
 		return rtrim($url.'?'.$params, '&?');
