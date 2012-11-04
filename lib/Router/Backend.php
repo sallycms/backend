@@ -96,7 +96,7 @@ class sly_Router_Backend extends sly_Router_Base {
 		$url .= urlencode(strtolower($controller));
 
 		if ($action && $action !== 'index') {
-			$url .= '/'.urlencode($controller);
+			$url .= '/'.urlencode($action);
 		}
 
 		if (is_string($params)) {
