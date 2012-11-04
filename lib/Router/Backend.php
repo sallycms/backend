@@ -57,6 +57,10 @@ class sly_Router_Backend extends sly_Router_Base {
 			return true;
 		}
 
+		return $this->findBestHomepage($request);
+	}
+
+	protected function findBestHomepage(sly_Request $request) {
 		$container    = $this->app->getContainer();
 		$dispatcher   = $this->dispatcher;
 		$config       = $container->getConfig();
@@ -67,7 +71,7 @@ class sly_Router_Backend extends sly_Router_Base {
 			'profile'
 		));
 
-		//
+		// force login (is done by app as well, but do it here explicitely so the request contains the proper controller value)
 		if (!$user) {
 			$request->get->set(self::CONTROLLER_PARAM, 'login');
 			return true;
