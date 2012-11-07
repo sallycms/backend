@@ -27,6 +27,6 @@ $this->title(t('setup_license_title'));
 	</div>
 
 	<div class="sly-area-footer">
-		<p class="right"><a href="index.php?page=setup&amp;func=syscheck&amp;lang=<?php print urlencode($this->lang) ?>">&raquo; <?php print t('setup_license_accept') ?></a></p>
+		<p class="right"><a href="<?php print $_router->getUrl(null, 'syscheck', array('lang' => $this->lang)) ?>">&raquo; <?php print t('setup_license_accept') ?></a></p>
 	</div>
 </div>

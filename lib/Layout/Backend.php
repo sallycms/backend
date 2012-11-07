@@ -14,6 +14,7 @@
 class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	private $hasNavigation = true;
 	private $navigation;
+	private $router;
 
 	public function __construct(sly_I18N $i18n, sly_Configuration $config, sly_Request $request) {
 		$locale  = $i18n->getLocale();
@@ -69,6 +70,10 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		}
 	}
 
+	public function setRouter(sly_Router_Backend $router) {
+		$this->router = $router;
+	}
+
 	public function printHeader() {
 		parent::printHeader();
 		print $this->renderView('top.phtml');
@@ -121,7 +126,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$result     = array();
 		$curPage    = sly_Core::getCurrentControllerName();
 		$numPages   = count($subPages);
-		$format     = '<a href="index.php?page=%s%s"%s>%s</a>';
+		$format     = '<a href="%s"%s>%s</a>';
 		$activePage = false;
 		$nav        = $this->getNavigation();
 
@@ -158,7 +163,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 				$className = '';
 			}
 
-			$params    = !empty($extra) ? sly_Util_HTTP::queryString($extra) : '';
+			$params    = !empty($extra) ? sly_Util_HTTP::queryString($extra, '&amp;', false) : '';
 			$active    = is_string($sp) ? $curPage === $sp : $sp->isActive();
 			$linkClass = array();
 			$liClass   = array();
@@ -183,7 +188,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 			$linkAttr  = ' rel="page-'.urlencode($page).'"';
 			$linkAttr .= empty($linkClass) ? '' : ' class="'.implode(' ', $linkClass).'"';
 			$liAttr    = empty($liClass)   ? '' : ' class="'.implode(' ', $liClass).'"';
-			$link      = sprintf($format, urlencode($page), $params, $linkAttr, $label);
+			$link      = sprintf($format, $this->router->getUrl($page, null, $params), $linkAttr, $label);
 
 			$result[] = '<li'.$liAttr.'>'.$link.'</li>';
 		}
@@ -222,5 +227,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		if (file_exists($full)) return $full;
 
 		return parent::getViewFile($file);
+	}
+
+	/**
+	 * @param  string $filename
+	 * @param  array  $params
+	 * @return string
+	 */
+	protected function renderView($filename, $params = array()) {
+		// make router available to all controller views
+		$params = array_merge(array('_router' => $this->router), $params);
+
+		return parent::renderView($filename, $params);
 	}
 }

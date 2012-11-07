@@ -294,6 +294,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 		$res    = array();
 		$usages = array();
+		$router = $this->getContainer()->getApplication()->getRouter();
 
 		$sql->query($query);
 		foreach ($sql as $row) $res[] = $row;
@@ -304,7 +305,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			$usages[] = array(
 				'title' => $article->getName(),
 				'type'  => 'sly-article',
-				'link'  => 'index.php?page=content&article_id='.$row['article_id'].'&mode=edit&clang='.$row['clang']
+				'link'  => $router->getPlainUrl('content', null, array('article_id' => $row['article_id'], 'clang' => $row['clang']))
 			);
 		}
 

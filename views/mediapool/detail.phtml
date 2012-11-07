@@ -33,13 +33,11 @@ $this->render('mediapool/javascript.phtml', array(), false);
 // start forms
 
 if ($this->canAccessFile($medium)) {
-	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+	$form = new sly_Form($_router->getPlainUrl(null, 'save'), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
 	$form->setEncType('multipart/form-data');
 
 	$request = $this->getRequest();
 
-	$form->addHiddenValue('page', 'mediapool_detail');
-	$form->addHiddenValue('func', 'save');
 	$form->addHiddenValue('file_id', $fileID);
 	$form->addHiddenValue('callback', $request->request('callback', 'string', ''));
 
@@ -50,7 +48,7 @@ if ($this->canAccessFile($medium)) {
 	}
 }
 else {
-	$form = new sly_Form('index.php', 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+	$form = new sly_Form($_router->getPlainUrl(null), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
 }
 
 ////////////////////////////////////////////////////////
