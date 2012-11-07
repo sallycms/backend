@@ -12,19 +12,16 @@ print sly_Helper_Message::renderFlashMessage();
 
 if ($this->func === 'add' || $this->func === 'edit'): ?>
 <div class="sly-form">
-	<form action="index.php" method="post">
-		<input type="hidden" name="page" value="system_languages" />
+	<form action="<?php print $_router->getUrl(null, $this->func) ?>" method="post">
 		<input type="hidden" name="clang_id" value="<?php echo (int) $this->id ?>" />
-		<input type="hidden" name="func" value="<?php echo $this->func ?>" />
 		<?php print sly_Util_Csrf::renderInputTag() ?>
 	<?php endif ?>
 
 	<?php
 
-	$base  = 'index.php?page=system_languages&func=';
 	$table = new sly_Table('languages');
 
-	$table->addColumn(sly_Table_Column::sprite('language-add', $base.'add', t('add_language'), 'sly-col-icon sly-icon'));
+	$table->addColumn(sly_Table_Column::sprite('language-add', $_router->getPlainUrl(null, 'add'), t('add_language'), 'sly-col-icon'));
 	$table->addColumn(sly_Table_Column::factory(t('name'), 'sly-col-name'));
 	$table->addColumn(sly_Table_Column::factory(t('locale'), 'sly-col-locale'));
 	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));

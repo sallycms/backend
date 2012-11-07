@@ -8,13 +8,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$base_url     = 'index.php?page=structure&category_id='.$category->getId().'&clang='.$this->clangId;
-$edit_url     = 'index.php?page=structure&amp;category_id='.$category->getParentId().'&amp;clang='.$this->clangId.'&amp;edit_id='.$category->getId();
+$viewURL      = $_router->getPlainUrl('structure', null, array('category_id' => $category->getId(), 'clang' => $this->clangId));
+$editParams   = array('category_id' => $category->getParentId(), 'clang' => $this->clangId, 'edit_id' => $category->getId());
 $status       = $statusTypes[$category->getStatus()][0];
 $status_class = $statusTypes[$category->getStatus()][1];
 
 if ($this->canPublishCategory($category->getId())) {
-	$status = '<a href="'.$edit_url.'&amp;func=editStatusCategory" class="'.$status_class.' sly-postlink">'.$status.'</a>';
+	$status = '<a href="'.$_router->getUrl(null, 'editStatusCategory', $editParams).'" class="'.$status_class.' sly-postlink">'.$status.'</a>';
 }
 else {
 	$status_class .= ' sly-na';
@@ -22,16 +22,16 @@ else {
 }
 ?>
 <tr data-slyid="<?php echo $category->getId() ?>" data-slystatus="<?php echo $category->getStatus() ?>">
-	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($base_url, $category->getCatName(), 'category') ?></td>
-	<td class="sly-col-name"><a href="<?php echo sly_html($base_url) ?>"><?php echo sly_html($category->getCatName()) ?></a></td>
+	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $category->getCatName(), 'category') ?></td>
+	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($category->getCatName()) ?></a></td>
 	<?php if ($isActive): ?>
 	<td class="sly-col-pos"><?php echo sly_html($category->getCatPosition()) ?></td>
 	<?php endif ?>
 	<td class="sly-col-status">
 		<?php
 		if ($this->canEditCategory($category->getId())) {
-			echo '<a href="'.$edit_url.'&amp;func=editCategory">'.t('change').'</a>&nbsp;';
-			echo '<a href="'.$edit_url.'&amp;func=deleteCategory" class="sly-delete sly-postlink">'.t('delete').'</a>';
+			echo '<a href="'.$_router->getUrl(null, 'editCategory', $editParams).'">'.t('change').'</a>&nbsp;';
+			echo '<a href="'.$_router->getUrl(null, 'deleteCategory', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>';
 		}
 		else {
 			echo '<span class="sly-na">'.t('change').'</span>&nbsp;';

@@ -15,16 +15,16 @@ else {
 	$sprite = 'article';
 }
 
-$request  = $this->getRequest();
-$base_url = 'index.php?page=structure&category_id='.$article->getId().'&clang='.$this->clangId;
-$name     = $request->post('article_name', 'string', $article->getName());
-$pos      = $request->post('article_position', 'int', $article->getPosition());
+$request = $this->getRequest();
+$viewURL = $_router->getPlainUrl(null, null, array('category_id' => $article->getParentId(), 'clang' => $this->clangId));
+$name    = $request->post('article_name', 'string', $article->getName());
+$pos     = $request->post('article_position', 'int', $article->getPosition());
 ?>
 
 <tr class="sly-active" data-slyid="<?php echo $article->getId() ?>" data-slystatus="<?php echo $article->getStatus() ?>" data-slytype="<?php echo $article->getType() ?>">
 	<td class="sly-col-icon sly-icon">
 		<input type="hidden" name="edit_id" value="<?php echo $article->getId() ?>" />
-		<?php echo sly_Util_HTML::getSpriteLink($base_url, $article->getName(), $sprite) ?>
+		<?php echo sly_Util_HTML::getSpriteLink($viewURL, $article->getName(), $sprite) ?>
 	</td>
 	<td class="sly-col-name sly-has-input" colspan="2"><div><input type="text" class="sly-form-text" name="article_name" autofocus="autofocus" required="required" placeholder="<?php echo ht('article_name') ?>" value="<?php echo sly_html($name) ?>" /></div></td>
 	<td class="sly-col-pos sly-has-input"><div><input type="number" class="sly-form-text" name="article_position" value="<?php echo sly_html($pos) ?>" min="1" max="<?php echo $maxPosition ?>" required="required" /></div></td>

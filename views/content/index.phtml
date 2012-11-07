@@ -10,7 +10,7 @@
 
 $messages    = '<div id="messages">'.sly_Helper_Message::renderFlashMessage().'</div>';
 $params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
-$form        = new sly_Form('index.php', 'POST', t('general'), '', 'content_article_form');
+$form        = new sly_Form($_router->getPlainUrl(null, 'setarticletype'), 'POST', t('general'), '', 'content_article_form');
 $hasType     = $article->hasType();
 $hasTemplate = $article->hasTemplate();
 
@@ -18,9 +18,7 @@ $hasTemplate = $article->hasTemplate();
 // init form
 
 $form->setEncType('multipart/form-data');
-$form->addHiddenValue('page', 'content');
 $form->addHiddenValue('article_id', $article->getId());
-$form->addHiddenValue('func', 'setArticleType');
 $form->addHiddenValue('clang', $article->getClang());
 
 /////////////////////////////////////////////////////////////////

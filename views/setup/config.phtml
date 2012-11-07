@@ -10,9 +10,9 @@
 
 $this->title(t('setup_step_n', 4, 5));
 
-$form = new sly_Form('index.php', 'POST', t('settings'));
+$form = new sly_Form($_router->getPlainUrl(null, 'config'), 'POST', t('settings'));
 $form->setCsrfEnabled(false);
-$this->printHiddens('config', $form);
+$this->printHiddens($form);
 
 // fields
 

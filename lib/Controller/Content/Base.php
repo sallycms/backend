@@ -43,10 +43,10 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	}
 
 	protected function renderLanguageBar() {
-		$this->render('toolbars/languages.phtml', array('params' => array(
-			'page'       => $this->getPageName(),
-			'article_id' => $this->article->getId()
-		)), false);
+		$this->render('toolbars/languages.phtml', array(
+			'controller' => $this->getPageName(),
+			'params'     => array('article_id' => $this->article->getId())
+		), false);
 	}
 
 	/**
@@ -59,20 +59,21 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$clang  = $art->getClang();
 		$user   = sly_Util_User::getCurrentUser();
 		$cat    = $art->getCategory();
+		$router = $this->getContainer()->getApplication()->getRouter();
 		$result = '<ul class="sly-navi-path">
 			<li>'.t('path').'</li>
-			<li> : <a href="index.php?page=structure&amp;clang='.$clang.'">'.t('home').'</a></li>';
+			<li> : <a href="'.$router->getUrl('structure', null, array('clang' => $clang)).'">'.t('home').'</a></li>';
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if (sly_Util_Category::canReadCategory($user, $parent->getId())) {
-					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$clang.'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li> : <a href="'.$router->getUrl('structure', null, array('category_id' => $parent->getId(), 'clang' => $clang)).'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
 
 		$result .= '<li> | '.($art->isStartArticle() ? t('startarticle') : t('article')).'</li>';
-		$result .= '<li> : <a href="index.php?page='.$this->getPageName().'&amp;article_id='.$art->getId().'&amp;clang='.$clang.'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
+		$result .= '<li> : <a href="'.$router->getUrl($this->getPageName(), null, array('article_id' => $art->getId(), 'clang' => $clang)).'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
 		$result .= '</ul>';
 
 		return $result;

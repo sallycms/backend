@@ -13,10 +13,7 @@ print sly_Helper_Message::renderFlashMessage();
 ////////////////////////////////////////////////////////
 // init form
 
-$form = new sly_Form('index.php', 'POST', t('sync_files'), '', 'sly-form-mediapool-sync');
-
-$form->addHiddenValue('page', 'mediapool_sync');
-$form->addHiddenValue('func', 'sync');
+$form = new sly_Form($_router->getPlainUrl(null, 'sync'), 'POST', t('sync_files'), '', 'sly-form-mediapool-sync');
 
 ////////////////////////////////////////////////////////
 // files title

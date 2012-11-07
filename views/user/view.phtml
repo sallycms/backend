@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////
 // start the form
 
-$form = new sly_Form('index.php', 'GET', '');
-$form->addHiddenValue('page', 'user');
+$form = new sly_Form($_router->getPlainUrl(null), 'GET', '');
+$form->setCsrfEnabled(false);
 $form->setSubmitButton(null);
 $form->setResetButton(null);
 $form->beginFieldset(t('user'), '', 2);

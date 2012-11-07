@@ -20,7 +20,7 @@ else {
 	<ul class="sly-addonlist">
 		<?php
 		foreach ($tree as $addon => $info) {
-			$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
+			$base    = $_router->getUrl(null, '_action_', array('addon' => $addon));
 			$classes = $stati[$addon]['classes'];
 
 			?>
@@ -38,7 +38,7 @@ else {
 				}
 
 				foreach ($info['children'] as $addon => $info) {
-					$base    = 'index.php?page=addon&amp;addon='.urlencode($addon).'&amp;func=';
+					$base    = $_router->getUrl(null, '_action_', array('addon' => $addon));
 					$classes = $stati[$addon]['classes'];
 
 					?>

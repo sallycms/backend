@@ -216,11 +216,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected function getBreadcrumb() {
 		$result = '';
 		$cat    = $this->catService->findById($this->categoryId);
+		$router = $this->getContainer()->getApplication()->getRouter();
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if ($this->canViewCategory($parent->getId())) {
-					$result .= '<li> : <a href="index.php?page=structure&amp;category_id='.$parent->getId().'&amp;clang='.$this->clangId.'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li> : <a href="'.$router->getUrl(null, null, array('category_id' => $parent->getId(), 'clang' => $this->clangId)).'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
@@ -228,7 +229,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$result = '
 			<ul class="sly-navi-path">
 				<li>'.t('path').'</li>
-				<li> : <a href="index.php?page=structure&amp;clang='.$this->clangId.'">'.t('home').'</a></li>
+				<li> : <a href="'.$router->getUrl(null, null, array('clang' => $this->clangId)).'">'.t('home').'</a></li>
 				'.$result.'
 			</ul>
 			';
@@ -344,8 +345,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
 
 		$this->render('toolbars/languages.phtml', array(
-			'curClang' => $this->clangId,
-			'params'   => array('page' => 'structure', 'category_id' => $this->categoryId)
+			'controller' => 'structure',
+			'curClang'   => $this->clangId,
+			'params'     => array('category_id' => $this->categoryId)
 		), false);
 
 		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
