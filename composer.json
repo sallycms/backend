@@ -15,13 +15,13 @@
         }
     ],
     "homepage": "http://www.sallycms.de/",
-    "version": "0.8.x-dev",
     "license": "MIT",
     "type": "sallycms-app",
     "require": {
         "php": ">=5.2.1",
         "sallycms/core": "0.8.x-dev",
-        "sallycms/less-mixins": ">=2.2.0,<3.0.0"
+        "sallycms/less-mixins": ">=2.2.0,<3.0.0",
+        "sallycms/composer-installer": "*"
     },
     "extra": {
         "branch-alias": {
