@@ -16,7 +16,11 @@ if (!$service->exists($module)) {
 	return;
 }
 
+// render output *before* outputting anything, so that when an exception is
+// thrown, we don't end up with invalid HTML
+$output = $slice->getOutput();
+
 ?>
 <div class="sly-contentpage-slice-output">
-	<?php echo $slice->getOutput() ?>
+	<?php echo $output ?>
 </div>
