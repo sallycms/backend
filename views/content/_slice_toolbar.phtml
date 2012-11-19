@@ -31,7 +31,7 @@ if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
 	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
-if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
+if ($allowed && !$noContentAllowed && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
@@ -49,13 +49,6 @@ if ($allowed && !$nocontent && $service->exists($module) && ($user->isAdmin() ||
 	));
 }
 
-if (!$allowed) {
-	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
-	print sly_Helper_Message::warn(t('module_not_allowed_in_slot', $moduleName, $slotTitle));
-}
-if (!$allowed || $nocontent) {
-	print sly_Helper_Message::warn(t('delete_this_slice'));
-}
 ?>
 <div class="sly-slice-toolbar">
 	<h3><?php echo sly_translate($moduleName, true) ?></h3>
@@ -67,3 +60,19 @@ if (!$allowed || $nocontent) {
 		</ul>
 	</div>
 </div>
+<?php
+
+$warning = null;
+
+if (!$allowed) {
+	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
+	$warning   = t('module_not_allowed_in_slot', $moduleName, $slotTitle);
+}
+
+if (!$allowed || $noContentAllowed) {
+	$warning = $warning ? $warning.'<br />'.t('delete_this_slice') : t('delete_this_slice');
+}
+
+if ($warning) {
+	print sly_Helper_Message::warn($warning);
+}
