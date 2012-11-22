@@ -27,11 +27,11 @@ else {
 	}
 }
 
-if ($user->isAdmin() || $user->hasRight('module', 'delete', $module)) {
+if ($user->isAdmin() || $user->hasRight('module', 'delete', $module) || $user->hasRight('module', 'delete', sly_Authorisation_ModuleListProvider::ALL)) {
 	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
-if ($allowed && !$noContentAllowed && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module))) {
+if ($allowed && !$noContentAllowed && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module) || $user->hasRight('module', 'move', sly_Authorisation_ModuleListProvider::ALL))) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
