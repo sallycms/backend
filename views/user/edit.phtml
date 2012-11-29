@@ -62,7 +62,17 @@ if ($user) {
 $form->addRow(array($name, $description));
 
 //////////////////////////////////////////////////////////////////
-// third row: admin and status
+// third row: created and updated
+
+if ($user) {
+	$created = new sly_Form_Text(t('created_at'), sly_Util_String::formatDatetime($user->getCreateDate()));
+	$updated = new sly_Form_Text(t('updated_at'), sly_Util_String::formatDatetime($user->getUpdateDate()));
+
+	$form->addRow(array($created, $updated));
+}
+
+//////////////////////////////////////////////////////////////////
+// fourth row: admin and status
 
 $userAdmin  = new sly_Form_Input_Checkbox('is_admin', '', '1', t('admin'));
 $userStatus = new sly_Form_Input_Checkbox('userstatus', '', '1', t('activated'));
@@ -91,7 +101,7 @@ if ($safeMode) {
 $form->addRow(array($userAdmin, $userStatus));
 
 //////////////////////////////////////////////////////////////////
-// fourth row: backend startpage and backend locale
+// fifth row: backend startpage and backend locale
 
 $startPage     = $user ? $user->getStartPage() : array();
 $backendLocale = $user ? $user->getBackendLocale() : array();
