@@ -103,7 +103,6 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$this->appendToTitle($head);
 		$dispatcher = sly_Core::dispatcher();
 
-		$page = sly_Core::getCurrentPage();
 		$head = $dispatcher->filter('PAGE_TITLE', $head, compact('page'));
 		print '<div id="sly-pagehead"><div class="pagehead-row"><h1>'.$head.'</h1></div>'.$subtitle.'</div>';
 

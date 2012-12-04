@@ -32,7 +32,7 @@ class sly_Layout_Navigation_Page {
 
 	public function isActive() {
 		$forced = $this->forceStatus;
-		$isPage = sly_Core::getCurrentPage() == $this->pageParam;
+		$isPage = sly_Core::getCurrentControllerName() == $this->pageParam;
 		foreach ($this->subpages as $subpage) {
 			$isPage |= $subpage->isActive();
 		}
