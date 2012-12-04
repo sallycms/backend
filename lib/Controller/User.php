@@ -68,7 +68,8 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$service     = sly_Service_Factory::getUserService();
 		$currentUser = sly_Util_User::getCurrentUser();
 		$isSelf      = $currentUser->getId() === $user->getId();
-		$safeMode    = $user->isAdmin() && !$currentUser->isAdmin();
+		$isAdmin     = $currentUser->isAdmin();
+		$safeMode    = $user->isAdmin() && !$isAdmin;
 
 		if ($save) {
 			$status = $request->post('userstatus', 'boolean', false) ? 1 : 0;
@@ -92,7 +93,26 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$user->setPassword($password);
 			}
 
-			$user->setRights($this->getRightsFromForm($user));
+			// backend locale and startpage
+			$backendLocale  = $request->post('userperm_mylang', 'string');
+			$backendLocales = $this->getBackendLocales();
+			if (isset($backendLocales[$backendLocale])) {
+				$user->setBackendLocale($backendLocale);
+			}
+
+			$startpage  = $request->post('userperm_startpage', 'string');
+			$startpages = $this->getPossibleStartpages();
+			if (isset($startpages[$startpage])) {
+				$user->setStartPage($startpage);
+			}
+
+			/* set the isAdmin info but there are some rules:
+			 * - admin flags can only be removed by admins
+			 * - an admin can not remove this flag from himself
+			 *
+			 * we use reverse logic so it is hard to understand
+			 */
+			$user->setIsAdmin($safeMode || ($isAdmin && ($isSelf || $request->post('is_admin', 'boolean', false))));
 
 			// save it
 			$apply = $request->post('apply', 'string');
@@ -251,39 +271,5 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		}
 
 		return $startpages;
-	}
-
-	protected function getRightsFromForm($user) {
-		$permissions = array();
-		$request     = $this->getRequest();
-		$curUser     = sly_Util_User::getCurrentUser();
-		$isAdmin     = $curUser->isAdmin();
-		$isSelfEdit  = $user !== null && $curUser->getId() === $user->getId();
-		$safeMode    = $user && $user->isAdmin() && !$curUser->isAdmin();
-
-		// admin status
-
-		if ($safeMode || ($isAdmin && ($isSelfEdit || $request->post('is_admin', 'boolean', false)))) {
-			$permissions[] = 'admin[]';
-		}
-
-		// backend locale and startpage
-
-		$backendLocale  = $request->post('userperm_mylang', 'string');
-		$backendLocales = $this->getBackendLocales();
-		$startpage      = $request->post('userperm_startpage', 'string');
-		$startpages     = $this->getPossibleStartpages();
-
-		if (isset($backendLocales[$backendLocale])) {
-			$permissions[] = 'be_lang['.$backendLocale.']';
-		}
-
-		if (isset($startpages[$startpage])) {
-			$permissions[] = 'startpage['.$startpage.']';
-		}
-
-		// and build the permission string
-
-		return '#'.implode('#', $permissions).'#';
 	}
 }
