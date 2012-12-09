@@ -36,21 +36,14 @@ class sly_Router_Backend extends sly_Router_Base {
 	 * will be put into $_REQUEST (so that third party code can access the
 	 * correct value).
 	 *
-	 * When setup is true, requests to the setup controller will be redirected to
-	 * the profile page (always accessible). Otherwise, this method will also
-	 * check whether the current user has access to the found controller. If a
-	 * forbidden controller is requested, the profile page is used.
+	 * This method will also check whether the current user has access to the
+	 * found controller. If a forbidden controller is requested, the profile page
+	 * is used.
 	 *
 	 * @return string  the currently active page
 	 */
 	public function match(sly_Request $request) {
 		$matched = parent::match($request);
-
-		if (sly_Core::isSetup()) {
-			// do not reset the action, but only the controller
-			$request->get->set(self::CONTROLLER_PARAM, 'setup');
-			return true;
-		}
 
 		if ($matched) {
 			return true;

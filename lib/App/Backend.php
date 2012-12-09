@@ -29,17 +29,25 @@ class sly_App_Backend extends sly_App_Base {
 		// init request
 		$this->request = $container->getRequest();
 
+		// Setup?
+		if (sly_Core::isSetup()) {
+			$target = $this->request->getBaseUrl(true).'/setup/';
+			$text   = 'Bitte führe das <a href="'.sly_html($target).'">Setup</a> aus, um SallyCMS zu nutzen.';
+
+			sly_Util_HTTP::tempRedirect($target, array(), $text);
+		}
+
 		// init the current language
 		$this->initLanguage($container, $this->request);
 
-		// only start session if not running unit tests
-		if (!SLY_IS_TESTING) sly_Util_Session::start();
+		// start session
+		sly_Util_Session::start();
 
 		// load static config
 		$this->loadStaticConfig($container);
 
 		// init timezone and locale
-		$this->initUserSettings(sly_Core::isSetup());
+		$this->initUserSettings();
 
 		// make sure our layout is used later on
 		$this->initLayout($container);
@@ -140,37 +148,22 @@ class sly_App_Backend extends sly_App_Base {
 		$container->setCurrentLanguageId($clangID);
 	}
 
-	protected function initUserSettings($isSetup) {
+	protected function initUserSettings() {
 		$container = $this->getContainer();
 
 		// set timezone
-		$this->setDefaultTimezone($isSetup);
+		$this->setDefaultTimezone();
 
-		if (!SLY_IS_TESTING && $isSetup) {
-			$locale        = sly_Core::getDefaultLocale();
-			$locales       = sly_I18N::getLocales(SLY_SALLYFOLDER.'/backend/lang');
-			$requestLocale = $this->request->request('lang', 'string', '');
-			$user          = null;
+		$locale = sly_Core::getDefaultLocale();
+		$user   = $container->getUserService()->getCurrentUser();
 
-			if (in_array($requestLocale, $locales)) {
-				$locale = $requestLocale;
-			}
+		// get user values
+		if ($user instanceof sly_Model_User) {
+			$locale   = $user->getBackendLocale() ? $user->getBackendLocale() : $locale;
+			$timezone = $user->getTimeZone();
 
-			// force setup page
-			$this->controller = 'setup';
-		}
-		else {
-			$locale = sly_Core::getDefaultLocale();
-			$user   = $container->getUserService()->getCurrentUser();
-
-			// get user values
-			if ($user instanceof sly_Model_User) {
-				$locale   = $user->getBackendLocale() ? $user->getBackendLocale() : $locale;
-				$timezone = $user->getTimeZone();
-
-				// set user's timezone
-				if ($timezone) date_default_timezone_set($timezone);
-			}
+			// set user's timezone
+			if ($timezone) date_default_timezone_set($timezone);
 		}
 
 		// set the i18n object
@@ -218,7 +211,7 @@ class sly_App_Backend extends sly_App_Base {
 		// let the layout know where we are
 		$container = $this->getContainer();
 		$layout    = $container->getLayout();
-		$user      = sly_Core::isSetup() ? null : $container->getUserService()->getCurrentUser();
+		$user      = $container->getUserService()->getCurrentUser();
 		$page      = $this->controller instanceof sly_Controller_Error ? 'error' : $this->controller;
 
 		$layout->setCurrentPage($page, $user);
@@ -237,11 +230,10 @@ class sly_App_Backend extends sly_App_Base {
 		$container = $this->container;
 		$request   = $this->request;
 		$response  = $container->getResponse();
-		$isSetup   = sly_Core::isSetup();
-		$user      = $isSetup ? null : $this->container->getUserService()->getCurrentUser();
+		$user      = $container->getUserService()->getCurrentUser();
 
 		// force login controller if no login is found
-		if (!$isSetup && ($user === null || (!$user->isAdmin() && !$user->hasRight('apps', 'backend')))) {
+		if ($user === null || (!$user->isAdmin() && !$user->hasRight('apps', 'backend'))) {
 			// send a 403 header to prevent robots from including the login page
 			// and to help ajax requests that were fired a long time after the last
 			// interaction with the backend to easily detect the expired session
