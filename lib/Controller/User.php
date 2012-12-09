@@ -25,23 +25,40 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
+			$currentUser = sly_Util_User::getCurrentUser();
+			$isAdmin     = $currentUser->isAdmin();
+
 			$password = $request->post('userpsw', 'string');
 			$login    = $request->post('userlogin', 'string');
 			$timezone = $request->post('timezone', 'string');
 			$service  = sly_Service_Factory::getUserService();
 			$flash    = sly_Core::getFlashMessage();
-			$params   = array(
-				'login'       => $login,
-				'name'        => $request->post('username', 'string'),
-				'description' => $request->post('userdesc', 'string'),
-				'status'      => $request->post('userstatus', 'boolean', false),
-				'timezone'    => $timezone ? $timezone : null,
-				'psw'         => $password,
-				'rights'      => $this->getRightsFromForm(null)
-			);
+			$newuser  = new sly_Model_User();
+
+			$newuser->setLogin($login);
+			$newuser->setName($request->post('username', 'string'));
+			$newuser->setDescription($request->post('userdesc', 'string'));
+			$newuser->setStatus($request->post('userstatus', 'boolean', false));
+			$newuser->setTimeZone($timezone ? $timezone : null);
+			$newuser->setPassword($password);
+			$newuser->setIsAdmin($isAdmin && $request->post('is_admin', 'boolean', false));
+			$newuser->setRevision(0);
+
+			// backend locale and startpage
+			$backendLocale  = $request->post('userperm_mylang', 'string');
+			$backendLocales = $this->getBackendLocales();
+			if (isset($backendLocales[$backendLocale])) {
+				$newuser->setBackendLocale($backendLocale);
+			}
+
+			$startpage  = $request->post('userperm_startpage', 'string');
+			$startpages = $this->getPossibleStartpages();
+			if (isset($startpages[$startpage])) {
+				$newuser->setStartPage($startpage);
+			}
 
 			try {
-				$service->create($params);
+				$service->save($newuser, $currentUser);
 				$flash->prependInfo(t('user_added'), true);
 
 				return $this->redirectResponse();
