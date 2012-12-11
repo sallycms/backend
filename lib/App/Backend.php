@@ -113,7 +113,8 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	public function redirectResponse($page, $params = array(), $code = 302) {
-		$url      = $this->router->getAbsoluteUrl($page, null, $params, '&');
+		$action   = isset($params['func']) ? $params['func'] : null;
+		$url      = $this->router->getAbsoluteUrl($page, $action, $params, '&');
 		$response = $this->getContainer()->getResponse();
 
 		$response->setStatusCode($code);
