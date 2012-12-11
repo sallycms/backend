@@ -41,7 +41,7 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 		sly_Core::getCurrentApp()->redirect($page, $params, $code);
 	}
 
-	protected function redirectResponse($params = array(), $page = null, $code = 302) {
-		return sly_Core::getCurrentApp()->redirectResponse($page, $params, $code);
+	protected function redirectResponse($params = array(), $controller = null, $action = null, $code = 302) {
+		return sly_Core::getCurrentApp()->redirectResponse($controller, $action, $params, $code);
 	}
 }

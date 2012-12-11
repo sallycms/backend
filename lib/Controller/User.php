@@ -138,8 +138,12 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			try {
 				$user = $service->save($user);
 				$flash->prependInfo(t('user_updated'), true);
+				$params = array();
+				if ($apply) {
+					$params['id'] = $user->getId();
+				}
 
-				return $this->redirectResponse($apply ? array('func' => 'edit', 'id' => $user->getId()) : '');
+				return $this->redirectResponse($params, null, $apply ? 'edit' : null);
 			}
 			catch (Exception $e) {
 				$flash->prependWarning($e->getMessage(), true);
