@@ -42,10 +42,17 @@ jQuery(function($) {
 		return false;
 	});
 
-	var links = $('a[href!="#"]:visible'), len = links.length, i = 0;
+	var links = $('a[href!="#"]:visible'), len = links.length, i = 0, href;
 
 	for (; i < len; ++i) {
-		links[i].href = links[i].href += '&callback=<?php echo $callback ?>';
+		href = links[i].href;
+
+		if (href.indexOf('?') === -1) {
+			links[i].href = href += '?callback=<?php echo $callback ?>';
+		}
+		else {
+			links[i].href = href += '&callback=<?php echo $callback ?>';
+		}
 	}
 });
 	<?php
