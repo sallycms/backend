@@ -20,7 +20,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			'article' => $this->article,
 			'slot'    => $this->slot,
 			'user'    => sly_Util_User::getCurrentUser(),
-			'clangA'  => $post->get('clang_a', 'int', sly_Core::getCurrentClang()),
+			'clangA'  => $post->get('clang_a', 'int', $this->container->getCurrentLanguageID()),
 			'clangB'  => $post->get('clang_b', 'int')
 		), false);
 	}

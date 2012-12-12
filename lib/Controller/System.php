@@ -175,7 +175,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function setupAction() {
 		$this->init();
 		sly_Core::config()->setLocal('SETUP', true);
-		sly_Core::getCurrentApp()->redirect('');
+		$this->redirect(array(), '');
 	}
 
 	public function checkPermission($action) {

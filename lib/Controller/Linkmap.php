@@ -124,7 +124,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 			$this->globals = array(
 				'page'        => 'linkmap',
 				'category_id' => $this->getRequest()->request('category_id', 'int', 0),
-				'clang'       => sly_Core::getCurrentClang(),
+				'clang'       => $this->container->getCurrentLanguageID(),
 				'args'        => $this->args
 			);
 		}
