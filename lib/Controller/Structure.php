@@ -32,7 +32,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 
 	protected function init() {
 		$this->categoryId = $this->getRequest()->request('category_id', 'int', 0);
-		$this->clangId    = sly_Core::getCurrentClang();
+		$this->clangId    = $this->getRequest()->request('clang', 'int', sly_Core::getDefaultClangId());
 		$this->artService = sly_Service_Factory::getArticleService();
 		$this->catService = sly_Service_Factory::getCategoryService();
 	}
@@ -288,9 +288,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	public function checkPermission($action) {
 		$request    = $this->getRequest();
-		$categoryId = $request->request('category_id', 'int');
+		$categoryId = $request->request('category_id', 'int', 0);
 		$editId     = $request->request('edit_id', 'int');
-		$clang      = sly_Core::getCurrentClang();
+		$clang      = $request->request('clang', 'int', sly_Core::getDefaultClangId());
 		$user       = sly_Util_User::getCurrentUser();
 
 		if ($user === null) {

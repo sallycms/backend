@@ -38,10 +38,10 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {
-		sly_Core::getCurrentApp()->redirect($page, $params, $code);
+		$this->container->getApplication()->redirect($page, $params, $code);
 	}
 
 	protected function redirectResponse($params = array(), $controller = null, $action = null, $code = 302) {
-		return sly_Core::getCurrentApp()->redirectResponse($controller, $action, $params, $code);
+		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
 	}
 }

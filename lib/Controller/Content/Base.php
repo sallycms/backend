@@ -114,7 +114,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		// all users are allowed to see the error message in init()
 		if ($article === null) return true;
 
-		$clang   = sly_Core::getCurrentClang();
+		$clang   = $this->container->getCurrentLanguageID();
 		$clangOk = sly_Util_Language::hasPermissionOnLanguage($user, $clang);
 		if (!$clangOk) return false;
 
