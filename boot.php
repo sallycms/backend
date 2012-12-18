@@ -9,7 +9,7 @@
  */
 
 // add the backend app
-sly_Loader::addLoadPath(SLY_SALLYFOLDER.'/backend/lib/', 'sly_');
+sly_Loader::addLoadPath(SLY_SALLYFOLDER.'/backend/lib/');
 
 // init the app
 $app = new sly_App_Backend();
