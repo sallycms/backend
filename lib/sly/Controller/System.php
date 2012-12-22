@@ -85,8 +85,9 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// Änderungen speichern
 
-		$conf  = sly_Core::config();
-		$flash = sly_Core::getFlashMessage();
+		$container = $this->getContainer();
+		$conf      = $container->getConfig();
+		$flash     = $container->getFlashMessage();
 
 		$flash->appendInfo(t('configuration_updated'));
 
@@ -137,8 +138,18 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		if (!isset($strategies[$cachingStrategy])) {
 			$flash->appendWarning(t('invalid_caching_strategy_selected'));
 		}
-		else {
+		elseif ($cachingStrategy !== $originals['CACHING_STRATEGY']) {
 			$conf->setLocal('CACHING_STRATEGY', $cachingStrategy);
+
+			// make the container create a fresh cache instance once the next
+			// code requires the cache :-)
+			$container['sly-cache'] = array($container, 'buildCache');
+
+			// clear cache if different one was selected
+			// important in case we re-use an existing cache that has something
+			// like a broken addOn load order stored
+			$cache = $container->getCache();
+			$cache->flush('sly');
 		}
 
 		// timezone
