@@ -8,11 +8,9 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$usage   = function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : memory_get_usage();
-$memory  = sly_Util_String::formatFilesize($usage);
-$classes = sly_Loader::getClassCount();
-$usage   = t('used_ressources', $memory, $classes);
-$user    = sly_Util_User::getCurrentUser();
+$usage  = function_exists('memory_get_peak_usage') ? memory_get_peak_usage() : memory_get_usage();
+$memory = sly_Util_String::formatFilesize($usage);
+$user   = sly_Util_User::getCurrentUser();
 
 ?>
 	</div>
@@ -27,7 +25,7 @@ $user    = sly_Util_User::getCurrentUser();
 		</ul>
 		<p>
 			<?php if ($user): ?>
-			<span title="<?php echo sly_html($usage) ?>"><?php print sly_Util_String::formatTimespan(microtime(true) - SLY_START_TIME) ?></span> |
+			<span title="<?php echo sly_html($memory) ?>"><?php print sly_Util_String::formatTimespan(microtime(true) - SLY_START_TIME) ?></span> |
 			<?php endif ?>
 			<?php print sly_Util_String::formatDatetime() ?>
 		</p>
