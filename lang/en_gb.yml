@@ -286,7 +286,6 @@ articletype_not_found: 'Article type {0} could not be found.'
 
 no_articletype_set: "This article's type has not yet been set."
 no_startarticle: 'No homepage given. Please select one in the <a href="{0}">backend</a>.'
-used_ressources: '{0} in {1} classes'
 to_website: Go to website
 
 errorlog: Error Log
