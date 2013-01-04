@@ -34,7 +34,7 @@ jQuery(function($) {
 
 		// execute callback (media widget, WYMeditor, ...)
 		if (callback !== null) {
-			close = callback(filename, fullName, title, link);
+			close = callback(filename, fullName, title, link, window);
 		}
 
 		// close the popup

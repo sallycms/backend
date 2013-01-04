@@ -26,7 +26,7 @@ jQuery(function($) {
 
 		// execute callback (link widget, WYMeditor, ...)
 		if (callback !== null) {
-			close = callback(id, fullName, name, link);
+			close = callback(id, fullName, name, link, window);
 		}
 
 		// close the popup
