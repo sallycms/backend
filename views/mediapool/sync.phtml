@@ -14,6 +14,7 @@ print sly_Helper_Message::renderFlashMessage();
 // init form
 
 $form = new sly_Form($_router->getPlainUrl(null, 'sync'), 'POST', t('sync_files'), '', 'sly-form-mediapool-sync');
+$this->appendParamsToForm($form);
 
 ////////////////////////////////////////////////////////
 // files title

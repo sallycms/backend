@@ -17,12 +17,7 @@ $selected = $this->getCurrentCategory();
 $form = new sly_Form($_router->getPlainUrl(null, 'batch'), 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
 $form->addHiddenValue('page', 'mediapool');
 $form->addHiddenValue('func', 'batch');
-
-// additional arguments
-
-foreach ($this->args as $name => $value) {
-	$form->addHiddenValue('args['.$name.']', $value);
-}
+$this->appendParamsToForm($form);
 
 $isAdmin = $this->isMediaAdmin();
 
@@ -73,8 +68,6 @@ if ($isAdmin) {
 // list files
 
 print '<tbody>';
-
-$argUrl = $this->getArgumentString();
 
 foreach ($files as $file) {
 	$id         = $file->getId();
@@ -128,7 +121,7 @@ foreach ($files as $file) {
 
 	if ($title == '') $title = '['.t('no_title').']';
 
-	$ilink  = $_router->getUrl('mediapool_detail', null, 'file_id='.$id.'&amp;'.$argUrl);
+	$ilink  = $_router->getUrl('mediapool_detail', null, $this->appendQueryString('file_id='.$id));
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {
