@@ -9,22 +9,29 @@
  */
 
 class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Controller_Interface {
-	protected $globals    = null;
-	protected $tree       = array();
-	protected $categories = array();
-	protected $types      = array();
-	protected $roots      = array();
-	protected $forced     = array();
-	protected $args       = array();
-	protected $category   = null;
+	protected $globals     = null;
+	protected $tree        = array();
+	protected $categories  = array();
+	protected $types       = array();
+	protected $roots       = array();
+	protected $forced      = array();
+	protected $popupHelper = array();
+	protected $category    = null;
 
 	protected function init() {
 		$request    = $this->getRequest();
-		$this->args = $request->requestArray('args', 'string');
+		$dispatcher = $this->container->getDispatcher();
+		$params     = array('callback' => 'string', 'args' => 'array');
+
+		$this->popupHelper = new sly_Helper_Popup($params, 'SLY_LINKMAP_URL_PARAMS');
+		$this->popupHelper->init($request, $dispatcher);
 
 		// init category filter
-		if (isset($this->args['categories'])) {
-			$cats = array_map('intval', explode('|', $this->args['categories']));
+		$cats = $this->popupHelper->getArgument('categories');
+
+		// do NOT use empty(), as '0' is a valid value!
+		if (strlen($cats) > 0) {
+			$cats = array_map('intval', explode('|', $cats));
 
 			foreach (array_unique($cats) as $catID) {
 				$cat = sly_Util_Category::findById($catID);
@@ -33,8 +40,10 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 		}
 
 		// init article type filter
-		if (isset($this->args['types'])) {
-			$types       = explode('|', $this->args['types']);
+		$types = $this->popupHelper->getArgument('types');
+
+		if (!empty($types)) {
+			$types       = explode('|', $types);
 			$this->types = array_unique($types);
 		}
 
@@ -124,8 +133,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 			$this->globals = array(
 				'page'        => 'linkmap',
 				'category_id' => $this->getRequest()->request('category_id', 'int', 0),
-				'clang'       => $this->container->getCurrentLanguageID(),
-				'args'        => $this->args
+				'clang'       => $this->container->getCurrentLanguageID()
 			);
 		}
 
@@ -149,7 +157,11 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	}
 
 	protected function url($local = array()) {
-		return '?'.http_build_query(array_merge($this->getGlobals(), $local), '', '&amp;');
+		$globals = $this->getGlobals();
+		$extra   = $this->popupHelper->getValues();
+		$params  = array_merge($globals, $extra, $local);
+
+		return 'index.php?'.http_build_query($params, '', '&amp;');
 	}
 
 	protected function formatLabel($object) {

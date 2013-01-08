@@ -41,19 +41,6 @@ jQuery(function($) {
 		if (close) window.close();
 		return false;
 	});
-
-	var links = $('a[href!="#"]:visible'), len = links.length, i = 0, href;
-
-	for (; i < len; ++i) {
-		href = links[i].href;
-
-		if (href.indexOf('?') === -1) {
-			links[i].href = href += '?callback=<?php echo $callback ?>';
-		}
-		else {
-			links[i].href = href += '&callback=<?php echo $callback ?>';
-		}
-	}
 });
 	<?php
 }

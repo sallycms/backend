@@ -34,17 +34,8 @@ print sly_Helper_Message::renderFlashMessage();
 if ($this->canAccessFile($medium)) {
 	$form = new sly_Form($_router->getPlainUrl(null, 'save'), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
 	$form->setEncType('multipart/form-data');
-
-	$request = $this->getRequest();
-
 	$form->addHiddenValue('file_id', $fileID);
-	$form->addHiddenValue('callback', $request->request('callback', 'string', ''));
-
-	// additional arguments
-
-	foreach ($request->requestArray('args', 'string') as $name => $value) {
-		$form->addHiddenValue('args['.$name.']', $value);
-	}
+	$this->appendParamsToForm($form);
 }
 else {
 	$form = new sly_Form($_router->getPlainUrl(null), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');

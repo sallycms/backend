@@ -22,7 +22,7 @@ jQuery(function($) {
 		var link     = 'sally://' + id + '/';
 		var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
 		var close    = true;
-		var fullName = name.length === 0 ? '<?php echo t('unnamed_article') ?> [' + id + ']' : name;
+		var fullName = name.length === 0 ? <?php echo json_encode(t('unnamed_article')) ?> + ' [' + id + ']' : name;
 
 		// execute callback (link widget, WYMeditor, ...)
 		if (callback !== null) {
@@ -33,12 +33,6 @@ jQuery(function($) {
 		if (close) window.close();
 		return false;
 	});
-
-	var links = $('a[href!="#"]:visible'), len = links.length, i = 0;
-
-	for (; i < len; ++i) {
-		links[i].href = links[i].href += '&callback=<?php echo $callback ?>';
-	}
 });
 	<?php
 	$javascript = ob_get_clean();

@@ -12,7 +12,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected $args;
 	protected $category;
 	protected $selectBox;
-	protected $categories;
+	protected $categories = null;
+	protected $popupHelper;
 
 	private $init = false;
 
@@ -25,14 +26,16 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->init) return;
 		$this->init = true;
 
-		$request          = $this->getRequest();
-		$this->args       = $request->requestArray('args', 'string');
-		$this->categories = array();
+		// init custom query string params
+		$this->initPopupHelper();
 
 		// init category filter
-		if (isset($this->args['categories'])) {
-			$cats             = array_map('intval', explode('|', $this->args['categories']));
-			$this->categories = array_unique($cats);
+		$cats = $this->popupHelper->getArgument('categories');
+
+		// do NOT use empty(), as '0' is a valid value!
+		if (strlen($cats) > 0) {
+			$cats             = array_unique(array_map('intval', explode('|', $cats)));
+			$this->categories = count($cats) === 0 ? null : $cats;
 		}
 
 		$this->getCurrentCategory();
@@ -45,6 +48,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 		if ($page) {
 			$cur     = sly_Core::getCurrentControllerName();
+			$values  = $this->popupHelper->getValues();
 			$subline = array(
 				array('mediapool',        t('media_list')),
 				array('mediapool_upload', t('upload_file'))
@@ -58,8 +62,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			foreach ($subline as $item) {
 				$sp = $page->addSubpage($item[0], $item[1]);
 
-				if (!empty($this->args)) {
-					$sp->setExtraParams(array('args' => $this->args));
+				if (!empty($values)) {
+					$sp->setExtraParams($values);
 
 					// ignore the extra params when detecting the current page
 					if ($cur === $item[0]) $sp->forceStatus(true);
@@ -67,7 +71,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			}
 		}
 
-		$page = sly_Core::dispatcher()->filter('SLY_MEDIAPOOL_MENU', $page);
+		$dispatcher = $this->container->getDispatcher();
+		$page       = $dispatcher->filter('SLY_MEDIAPOOL_MENU', $page);
 
 		$layout->showNavigation(false);
 		$layout->pageHeader(t('media_list'), $page);
@@ -76,15 +81,24 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$this->render('mediapool/javascript.phtml', array(), false);
 	}
 
-	protected function getArgumentString($separator = '&amp;') {
-		$args = array();
+	protected function initPopupHelper() {
+		$request    = $this->getRequest();
+		$dispatcher = $this->container->getDispatcher();
 
-		foreach ($this->args as $name => $value) {
-			$args['args['.$name.']'] = $value;
-		}
+		// init custom query string params
+		$params = array('callback' => 'string', 'args' => 'array');
 
-		return http_build_query($args, '', $separator);
+		$this->popupHelper = new sly_Helper_Popup($params, 'SLY_MEDIAPOOL_URL_PARAMS');
+		$this->popupHelper->init($request, $dispatcher);
 	}
+
+	protected function appendQueryString($url, $separator = '&amp;') {
+		return $this->popupHelper->appendQueryString($url, $separator);
+	}
+
+	protected function appendParamsToForm(sly_Form $form) {
+		return $this->popupHelper->appendParamsToForm($form);
+ 	}
 
 	protected function getCurrentCategory() {
 		if ($this->category === null) {
@@ -113,9 +127,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function getOpenerLink(sly_Model_Medium $file) {
-		$request  = $this->getRequest();
-		$callback = $request->request('callback', 'string');
 		$link     = '';
+		$callback = $this->popupHelper->get('callback');
 
 		if (!empty($callback)) {
 			$filename = $file->getFilename();
@@ -131,9 +144,10 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$where = 'f.category_id = '.$cat;
 		$where = sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
 		$where = '('.$where.')';
+		$types = $this->popupHelper->getArgument('types');
 
-		if (isset($this->args['types'])) {
-			$types = explode('|', preg_replace('#[^a-z0-9/+.-|]#i', '', $this->args['types']));
+		if (!empty($types)) {
+			$types = explode('|', preg_replace('#[^a-z0-9/+.-|]#i', '', $types));
 
 			if (!empty($types)) {
 				$where .= ' AND filetype IN ("'.implode('","', $types).'")';
@@ -234,16 +248,13 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());
 
-			// filter categories if args[categories] is set
-			if (isset($this->args['categories'])) {
-				$cats = array_map('intval', explode('|', $this->args['categories']));
-				$cats = array_unique($cats);
+			// filter categories
+			if (!empty($this->categories)) {
+				$values = array_keys($this->selectBox->getValues());
 
-				if (!empty($cats)) {
-					$values = array_keys($this->selectBox->getValues());
-
-					foreach ($values as $catID) {
-						if (!in_array($catID, $cats)) $this->selectBox->removeValue($catID);
+				foreach ($values as $catID) {
+					if (!in_array($catID, $cats)) {
+						$this->selectBox->removeValue($catID);
 					}
 				}
 			}
@@ -320,5 +331,27 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected function revalidate() {
 		// re-validate asset cache
 		sly_Service_Factory::getAssetService()->validateCache();
+	}
+
+	protected function redirect($params = array(), $page = null, $code = 302) {
+		if (!$this->popupHelper) {
+			$this->initPopupHelper();
+		}
+
+		$values = $this->popupHelper->getValues();
+		$params = array_merge($values, sly_makeArray($params));
+
+		$this->container->getApplication()->redirect($page, $params, $code);
+	}
+
+	protected function redirectResponse($params = array(), $controller = null, $action = null, $code = 302) {
+		if (!$this->popupHelper) {
+			$this->initPopupHelper();
+		}
+
+		$values = $this->popupHelper->getValues();
+		$params = array_merge($values, sly_makeArray($params));
+
+		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
 	}
 }

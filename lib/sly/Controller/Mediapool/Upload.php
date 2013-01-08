@@ -33,7 +33,7 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 
 			// close the popup, if requested
 
-			$callback = $request->request('callback', 'string');
+			$callback = $this->popupHelper->get('callback');
 
 			if ($callback && $request->post('saveandexit', 'boolean', false) && $file !== null) {
 				$this->render('mediapool/upload_js.phtml', compact('file', 'callback'), false);
