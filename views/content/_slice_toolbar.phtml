@@ -22,16 +22,17 @@ if (!$service->exists($module)) {
 }
 else {
 	$moduleName = $service->getTitle($module);
-	if ($user->isAdmin() || $user->hasRight('module', 'edit', sly_Authorisation_ModuleListProvider::ALL) || $user->hasRight('module', 'edit', $module)) {
+
+	if (sly_Util_ArticleSlice::canEditModule($user, $module)) {
 		$listElements[] = '<a href="'.$_router->getUrl(null, null, array_merge(array('function' => 'edit'), $urlParams)).'#editslice" class="sly-edit">'.t('edit').'</a>';
 	}
 }
 
-if ($user->isAdmin() || $user->hasRight('module', 'delete', $module) || $user->hasRight('module', 'delete', sly_Authorisation_ModuleListProvider::ALL)) {
+if (sly_Util_ArticleSlice::canDeleteModule($user, $module)) {
 	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
-if ($allowed && !$noContentAllowed && $service->exists($module) && ($user->isAdmin() || $user->hasRight('module', 'move', $module) || $user->hasRight('module', 'move', sly_Authorisation_ModuleListProvider::ALL))) {
+if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_ArticleSlice::canMoveSlice($user, $slice)) {
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
@@ -42,8 +43,8 @@ if ($allowed && !$noContentAllowed && $service->exists($module) && ($user->isAdm
 	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
 		'article_id' => $slice->getArticleId(),
 		'clang'      => $slice->getClang(),
-		'ctype'      => $slice->getSlot(),
-		'slot'       => $slice->getSlot(),
+		'ctype'      => $slot,
+		'slot'       => $slot,
 		'module'     => $module,
 		'slice_id'   => $slice->getId()
 	));
