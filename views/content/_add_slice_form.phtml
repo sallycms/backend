@@ -9,14 +9,13 @@
  */
 
 $user = sly_Util_User::getCurrentUser();
-$moduleAdmin = $user->isAdmin() || $user->hasRight('module', 'add', sly_Authorisation_ModuleListProvider::ALL);
 
 $moduleSelect = new sly_Form_Select_DropDown('add_module', '', '', array(), 'module'.$pos);
 $moduleSelect->addClass('sly-module-select');
 $moduleSelect->addValue('', '---------------------------- '.t('add_slice'));
 
 foreach ($modules as $module => $moduleTitle) {
-	if ($moduleAdmin || $user->hasRight('module', 'add', $module)) {
+	if (sly_Util_ArticleSlice::canAddModule($user, $module)) {
 		$moduleSelect->addValue($module, sly_translate($moduleTitle));
 	}
 }
