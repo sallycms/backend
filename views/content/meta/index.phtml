@@ -1,0 +1,133 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div class="sly-content-header">
+	<?php
+	//navigation
+	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
+	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
+	?>
+</div>
+<?php
+
+print sly_Helper_Message::renderFlashMessage();
+
+$category_id = $article->getCategoryId();
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
+$form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POST', t('general'));
+
+$form->setEncType('multipart/form-data');
+$form->addHiddenValue('article_id', $article->getId());
+$form->addHiddenValue('clang', $article->getClang());
+$form->setSubmitButton(null);
+$form->setResetButton(null);
+
+/////////////////////////////////////////////////////////////////
+// article name / metadata
+
+$name = new sly_Form_Input_Text('meta_article_name', t('article_name'), $article->getName());
+$form->add($name);
+
+$dispatcher = sly_Core::dispatcher();
+$form       = $dispatcher->filter('SLY_ART_META_FORM', $form, $params);
+
+$button = new sly_Form_Input_Button('submit', 'save_meta', t('save'));
+$form->add(new sly_Form_ButtonBar(array('submit' => $button)));
+
+$form = $dispatcher->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
+
+/////////////////////////////////////////////////////////////////
+// misc
+
+// copy content
+
+$baseSelect = sly_Form_Helper::getLanguageSelect('clang_a');
+
+if ($baseSelect->getValueCount() > 1) {
+	$baseSelect->setSize(1);
+
+	$langA = clone $baseSelect;
+	$langB = clone $baseSelect;
+
+	$langA->setLabel(t('from_language'));
+	$langB->setLabel(t('to_language'));
+
+	$langA->setAttribute('id', 'clang_a');
+	$langB->setAttribute('id', 'clang_b');
+
+	$langA->setAttribute('name', 'clang_a');
+	$langB->setAttribute('name', 'clang_b');
+
+	$langA->setSelected($clangA);
+	$langB->setSelected($clangB);
+
+	$langB->setMultiple(true);
+
+	$form->beginFieldset(t('copy_content'), null, 2);
+	$form->addRow(array($langA, $langB));
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('copy_content'), 'copy_content');
+}
+
+// move article
+
+if ($this->canMoveArticle()) {
+	$select = sly_Form_Helper::getCategorySelect('category_id_new', false, null, null, $user);
+	$select->setAttribute('value', $category_id);
+	$select->setLabel(t('target_category'));
+
+	$form->beginFieldset(t('move_article'));
+	$form->add($select);
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('move_article'), 'move_article');
+}
+
+// copy article
+
+$select = sly_Form_Helper::getCategorySelect('category_copy_id_new', false, null, null, $user);
+$select->setAttribute('value', $category_id);
+$select->setLabel(t('target_category'));
+
+$form->beginFieldset(t('copy_article'));
+$form->add($select);
+
+sly_Helper_Content::metaFormAddButtonBar($form, t('copy_article'), 'copy_article');
+
+// move category
+
+if ($this->canMoveCategory()) {
+	$select = sly_Form_Helper::getCategorySelect('category_id_new', false, null, null, $user);
+	$select->setAttribute('value', $category_id);
+	$select->setLabel(t('target_category'));
+
+	$form->beginFieldset(t('move_category'));
+	$form->add($select);
+
+	sly_Helper_Content::metaFormAddButtonBar($form, t('move_category'), 'move_category');
+}
+
+// convert to startarticle
+
+if ($this->canConvertToStartarticle()) {
+	$form->beginFieldset(t('startarticle'));
+
+	if ($article->getStartpage() == 0 && $article->getParentId() == 0) {
+		$form->add(new sly_Form_Text('', t('root_articles_cannot_be_startarticles')));
+	}
+	elseif ($article->getStartpage() == 1) {
+		$form->add(new sly_Form_Text('', t('article_is_startarticle')));
+	}
+	else {
+		sly_Helper_Content::metaFormAddButtonBar($form, t('convert_to_startarticle'), 'to_startarticle');
+	}
+}
+
+$form = $dispatcher->filter('SLY_ART_META_FORM_ADDITIONAL', $form, $params);
+if ($form instanceof sly_Viewable) print $form->render();

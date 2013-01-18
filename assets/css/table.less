@@ -1,0 +1,109 @@
+.sly-table {
+	clear: both;
+	width: 100%;
+	background-color: #fff;
+	border-spacing: 0;
+	*border-collapse: collapse; /* hack for IE7 */
+	.border-bottom-radius(5px);
+
+	th, td {
+		/* 'sly-col-icon' is only for identification, not for styling! */
+		&.sly-icon {
+			width: 40px;
+			text-align: center;
+		}
+	}
+
+	tr:first-child td {
+		border-top: none;
+	}
+
+	caption {
+		.border-top-radius(@brd_rad);
+		text-align: left;
+		background-color: @drk_grey;
+		color: #4D4646;
+		border: 1px solid @drk_grey;
+		height: 5px;
+	}
+
+	th {
+		text-align: left;
+		color: #fff;
+		padding: 4px 0 9px 0px;
+		vertical-align: middle;
+		background-color: @drk_grey;
+
+		a.sort {
+			color: white;
+			padding-right: 13px;
+			background-repeat: no-repeat;
+			background-position: right center;
+
+			&.asc    { background-image: url(../ascending.png);  }
+			&.desc   { background-image: url(../descending.png); }
+			&.nosort { background-image: url(../nosort.png);     }
+		}
+	}
+
+	td {
+		height: 40px;
+		border-top: 1px dotted @md_grey;
+		*position: relative;
+	}
+
+	tr.sly-active td {
+		background-color: @link_color;
+		color: #fff;
+	}
+
+	/* make sure the active row doesn't kill the border-bottom with its background color */
+
+	tr:last-child.sly-active td {
+		&:first-child { @border-bottom-left-radius(4px); }
+		&:last-child { @border-bottom-right-radius(4px); }
+	}
+
+	.sly-has-input {
+		div {
+			padding: 0 11px 0 0;
+		}
+
+		input[type=text], input[type=number] {
+			width: 100%;
+		}
+	}
+}
+
+.sly-table-extras-pager,
+.sly-table-extras-filter,
+.sly-table-extras-sorting {
+	margin-bottom: 1em;
+	font-size: 13px;
+	line-height: 20px;
+}
+
+.sly-table-extras-pager {
+	float: left;
+
+	span, a {
+		margin: 0 1px;
+		padding: 0 1px;
+	}
+}
+
+.sly-table-extras-sorting {
+	float: right;
+	margin-left: 20px;
+}
+
+.sly-table-extras-filter {
+	float: right;
+
+	input[type="text"] {
+		width: 150px;
+		padding: 1px;
+	}
+}
+
+.sly-table-fixed { table-layout: fixed; }

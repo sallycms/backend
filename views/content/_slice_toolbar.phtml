@@ -1,0 +1,79 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$user         = sly_Util_User::getCurrentUser();
+$module       = $slice->getModule();
+$slot         = $slice->getSlot();
+$service      = sly_Service_Factory::getModuleService();
+$urlParams    = array('article_id' => $slice->getArticleId(), 'slice_id' => $slice->getId(), 'clang' => $slice->getClang());
+$listElements = array();
+$allowed      = sly_Service_Factory::getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
+
+if (!$service->exists($module)) {
+	$moduleName = $module;
+
+}
+else {
+	$moduleName = $service->getTitle($module);
+
+	if (sly_Util_ArticleSlice::canEditModule($user, $module)) {
+		$listElements[] = '<a href="'.$_router->getUrl(null, null, array_merge(array('function' => 'edit'), $urlParams)).'#editslice" class="sly-edit">'.t('edit').'</a>';
+	}
+}
+
+if (sly_Util_ArticleSlice::canDeleteModule($user, $module)) {
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
+}
+
+if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_ArticleSlice::canMoveSlice($user, $slice)) {
+	$moveUp   = t('move_up');
+	$moveDown = t('move_down');
+
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'up'))).'#messages" title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'down'))).'#messages" title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
+
+	$dispatcher   = sly_Core::dispatcher();
+	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
+		'article_id' => $slice->getArticleId(),
+		'clang'      => $slice->getClang(),
+		'ctype'      => $slot,
+		'slot'       => $slot,
+		'module'     => $module,
+		'slice_id'   => $slice->getId()
+	));
+}
+
+?>
+<div class="sly-slice-toolbar">
+	<h3><?php echo sly_translate($moduleName, true) ?></h3>
+	<div class="sly-slice-actions">
+		<ul>
+			<?php foreach ($listElements as $listElement): ?>
+			<li><?php echo $listElement ?></li>
+			<?php endforeach ?>
+		</ul>
+	</div>
+</div>
+<?php
+
+$warning = null;
+
+if (!$allowed) {
+	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
+	$warning   = t('module_not_allowed_in_slot', $moduleName, $slotTitle);
+}
+
+if (!$allowed || $noContentAllowed) {
+	$warning = $warning ? $warning.'<br />'.t('delete_this_slice') : t('delete_this_slice');
+}
+
+if ($warning) {
+	print sly_Helper_Message::warn($warning);
+}

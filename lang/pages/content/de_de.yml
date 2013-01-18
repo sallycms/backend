@@ -1,0 +1,32 @@
+edit_mode: Editier Modus
+metadata: Metadaten/Sonstiges
+preview: Vorschau
+
+module_not_found: 'Das Modul {0} wurde nicht gefunden!'
+module_not_allowed_in_slot: 'Das Modul {0} ist im Slot {1} nicht erlaubt.'
+no_rights_to_this_module: Sie haben keine Rechte für dieses Modul!
+
+edit_slice: Block bearbeiten
+add_slice: Block hinzufügen
+slice_updated: Block wurde aktualisiert.
+slice_added: Block wurde hinzugefügt.
+slice_moved: Block wurde verschoben.
+slice_deleted: Block wurde gelöscht.
+cannot_move_slice: Beim Verschieben des Blocks ist ein Fehler aufgetreten!
+cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
+cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
+
+select_type_first: Bitte wählen sie zuerst einen Artikeltypen!
+no_template_defined: Dieser Artikel hat kein Template. Es können keine Inhalte eingepflegt werden.
+template_has_no_slots: In diesem Artikel können keine Inhalte eingepflegt werden.
+no_modules_allowed: In diesem Slot können keine Inhalte eingepflegt werden.
+slices_left: 'Der Inhalt dieses Artikels kann nicht bearbeitet werden, aber es sind noch Module vorhanden.'
+delete_this_slice: Bitte löschen sie diesen Block!
+
+metadata_updated: Metadaten wurden aktualisiert.
+move_article: Artikel verschieben
+article_copied: Artikel wurde kopiert.
+article_content_copied: Die Inhalte des Artikels wurden kopiert.
+cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
+cannot_copy_article: Der Artikel konnte nicht kopiert werden!
+cannot_move_category: Die Kategorie konnte nicht verschoben werden!
