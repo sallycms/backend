@@ -21,7 +21,12 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function indexAction() {
 		$this->init();
-		$this->render('system/index.phtml', array(), false);
+
+		// it's not perfect, but let's check whether the setup app actually
+		// exists before showing the 'Setup' button inside the form.
+		$hasSetupApp = is_dir(SLY_SALLYFOLDER.'/setup');
+
+		$this->render('system/index.phtml', compact('hasSetupApp'), false);
 	}
 
 	public function clearcacheAction() {
