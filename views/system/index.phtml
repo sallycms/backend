@@ -76,12 +76,16 @@ $form->addElements(array($projectName, $startArticle, $notFound, $defaultType, $
 // caching form
 
 $caches = array(
-	'sly_core'    => t('sally_core_cache'),
-	'sly_asset'   => t('sally_assetcache'),
-	'sly_develop' => t('sally_develop_content'),
+	'sly_core'          => t('sally_core_cache'),
+	'sly_asset'         => t('sally_assetcache'),
+	'sly_develop'       => t('sally_develop_content'),
+	'sly_reinit_addons' => t('reinit_all_addon_assets')
 );
 
-$caches = new sly_Form_Select_Checkbox('caches', '', array_keys($caches), $caches);
+$selected = array_keys($caches);
+unset($selected[3]); // do not re-init all addOns by default
+
+$caches = new sly_Form_Select_Checkbox('caches', '', $selected, $caches);
 $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 
 ?>
