@@ -121,7 +121,7 @@ foreach ($files as $file) {
 
 	if ($title == '') $title = '['.t('no_title').']';
 
-	$ilink  = $_router->getUrl('mediapool_detail', null, $this->appendQueryString('file_id='.$id));
+	$ilink  = $_router->getUrl('mediapool_detail', null, $this->appendQueryString(array('file_id' => $id)));
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($isAdmin) {
