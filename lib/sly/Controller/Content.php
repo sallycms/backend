@@ -238,7 +238,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$module = $slice->getModule();
 		$user   = sly_Util_User::getCurrentUser();
 
-		if (!sly_Util_ArticleSlice::canEditModule($module)) {
+		if (!sly_Util_ArticleSlice::canEditModule($user, $module)) {
 			$flash->appendWarning(t('no_rights_to_this_module'));
 			return $this->redirectToArticle('#messages', $slice);
 		}

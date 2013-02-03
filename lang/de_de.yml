@@ -235,6 +235,7 @@ uninstall: deinstallieren
 deactivate: deaktivieren
 activate: aktivieren
 reinit_assets: Assets re-initialisieren
+reinit_all_addon_assets: Assets aller AddOns re-initialisieren
 addon_help: 'Hilfe für {0}'
 addon_help_file_not_found: Die Hilfedatei (help.php) wurde nicht gefunden!
 addon_boot_file_not_found: Das Startup-Script (boot.php) wurde nicht gefunden!
