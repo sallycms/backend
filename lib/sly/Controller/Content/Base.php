@@ -15,10 +15,12 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected function init() {
 		$request = $this->getRequest();
 		$id      = $request->request('article_id', 'int', 0);
+		$clang   = $request->request('clang'     , 'int', 0);
+		$rev     = $request->request('rev'       , 'int', null);
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
 
-		$this->article = sly_Util_Article::findById($id);
+		$this->article = sly_Util_Article::findById($id, $clang, $rev);
 
 		if ($this->article === null) {
 			throw new sly_Exception(t('article_not_found', $id), 404);
@@ -79,6 +81,29 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		return $result;
 	}
 
+	protected function getRevisionSelect() {
+		$revisions = $this->getContainer()->getArticleService()->findAllRevisions($this->article->getId(), $this->article->getClang());
+		$select    = new sly_Form_Select_DropDown('rev', t('revision'), $this->article->getRevision(), array());
+
+		foreach ($revisions as $revision) {
+			$select->addValue($revision->getRevision(), sly_Util_String::formatDatetime($revision->getUpdateDate()));
+		}
+
+		$router = $this->getContainer()->getApplication()->getRouter();
+		$form   = new sly_Form($router->getUrl($this->getPageName()), 'get', '');
+
+		$form->setCsrfEnabled(false);
+		$form->addHiddenValue('article_id', $this->article->getId()   );
+		$form->addHiddenValue('clang',      $this->article->getclang());
+		$form->add($select);
+		$form->setSubmitButton();
+		$form->setResetButton();
+
+		$form->addClass('rev-select');
+
+		return $form->render();
+	}
+
 	protected function header() {
 		if ($this->article === null) {
 			sly_Core::getLayout()->pageHeader(t('content'));
@@ -86,7 +111,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			return false;
 		}
 		else {
-			sly_Core::getLayout()->pageHeader(t('content'), $this->getBreadcrumb());
+			sly_Core::getLayout()->pageHeader(t('content'), $this->getBreadcrumb().$this->getRevisionSelect());
 
 			$art = $this->article;
 
@@ -120,4 +145,6 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 		return sly_Util_Article::canEditContent($user, $article->getId());
 	}
+
+	abstract protected function getPageName();
 }

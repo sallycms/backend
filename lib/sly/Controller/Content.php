@@ -197,7 +197,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$flash               = sly_Core::getFlashMessage();
 
 		if (!$articleSlice) {
-			$flash->appendWarning(t('slice_not_found', $slice_id));
+			$flash->appendWarning(t('article_slice_not_found', $slice_id));
 		}
 		else {
 			$slicedata = $this->preSliceEdit('edit');
@@ -320,11 +320,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	}
 
 	private function postSliceEdit($function, $articleSliceId) {
-		$user       = sly_Util_User::getCurrentUser();
 		$flash      = sly_Core::getFlashMessage();
 		$dispatcher = sly_Core::dispatcher();
-
-		sly_Service_Factory::getArticleService()->touch($this->article, $user);
 
 		$dispatcher->notify('SLY_SLICE_POSTSAVE_'.strtoupper($function), $articleSliceId);
 		$dispatcher->notify('SLY_CONTENT_UPDATED', $this->article, array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));

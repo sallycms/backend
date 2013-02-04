@@ -750,6 +750,12 @@ var sly = sly || {};
 			$(this).closest('form').submit();
 		});
 
+		// Revision Select on content page
+
+		$('select#rev').change(function() {
+			$(this).closest('form').submit();
+		});
+
 		// toggle cache options
 		$('#sly-system-toggle-cache').click(function() {
 			$('#sly-form-system-caches p').slideToggle();
