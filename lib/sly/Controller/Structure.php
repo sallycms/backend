@@ -215,7 +215,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	protected function getBreadcrumb() {
 		$result = '';
-		$cat    = $this->catService->findById($this->categoryId);
+		$cat    = $this->catService->findById($this->categoryId, $this->clangId);
 		$router = $this->getContainer()->getApplication()->getRouter();
 
 		if ($cat) {
@@ -358,7 +358,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		// render flash message
 		print sly_Helper_Message::renderFlashMessage();
 
-		$currentCategory = $this->catService->findById($this->categoryId);
+		$currentCategory = $this->catService->findById($this->categoryId, $this->clangId);
 		$categories      = $this->catService->findByParentId($this->categoryId, false);
 		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
 		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);

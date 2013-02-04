@@ -141,7 +141,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		}
 
 		$db     = sly_DB_Persistence::getInstance();
-		$prefix = sly_Core::getTablePrefix();
+		$prefix = $db->getPrefix();
 		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.updatedate DESC';
 		$files  = array();
 
@@ -286,7 +286,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected function isInUse(sly_Model_Medium $medium) {
 		$sql      = sly_DB_Persistence::getInstance();
 		$filename = addslashes($medium->getFilename());
-		$prefix   = sly_Core::getTablePrefix();
+		$prefix   = $sql->getPrefix();
 		$query    =
 			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
 			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
