@@ -45,11 +45,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editstatuscategoryAction() {
 		$this->init();
 
-		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
+		$editId   = $this->getRequest()->post('edit_id', 'int', 0);
+		$category = sly_Util_Category::findById($editId, $this->clangId);
+		$flash    = sly_Core::getFlashMessage();
 
 		try {
-			$this->catService->changeStatus($editId, $this->clangId);
+			$this->catService->changeStatus($category);
 			$flash->prependInfo(t('category_status_updated'), true);
 		}
 		catch (Exception $e) {
@@ -62,11 +63,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	public function editstatusarticleAction() {
 		$this->init();
 
-		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
+		$editId  = $this->getRequest()->post('edit_id', 'int', 0);
+		$article = sly_Util_Article::findById($editId, $this->clangId);
+		$flash   = sly_Core::getFlashMessage();
 
 		try {
-			$this->artService->changeStatus($editId, $this->clangId);
+			$this->artService->changeStatus($article);
 			$flash->prependInfo(t('article_status_updated'), true);
 		}
 		catch (Exception $e) {
