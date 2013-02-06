@@ -86,7 +86,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$select    = new sly_Form_Select_DropDown('rev', t('revision'), $this->article->getRevision(), array());
 
 		foreach ($revisions as $revision) {
-			$select->addValue($revision->getRevision(), sly_Util_String::formatDatetime($revision->getUpdateDate()));
+			$select->addValue($revision->getRevision(), sly_Util_String::formatDatetime($revision->getCreateDate()));
 		}
 
 		$router = $this->getContainer()->getApplication()->getRouter();
