@@ -1,0 +1,33 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$table    = new sly_Table('sly-trash-articles');
+
+$table->addColumn(sly_Table_Column::sprite('article'));
+$table->addColumn(sly_Table_Column::factory(t('article'), 'sly-col-name'));
+$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-function'));
+$table->setIsEmpty(empty($articles));
+$table->setEmptyNotice(t('no_articles_yet'));
+
+$table->openBuffer();
+$table->enableSearching();
+
+foreach ($articles as $article) {
+	$this->render(
+		'trash/article_table_row.phtml',
+		array('article' => $article),
+		false
+	);
+}
+
+$table->closeBuffer();
+print $table->render();

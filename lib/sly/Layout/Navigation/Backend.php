@@ -32,7 +32,10 @@ class sly_Layout_Navigation_Backend {
 				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
 
 				if ($hasClangPerm) {
-					$this->addPage('system', 'structure');
+					$structurePage = $this->addPage('system', 'structure');
+
+
+					$structurePage->addSubpage('trash', t('trash'));
 				}
 			}
 
