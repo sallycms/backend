@@ -13,24 +13,12 @@ var sly = sly || {};
 	var openPopups = [], tokenName = 'sly-csrf-token';
 
 	sly.Popup = function(name, url, posx, posy, width, height, extra) {
-		var ua = navigator.userAgent;
-
 		// ensure names are somewhat unique
 		name += (new Date()).getTime();
 
 		this.name = name;
 		this.url  = url;
 		this.obj  = win.open(url, name, 'width='+width+',height='+height+extra);
-
-		// Don't position the popup in Chrome 18 and 20.
-		//   bug details: http://code.google.com/p/chromium/issues/detail?id=114762
-		//   workaround:  http://code.google.com/p/chromium/issues/detail?id=115585
-		// Remove this once Chrome 18/20 is not used anymore (~ September 2012)
-
-		if (ua.indexOf('Chrome/18.') === -1 && ua.indexOf('Chrome/20.') === -1) {
-			this.obj.moveTo(posx, posy);
-			this.obj.focus();
-		}
 
 		openPopups[name] = this;
 
@@ -69,50 +57,51 @@ var sly = sly || {};
 	// Mediapool
 
 	sly.openMediapool = function(subpage, value, callback, filetypes, categories) {
-		var url = 'index.php?page=mediapool';
+		var controller = 'mediapool', args = {args: {}};
 
 		if (value) {
-			url += '_detail&file_name='+value;
+			controller += '_detail';
+			args.file_name = value;
 		}
 		else if (subpage && (subpage !== 'detail' || value)) {
-			url += '_' + subpage;
+			controller += '_' + subpage;
 		}
 
 		if (callback) {
-			url += '&callback='+callback;
+			args.callback = callback;
 		}
 
 		if ($.isArray(filetypes) && filetypes.length > 0) {
-			url += '&args[types]='+filetypes.join('|');
+			args.args.types = filetypes.join('|');
 		}
 
 		if ($.isArray(categories) && categories.length > 0) {
-			url += '&args[categories]='+categories.join('|');
+			args.args.categories = categories.join('|');
 		}
 
-		return sly.openCenteredPopup('slymediapool', url, 760, 600);
+		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 760, 600);
 	};
 
 	sly.openLinkmap = function(value, callback, articletypes, categories) {
-		var url = 'index.php?page=linkmap';
+		var controller = 'linkmap', args = {args: {}};
 
 		if (value) {
-			url += '&category_id='+value;
+			args.category_id = value;
 		}
 
 		if (callback) {
-			url += '&callback='+callback;
+			args.callback = callback;
 		}
 
 		if ($.isArray(articletypes) && articletypes.length > 0) {
-			url += '&args[types]='+articletypes.join('|');
+			args.args.types = articletypes.join('|');
 		}
 
 		if ($.isArray(categories) && categories.length > 0) {
-			url += '&args[categories]='+categories.join('|');
+			args.args.categories = categories.join('|');
 		}
 
-		return sly.openCenteredPopup('slylinkmap', url, 760, 600);
+		return sly.openCenteredPopup('slylinkmap', sly.getUrl(controller, null, args), 760, 600);
 	};
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -507,6 +496,41 @@ var sly = sly || {};
 		});
 	};
 
+	sly.getUrl = function(controller, action, params, sep) {
+		var url = './';
+
+		action     = action || 'index';
+		action     = action.toLowerCase();
+		controller = controller.toLowerCase();
+
+		url += encodeURI(controller);
+
+		if (action.length > 0 && action !== 'index') {
+			url += '/' + encodeURI(action);
+		}
+
+		if (typeof params === 'string') {
+			// trim ? and & from the start and end
+			params = params.replace(/^[?&]*(.*?)[?&]*$/, '$1');
+		}
+		else if (typeof params === 'object') {
+			params = $.param(params); // always uses '&' as a separator
+
+			// ... fix that if needed
+			if (typeof set === 'string' && sep !== '&') {
+				params = params.replace('&', sep);
+			}
+		}
+		else {
+			params = '';
+		}
+
+		url += '?' + params;
+
+		// trim ? and & from the end
+		return url.replace(/[?&]+$/, '');
+	};
+
 	/////////////////////////////////////////////////////////////////////////////
 	// dom:loaded handler
 
@@ -543,7 +567,7 @@ var sly = sly || {};
 
 			var
 				className = $(this).attr('class'),
-				tableName = className.match(/filter_input_([a-zA-Z0-9-_]+)/)[1],
+				tableName = className.match(/filter_input_([a-zA-Z0-9_-]+)/)[1],
 				table     = $('#' + tableName),
 				c         = event.keyCode;
 
@@ -559,11 +583,13 @@ var sly = sly || {};
 				var keyword = new RegExp($(this).val(), 'i');
 
 				$('tbody tr', table).each(function() {
-					var row = $(this);
+					var
+						row  = $(this),
+						rows = $('td', row).filter(function() {
+							return keyword.test($(this).text());
+						});
 
-					$('td', row).filter(function() {
-						return keyword.test($(this).text());
-					}).length ? row.show() : row.hide();
+					row.toggle(rows.length > 0);
 				});
 			}
 		});
@@ -624,7 +650,7 @@ var sly = sly || {};
 				lngMonths:           sly.locale.months.join(','),
 				lngShortMonths:      sly.locale.shortMonths.join(','),
 				lngDays:             sly.locale.days.join(','),
-				lngShortDays:        sly.locale.shortDays.join(','),
+				lngShortDays:        sly.locale.shortDays.join(',')
 			});
 		}
 
@@ -772,8 +798,6 @@ var sly = sly || {};
 
 			// build POST data
 			var postData = {
-				page: 'addon',
-				func: func,
 				addon: row.data('key'),
 				json: 1
 			};
@@ -821,7 +845,7 @@ var sly = sly || {};
 
 			var performRequest = function() {
 				$.ajax({
-					url: 'index.php',
+					url: sly.getUrl('addon', func),
 					data: postData,
 					cache: false,
 					dataType: 'json',
