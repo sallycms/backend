@@ -186,7 +186,10 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 	protected function call($method, $i18n, $silent = false) {
 		extract($this->getServices());
-		$addon = $this->getAddOn();
+
+		$addon       = $this->getAddOn();
+		$container   = $this->getContainer();
+		$persistence = $container->getPersistence();
 
 		// check token here instead of in checkPermission() to handle the exception
 		// ourselves and send a proper JSON response
@@ -194,11 +197,15 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 		switch ($method) {
 			case 'install':
-				$manager->install($addon, true, sly_DB_Persistence::getInstance());
+				$manager->install($addon, true, $persistence, $container);
 				break;
 
 			case 'uninstall':
-				$manager->uninstall($addon, sly_DB_Persistence::getInstance());
+				$manager->uninstall($addon, $persistence, $container);
+				break;
+
+			case 'activate':
+				$manager->$method($addon, $container);
 				break;
 
 			default:
@@ -206,7 +213,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		}
 
 		if (!$silent) {
-			sly_Core::getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
+			$container->getFlashMessage()->appendInfo(t('addon_'.$i18n, $addon));
 		}
 	}
 
