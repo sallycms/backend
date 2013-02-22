@@ -80,7 +80,17 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	}
 
 	public function printFooter() {
-		print $this->renderView('bottom.phtml');
+		$container   = sly_Core::getContainer();
+		$user        = sly_Util_User::getCurrentUser();
+		$showCredits = $user && ($user->isAdmin() || $user->hasRight('apps', 'backend'));
+		$memory      = sly_Util_String::formatFilesize(memory_get_peak_usage());
+		$runtime     = null;
+
+		if ($container->has('sly-start-time')) {
+			$runtime = microtime(true) - $container->get('sly-start-time');
+		}
+
+		print $this->renderView('bottom.phtml', compact('user', 'memory', 'runtime', 'showCredits'));
 		parent::printFooter();
 	}
 
