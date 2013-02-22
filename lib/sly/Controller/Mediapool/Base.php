@@ -172,7 +172,6 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$filename = $medium->getFileName();
 		$user     = sly_Util_User::getCurrentUser();
 		$service  = sly_Service_Factory::getMediumService();
-		$flash   = sly_Core::getFlashMessage();
 
 		if ($this->canAccessCategory($medium->getCategoryId())) {
 			$usages = $this->isInUse($medium);
@@ -204,7 +203,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 				}
 
 				$tmp[] = '</ul>';
-				$flash->appendWarning(implode("\n", $tmp));
+				$msg->appendWarning(implode("\n", $tmp));
 			}
 		}
 		else {
