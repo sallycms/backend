@@ -9,31 +9,63 @@
  */
 
 class sly_Helper_Modernizr {
-	private static $data = null;
+	protected $request;
+	protected $name;
 
-	public static function hasCapability($test) {
-		$info = self::getCapabilities();
-		return isset($info[$test]) && $info[$test] === true;
+	const COOKIE_NAME = 'sly_modernizr';
+
+	/**
+	 * constructor
+	 *
+	 * @param sly_Request $request
+	 * @param string      $cookieName
+	 */
+	public function __construct(sly_Request $request, $cookieName = null) {
+		$this->request = $request;
+		$this->name    = $cookieName === null ? self::COOKIE_NAME : (string) $cookieName;
 	}
 
-	public static function getCapabilities() {
-		if (self::$data === null) {
-			$cookie = isset($_COOKIE['sly_modernizr']) ? $_COOKIE['sly_modernizr'] : 'false';
-			$cookie = @json_decode($cookie, true);
-
-			self::$data = $cookie;
-		}
-
-		return self::$data;
+	/**
+	 * check if the client has a given capability
+	 *
+	 * @param  string  $test  test name like 'filereader'
+	 * @return boolean
+	 */
+	public function hasCapability($test) {
+		$info = $this->getCapabilities();
+		return isset($info[$test]) && ((boolean) $info[$test]) === true;
 	}
 
-	public static function hasInputtype($type) {
-		$data = self::getCapabilities();
+	/**
+	 * get client capabilities
+	 *
+	 * @return mixed  array if cookie was set, else false
+	 */
+	public function getCapabilities() {
+		$value = $this->request->cookie($this->name, 'string', 'false');
+
+		return @json_decode($value, true);
+	}
+
+	/**
+	 * check if an input type is known
+	 *
+	 * @param  string  $type
+	 * @return boolean
+	 */
+	public function hasInputtype($type) {
+		$data = $this->getCapabilities();
 		return !empty($data['inputtypes'][$type]);
 	}
 
-	public static function hasInput($type) {
-		$data = self::getCapabilities();
+	/**
+	 * check if an input is known
+	 *
+	 * @param  string  $type
+	 * @return boolean
+	 */
+	public function hasInput($type) {
+		$data = $this->getCapabilities();
 		return !empty($data['input'][$type]);
 	}
 }
