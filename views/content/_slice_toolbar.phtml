@@ -29,7 +29,7 @@ else {
 }
 
 if (sly_Util_ArticleSlice::canDeleteModule($user, $module)) {
-	$listElements[] = '<a href="'.$_router->getUrl('content', 'deleteArticeSlice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
+	$listElements[] = '<a href="'.$_router->getUrl('content', 'deletearticleslice', $urlParams).'#messages" class="sly-delete sly-postlink">'.t('delete').'</a>';
 }
 
 if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_ArticleSlice::canMoveSlice($user, $slice)) {
