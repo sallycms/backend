@@ -496,6 +496,10 @@ var sly = sly || {};
 		});
 	};
 
+	sly.assetBaseUri = function(addon) {
+		return '../data/dyn/public/' + (addon ? (addon+'/') : '');
+	};
+
 	sly.getUrl = function(controller, action, params, sep) {
 		var url = './';
 
