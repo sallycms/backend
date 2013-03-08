@@ -198,8 +198,15 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function initI18N(sly_Container $container, $locale) {
-		$i18n = new sly_I18N($locale, SLY_SALLYFOLDER.'/backend/lang');
-		$container->setI18N($i18n);
+		if ($container->has('sly-i18n')) {
+			$i18n = $container->getI18N();
+		}
+		else {
+			$i18n = new sly_I18N($locale, null, false);
+			$container->setI18N($i18n);
+		}
+
+		$i18n->appendFile(SLY_SALLYFOLDER.'/backend/lang');
 	}
 
 	protected function getControllerFromRequest(sly_Request $request) {
