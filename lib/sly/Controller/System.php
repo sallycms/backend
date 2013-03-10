@@ -93,7 +93,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		$keys = array(
 			'START_ARTICLE_ID', 'NOTFOUND_ARTICLE_ID', 'DEFAULT_CLANG_ID', 'DEFAULT_ARTICLE_TYPE',
-			'DEVELOPER_MODE', 'DEFAULT_LOCALE', 'PROJECTNAME', 'CACHING_STRATEGY', 'TIMEZONE'
+			'environment', 'DEFAULT_LOCALE', 'PROJECTNAME', 'CACHING_STRATEGY', 'TIMEZONE'
 		);
 
 		// Änderungen speichern
@@ -184,7 +184,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		}
 
 		// misc
-		$conf->setLocal('DEVELOPER_MODE', $developerMode);
+		$conf->setLocal('environment', $developerMode ? 'dev' : 'prod');
 		$conf->set('PROJECTNAME', $projectName);
 
 		// notify system
