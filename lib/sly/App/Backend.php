@@ -174,7 +174,7 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function loadStaticConfig(sly_Container $container) {
-		$container->getConfig()->loadStatic(SLY_SALLYFOLDER.'/backend/config/static.yml');
+		$container->getConfig()->setStatic('/', sly_Util_YAML::load(SLY_SALLYFOLDER.'/backend/config/static.yml'));
 	}
 
 	protected function initLayout(sly_Container $container) {
