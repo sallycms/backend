@@ -243,7 +243,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$user = sly_Util_User::getCurrentUser();
 
 		if ($this->selectBox === null) {
-			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('category', null, $user);
+			$this->selectBox = sly_Backend_Form_Helper::getMediaCategorySelect('category', null, $user);
 			$this->selectBox->setLabel(t('categories'));
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());
