@@ -92,8 +92,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$timezone        = $request->post('timezone',         'string');
 
 		$keys = array(
-			'START_ARTICLE_ID', 'NOTFOUND_ARTICLE_ID', 'DEFAULT_CLANG_ID', 'DEFAULT_ARTICLE_TYPE',
-			'environment', 'DEFAULT_LOCALE', 'PROJECTNAME', 'CACHING_STRATEGY', 'TIMEZONE'
+			'start_article_id', 'notfound_article_id', 'default_clang_id', 'default_article_type',
+			'environment', 'default_locale', 'projectname', 'caching_strategy', 'timezone'
 		);
 
 		// Änderungen speichern
@@ -109,21 +109,21 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		}
 
 		if (sly_Util_Article::exists($startArticle)) {
-			$conf->set('START_ARTICLE_ID', $startArticle);
+			$conf->set('start_article_id', $startArticle);
 		}
 		elseif ($startArticle > 0) {
 			$flash->appendWarning(t('invalid_start_article_selected'));
 		}
 
 		if (sly_Util_Article::exists($notFoundArticle)) {
-			$conf->set('NOTFOUND_ARTICLE_ID', $notFoundArticle);
+			$conf->set('notfound_article_id', $notFoundArticle);
 		}
 		elseif ($notFoundArticle > 0) {
 			$flash->appendWarning(t('invalid_not_found_article_selected'));
 		}
 
 		if (sly_Util_Language::exists($defaultClang)) {
-			$conf->set('DEFAULT_CLANG_ID', $defaultClang);
+			$conf->set('default_clang_id', $defaultClang);
 		}
 		else {
 			$flash->appendWarning(t('invalid_default_language_selected'));
@@ -138,11 +138,11 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 				$flash->appendWarning(t('invalid_default_articletype_selected'));
 			}
 			else {
-				$conf->set('DEFAULT_ARTICLE_TYPE', $defaultType);
+				$conf->set('default_article_type', $defaultType);
 			}
 		}
 		catch (Exception $e) {
-			$conf->set('DEFAULT_ARTICLE_TYPE', '');
+			$conf->set('default_article_type', '');
 		}
 
 		// caching strategy
@@ -151,8 +151,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		if (!isset($strategies[$cachingStrategy])) {
 			$flash->appendWarning(t('invalid_caching_strategy_selected'));
 		}
-		elseif ($cachingStrategy !== $originals['CACHING_STRATEGY']) {
-			$conf->setLocal('CACHING_STRATEGY', $cachingStrategy);
+		elseif ($cachingStrategy !== $originals['caching_strategy']) {
+			$conf->set('caching_strategy', $cachingStrategy);
 
 			// make the container create a fresh cache instance once the next
 			// code requires the cache :-)
@@ -170,7 +170,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$flash->appendWarning(t('invalid_timezone_selected'));
 		}
 		else {
-			$conf->set('TIMEZONE', $timezone);
+			$conf->set('timezone', $timezone);
 		}
 
 		// backend default locale
@@ -180,13 +180,13 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$flash->appendWarning(t('invalid_locale_selected'));
 		}
 		else {
-			$conf->set('DEFAULT_LOCALE', $backendLocale);
+			$conf->set('default_locale', $backendLocale);
 		}
 
 		// misc
-		$conf->setLocal('environment', $developerMode ? 'dev' : 'prod');
-		$conf->set('PROJECTNAME', $projectName);
-
+		$conf->set('environment', $developerMode ? 'dev' : 'prod');
+		$conf->set('projectname', $projectName);
+		$conf->store();
 		// notify system
 		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
 
@@ -195,7 +195,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 	public function setupAction() {
 		$this->init();
-		sly_Core::config()->setLocal('SETUP', true);
+		sly_Core::config()->set('setup', true)->store();
 		$this->redirect(array(), '');
 	}
 
