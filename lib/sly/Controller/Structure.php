@@ -121,7 +121,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$this->catService->add($this->categoryId, $name, 0, $position);
+				$this->catService->add($this->categoryId, $name, $position);
 				$flash->prependInfo(t('category_added'), true);
 
 				return $this->redirectToCat();
@@ -145,7 +145,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$this->artService->add($this->categoryId, $name, 0, $position);
+				$this->artService->add($this->categoryId, $name, $position);
 				$flash->prependInfo(t('article_added'), true);
 
 				return $this->redirectToCat();
@@ -215,7 +215,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	protected function getBreadcrumb() {
 		$result = '';
-		$cat    = $this->catService->findById($this->categoryId);
+		$cat    = $this->catService->findByPK($this->categoryId, $this->clangId);
 		$router = $this->getContainer()->getApplication()->getRouter();
 
 		if ($cat) {
@@ -245,7 +245,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	protected function canEditCategory($categoryId) {
 		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditArticle($user, $categoryId);
+		return sly_Backend_Authorisation_Util::canEditArticle($user, $categoryId);
 	}
 
 	/**
@@ -267,7 +267,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	protected function canViewCategory($categoryId) {
 		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Category::canReadCategory($user, $categoryId);
+		return sly_Backend_Authorisation_Util::canReadCategory($user, $categoryId);
 	}
 
 	/**
@@ -278,7 +278,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 */
 	protected function canEditContent($articleId) {
 		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditContent($user, $articleId);
+		return sly_Backend_Authorisation_Util::canEditContent($user, $articleId);
 	}
 
 	/**
@@ -358,9 +358,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		// render flash message
 		print sly_Helper_Message::renderFlashMessage();
 
-		$currentCategory = $this->catService->findById($this->categoryId);
-		$categories      = $this->catService->findByParentId($this->categoryId, false);
-		$articles        = $this->artService->findArticlesByCategory($this->categoryId, false);
+		$currentCategory = $this->catService->findByPK($this->categoryId, $this->clangId);
+		$categories      = $this->catService->findByParentId($this->categoryId, $this->clangId, false);
+		$articles        = $this->artService->findArticlesByCategory($this->categoryId, $this->clangId, false);
 		$maxPosition     = $this->artService->getMaxPosition($this->categoryId);
 		$maxCatPosition  = $this->catService->getMaxPosition($this->categoryId);
 
@@ -399,14 +399,12 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$renderParams = array_merge($params, array(
 			'categories'      => $categories,
 			'currentCategory' => $currentCategory,
-			'statusTypes'     => $this->catService->getStates(),
 		));
 
 		$this->render(self::$viewPath.'category_table.phtml', $renderParams, false);
 
 		$renderParams = array_merge($params, array(
 			'articles'       => $articles,
-			'statusTypes'    => $this->artService->getStates(),
 		));
 
 		$this->render(self::$viewPath.'article_table.phtml', $renderParams, false);
