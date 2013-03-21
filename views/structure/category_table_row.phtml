@@ -10,18 +10,9 @@
 
 $viewURL      = $_router->getPlainUrl('structure', null, array('category_id' => $category->getId(), 'clang' => $this->clangId));
 $editParams   = array('category_id' => $category->getParentId(), 'clang' => $this->clangId, 'edit_id' => $category->getId());
-$status       = $statusTypes[$category->getStatus()][0];
-$status_class = $statusTypes[$category->getStatus()][1];
 
-if ($this->canPublishCategory($category->getId())) {
-	$status = '<a href="'.$_router->getUrl(null, 'editStatusCategory', $editParams).'" class="'.$status_class.' sly-postlink">'.$status.'</a>';
-}
-else {
-	$status_class .= ' sly-na';
-	$status = '<span class="'.$status_class.'">'.$status.'</span>';
-}
 ?>
-<tr data-slyid="<?php echo $category->getId() ?>" data-slystatus="<?php echo $category->getStatus() ?>">
+<tr data-slyid="<?php echo $category->getId() ?>">
 	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $category->getCatName(), 'category') ?></td>
 	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($category->getCatName()) ?></a></td>
 	<?php if ($isActive): ?>
@@ -38,6 +29,5 @@ else {
 			echo '<span class="sly-na">'.t('delete').'</span>';
 		}
 		?>
-		&nbsp;<?php echo $status ?>
 	</td>
 </tr>
