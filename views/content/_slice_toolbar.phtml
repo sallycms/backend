@@ -43,6 +43,7 @@ if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_Arti
 	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
 		'article_id' => $slice->getArticleId(),
 		'clang'      => $slice->getClang(),
+		'revision'   => $slice->getRevision(),
 		'ctype'      => $slot,
 		'slot'       => $slot,
 		'module'     => $module,

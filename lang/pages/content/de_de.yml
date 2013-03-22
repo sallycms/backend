@@ -30,3 +30,6 @@ article_content_copied: Die Inhalte des Artikels wurden kopiert.
 cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
 cannot_copy_article: Der Artikel konnte nicht kopiert werden!
 cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+
+contentmeta_revisions: Revisionen
+contentmeta_select_revision: Revision auswählen

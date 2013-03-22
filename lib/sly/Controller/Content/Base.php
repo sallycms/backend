@@ -13,12 +13,14 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected $slot;
 
 	protected function init() {
-		$request = $this->getRequest();
-		$id      = $request->request('article_id', 'int', 0);
+		$request  = $this->getRequest();
+		$id       = $request->request('article_id', 'int', 0);
+		$clang    = $request->request('clang',      'int', sly_Core::getDefaultClangId());
+		$revision = $request->request('revision',   'int', sly_Service_Article::FIND_REVISION_LATEST);
 
 		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
 
-		$this->article = sly_Util_Article::findById($id);
+		$this->article = $this->getContainer()->getArticleService()->findByPK($id, $clang, $revision);
 
 		if ($this->article === null) {
 			throw new sly_Exception(t('article_not_found', $id), 404);
@@ -66,7 +68,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
-				if (sly_Util_Category::canReadCategory($user, $parent->getId())) {
+				if (sly_Backend_Authorisation_Util::canReadCategory($user, $parent->getId())) {
 					$result .= '<li> : <a href="'.$router->getUrl('structure', null, array('category_id' => $parent->getId(), 'clang' => $clang)).'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
@@ -88,15 +90,13 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		else {
 			sly_Core::getLayout()->pageHeader(t('content'), $this->getBreadcrumb());
 
-			$art = $this->article;
-
 			$this->renderLanguageBar();
 
 			// extend menu
 			print sly_Core::dispatcher()->filter('PAGE_CONTENT_HEADER', '', array(
-				'article_id'  => $art->getId(),
-				'clang'       => $art->getClang(),
-				'category_id' => $art->getCategoryId()
+				'article_id'  => $this->article->getId(),
+				'clang'       => $this->article->getClang(),
+				'category_id' => $this->article->getCategoryId()
 			));
 
 			return true;
@@ -109,15 +109,14 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 		$request   = $this->getRequest();
 		$articleId = $request->request('article_id', 'int', 0);
-		$article   = sly_Util_Article::findById($articleId);
 
 		// all users are allowed to see the error message in init()
-		if ($article === null) return true;
+		if (!sly_Util_Article::exists($articleId)) return true;
 
 		$clang   = $this->container->getCurrentLanguageID();
 		$clangOk = sly_Util_Language::hasPermissionOnLanguage($user, $clang);
 		if (!$clangOk) return false;
 
-		return sly_Util_Article::canEditContent($user, $article->getId());
+		return sly_Backend_Authorisation_Util::canEditContent($user, $articleId);
 	}
 }

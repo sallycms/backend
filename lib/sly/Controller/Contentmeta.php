@@ -17,11 +17,12 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$post = $this->getRequest()->post;
 
 		$this->render('content/meta/index.phtml', array(
-			'article' => $this->article,
-			'slot'    => $this->slot,
-			'user'    => sly_Util_User::getCurrentUser(),
-			'clangA'  => $post->get('clang_a', 'int', $this->container->getCurrentLanguageID()),
-			'clangB'  => $post->get('clang_b', 'int')
+			'article'   => $this->article,
+			'slot'      => $this->slot,
+			'revisions' => $this->getContainer()->getArticleService()->findAllRevisions($this->article->getId(), $this->article->getclang()),
+			'user'      => sly_Util_User::getCurrentUser(),
+			'clangA'    => $post->get('clang_a', 'int', $this->container->getCurrentLanguageID()),
+			'clangB'    => $post->get('clang_b', 'int')
 		), false);
 	}
 
@@ -254,7 +255,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 */
 	protected function canConvertToStartArticle() {
 		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditArticle($user, $this->article->getCategoryId());
+		return sly_Backend_Authorisation_Util::canEditArticle($user, $this->article->getCategoryId());
 	}
 
 	/**
@@ -262,7 +263,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 */
 	protected function canCopyContent($clang_a, $clang_b) {
 		$user    = sly_Util_User::getCurrentUser();
-		$editok  = sly_Util_Article::canEditContent($user, $this->article->getId());
+		$editok  = sly_Backend_Authorisation_Util::canEditContent($user, $this->article->getId());
 		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
 		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
 
@@ -274,7 +275,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 */
 	protected function canCopyArticle($target) {
 		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditArticle($user, $target);
+		return sly_Backend_Authorisation_Util::canEditArticle($user, $target);
 	}
 
 	/**

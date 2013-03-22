@@ -30,3 +30,6 @@ article_content_copied: Article content has been copied.
 cannot_copy_article_content: 'Article content could not be copied!'
 cannot_copy_article: Article could not be moved!
 cannot_move_category: Category could not be moved!
+
+contentmeta_revisions: revisions
+contentmeta_select_revision: select revision

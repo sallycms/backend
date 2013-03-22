@@ -26,6 +26,7 @@ $form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POS
 $form->setEncType('multipart/form-data');
 $form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('clang', $article->getClang());
+$form->addHiddenValue('revision', $article->getRevision());
 $form->setSubmitButton(null);
 $form->setResetButton(null);
 
@@ -45,6 +46,26 @@ $form = $dispatcher->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
 
 /////////////////////////////////////////////////////////////////
 // misc
+
+// revision select
+
+if (count($revisions) > 1) {
+	$rowTpl       = '<div>%s&nbsp;<a href="%s">%s</a></div>';
+	$revisionRows = '';
+
+	foreach ($revisions as $revision) {
+		$revisionRows .= sprintf($rowTpl,
+				sly_Util_String::formatDatetime($revision->getCreateDate()),
+				$_router->getUrl('content', null, array('article_id' => $revision->getId(), 'clang' => $revision->getClang(), 'revision' => $revision->getRevision())),
+				t('contentmeta_select_revision')
+			);
+	}
+
+	$form->beginFieldset(t('contentmeta_revisions'), null);
+	$revSelect = new sly_Form_Freeform('revisions', t('contentmeta_revisions'), $revisionRows);
+	$form->addElement($revSelect);
+}
+
 
 // copy content
 

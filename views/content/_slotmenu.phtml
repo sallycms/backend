@@ -18,6 +18,7 @@ if (count($slots) < 2) return;
 
 $params['article_id'] = $article->getId();
 $params['clang']      = $article->getClang();
+$params['revision']        = $article->getRevision();
 $listElements         = array();
 
 foreach ($slots as $tmpSlot) {
