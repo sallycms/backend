@@ -51,8 +51,8 @@ $cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_s
 $developerMode   = new sly_Form_Input_Checkbox('developer_mode', t('developer_mode'), '1', t('enabled'));
 
 if (count($languages) === 1) {
-	$form->addHiddenValue('default_clang', sly_Core::getDefaultClangId());
-	$defaultClang = new sly_Form_Text(t('default_language'), sly_Core::getCurrentLanguage()->getName());
+	$form->addHiddenValue('default_clang', key($languages));
+	$defaultClang = new sly_Form_Text(t('default_language'), reset($languages));
 }
 else {
 	$defaultClang = new sly_Form_Select_DropDown('default_clang', t('default_language'), sly_Core::getDefaultClangId(), $languages);
