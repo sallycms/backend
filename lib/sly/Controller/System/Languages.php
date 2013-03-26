@@ -16,8 +16,8 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 	public function indexAction() {
 		$this->init();
 
-		$languageService = sly_Service_Factory::getLanguageService();
-		$this->languages = $languageService->find(null, null, 'id');
+		$languageService = $this->container->getLanguageService();
+		$this->languages = $languageService->findAll();
 
 		$this->render('system/languages.phtml', array(), false);
 	}
