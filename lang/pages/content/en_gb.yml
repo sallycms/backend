@@ -33,3 +33,4 @@ cannot_move_category: Category could not be moved!
 
 contentmeta_revisions: revisions
 contentmeta_select_revision: select revision
+create_time: Created at
