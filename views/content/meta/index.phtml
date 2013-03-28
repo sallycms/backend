@@ -59,7 +59,7 @@ if (count($revisions) > 1) {
 	foreach ($revisions as $revision) {
 		$selectUrl = $_router->getUrl('content', null, array('article_id' => $revision->getId(), 'clang' => $revision->getClang(), 'revision' => $revision->getRevision()));
 		?>
-		<tr data-slyonline="<?php echo $revision->isOnline() ? '1' : '0' ?>">
+		<tr data-slyid="<?php echo $revision->getId() ?>" data-slyclang="<?php echo $revision->getClang() ?>" data-slyrevision="<?php echo $revision->getRevision() ?>" data-slyonline="<?php echo $revision->isOnline() ? '1' : '0' ?>">
 			<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink('', $article->getName(), 'article') ?></td>
 			<td class="sly-col-created <?php echo $revision->isOnline() ? 'sly-online' : 'sly-offline' ?>"><?php echo sly_Util_String::formatDatetime($revision->getCreateDate()) ?></td>
 			<td class="sly-col-user"><?php echo $revision->getCreateUser() ?></td>
