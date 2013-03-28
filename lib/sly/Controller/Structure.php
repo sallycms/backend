@@ -249,17 +249,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	}
 
 	/**
-	 * checks if a user can change a category's status
-	 *
-	 * @param  int $categoryId
-	 * @return boolean
-	 */
-	protected function canPublishCategory($categoryId) {
-		$user = sly_Util_User::getCurrentUser();
-		return $user->isAdmin() || $user->hasRight('article', 'publish', 0) || $user->hasRight('article', 'publish', $categoryId);
-	}
-
-	/**
 	 * checks if a user can view a category
 	 *
 	 * @param  int $categoryId
@@ -309,15 +298,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			return $this->canViewCategory($categoryId);
 		}
 
-		if (sly_Util_String::startsWith($action, 'editstatus')) {
-			if ($action === 'editstatuscategory') {
-				return $this->canPublishCategory($editId);
-			}
-			else {
-				return $this->canPublishCategory($categoryId);
-			}
-		}
-		elseif (sly_Util_String::startsWith($action, 'edit') || sly_Util_String::startsWith($action, 'delete')) {
+		if (sly_Util_String::startsWith($action, 'edit') || sly_Util_String::startsWith($action, 'delete')) {
 			return $this->canEditCategory($editId);
 		}
 		elseif (sly_Util_String::startsWith($action, 'add')) {
