@@ -28,7 +28,7 @@ class sly_Helper_Message {
 		return self::message($message, 'sly-warn');
 	}
 
-	public static function renderFlashMessage(sly_Util_Flash $message = null) {
+	public static function renderFlashMessage(sly_Util_FlashMessage $message = null) {
 		$msg      = $message === null ? sly_Core::getFlashMessage() : $message;
 		$messages = $msg->getMessages();
 		$result   = array();
