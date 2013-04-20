@@ -206,6 +206,10 @@ class sly_App_Backend extends sly_App_Base {
 			$container->setI18N($i18n);
 		}
 
+		if (strtolower($locale) !== strtolower($i18n->getLocale())) {
+			$i18n->setLocale($locale);
+		}
+
 		$i18n->appendFile(SLY_SALLYFOLDER.'/backend/lang');
 	}
 
