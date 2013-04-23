@@ -12,7 +12,7 @@ $viewURL      = $_router->getPlainUrl('structure', null, array('category_id' => 
 $editParams   = array('category_id' => $category->getParentId(), 'clang' => $this->clangId, 'edit_id' => $category->getId());
 
 ?>
-<tr data-slyid="<?php echo $category->getId() ?>">
+<tr data-slyid="<?php echo $category->getId() ?>" data-slyonline="<?php echo $article->isOnline() ?>">
 	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $category->getCatName(), 'category') ?></td>
 	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($category->getCatName()) ?></a></td>
 	<?php if ($isActive): ?>

@@ -29,7 +29,7 @@ else {
 	$type = t('no_articletype');
 }
 ?>
-<tr data-slyid="<?php echo $article->getId() ?>" data-slytype="<?php echo $article->getType() ?>">
+<tr data-slyid="<?php echo $article->getId() ?>" data-slytype="<?php echo $article->getType() ?>" data-slyonline="<?php echo $article->isOnline() ?>">
 	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $article->getName(), $sprite) ?></td>
 	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($article->getName()) ?></a></td>
 	<td class="sly-col-arttype"><?php echo sly_html($type) ?></td>
