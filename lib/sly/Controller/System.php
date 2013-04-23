@@ -36,9 +36,6 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		// control over what caches get cleared
 		clearstatcache();
 
-		// clear loader cache
-		sly_Loader::clearCache();
-
 		// clear our own data caches
 		if ($this->isCacheSelected('sly_core')) {
 			sly_Core::cache()->flush('sly', true);
