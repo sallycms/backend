@@ -50,7 +50,8 @@ $form = $dispatcher->filter('SLY_ART_META_FORM_FIELDSET', $form, $params);
 // revision select
 
 if (count($revisions) > 1) {
-	$table = new sly_Table('sly-article-revisions');
+	$form->beginFieldset('', 'sly-article-revisions');
+	$table = new sly_Table('sly-article-revisions-table');
 	$table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created', '', array('colspan' => '2')));
 	$table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
 	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
@@ -69,7 +70,7 @@ if (count($revisions) > 1) {
 	}
 
 	$table->closeBuffer();
-	$revSelect = new sly_Form_Fragment('</div>'.$table->render().'<div class="sly-form-wrapper"');
+	$revSelect = new sly_Form_Fragment($table->render());
 	$form->addElement($revSelect);
 }
 
@@ -114,7 +115,7 @@ if ($this->canMoveArticle()) {
 	$form->beginFieldset(t('move_article'));
 	$form->add($select);
 
-	sly_Backend_Helper_Content::metaFormAddButtonBar($form, t('move_article'), 'move_article');
+	sly_Helper_Content::metaFormAddButtonBar($form, t('move_article'), 'move_article');
 }
 
 // copy article
