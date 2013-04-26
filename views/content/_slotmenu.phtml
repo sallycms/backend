@@ -9,8 +9,8 @@
  */
 
 if (!$article->hasTemplate()) return;
-
-$templateService = sly_Service_Factory::getTemplateService();
+$container       = sly_Core::getContainer();
+$templateService = $container->getTemplateService();
 $templateName    = $article->getTemplateName();
 $slots           = $templateService->getSlots($templateName);
 

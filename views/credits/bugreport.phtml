@@ -49,11 +49,11 @@ $sysinfo = array(
 );
 
 // add addon details
-
-$service  = sly_Service_Factory::getAddOnService();
-$pservice = $service->getPackageService();
-$list     = $service->getRegisteredAddOns();
-$isEmpty  = true;
+$container = sly_Core::getContainer();
+$service   = $container->getAddOnService();
+$pservice  = $service->getPackageService();
+$list      = $service->getRegisteredAddOns();
+$isEmpty   = true;
 
 foreach ($list as $addon) {
 	if (!$service->isInstalled($addon)) continue;

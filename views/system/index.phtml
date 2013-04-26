@@ -8,16 +8,6 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$config    = sly_Core::config();
-$locales   = $this->getBackendLocales();
-$yesNo     = array('true' => t('yes'), 'false' => t('no'));
-$types     = array('' => t('no_articletype'));
-$languages = sly_Util_Language::findAll();
-
-foreach ($languages as $id => $language) {
-	$languages[$id] = $language->getName();
-}
-
 print sly_Helper_Message::renderFlashMessage();
 
 // build form
@@ -28,17 +18,15 @@ $form->setApplyButton();
 $form->setResetButton();
 
 // build form elements
-
-try {
-	$typeService = sly_Service_Factory::getArticleTypeService();
-	$types       = array_merge($types, $typeService->getArticleTypes());
-}
-catch (Exception $e) {
-	// pass...
-}
+$config = sly_Core::config();
+$yesNo  = array('true' => t('yes'), 'false' => t('no'));
 
 foreach ($types as $key => $name) {
 	$types[$key] = sly_translate($name);
+}
+
+foreach ($languages as $id => $language) {
+	$languages[$id] = $language->getName();
 }
 
 $timezoneSelect  = sly_Backend_Form_Helper::getTimezoneSelect();
@@ -121,19 +109,16 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 
 			<h4><?php print t('database_connection') ?></h4>
 			<p><?php
-			$database = $config->get('DATABASE');
-			$pdo      = sly_DB_Persistence::getInstance()->getPDO();
-			$version  = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
 
-			if (strtolower($database['DRIVER']) === 'sqlite') {
-				print sly_html(sprintf('%s.sq3 (v%s)', $database['NAME'], $version));
+			if (strtolower($database['driver']) === 'sqlite') {
+				print sly_html(sprintf('%s.sq3 (v%s)', $database['name'], $database['version']));
 			}
 			else {
-				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['LOGIN'], $database['HOST'], $database['NAME'], $version));
+				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['login'], $database['host'], $database['name'], $database['version']));
 			}
 
-			if (strtolower($database['DRIVER']) !== 'mysql') {
-				printf(' (%s)', strtolower($database['DRIVER']));
+			if (strtolower($database['driver']) !== 'mysql') {
+				printf(' (%s)', strtolower($database['driver']));
 			}
 			?>
 		</div>

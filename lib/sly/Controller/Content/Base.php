@@ -32,7 +32,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		// validate slot
 		if ($this->article->hasTemplate()) {
 			$templateName = $this->article->getTemplateName();
-			$tplService   = sly_Service_Factory::getTemplateService();
+			$tplService   = $this->getContainer()->getTemplateService();
 
 			if (!$tplService->hasSlot($templateName, $this->slot)) {
 				$this->slot = $tplService->getFirstSlot($templateName);

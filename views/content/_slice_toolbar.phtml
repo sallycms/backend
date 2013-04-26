@@ -8,13 +8,14 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+$container    = sly_Core::getContainer();
 $user         = sly_Util_User::getCurrentUser();
 $module       = $slice->getModule();
 $slot         = $slice->getSlot();
-$service      = sly_Service_Factory::getModuleService();
+$service      = $container->getModuleService();
 $urlParams    = array('article_id' => $slice->getArticleId(), 'slice_id' => $slice->getId(), 'clang' => $slice->getClang());
 $listElements = array();
-$allowed      = sly_Service_Factory::getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
+$allowed      = $container->getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
 
 if (!$service->exists($module)) {
 	$moduleName = $module;
@@ -67,7 +68,7 @@ if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_Arti
 $warning = null;
 
 if (!$allowed) {
-	$slotTitle = sly_Service_Factory::getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
+	$slotTitle = $container->getTemplateService()->getSlotTitle($slice->getArticle()->getTemplateName(), $slot);
 	$warning   = t('module_not_allowed_in_slot', $moduleName, $slotTitle);
 }
 

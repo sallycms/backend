@@ -36,7 +36,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		$request = $this->getRequest();
 		$media   = $request->postArray('selectedmedia', 'int');
 		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getMediumService();
+		$service = $this->getContainer()->getMediumService();
 
 		// check selection
 

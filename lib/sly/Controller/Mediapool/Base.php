@@ -104,7 +104,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->category === null) {
 			$request  = $this->getRequest();
 			$category = $request->request('category', 'int', -1);
-			$service  = sly_Service_Factory::getMediaCategoryService();
+			$service  = $this->getContainer()->getMediaCategoryService();
 			$session  = sly_Core::getSession();
 
 			if ($category === -1) {
@@ -171,7 +171,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg, $revalidate = true) {
 		$filename = $medium->getFileName();
 		$user     = sly_Util_User::getCurrentUser();
-		$service  = sly_Service_Factory::getMediumService();
+		$service  = $this->getContainer()->getMediumService();
 
 		if ($this->canAccessCategory($medium->getCategoryId())) {
 			$usages = $this->isInUse($medium);
@@ -330,7 +330,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 	protected function revalidate() {
 		// re-validate asset cache
-		sly_Service_Factory::getAssetService()->validateCache();
+		$this->getContainer()->getAssetService()->validateCache();
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {

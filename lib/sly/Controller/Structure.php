@@ -33,8 +33,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected function init() {
 		$this->categoryId = $this->getRequest()->request('category_id', 'int', 0);
 		$this->clangId    = $this->getRequest()->request('clang', 'int', sly_Core::getDefaultClangId());
-		$this->artService = sly_Service_Factory::getArticleService();
-		$this->catService = sly_Service_Factory::getCategoryService();
+		$this->artService = $this->getContainer()->getArticleService();
+		$this->catService = $this->getContainer()->getCategoryService();
 	}
 
 	public function indexAction() {

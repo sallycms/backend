@@ -18,7 +18,7 @@ else {
 $viewURL      = $_router->getPlainUrl('content', null, array('article_id' => $article->getId(), 'clang' => $this->clangId));
 $editParams   = array('category_id' => $article->getCategoryId(), 'clang' => $this->clangId, 'edit_id' => $article->getId());
 
-$service  = sly_Service_Factory::getArticleTypeService();
+$service  = sly_Core::getContainer()->getArticleTypeService();
 $type     = $article->getType();
 
 if ($type) {
