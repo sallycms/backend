@@ -103,8 +103,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function convertToStartArticle() {
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$flash   = $this->getContainer()->getFlashMessage();
+		$service = $this->getContainer()->getArticleService();
 
 		try {
 			$service->convertToStartArticle($this->article->getId());
@@ -148,7 +148,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			}
 
 			try {
-				sly_Service_Factory::getArticleService()->copyContent($articleID, $articleID, $srcClang, $targetClang);
+				$this->getContainer()->getArticleService()->copyContent($articleID, $articleID, $srcClang, $targetClang);
 				$infos[$targetClang] = t('article_content_copied');
 			}
 			catch (sly_Exception $e) {
@@ -180,7 +180,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	private function moveArticle() {
 		$target  = $this->getRequest()->post('category_id_new', 'int', 0);
 		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$service = $this->getContainer()->getArticleService();
 
 		if ($this->canMoveArticle()) {
 			try {
@@ -201,7 +201,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	private function copyArticle() {
 		$target  = $this->getRequest()->post('category_copy_id_new', 'int', 0);
 		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$service = $this->getContainer()->getArticleService();
 
 		if ($this->canCopyArticle($target)) {
 			try {
@@ -225,7 +225,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$target  = $this->getRequest()->post('category_id_new', 'int');
 		$user    = sly_Util_User::getCurrentUser();
 		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getCategoryService();
+		$service = $this->getContainer()->getCategoryService();
 
 		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
 			try {

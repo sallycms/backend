@@ -13,7 +13,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->init();
 		if ($this->header() !== true) return;
 
-		$service = sly_Service_Factory::getArticleTypeService();
+		$service = $this->getContainer()->getArticleTypeService();
 		$types   = $service->getArticleTypes();
 		$modules = array();
 
@@ -79,7 +79,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				if ($user->isAdmin()) return true;
 
 				if ($forceModule === null) {
-					$sliceservice = sly_Service_Factory::getArticleSliceService();
+					$sliceservice = $this->getContainer()->getArticleSliceService();
 					$slice_id     = $request->post('slice_id', 'int', 0);
 					$slice        = $sliceservice->findById($slice_id);
 					$module       = $slice ? $slice->getModule() : null;
@@ -101,11 +101,11 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->init();
 
 		$type    = $this->getRequest()->post('article_type', 'string', '');
-		$service = sly_Service_Factory::getArticleTypeService();
+		$service = $this->getContainer()->getArticleTypeService();
 
 		if (!empty($type) && $service->exists($type, true)) {
-			$service = sly_Service_Factory::getArticleService();
-			$flash   = sly_Core::getFlashMessage();
+			$service = $this->getContainer()->getArticleService();
+			$flash   = $this->getContainer()->getFlashMessage();
 
 			// change type and update database
 			$service->setType($this->article, $type);
@@ -134,7 +134,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			// check permission
 			if (sly_Util_ArticleSlice::canMoveSlice($user, $slice_id)) {
-				$success = sly_Service_Factory::getArticleSliceService()->move($slice_id, $direction);
+				$success = $this->getContainer()->getArticleSliceService()->move($slice_id, $direction);
 
 				if ($success) {
 					$flash->appendInfo(t('slice_moved'));
@@ -161,7 +161,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$flash     = sly_Core::getFlashMessage();
 
 		if ($slicedata['SAVE'] === true) {
-			$service  = sly_Service_Factory::getArticleSliceService();
+			$service  = $this->getContainer()->getArticleSliceService();
 			$pos      = $request->post('pos', 'int', 0);
 			$instance = $service->add($this->article, $this->slot, $module, $slicedata['VALUES'], $pos);
 
@@ -184,8 +184,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->init();
 
 		$request             = $this->getRequest();
-		$articleSliceService = sly_Service_Factory::getArticleSliceService();
-		$sliceService        = sly_Service_Factory::getSliceService();
+		$articleSliceService = $this->getContainer()->getArticleSliceService();
+		$sliceService        = $this->getContainer()->getSliceService();
 		$slice_id            = $request->post('slice_id', 'int', 0);
 		$articleSlice        = $articleSliceService->findById($slice_id);
 		$flash               = sly_Core::getFlashMessage();
@@ -275,14 +275,14 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$flash = sly_Core::getFlashMessage();
 
 		if ($function !== 'delete') {
-			if (!sly_Service_Factory::getModuleService()->exists($module)) {
+			if (!$this->getContainer()->getModuleService()->exists($module)) {
 				$flash->appendWarning(t('module_not_found'));
 				return false;
 			}
 
-			if (!sly_Service_Factory::getArticleTypeService()->hasModule($this->article->getType(), $module, $this->slot)) {
+			if (!$this->getContainer()->getArticleTypeService()->hasModule($this->article->getType(), $module, $this->slot)) {
 				$slotTitle  = $templateService->getSlotTitle($templateName, $this->slot);
-				$moduleName = sly_Service_Factory::getModuleService()->getTitle($module);
+				$moduleName = $this->getContainer()->getModuleService()->getTitle($module);
 
 				$flash->appendWarning(t('module_not_allowed_in_slot', $moduleName, $slotTitle));
 				return false;
@@ -318,7 +318,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$flash      = sly_Core::getFlashMessage();
 		$dispatcher = sly_Core::dispatcher();
 
-		sly_Service_Factory::getArticleService()->touch($this->article, $user);
+		$this->getContainer()->getArticleService()->touch($this->article, $user);
 
 		$dispatcher->notify('SLY_SLICE_POSTSAVE_'.strtoupper($function), $articleSliceId);
 		$dispatcher->notify('SLY_CONTENT_UPDATED', $this->article, array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));

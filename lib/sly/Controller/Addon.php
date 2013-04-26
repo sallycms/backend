@@ -62,9 +62,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 */
 	protected function getServices() {
 		return array(
-			'aservice' => sly_Service_Factory::getAddOnService(),
-			'manager'  => sly_Service_Factory::getAddOnManagerService(),
-			'pservice' => sly_Service_Factory::getAddOnPackageService()
+			'aservice' => $this->getContainer()->getAddOnService(),
+			'manager'  => $this->getContainer()->getAddOnManagerService(),
+			'pservice' => $this->getContainer()->getAddOnPackageService()
 		);
 	}
 

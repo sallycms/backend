@@ -31,7 +31,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$password = $request->post('userpsw', 'string');
 			$login    = $request->post('userlogin', 'string');
 			$timezone = $request->post('timezone', 'string');
-			$service  = sly_Service_Factory::getUserService();
+			$service  = $this->getUserService();
 			$flash    = sly_Core::getFlashMessage();
 			$newuser  = new sly_Model_User();
 
@@ -82,7 +82,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		$request     = $this->getRequest();
 		$save        = $request->isMethod('POST');
-		$service     = sly_Service_Factory::getUserService();
+		$service     = $this->getUserService();
 		$currentUser = sly_Util_User::getCurrentUser();
 		$isSelf      = $currentUser->getId() === $user->getId();
 		$isAdmin     = $currentUser->isAdmin();
@@ -169,7 +169,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			return $this->redirectResponse();
 		}
 
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$current = sly_Util_User::getCurrentUser();
 		$flash   = sly_Core::getFlashMessage();
 
@@ -233,7 +233,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		$search  = sly_Table::getSearchParameters('users');
 		$paging  = sly_Table::getPagingParameters('users', true, false);
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$where   = null;
 
 		if (!empty($search)) {
@@ -255,7 +255,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	protected function getUser($forcePost = false) {
 		$request = $this->getRequest();
 		$userID  = $forcePost ? $request->post('id', 'int', 0) : $request->request('id', 'int', 0);
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$user    = $service->findById($userID);
 
 		return $user;
@@ -275,7 +275,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	protected function getPossibleStartpages() {
-		$service = sly_Service_Factory::getAddOnService();
+		$service = $this->getContainer()->getAddOnService();
 		$addons  = $service->getAvailableAddOns();
 
 		$startpages = array();
@@ -292,5 +292,9 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		}
 
 		return $startpages;
+	}
+
+	protected function getUserService() {
+		return $this->getContainer()->getUserService();
 	}
 }

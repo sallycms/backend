@@ -22,15 +22,32 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function indexAction() {
 		$this->init();
 
+		$container = $this->getContainer();
+
 		// it's not perfect, but let's check whether the setup app actually
 		// exists before showing the 'Setup' button inside the form.
 		$hasSetupApp = is_dir(SLY_SALLYFOLDER.'/setup');
+		$locales             = $this->getBackendLocales();
+		$languages           = sly_Util_Language::findAll();
+		$database            = $container->getConfig()->get('database');
+		$database['version'] = $container->getPersistence()->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION);
+		$types               = array('' => t('no_articletype'));
 
-		$this->render('system/index.phtml', compact('hasSetupApp'), false);
+		try {
+			$typeService = $this->getContainer()->getArticleTypeService();
+			$types       = array_merge($types, $typeService->getArticleTypes());
+		}
+		catch (Exception $e) {
+			// pass...
+		}
+
+		$this->render('system/index.phtml', compact('hasSetupApp', 'locales', 'languages', 'database', 'types'), false);
 	}
 
 	public function clearcacheAction() {
 		$this->init();
+
+		$container = $this->getContainer();
 
 		// do not call sly_Core::clearCache(), since we want to have fine-grained
 		// control over what caches get cleared
@@ -43,8 +60,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// sync develop files
 		if ($this->isCacheSelected('sly_develop')) {
-			sly_Service_Factory::getTemplateService()->refresh();
-			sly_Service_Factory::getModuleService()->refresh();
+			$container->getTemplateService()->refresh();
+			$container->getModuleService()->refresh();
 		}
 
 		// re-initialize assets of all installed addOns
@@ -129,7 +146,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		// Standard-Artikeltyp
 
 		try {
-			$service = sly_Service_Factory::getArticleTypeService();
+			$service = $this->getContainer()->getArticleTypeService();
 
 			if (!empty($defaultType) && !$service->exists($defaultType)) {
 				$flash->appendWarning(t('invalid_default_articletype_selected'));

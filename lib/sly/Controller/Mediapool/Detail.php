@@ -76,7 +76,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 				$medium->setTitle($title);
 				$medium->setCategoryId($target);
 
-				$service = sly_Service_Factory::getMediumService();
+				$service = $this->getContainer()->getMediumService();
 				$service->update($medium);
 
 				$flash->appendInfo(t('medium_updated'));
@@ -118,7 +118,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 		$request  = $this->getRequest();
 		$fileID   = $forcePost ? $request->post('file_id', 'int', -1)      : $request->request('file_id', 'int', -1);
 		$fileName = $forcePost ? $request->post('file_name', 'string', '') : $request->request('file_name', 'string', '');
-		$service  = sly_Service_Factory::getMediumService();
+		$service  = $this->getContainer()->getMediumService();
 
 		if (mb_strlen($fileName) > 0) {
 			$media = $service->find(array('filename' => $fileName), null, null, 'LIMIT 1');

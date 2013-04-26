@@ -48,7 +48,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		// Passwort ändern?
 
 		$password = $request->post('password', 'string');
-		$service  = sly_Service_Factory::getUserService();
+		$service  = $this->getContainer()->getUserService();
 
 		if (!empty($password)) {
 			$user->setPassword($password);

@@ -13,7 +13,7 @@
  */
 class sly_Helper_Content {
 	public static function printAddSliceForm($module, $position, $articleId, $clang, $slot) {
-		$moduleService = sly_Service_Factory::getModuleService();
+		$moduleService = sly_Core::getContainer()->getModuleService();
 		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
 		if (!$moduleService->exists($module)) {
@@ -63,7 +63,7 @@ class sly_Helper_Content {
 	}
 
 	public static function printEditSliceForm(sly_Model_ArticleSlice $articleSlice, $values = array()) {
-		$moduleService = sly_Service_Factory::getModuleService();
+		$moduleService = sly_Core::getContainer()->getModuleService();
 		$module        = $articleSlice->getModule();
 		$moduleTitle   = $moduleService->getTitle($module);
 		$router        = sly_Core::getContainer()->getApplication()->getRouter();

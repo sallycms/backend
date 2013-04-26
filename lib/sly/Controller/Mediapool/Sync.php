@@ -73,7 +73,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 
 		// create and save the file
 
-		$service = sly_Service_Factory::getMediumService();
+		$service = $this->getContainer()->getMediumService();
 
 		try {
 			$service->add($newName, $title, $category);

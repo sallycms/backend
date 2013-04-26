@@ -18,7 +18,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$service  = sly_Service_Factory::getMediaCategoryService();
+			$service  = $this->getContainer()->getMediaCategoryService();
 			$name     = $request->post('catname', 'string', '');
 			$parentID = $request->post('cat_id', 'int', 0);
 			$flash    = sly_Core::getFlashMessage();
@@ -43,7 +43,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 
 		if ($request->isMethod('POST')) {
 			$editID   = $request->post('edit_id', 'int', 0);
-			$service  = sly_Service_Factory::getMediaCategoryService();
+			$service  = $this->getContainer()->getMediaCategoryService();
 			$category = $service->findById($editID);
 
 			if ($category) {
@@ -68,7 +68,7 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 
 	public function deleteAction() {
 		$editID   = $this->getRequest()->post('edit_id', 'int', 0);
-		$service  = sly_Service_Factory::getMediaCategoryService();
+		$service  = $this->getContainer()->getMediaCategoryService();
 		$category = $service->findById($editID);
 
 		if ($category) {
