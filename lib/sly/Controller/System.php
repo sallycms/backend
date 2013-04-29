@@ -168,6 +168,11 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		elseif ($cachingStrategy !== $originals['caching_strategy']) {
 			$conf->set('caching_strategy', $cachingStrategy);
 
+			// flush the old cache
+			// we are no messies
+			$cache = $container->getCache();
+			$cache->flush('sly');
+
 			// make the container create a fresh cache instance once the next
 			// code requires the cache :-)
 			$container['sly-cache'] = $container->share(function($container) use ($cachingStrategy) {
