@@ -10,8 +10,8 @@
 
 abstract class sly_Controller_Backend extends sly_Controller_Base {
 	public function __construct() {
-		$this->setContentType('text/html');
-		$this->setCharset('UTF-8');
+		$response = sly_Core::getContainer()->get('sly-response');
+		$response->setContentType('text/html', 'UTF-8');
 	}
 
 	protected function getViewFolder() {
