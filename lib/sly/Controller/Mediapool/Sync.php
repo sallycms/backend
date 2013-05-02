@@ -85,8 +85,10 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	protected function getFilesFromFilesystem() {
-		$dir = new sly_Util_Directory(SLY_MEDIAFOLDER);
-		return $dir->listPlain(true, false);
+		$dir   = new sly_Util_Directory(SLY_MEDIAFOLDER);
+		$files = $dir->listPlain(true, false);
+
+		return $files ?: array();
 	}
 
 	protected function getFilesFromDatabase() {
