@@ -237,7 +237,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$where   = null;
 
 		if (!empty($search)) {
-			$db    = sly_DB_Persistence::getInstance();
+			$db    = $this->getContainer()->getPersistence();
 			$where = 'login LIKE ? OR description LIKE ? OR name LIKE ?';
 			$where = str_replace('?', $db->quote('%'.$search.'%'), $where);
 		}

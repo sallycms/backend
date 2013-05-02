@@ -90,7 +90,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	protected function getFilesFromDatabase() {
-		$db    = sly_DB_Persistence::getInstance();
+		$db    = $this->getContainer()->getPersistence();
 		$files = array();
 
 		$db->select('file', 'filename');
