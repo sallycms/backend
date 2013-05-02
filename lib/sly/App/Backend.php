@@ -186,13 +186,13 @@ class sly_App_Backend extends sly_App_Base {
 
 		// be the first to init the layout later on, after the possibly available
 		// auth provider has been setup by external addOns / frontend code.
-		$container->getDispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
+		$container->getDispatcher()->addListener('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
 	}
 
 	/**
 	 * Event handler
 	 */
-	public function initNavigation(array $params) {
+	public function initNavigation() {
 		$layout = $this->getContainer()->getLayout();
 		$layout->getNavigation()->init();
 	}
