@@ -41,11 +41,12 @@ class sly_Backend_Authorisation_Util {
 					$path = '|%';
 				}
 
-				$query  = sly_DB_Persistence::getInstance();
-				$prefix = $query->getPrefix();
-				$query->query('SELECT DISTINCT id FROM '.$prefix.'article WHERE path LIKE ?', array($path));
+				$persistence = sly_Core::getContainer()->getPersistence();
+				$prefix      = $query->getPrefix();
 
-				foreach ($query as $row) {
+				$persistence->query('SELECT DISTINCT id FROM '.$prefix.'article WHERE path LIKE ?', array($path));
+
+				foreach ($persistence->all() as $row) {
 					if (self::canEditContent($user, $row['id'])) {
 						$canReadCache[$userID][$categoryID] = true;
 						break;

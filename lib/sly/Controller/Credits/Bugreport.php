@@ -34,9 +34,9 @@ class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements
 		switch ($driver) {
 			case 'mysql':
 			case 'pgsql':
-				$db = sly_DB_Persistence::getInstance();
+				$db = sly_Core::getContainer()->getPersistence();
 				$db->query('SELECT VERSION()');
-				foreach ($db as $row) $version = reset($row);
+				foreach ($db->all() as $row) $version = reset($row);
 				break;
 
 			case 'sqlite':
