@@ -13,16 +13,21 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	protected $clangId;
 	protected $artService;
 	protected $catService;
+	protected $dontRedirect;
 
 	public static $viewPath = 'structure/';
 
 	public function __construct($dontRedirect = false) {
-		parent::__construct();
+		$this->dontRedirect = $dontRedirect;
 
-		if (!$dontRedirect) {
+		parent::__construct();
+	}
+
+	protected function redirectToBaseLanguage() {
+		if (!$this->dontRedirect) {
 			$user    = sly_Util_User::getCurrentUser();
 			$allowed = $user->getAllowedCLangs();
-			$request = sly_Core::getRequest(); // has not yet been set by dispatcher
+			$request = $this->getRequest();
 
 			if (!empty($user) && !empty($allowed) && $request->request('clang', 'int', -1) === -1 && !in_array(sly_Core::getDefaultClangId(), $allowed)) {
 				$this->redirect(array('clang' => reset($allowed)));
@@ -35,6 +40,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$this->clangId    = $this->getRequest()->request('clang', 'int', sly_Core::getDefaultClangId());
 		$this->artService = $this->getContainer()->getArticleService();
 		$this->catService = $this->getContainer()->getCategoryService();
+
+		$this->redirectToBaseLanguage();
 	}
 
 	public function indexAction() {
@@ -292,6 +299,9 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 
 		if ($user->isAdmin()) return true;
 		if (!$user->hasRight('pages', 'structure')) return false;
+
+		$this->redirectToBaseLanguage();
+
 		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clang)) return false;
 
 		if ($action === 'index') {

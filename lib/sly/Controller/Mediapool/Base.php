@@ -195,7 +195,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 					$title = sly_html($usage['title']);
 
 					if (!empty($usage['link'])) {
-						$tmp[] = '<li><a href="javascript:openPage('.json_encode($usage['link']).')">'.$title.'</a></li>';
+						$tmp[] = '<li><a class="sly-blank" target="_blank" href="'.$usage['link'].'">'.$title.'</a></li>';
 					}
 					else {
 						$tmp[] = '<li>'.$title.'</li>';
