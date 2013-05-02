@@ -1,0 +1,103 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+// Navigation erzeugen
+print '<dl class="sly-navigation">';
+
+$nav    = $this->getNavigation();
+$groups = $nav->getGroups();
+
+// give addons a way to alter the menu a last time
+$nav = sly_Core::dispatcher()->filter('SLY_LAYOUT_NAVI', $nav, array('layout' => $this));
+
+foreach ($groups as $group) {
+	$topic    = $group->getName();
+	$headline = $group->getTitle();
+	$pages    = $group->getPages();
+	$count    = 0;
+
+	foreach ($pages as $page) {
+		if ($page->isHidden()) continue;
+		++$count;
+	}
+
+	if ($count == 0) continue;
+
+	print '<dt>'.$headline.'</dt><dd>';
+	print '<ul id="sly-navi-'.$topic.'">';
+
+	$first   = true;
+
+	// Sort the addon group automatically, since we can't load the addOns in
+	// a translated sorted way.
+
+	if ($topic === 'addon') {
+		$group->sortPages();
+		$pages = $group->getPages();
+	}
+
+	foreach ($pages as $page) {
+		if ($page->isHidden()) continue;
+
+		$liclass  = 'sly-navigation-level-1';
+		$liclass .= $page->isActive() ? ' sly-active' : '';
+		$liclass .= $page->isPopup()  ? ' popup'      : '';
+		$li       = array(
+			'class' => $liclass,
+			'id'    => 'sly-navi-page-'.$page->getPageParam()
+		);
+
+		$a = array('href' => $_router->getPlainUrl($page->getPageParam()));
+
+		if ($first) {
+			$li['class'] .= ' sly-first';
+		}
+
+		$a['class'] = $li['class'];
+
+		$p        = $page->getName();
+		$subpages = $page->getSubpages();
+		$liAttr   = sly_Util_HTML::buildAttributeString($li);
+		$aAttr    = sly_Util_HTML::buildAttributeString($a);
+
+		print '<li '.$liAttr.'><a '.$aAttr.'>'.$page->getTitle().'</a>';
+
+		// ***** Subnavi
+		if ($page->isActive() && !empty($subpages)) {
+			print '<ul>';
+			$first = true;
+
+			foreach ($subpages as $sp) {
+				$param = $sp->getPageParam();
+				$class = 'sly-navigation-level-2';
+				$id    = 'sly-navi-'.$p.'-subpage-'.$param;
+				$href  = $_router->getPlainUrl($param, '', $sp->getExtraParams());
+
+				if ($first)          $class .= ' sly-first';
+				if ($sp->isActive()) $class .= ' sly-active';
+
+				$liAttr = sly_Util_HTML::buildAttributeString(array('class' => $class, 'id' => $id));
+				$aAttr  = sly_Util_HTML::buildAttributeString(array('class' => $class, 'href' => $href));
+
+				print '<li '.$liAttr.'><a '.$aAttr.'>'.$sp->getTitle().'</a></li>';
+				$first = false;
+			}
+
+			print '</ul>';
+		}
+
+		print '</li>';
+		$first = false;
+	}
+
+	print '</ul></dd>';
+}
+
+print '</dl>';

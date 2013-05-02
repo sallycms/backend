@@ -1,0 +1,26 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$module  = $slice->getModule();
+$service = sly_Core::getContainer()->getModuleService();
+
+if (!$service->exists($module)) {
+	print sly_Helper_Message::warn(t('module_not_found', $module));
+	return;
+}
+
+// render output *before* outputting anything, so that when an exception is
+// thrown, we don't end up with invalid HTML
+$output = $slice->getOutput();
+
+?>
+<div class="sly-contentpage-slice-output">
+	<?php echo $output ?>
+</div>
