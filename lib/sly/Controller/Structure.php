@@ -177,7 +177,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$this->catService->edit($editId, $this->clangId, $name, $position);
+				$editCategory = $this->catService->findByPK($editId, $this->clangId, \sly_Service_Category::FIND_REVISION_LATEST);
+				$this->catService->edit($editCategory, $name, $position);
 				$flash->prependInfo(t('category_updated'), true);
 
 				return $this->redirectToCat();
@@ -202,7 +203,8 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$this->artService->edit($editId, $this->clangId, $name, $position);
+				$editArticle = $this->artService->findByPK($editId, $this->clangId, \sly_Service_Article::FIND_REVISION_LATEST);
+				$this->artService->edit($editArticle, $name, $position);
 				$flash->prependInfo(t('article_updated'), true);
 
 				return $this->redirectToCat();
