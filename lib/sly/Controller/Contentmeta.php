@@ -200,8 +200,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		if ($this->canCopyArticle($target)) {
 			try {
-				$newID         = $service->copy($this->article->getId(), $target);
-				$this->article = sly_Util_Article::findById($newID);
+				$this->article = $service->copy($this->article->getId(), $target);
 
 				$flash->appendInfo(t('article_copied'));
 			}
