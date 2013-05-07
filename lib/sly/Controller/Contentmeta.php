@@ -84,12 +84,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function saveMeta() {
-		$name    = $this->getRequest()->post('meta_article_name', 'string');
 		$flash   = sly_Core::getFlashMessage();
-		$service = $this->getContainer()->getArticleService();
-
-		$service->edit($this->article, $name);
-		$this->article = $service->findByPK($this->article->getId(), $this->article->getClang(), sly_Service_Article::FIND_REVISION_LATEST);
 
 		// notify system
 		$flash->appendInfo(t('metadata_updated'));
