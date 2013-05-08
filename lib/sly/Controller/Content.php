@@ -109,8 +109,14 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			// change type and update database
 			$service->setType($this->article, $type);
+			$this->article = $this->getContainer()->getArticleService()->findByPK($this->article->getId(), $this->article->getClang(), sly_Service_Article::FIND_REVISION_LATEST);
 			$flash->appendInfo(t('article_updated'));
 		}
+
+		sly_Core::dispatcher()->notify('SLY_ART_META_UPDATED', $this->article, array(
+			'id'    => $this->article->getId(),   // deprecated
+			'clang' => $this->article->getClang() // deprecated
+		));
 
 		return $this->redirectToArticle('', null);
 	}

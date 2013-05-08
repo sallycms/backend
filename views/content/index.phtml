@@ -20,6 +20,7 @@ $hasTemplate = $article->hasTemplate();
 $form->setEncType('multipart/form-data');
 $form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('clang', $article->getClang());
+$form->addHiddenValue('revision', $article->getRevision());
 
 /////////////////////////////////////////////////////////////////
 // article type
