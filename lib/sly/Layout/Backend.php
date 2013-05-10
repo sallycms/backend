@@ -19,7 +19,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 	public function __construct(sly_I18N $i18n, sly_Configuration $config, sly_Request $request) {
 		$locale  = $i18n->getLocale();
 		$favicon = $config->get('backend/favicon');
-		$project = $config->get('PROJECTNAME');
+		$project = $config->get('projectname');
 		$base    = $request->getBaseUrl(true).'/';
 
 		$this->addCSSFile('assets/css/import.less');
