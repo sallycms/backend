@@ -44,4 +44,8 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 	protected function redirectResponse($params = array(), $controller = null, $action = null, $code = 302) {
 		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
 	}
+
+	protected function getCurrentUser() {
+		return $this->getContainer()->getUserService()->getCurrentUser();
+	}
 }
