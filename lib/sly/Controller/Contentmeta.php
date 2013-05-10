@@ -21,7 +21,6 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			'slot'      => $this->slot,
 			'revisions' => $this->getContainer()->getArticleService()->findAllRevisions($this->article->getId(), $this->article->getclang()),
 			'user'      => sly_Util_User::getCurrentUser(),
-			'clangA'    => $post->get('clang_a', 'int', $this->container->getCurrentLanguageID()),
 			'clangB'    => $post->get('clang_b', 'int')
 		), false);
 	}
@@ -113,13 +112,12 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function copyContent() {
-		$request   = $this->getRequest();
-		$srcClang  = $request->post('clang_a', 'int', 0);
-		$dstClangs = array_unique($request->postArray('clang_b', 'int'));
-		$user      = sly_Util_User::getCurrentUser();
-		$infos     = array();
-		$errs      = array();
-		$articleID = $this->article->getId();
+		$request        = $this->getRequest();
+		$dstClangs      = array_unique($request->postArray('clang_b', 'int'));
+		$user           = sly_Util_User::getCurrentUser();
+		$infos          = array();
+		$errs           = array();
+		$articleService = $this->getContainer()->getArticleService();
 
 		if (empty($dstClangs)) {
 			throw new sly_Authorisation_Exception(t('no_language_selected'));
@@ -137,13 +135,18 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 				continue;
 			}
 
-			if (!$this->canCopyContent($srcClang, $targetClang)) {
+			if (!$this->canCopyContent($targetClang)) {
 				$errs[$targetClang] = t('no_rights_to_this_function');
 				continue;
 			}
 
 			try {
-				$this->getContainer()->getArticleService()->copyContent($articleID, $articleID, $srcClang, $targetClang);
+				if ($targetClang === $this->article->getClang()) {
+					continue;
+				}
+				$target = $articleService->findByPK($this->article->getId(), $targetClang, \sly_Service_Article::FIND_REVISION_LATEST);
+				$target = $articleService->touch($target);
+				$this->getContainer()->getArticleService()->copyContent($this->article, $target, $user);
 				$infos[$targetClang] = t('article_content_copied');
 			}
 			catch (sly_Exception $e) {
@@ -166,7 +169,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		$flash = sly_Core::getFlashMessage();
 
-		foreach ($infos as $msg) $flash->appendInfo($info);
+		foreach ($infos as $msg) $flash->appendInfo($msg);
 		foreach ($errs  as $msg) $flash->appendWarning($msg);
 
 		return $this->redirectToArticle();
@@ -257,11 +260,10 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyContent($clang_a, $clang_b) {
+	protected function canCopyContent($clang_b) {
 		$user    = sly_Util_User::getCurrentUser();
 		$editok  = sly_Backend_Authorisation_Util::canEditContent($user, $this->article->getId());
-		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
-		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
+		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
 
 		return $editok && $clangok;
 	}
