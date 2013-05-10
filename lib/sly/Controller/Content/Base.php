@@ -18,8 +18,6 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		$clang    = $request->request('clang',      'int', sly_Core::getDefaultClangId());
 		$revision = $request->request('revision',   'int', sly_Service_Article::FIND_REVISION_LATEST);
 
-		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/content/');
-
 		$this->article = $this->getContainer()->getArticleService()->findByPK($id, $clang, $revision);
 
 		if ($this->article === null) {
