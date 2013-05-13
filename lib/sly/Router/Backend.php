@@ -63,7 +63,7 @@ class sly_Router_Backend extends sly_Router_Base {
 		$user         = $container->getUserService()->getCurrentUser();
 		$alternatives = array_filter(array(
 			$user ? $user->getStartpage() : null,
-			strtolower($config->get('START_PAGE')),
+			strtolower($config->get('backend/start_page')),
 			'profile'
 		));
 
