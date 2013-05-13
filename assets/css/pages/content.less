@@ -1,0 +1,243 @@
+.sly-content-header {
+	margin-bottom: 10px;
+	.clearfix;
+
+	ul {
+		padding: 5px 0; /*  Abstand oben und unten */
+
+		li {
+			display: inline;
+			margin: 0 0 0 5px; /* Abstand der Listenelemente zu einander, s. Buttons Editier-Modus etc. */
+		}
+	}
+
+	.sly-navi-slots   { float: left;  }
+	.sly-navi-content { float: right; }
+
+	a {
+		background-color: #fff;
+		padding: 2px 8px;
+		color: #1f9eb5;
+		.border-radius(3px);
+
+		&:hover {
+			background-color: #b3b3b3;
+			color: #fff;
+		}
+
+		&.sly-active {
+			background-color: @drk_grey;
+			color: #fff;
+
+			&:hover { background-color: #b3b3b3; }
+		}
+	}
+}
+
+/* add block widget */
+.sly-form-add-slice {
+	.sly-form-wrapper {
+		.border-top-radius(4px);
+		background-color: #e8e8e8;
+		margin-bottom: 10px;
+	}
+
+	legend, label { .hide; }
+	select.sly-module-select { width: 100%; }
+}
+
+/*	Editmode */
+.sly-slice-toolbar {
+	width: 100%;
+	line-height: 35px;
+	background-color: @drk_grey;
+	.border-radius(4px 4px 0 0);
+	.clearfix;
+
+	h3 {
+		float: left;
+		vertical-align: middle;
+		color: #fff;
+		font-size: 1.1em;
+		margin: 0 0 0 10px;
+	}
+
+	.sly-slice-actions {
+		float: right;
+		margin-right: 5px; /* Schiebt die Edit, Delete- und Pfeil-Buttons rein*/
+	}
+}
+
+/* slice toolbar */
+.sly-slice-actions li {
+	display: block;
+	float: left;
+	margin-top: 8px;
+	margin-left: 5px;
+
+	a {
+		display: block;
+		color: #fff;
+		font-size: 1em;
+		height: 20px;
+		background-color: @link_color;
+		line-height: 20px;
+		padding: 0 2px 0 20px;
+		background-repeat: no-repeat;
+		.border-radius(3px);
+
+		&.sly-edit, &.sly-delete {
+			padding-right: 8px;
+		}
+
+		/* Editbutton auf Artikelseite */
+		&.sly-edit {
+			background-image: url(../background_btn_edit.png);
+			background-position: 6px 0;
+
+			&:hover {
+				background-color: #4bcee4;
+			}
+		}
+
+		/* Löschen-Button */
+		&.sly-delete {
+			background-image: url(../background_btn_dlt.png);
+			background-position: 6px 0;
+
+			&:hover {
+				background-color: #4bcee4;
+			}
+		}
+
+		/*  Pfeil-Buttons */
+		&.sly-up,
+		&.sly-down {
+			width: 0;
+
+			&:hover {
+				background-color: #4bcee4;
+			}
+		}
+
+		&.sly-down {
+			background-image: url(../background_btn_down.png);
+			background-position: 7px 0;
+		}
+
+		&.sly-up {
+			background-image: url(../background_btn_up.png);
+			background-position: 7px 0;
+		}
+	}
+}
+
+.sly-contentpage-slice-output {
+	background-color: #e8e8e8;
+	padding: 14px;
+	.border-bottom-radius(4px);
+	margin: 0 0 10px;
+	color: #999;
+
+	h1 { font-size: 2em;   }
+	h2 { font-size: 1.6em; }
+	h3 { font-size: 1.4em; }
+	h4 { font-size: 1.2em; }
+	h5 { font-size: 1.1em; }
+	h6 { font-size: 1em;   }
+
+	h1, h2, h3, h4, h5, h6, p { margin : 0 0 10px 0; }
+	ul, ol { margin : 0 0 10px 20px; }
+}
+
+.sly-contentpage-slice-input {
+	label, input, select, textarea, .sly-widget {
+		margin: 8px 0;
+	}
+
+	.sly-widget {
+		float: left;
+
+		input, select {
+			margin: 0;
+		}
+	}
+
+	.row {
+		border-top: 1px dotted @md_grey;
+		padding-left: 7px;
+		padding-right: 7px;
+
+		&:first-child {
+			border-top: 0 none;
+		}
+	}
+
+	.sly-form-helptext {
+		margin-top: 0px;
+	}
+
+	.sly-form {
+
+		label, input, select, textarea, .sly-widget {
+			margin: 0px;
+		}
+
+		legend {
+			background: @md_grey;
+			.border-radius(0);
+		}
+
+		.sly-form-wrapper {
+			margin-bottom: 0;
+		}
+
+		.sly-form-helptext {
+			margin-top: 5px;
+		}
+
+		.sly-form-row {
+			label {
+				margin: inherit;
+			}
+
+			input, select, textarea {
+				margin: 0;
+			}
+		}
+	}
+}
+
+/* styling for slice edit submit row */
+.sly-contentpage-slice-input + .sly-form-row {
+	clear: both;
+	border: 0;
+	.border-bottom-radius(4px);
+	background-color: @md_grey;
+
+	input {
+		margin-bottom: 0;
+	}
+}
+
+#freeform-for-revisions {
+	> div {
+		width: 638px;
+		float: right;
+		padding: 5px 0;
+		border-bottom: 1px dotted @md_grey;
+	}
+	a {
+		float: right;
+	}
+}
+
+#sly-article-revisions-table {
+	th {
+		font-size: 1.1em;
+
+		&.sly-col-created {
+			padding-left: 40px;
+		}
+	}
+}

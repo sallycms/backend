@@ -1,0 +1,42 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$selected   = $this->getCurrentCategory();
+$dispatcher = sly_Core::dispatcher();
+
+////////////////////////////////////////////////////////
+// header
+
+print $dispatcher->filter('PAGE_MEDIAPOOL_HEADER', '', array('category_id' => $selected));
+
+////////////////////////////////////////////////////////
+// category selection form
+
+$select = $this->getCategorySelect();
+$values = $select->getValues();
+
+if (count($values) > 1 || $dispatcher->hasListeners('SLY_MEDIA_LIST_TOOLBAR')) {
+	$form = new sly_Form($_router->getPlainUrl(null), 'GET', t('select_category'), '', 'sly-form-mediapool-selectcategory');
+	$form->setCsrfEnabled(false);
+	$form->setResetButton(null);
+	$form->setSubmitButton(null);
+	$this->appendParamsToForm($form);
+
+	if (count($values) > 1) {
+		$select->setAttribute('onchange', 'this.form.submit()');
+		$form->add($select);
+	}
+
+	$form = $dispatcher->filter('SLY_MEDIA_LIST_TOOLBAR', $form, array('category_id' => $selected));
+
+	if ($form instanceof sly_Form) {
+		print $form->render();
+	}
+}
