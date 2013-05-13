@@ -49,40 +49,6 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$this->view('index');
 	}
 
-	public function editstatuscategoryAction() {
-		$this->init();
-
-		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
-
-		try {
-			$this->catService->changeStatus($editId, $this->clangId);
-			$flash->prependInfo(t('category_status_updated'), true);
-		}
-		catch (Exception $e) {
-			$flash->prependWarning($e->getMessage(), true);
-		}
-
-		return $this->redirectToCat();
-	}
-
-	public function editstatusarticleAction() {
-		$this->init();
-
-		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
-
-		try {
-			$this->artService->changeStatus($editId, $this->clangId);
-			$flash->prependInfo(t('article_status_updated'), true);
-		}
-		catch (Exception $e) {
-			$flash->prependWarning($e->getMessage());
-		}
-
-		return $this->redirectToCat();
-	}
-
 	public function deletecategoryAction() {
 		$this->init();
 
@@ -177,7 +143,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$editCategory = $this->catService->findByPK($editId, $this->clangId, \sly_Service_Category::FIND_REVISION_LATEST);
+				$editCategory = $this->catService->findByPK($editId, $this->clangId);
 				$this->catService->edit($editCategory, $name, $position);
 				$flash->prependInfo(t('category_updated'), true);
 
@@ -203,7 +169,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash    = sly_Core::getFlashMessage();
 
 			try {
-				$editArticle = $this->artService->findByPK($editId, $this->clangId, \sly_Service_Article::FIND_REVISION_LATEST);
+				$editArticle = $this->artService->findByPK($editId, $this->clangId);
 				$this->artService->edit($editArticle, $name, $position);
 				$flash->prependInfo(t('article_updated'), true);
 
