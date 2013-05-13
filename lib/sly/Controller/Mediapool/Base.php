@@ -299,7 +299,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$filename = addslashes($medium->getFilename());
 		$prefix   = $sql->getPrefix();
 		$query    =
-			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
+			'SELECT s.article_id, s.clang s.revision FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
 			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
 			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
 
@@ -311,12 +311,12 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		foreach ($sql as $row) $res[] = $row;
 
 		foreach ($res as $row) {
-			$article = sly_Util_Article::findById($row['article_id'], $row['clang']);
+			$article = sly_Util_Article::findById($row['article_id'], $row['clang'], $row['revision']);
 
 			$usages[] = array(
 				'title' => $article->getName(),
 				'type'  => 'sly-article',
-				'link'  => $router->getPlainUrl('content', null, array('article_id' => $row['article_id'], 'clang' => $row['clang']))
+				'link'  => $router->getPlainUrl('content', null, array('article_id' => $row['article_id'], 'clang' => $row['clang'], 'revision' => $row['revision']))
 			);
 		}
 
