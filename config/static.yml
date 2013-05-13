@@ -1,5 +1,4 @@
-RELOGINDELAY: 2
-START_PAGE: structure
+relogindelay: 2
 authorisation:
   apps:
     token:
@@ -50,3 +49,4 @@ authorisation:
       delete: 'translate:delete'
 backend:
   favicon: backend/assets/favicon.ico
+  start_page: structure
