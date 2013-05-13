@@ -144,9 +144,9 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 				if ($targetClang === $this->article->getClang()) {
 					continue;
 				}
-				$target = $articleService->findByPK($this->article->getId(), $targetClang, \sly_Service_Article::FIND_REVISION_LATEST);
+				$target = $articleService->findByPK($this->article->getId(), $targetClang);
 				$target = $articleService->touch($target);
-				$this->getContainer()->getArticleService()->copyContent($this->article, $target, $user);
+				$articleService->copyContent($this->article, $target, $user);
 				$infos[$targetClang] = t('article_content_copied');
 			}
 			catch (sly_Exception $e) {
@@ -169,8 +169,13 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		$flash = sly_Core::getFlashMessage();
 
-		foreach ($infos as $msg) $flash->appendInfo($msg);
-		foreach ($errs  as $msg) $flash->appendWarning($msg);
+		foreach ($infos as $msg) {
+			$flash->appendInfo($msg);
+		}
+
+		foreach ($errs as $msg) {
+			$flash->appendWarning($msg);
+		}
 
 		return $this->redirectToArticle();
 	}
@@ -224,7 +229,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$flash   = sly_Core::getFlashMessage();
 		$service = $this->getContainer()->getCategoryService();
 
-		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
+		if ($this->canMoveCategory() && \sly_Backend_Authorisation_Util::canEditArticle($user, $target)) {
 			try {
 				$service->move($this->article->getCategoryId(), $target);
 				$flash->appendInfo(t('category_moved'));

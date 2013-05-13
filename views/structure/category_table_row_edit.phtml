@@ -25,7 +25,7 @@ $pos     = $request->post('category_position', 'int', $category->getCatPosition(
 </tr>
 <?php
 
-print sly_Core::dispatcher()->filter('CAT_FORM_EDIT', '', array(
+print sly_Core::dispatcher()->filter('SLY_CAT_FORM_EDIT', '', array(
 	'category'     => $category,
 	'data_colspan' => 4
 ));

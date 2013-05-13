@@ -109,7 +109,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			// change type and update database
 			$service->setType($this->article, $type);
-			$this->article = $this->getContainer()->getArticleService()->findByPK($this->article->getId(), $this->article->getClang(), sly_Service_Article::FIND_REVISION_LATEST);
+			$this->article = $service->findByPK($this->article->getId(), $this->article->getClang());
 			$flash->appendInfo(t('article_updated'));
 		}
 
