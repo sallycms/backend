@@ -294,7 +294,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$filename = addslashes($medium->getFilename());
 		$prefix   = $sql->getPrefix();
 		$query    =
-			'SELECT s.article_id, s.clang s.revision FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
+			'SELECT s.article_id, s.clang, s.revision FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
 			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
 			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
 
