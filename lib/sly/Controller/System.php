@@ -64,11 +64,6 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$container->getModuleService()->refresh();
 		}
 
-		// clear asset cache (force this if the assets have been re-initialized)
-		if ($this->isCacheSelected('sly_asset') || $this->isCacheSelected('sly_reinit_addons')) {
-			$this->getContainer()->getAssetService()->clearCache();
-		}
-
 		sly_Core::getFlashMessage()->addInfo(t('delete_cache_message'));
 		sly_Core::dispatcher()->notify('SLY_CACHE_CLEARED', null, array('backend' => true));
 

@@ -64,10 +64,8 @@ $form->addElements(array($projectName, $startArticle, $notFound, $defaultType, $
 // caching form
 
 $caches = array(
-	'sly_core'          => t('sally_core_cache'),
-	'sly_asset'         => t('sally_assetcache'),
-	'sly_develop'       => t('sally_develop_content'),
-	'sly_reinit_addons' => t('reinit_all_addon_assets')
+	'sly_core'    => t('sally_core_cache'),
+	'sly_develop' => t('sally_develop_content')
 );
 
 $selected = array_keys($caches);
