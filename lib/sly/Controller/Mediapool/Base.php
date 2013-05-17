@@ -163,9 +163,9 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return $files;
 	}
 
-	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg, $revalidate = true) {
+	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg) {
 		$filename = $medium->getFileName();
-		$user     = sly_Util_User::getCurrentUser();
+		$user     = $this->getCurrentUser();
 		$service  = $this->getContainer()->getMediumService();
 
 		if ($this->canAccessCategory($medium->getCategoryId())) {
@@ -174,7 +174,6 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			if ($usages === false) {
 				try {
 					$service->deleteByMedium($medium);
-					if ($revalidate) $this->revalidate();
 					$msg->appendInfo($filename.': '.t('medium_deleted'));
 				}
 				catch (sly_Exception $e) {
@@ -207,7 +206,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 
 		if (!$user || (!$user->isAdmin() && !$user->hasRight('pages', 'mediapool'))) {
 			return false;
@@ -221,7 +220,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function isMediaAdmin() {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('mediacategory', 'access', sly_Authorisation_ListProvider::ALL);
 	}
 
@@ -230,12 +229,12 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function canAccessCategory($cat) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $this->isMediaAdmin() || $user->hasRight('mediacategory', 'access', intval($cat));
 	}
 
 	protected function getCategorySelect() {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 
 		if ($this->selectBox === null) {
 			$this->selectBox = sly_Backend_Form_Helper::getMediaCategorySelect('category', null, $user);
@@ -321,11 +320,6 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		));
 
 		return empty($usages) ? false : $usages;
-	}
-
-	protected function revalidate() {
-		// re-validate asset cache
-		$this->getContainer()->getAssetService()->validateCache();
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {
