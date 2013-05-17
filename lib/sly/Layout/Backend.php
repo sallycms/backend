@@ -21,18 +21,19 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$favicon = $config->get('backend/favicon');
 		$project = $config->get('projectname');
 		$base    = $request->getBaseUrl(true).'/';
+		$baseUri = '../assets/app/backend/';
 
-		$this->addCSSFile('assets/css/import.less');
+		$this->addCSSFile($baseUri.'css/import.less');
 
-		$this->addJavaScriptFile('assets/js/modernizr.min.js');
-		$this->addJavaScriptFile('assets/js/iso8601.min.js', 'if lt IE 8');
-		$this->addJavaScriptFile('assets/js/jquery.min.js');
-		$this->addJavaScriptFile('assets/js/json2.min.js');
-		$this->addJavaScriptFile('assets/js/jquery.chosen.min.js');
-		$this->addJavaScriptFile('assets/js/jquery.tools.min.js');
-		$this->addJavaScriptFile('assets/js/jquery.datetime.min.js');
-		$this->addJavaScriptFile('assets/js/locales/'.$locale.'.min.js');
-		$this->addJavaScriptFile('assets/js/standard.min.js');
+		$this->addJavaScriptFile($baseUri.'js/modernizr.min.js');
+		$this->addJavaScriptFile($baseUri.'js/iso8601.min.js', 'if lt IE 8');
+		$this->addJavaScriptFile($baseUri.'js/jquery.min.js');
+		$this->addJavaScriptFile($baseUri.'js/json2.min.js');
+		$this->addJavaScriptFile($baseUri.'js/jquery.chosen.min.js');
+		$this->addJavaScriptFile($baseUri.'js/jquery.tools.min.js');
+		$this->addJavaScriptFile($baseUri.'js/jquery.datetime.min.js');
+		$this->addJavaScriptFile($baseUri.'js/locales/'.$locale.'.min.js');
+		$this->addJavaScriptFile($baseUri.'js/standard.min.js');
 
 		if ($project) {
 			$this->setTitle($project.' - ');
