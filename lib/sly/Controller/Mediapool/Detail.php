@@ -25,7 +25,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 		if ($retval) return $retval;
 
 		if (!$this->canAccessFile($this->medium)) {
-			sly_Core::getFlashMessage()->appendWarning(t('no_permission'));
+			$this->getContainer()->getFlashMessage()->appendWarning(t('no_permission'));
 			return $this->indexView();
 		}
 
@@ -37,10 +37,11 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 	}
 
 	protected function performUpdate() {
-		$medium  = $this->medium;
-		$request = $this->getRequest();
-		$target  = $request->post('category', 'int', $medium->getCategoryId());
-		$flash   = sly_Core::getFlashMessage();
+		$medium    = $this->medium;
+		$container = $this->getContainer();
+		$request   = $this->getRequest();
+		$flash     = $container->getFlashMessage();
+		$target    = $request->post('category', 'int', $medium->getCategoryId());
 
 		// only continue if a file was found, we can access it and have access
 		// to the target category
@@ -52,40 +53,30 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 
 		// update our file
 
-		$title = $request->post('title', 'string');
+		$title   = $request->post('title', 'string');
+		$service = $container->getMediumService();
+		$files   = $request->files;
 
-		// upload new file or just change file properties?
+		$medium->setTitle($title);
+		$medium->setCategoryId($target);
 
-		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
-			try {
-				sly_Util_Medium::upload($_FILES['file_new'], $target, $title, $medium);
+		// upload new file or just change file properties
 
-				$flash->appendInfo(t('file_changed'));
-
-				return $this->redirectResponse(array('file_id' => $medium->getId()));
-			}
-			catch (Exception $e) {
-				$code = $e->getCode();
-				$msg  = t($code === sly_Util_Medium::ERR_TYPE_MISMATCH ? 'types_of_old_and_new_do_not_match' : 'an_error_happened_during_upload');
-
-				$flash->appendWarning($msg);
-			}
-		}
-		else {
-			try {
-				$medium->setTitle($title);
-				$medium->setCategoryId($target);
-
-				$service = $this->getContainer()->getMediumService();
+		try {
+			if (!empty($files['file_new']['name']) && $files['file_new']['name'] !== 'none') {
+				$service->replaceByUpload($medium, $files['file_new']);
 				$service->update($medium);
-
+				$flash->appendInfo(t('file_changed'));
+			}
+			else {
+				$service->update($medium);
 				$flash->appendInfo(t('medium_updated'));
+			}
 
-				return $this->redirectResponse(array('file_id' => $medium->getId()));
-			}
-			catch (Exception $e) {
-				$flash->appendWarning($e->getMessage());
-			}
+			return $this->redirectResponse(array('file_id' => $medium->getId()));
+		}
+		catch (Exception $e) {
+			$flash->appendWarning($e->getMessage());
 		}
 
 		return $this->indexView();
