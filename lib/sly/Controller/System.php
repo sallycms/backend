@@ -64,17 +64,6 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$container->getModuleService()->refresh();
 		}
 
-		// re-initialize assets of all installed addOns
-		if ($this->isCacheSelected('sly_reinit_addons')) {
-			$addonService = $this->getContainer()->getAddOnService();
-			$addonMngr    = $this->getContainer()->getAddOnManagerService();
-			$addOns       = $addonService->getInstalledAddOns();
-
-			foreach ($addOns as $addOn) {
-				$addonMngr->copyAssets($addOn);
-			}
-		}
-
 		// clear asset cache (force this if the assets have been re-initialized)
 		if ($this->isCacheSelected('sly_asset') || $this->isCacheSelected('sly_reinit_addons')) {
 			$this->getContainer()->getAssetService()->clearCache();

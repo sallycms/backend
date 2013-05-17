@@ -128,17 +128,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		return $this->sendResponse();
 	}
 
-	public function reinitAction() {
-		try {
-			$this->call('copyAssets', 'assets_copied');
-		}
-		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
-		}
-
-		return $this->sendResponse();
-	}
-
 	public function fullinstallAction() {
 		$this->init();
 
