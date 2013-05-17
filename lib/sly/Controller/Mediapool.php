@@ -33,10 +33,11 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 			return $this->indexAction();
 		}
 
-		$request = $this->getRequest();
-		$media   = $request->postArray('selectedmedia', 'int');
-		$flash   = sly_Core::getFlashMessage();
-		$service = $this->getContainer()->getMediumService();
+		$container = $this->getContainer();
+		$request   = $this->getRequest();
+		$service   = $container->getMediumService();
+		$flash     = $container->getFlashMessage();
+		$media     = $request->postArray('selectedmedia', 'int');
 
 		// check selection
 
@@ -48,7 +49,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		// pre-filter the selected media
 
 		foreach ($media as $idx => $mediumID) {
-			$medium = sly_Util_Medium::findById($mediumID);
+			$medium = $service->findById($mediumID);
 
 			if (!$medium) {
 				$flash->appendWarning(t('file_not_found', $mediumID));
@@ -63,7 +64,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 
 		if ($request->post->has('delete')) {
 			foreach ($media as $medium) {
-				$this->deleteMedium($medium, $flash, false);
+				$this->deleteMedium($medium, $flash);
 			}
 		}
 		else {
@@ -74,9 +75,6 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 
 			$flash->appendInfo(t('selected_files_moved'));
 		}
-
-		// refresh asset cache
-		$this->revalidate();
 
 		return $this->redirectResponse();
 	}
