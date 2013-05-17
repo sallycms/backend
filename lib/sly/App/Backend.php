@@ -211,6 +211,7 @@ class sly_App_Backend extends sly_App_Base {
 		}
 
 		$i18n->appendFile(SLY_SALLYFOLDER.'/backend/lang');
+		$i18n->setPHPLocale();
 	}
 
 	protected function getControllerFromRequest(sly_Request $request) {
