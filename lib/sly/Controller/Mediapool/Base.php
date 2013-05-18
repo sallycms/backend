@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+use sly\Assets\Util;
+
 abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $args;
 	protected $category;
@@ -286,19 +288,19 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		);
 
 		$extension = $medium->getExtension();
-		$base      = '../assets/app/backend/mime/';
+		$base      = 'mime/';
 
 		if (!$medium->exists()) {
-			return $base.'missing.png';
+			return Util::appUri($base.'missing.png');
 		}
 
 		foreach ($mapping as $type => $exts) {
 			if (in_array($extension, $exts, true)) {
-				return $base.$type.'.png';
+				return Util::appUri($base.$type.'.png');
 			}
 		}
 
-		return $base.'unknown.png';
+		return Util::appUri($base.'unknown.png');
 	}
 
 	protected function isImage(sly_Model_Medium $medium) {

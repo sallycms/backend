@@ -104,7 +104,7 @@ foreach ($files as $file) {
 				$attrs['src'] = '../imageresize/'.$width.'w__'.$height.'h__'.$encoded.'?t='.$timestamp;
 			}
 			else {
-				$attrs['src'] = '../data/mediapool/'.$encoded.'?t='.$timestamp;
+				$attrs['src'] = sly\Assets\Util::mediapoolUri($encoded.'?t='.$timestamp);
 			}
 
 			$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
