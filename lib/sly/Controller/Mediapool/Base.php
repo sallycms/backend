@@ -154,9 +154,9 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			}
 		}
 
-		$db     = sly_DB_Persistence::getInstance();
+		$db     = $this->getContainer()->getPersistence();
 		$prefix = sly_Core::getTablePrefix();
-		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.updatedate DESC';
+		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.title ASC';
 		$files  = array();
 
 		$db->query($query);
