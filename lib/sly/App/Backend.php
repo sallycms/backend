@@ -181,20 +181,14 @@ class sly_App_Backend extends sly_App_Base {
 		$i18n    = $container->getI18N();
 		$config  = $container->getConfig();
 		$request = $container->getRequest();
+		$router  = $this->getRouter();
+		$layout  = new sly_Layout_Backend($i18n, $config, $request);
 
-		$container->setLayout(new sly_Layout_Backend($i18n, $config, $request));
+		$layout->setTopMenuHelper(new sly_Helper_TopMenu($router));
+		$layout->setNavigation(new sly_Layout_Navigation_Backend());
+		$layout->setContainer($container);
 
-		// be the first to init the layout later on, after the possibly available
-		// auth provider has been setup by external addOns / frontend code.
-		$container->getDispatcher()->addListener('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
-	}
-
-	/**
-	 * Event handler
-	 */
-	public function initNavigation() {
-		$layout = $this->getContainer()->getLayout();
-		$layout->getNavigation()->init();
+		$container->setLayout($layout);
 	}
 
 	protected function initI18N(sly_Container $container, $locale) {

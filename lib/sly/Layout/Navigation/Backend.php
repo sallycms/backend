@@ -14,54 +14,58 @@
 class sly_Layout_Navigation_Backend {
 	private $groups       = array();
 	private $currentGroup = null;
+	private $initialized  = false;
 
 	public function __construct() {
 		$this->addGroup('system', t('base_navigation'));
 		$this->addGroup('addon', t('addons'));
 	}
 
-	public function init() {
-		$user = sly_Util_User::getCurrentUser();
+	public function init(sly_Model_User $user, sly_Event_IDispatcher $dispatcher = null) {
+		if ($this->initialized) return;
 
-		if ($user !== null) {
-			$isAdmin = $user->isAdmin();
+		$isAdmin = $user->isAdmin();
 
-			// Core-Seiten initialisieren
+		// Core-Seiten initialisieren
 
-			if ($isAdmin || $user->hasRight('pages', 'structure')) {
-				$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
+		if ($isAdmin || $user->hasRight('pages', 'structure')) {
+			$hasClangPerm = $isAdmin || count($user->getAllowedCLangs()) > 0;
 
-				if ($hasClangPerm) {
-					$this->addPage('system', 'structure');
-				}
+			if ($hasClangPerm) {
+				$this->addPage('system', 'structure');
 			}
+		}
 
-			if ($isAdmin || $user->hasRight('pages', 'mediapool')) {
-				$this->addPage('system', 'mediapool', null, true);
-			}
+		if ($isAdmin || $user->hasRight('pages', 'mediapool')) {
+			$this->addPage('system', 'mediapool', null, true);
+		}
 
-			if ($isAdmin || $user->hasRight('pages', 'user')) {
-				$this->addPage('system', 'user');
-			}
+		if ($isAdmin || $user->hasRight('pages', 'user')) {
+			$this->addPage('system', 'user');
+		}
 
-			if ($isAdmin || $user->hasRight('pages', 'addons')) {
-				$this->addPage('system', 'addon', t('addons'));
-			}
+		if ($isAdmin || $user->hasRight('pages', 'addons')) {
+			$this->addPage('system', 'addon', t('addons'));
+		}
 
-			if ($isAdmin) {
-				$system = $this->addPage('system', 'system');
-				$system->addSubpage('system', t('settings'));
-				$system->addSubpage('system_languages', t('languages'));
+		if ($isAdmin) {
+			$system = $this->addPage('system', 'system');
+			$system->addSubpage('system', t('settings'));
+			$system->addSubpage('system_languages', t('languages'));
 
-				if (!sly_Core::isDeveloperMode()) {
-					$handler = sly_Core::getErrorHandler();
+			if (!sly_Core::isDeveloperMode()) {
+				$handler = sly_Core::getErrorHandler();
 
-					if (get_class($handler) === 'sly_ErrorHandler_Production') {
-						$system->addSubpage('system_errorlog', t('errorlog'));
-					}
+				if (get_class($handler) === 'sly_ErrorHandler_Production') {
+					$system->addSubpage('system_errorlog', t('errorlog'));
 				}
 			}
 		}
+
+		$dispatcher = $dispatcher ?: sly_Core::getContainer()->getDispatcher();
+		$dispatcher->notify('SLY_BACKEND_NAVIGATION_INIT', $this, compact('user'));
+
+		$this->initialized = true;
 	}
 
 	/**
