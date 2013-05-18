@@ -79,16 +79,10 @@ foreach ($files as $file) {
 	// missing file?
 
 	if (!$file->exists()) {
-		$thumbnail = '<img src="assets/mime-error.png" width="44" height="38" alt="'.ht('file_not_found').'" />';
+		$thumbnail = '<img src="'.$this->getMimeIcon($file).'" width="44" height="38" alt="'.ht('file_not_found').'" />';
 	}
 	else {
-		$file_ext = $file->getExtension();
-		$icon_src = 'assets/mime-default.png';
-
-		if ($this->isDocType($file)) {
-			$icon_src = 'assets/mime-'.$file_ext.'.png';
-		}
-
+		$icon_src  = $this->getMimeIcon($file);
 		$alt       = $file->getTitle();
 		$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
 
