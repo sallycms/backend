@@ -149,11 +149,16 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 
 		$this->appendToTitle($title);
 
-		$title = $dispatcher->filter('SLY_BACKEND_PAGE_HEADER', $title, array('menu' => $topMenu, 'layout' => $this));
 		$menu  = $topMenu; // assuming $topMenu is a pre-rendered string
+		$app   = $this->container->getApplication();
+		$title = $dispatcher->filter('SLY_BACKEND_PAGE_HEADER', $title, array(
+			'menu'       => $topMenu,
+			'layout'     => $this,
+			'controller' => $app->getCurrentControllerName()
+		));
 
 		if ($topMenu instanceof sly_Layout_Navigation_Page) {
-			$router = $this->container->getApplication()->getRouter();
+			$router = $app->getRouter();
 			$menu   = $this->topMenu->render($topMenu, $router);
 		}
 
