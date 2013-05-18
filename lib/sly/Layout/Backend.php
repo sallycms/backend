@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+use sly\Assets\Util;
+
 /**
  * @ingroup layout
  */
@@ -20,20 +22,18 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$locale  = $i18n->getLocale();
 		$favicon = $config->get('backend/favicon');
 		$project = $config->get('projectname');
-		$base    = $request->getBaseUrl(true).'/';
-		$baseUri = '../assets/app/backend/';
 
-		$this->addCSSFile($baseUri.'css/import.less');
+		$this->addCSSFile(Util::appUri('css/import.less'));
 
-		$this->addJavaScriptFile($baseUri.'js/modernizr.min.js');
-		$this->addJavaScriptFile($baseUri.'js/iso8601.min.js', 'if lt IE 8');
-		$this->addJavaScriptFile($baseUri.'js/jquery.min.js');
-		$this->addJavaScriptFile($baseUri.'js/json2.min.js');
-		$this->addJavaScriptFile($baseUri.'js/jquery.chosen.min.js');
-		$this->addJavaScriptFile($baseUri.'js/jquery.tools.min.js');
-		$this->addJavaScriptFile($baseUri.'js/jquery.datetime.min.js');
-		$this->addJavaScriptFile($baseUri.'js/locales/'.$locale.'.min.js');
-		$this->addJavaScriptFile($baseUri.'js/standard.min.js');
+		$this->addJavaScriptFile(Util::appUri('js/modernizr.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/iso8601.min.js'), 'if lt IE 8');
+		$this->addJavaScriptFile(Util::appUri('js/jquery.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/json2.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/jquery.chosen.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/jquery.tools.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/jquery.datetime.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/locales/'.$locale.'.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/standard.min.js'));
 
 		if ($project) {
 			$this->setTitle($project.' - ');
@@ -43,7 +43,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 		$this->setBase($request->getAppBaseUrl().'/');
 
 		if ($favicon) {
-			$this->setFavIcon($base.$favicon);
+			$this->setFavIcon(Util::appUri($favicon));
 		}
 
 		$locale = explode('_', $locale, 2);
