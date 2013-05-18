@@ -1,3 +1,11 @@
+/* mediapool popup is wider than normal popups */
+
+.sly-popup.sly-mediapool {
+	#sly-wrapper, .sly-form legend {
+		width: 797px;
+	}
+}
+
 /* general styles for all subpages */
 
 .sly-mediapool {
@@ -25,20 +33,13 @@
 	}
 
 	.sly-form {
-		width: 690px;
-
 		td { padding: 5px 0 }
 
 		caption { display: none; }
 
 		.sly-form-wrapper {
-			width: 690px;
 			padding: 0;
 			margin-bottom: 10px;
-		}
-
-		.sly-form-row {
-			width: 676px;
 		}
 
 		fieldset.sly-file-properties {
@@ -46,13 +47,9 @@
 				min-height: 90px;
 			}
 		}
-
-		input[type=text] { width: 400px; }
-		select           { width: 407px; }
 	}
 
 	.sly-mediapool-list {
-		width: 690px;
 		margin-bottom: 0 !important;
 
 		td {
@@ -69,7 +66,7 @@
 		}
 
 		select {
-			width: 230px;
+			width: 300px;
 		}
 
 		label {
@@ -96,12 +93,12 @@
 			right: 0;
 			top: 0;
 			padding: 7px;
-			width: 113px;
+			width: 160px;
 			text-align: right;
 
 			img {
-				max-height: 60px;
-				max-width: 113px;
+				max-height: 120px;
+				max-width: 160px;
 			}
 		}
 	}
@@ -125,15 +122,11 @@
 	.sly-col-func { width: 150px; }
 }
 
-.sly-sprite-mediacat          { background-position: -32px 0;     }
-.sly-sprite-mediacat-add      { background-position: -32px -16px; }
+.sly-sprite-mediacat     { background-position: -32px 0;     }
+.sly-sprite-mediacat-add { background-position: -32px -16px; }
 
 #sly-form-mediapool-media {
 	.sly-form-wrapper .sly-form-row.sly-num0 {
 		padding: 0;
-	}
-
-	.sly-form-row {
-		width: 690px;
 	}
 }
