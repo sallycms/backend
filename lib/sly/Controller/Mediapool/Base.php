@@ -307,35 +307,31 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function isInUse(sly_Model_Medium $medium) {
-		$sql      = $this->getContainer()->getPersistence();
-		$filename = addslashes($medium->getFilename());
-		$prefix   = $sql->getPrefix();
-		$query    =
-			'SELECT s.article_id, s.clang, s.revision FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
-			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
+		$container = $this->getContainer();
+		$service   = $container->getMediumService();
+		$router    = $container->getApplication()->getRouter();
+		$usages    = $service->getUsages($medium);
 
-		$res    = array();
-		$usages = array();
-		$router = $this->getContainer()->getApplication()->getRouter();
+		foreach ($usages as $idx => $usage) {
+			// properly setup object
+			if (!empty($usage['link']) && !empty($usage['title'])) {
+				continue;
+			}
 
-		$sql->query($query);
-		foreach ($sql as $row) $res[] = $row;
+			switch ($usage['type']) {
+				case 'sly-article':
+					$article = $usage['object'];
+					$title   = $article->getName();
+					$link    = $router->getPlainUrl('content', null, array(
+						'article_id' => $article->getId(),
+						'clang'      => $article->getClang(),
+						'revision'   => $article->getRevision()
+					));
+			}
 
-		foreach ($res as $row) {
-			$article = sly_Util_Article::findById($row['article_id'], $row['clang'], $row['revision']);
-
-			$usages[] = array(
-				'title' => $article->getName(),
-				'type'  => 'sly-article',
-				'link'  => $router->getPlainUrl('content', null, array('article_id' => $row['article_id'], 'clang' => $row['clang'], 'revision' => $row['revision']))
-			);
+			$usages[$idx]['link']  = $link;
+			$usages[$idx]['title'] = $title;
 		}
-
-		$usages = sly_Core::dispatcher()->filter('SLY_MEDIA_USAGES', $usages, array(
-			'filename' => $medium->getFilename(),
-			'media'    => $medium
-		));
 
 		return empty($usages) ? false : $usages;
 	}
