@@ -16,12 +16,6 @@ $filesize   = $medium->getFormattedSize();
 $updatedate = $medium->getUpdateDate();
 $categoryID = $medium->getCategoryId();
 $encoded    = urlencode($filename);
-$file_ext   = $medium->getExtension();
-$icon_src   = 'assets/mime-default.png';
-
-if ($this->isDocType($medium)) {
-	$icon_src = 'assets/mime-'.$file_ext.'.png';
-}
 
 ////////////////////////////////////////////////////////
 // info and error messages
@@ -53,7 +47,7 @@ if ($isImage) {
 	$fheight = $medium->getHeight();
 
 	if (!$medium->exists()) {
-		$imgn = 'assets/mime-error.png';
+		$imgn = $this->getMimeIcon($medium);
 	}
 	elseif ($fwidth > 115 || $fheight > 60) {
 		list($rwidth, $rheight) = $this->getDimensions($fwidth, $fheight, 115, 60);
