@@ -37,15 +37,9 @@
 
 		caption { display: none; }
 
+		/* less space between category select and file list */
 		.sly-form-wrapper {
-			padding: 0;
 			margin-bottom: 10px;
-		}
-
-		fieldset.sly-file-properties {
-			.sly-form-wrapper {
-				min-height: 90px;
-			}
 		}
 	}
 
@@ -75,10 +69,6 @@
 
 		tfoot td {
 			border-top: 1px dotted @md_grey;
-		}
-
-		.sly-col-footer input:first-child {
-			margin-left: 0;
 		}
 	}
 
@@ -116,6 +106,12 @@
 	}
 }
 
+#sly-form-mediapool-media {
+	.sly-form-wrapper .sly-form-row.sly-num0 {
+		padding: 0;
+	}
+}
+
 /* structure management */
 
 #sly-page-mediapool-structure {
@@ -124,9 +120,3 @@
 
 .sly-sprite-mediacat     { background-position: -32px 0;     }
 .sly-sprite-mediacat-add { background-position: -32px -16px; }
-
-#sly-form-mediapool-media {
-	.sly-form-wrapper .sly-form-row.sly-num0 {
-		padding: 0;
-	}
-}
