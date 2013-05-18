@@ -55,10 +55,6 @@ class sly_App_Backend extends sly_App_Base {
 		// make sure our layout is used later on
 		$this->initLayout($container);
 
-		// instantiate asset service before addOns are loaded to make sure
-		// the CSS processing is first in the line for CSS files
-		$container->getAssetService();
-
 		// and now init the rest (addOns, listeners, ...)
 		parent::initialize();
 	}
