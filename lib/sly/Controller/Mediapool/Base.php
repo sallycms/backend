@@ -273,18 +273,36 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return array(ceil($width), ceil($height));
 	}
 
-	protected function isDocType(sly_Model_Medium $medium) {
-		static $docTypes = array(
-			'bmp', 'css', 'doc', 'docx', 'eps', 'gif', 'gz', 'jpg', 'mov', 'mp3',
-			'ogg', 'pdf', 'png', 'ppt', 'pptx','pps', 'ppsx', 'rar', 'rtf', 'swf',
-			'tar', 'tif', 'txt', 'wma', 'xls', 'xlsx', 'zip'
+	protected function getMimeIcon(sly_Model_Medium $medium) {
+		$mapping = array(
+			'compressed' => array('gz', 'gzip', 'tar', 'zip', 'tgz', 'bz', 'bz2', '7zip', '7z', 'rar'),
+			'audio'      => array('mp3', 'flac', 'aac', 'wav', 'ac3', 'ogg', 'wma'),
+			'document'   => array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'rtf'),
+			'executable' => array('sh', 'exe', 'bin', 'com', 'bat'),
+			'pdf'        => array('pdf'),
+			'text'       => array('txt', 'java', 'css', 'markdown', 'textile', 'md'),
+			'vector'     => array('svg', 'eps'),
+			'video'      => array('mkv', 'avi', 'swf', 'mov', 'flv', 'ogv', 'vp8')
 		);
 
-		return in_array($medium->getExtension(), $docTypes);
+		$extension = $medium->getExtension();
+		$base      = '../assets/app/backend/mime/';
+
+		if (!$medium->exists()) {
+			return $base.'missing.png';
+		}
+
+		foreach ($mapping as $type => $exts) {
+			if (in_array($extension, $exts, true)) {
+				return $base.$type.'.png';
+			}
+		}
+
+		return $base.'unknown.png';
 	}
 
 	protected function isImage(sly_Model_Medium $medium) {
-		static $exts = array('gif', 'jpeg', 'jpg', 'png', 'bmp', 'tif', 'tiff', 'webp');
+		$exts = array('gif', 'jpeg', 'jpg', 'png', 'bmp', 'tif', 'tiff', 'webp');
 		return in_array($medium->getExtension(), $exts);
 	}
 
