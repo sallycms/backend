@@ -39,40 +39,31 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 		// build navigation
 
-		$layout = sly_Core::getLayout();
-		$nav    = $layout->getNavigation();
-		$page   = $nav->find('mediapool');
+		$app    = $this->getContainer()->getApplication();
+		$cur    = $app->getCurrentControllerName();
+		$menu   = new sly_Layout_Navigation_Page('');
+		$values = $this->popupHelper->getValues();
 
-		if ($page) {
-			$cur     = sly_Core::getCurrentControllerName();
-			$values  = $this->popupHelper->getValues();
-			$subline = array(
-				array('mediapool',        t('media_list')),
-				array('mediapool_upload', t('upload_file'))
-			);
+		$menu->addSubpage('mediapool',        t('media_list'));
+		$menu->addSubpage('mediapool_upload', t('upload_file'));
 
-			if ($this->isMediaAdmin()) {
-				$subline[] = array('mediapool_structure', t('categories'));
-				$subline[] = array('mediapool_sync',      t('sync_files'));
-			}
+		if ($this->isMediaAdmin()) {
+			$menu->addSubpage('mediapool_structure', t('categories'));
+			$menu->addSubpage('mediapool_sync',      t('sync_files'));
+		}
 
-			foreach ($subline as $item) {
-				$sp = $page->addSubpage($item[0], $item[1]);
+		if (!empty($values)) {
+			foreach ($menu->getSubpages() as $sp) {
+				$sp->setExtraParams($values);
 
-				if (!empty($values)) {
-					$sp->setExtraParams($values);
-
-					// ignore the extra params when detecting the current page
-					if ($cur === $item[0]) $sp->forceStatus(true);
-				}
+				// ignore the extra params when detecting the current page
+				if ($cur === $sp->getPageParam()) $sp->forceStatus(true);
 			}
 		}
 
-		$dispatcher = $this->container->getDispatcher();
-		$page       = $dispatcher->filter('SLY_MEDIAPOOL_MENU', $page);
-
+		$layout = $this->getContainer()->getLayout();
 		$layout->showNavigation(false);
-		$layout->pageHeader(t('media_list'), $page);
+		$layout->pageHeader(t('media_list'), $menu);
 		$layout->setBodyAttr('class', 'sly-popup sly-mediapool');
 
 		$this->render('mediapool/javascript.phtml', array(), false);
