@@ -79,7 +79,7 @@ var sly = sly || {};
 			args.args.categories = categories.join('|');
 		}
 
-		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 760, 600);
+		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 857, 600);
 	};
 
 	sly.openLinkmap = function(value, callback, articletypes, categories) {
