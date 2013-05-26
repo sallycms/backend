@@ -240,7 +240,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 				$values = array_keys($this->selectBox->getValues());
 
 				foreach ($values as $catID) {
-					if (!in_array($catID, $cats)) {
+					if (!in_array($catID, $this->categories)) {
 						$this->selectBox->removeValue($catID);
 					}
 				}
