@@ -7,15 +7,6 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  */
-?>
-<div class="sly-content-header">
-	<?php
-	//navigation
-	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
-	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
-	?>
-</div>
-<?php
 
 print sly_Helper_Message::renderFlashMessage();
 
