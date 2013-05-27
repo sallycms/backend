@@ -154,9 +154,9 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			}
 		}
 
-		$db     = sly_DB_Persistence::getInstance();
+		$db     = $this->getContainer()->getPersistence();
 		$prefix = sly_Core::getTablePrefix();
-		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.updatedate DESC';
+		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.title ASC';
 		$files  = array();
 
 		$db->query($query);
@@ -253,7 +253,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 				$values = array_keys($this->selectBox->getValues());
 
 				foreach ($values as $catID) {
-					if (!in_array($catID, $cats)) {
+					if (!in_array($catID, $this->categories)) {
 						$this->selectBox->removeValue($catID);
 					}
 				}
@@ -296,18 +296,21 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 	protected function isInUse(sly_Model_Medium $medium) {
 		$sql      = sly_DB_Persistence::getInstance();
-		$filename = addslashes($medium->getFilename());
+		$filename = $medium->getFilename();
 		$prefix   = sly_Core::getTablePrefix();
 		$query    =
 			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
 			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND serialized_values LIKE "%'.$filename.'%" GROUP BY s.article_id, s.clang';
+			'AND serialized_values REGEXP ? GROUP BY s.article_id, s.clang';
 
 		$res    = array();
 		$usages = array();
+		$b      = '[^[:alnum:]_+-]'; // more or less like a \b in PCRE
+		$quoted = str_replace(array('.', '+'), array('\.', '\+'), $filename);
+		$data   = array("(^|$b)$quoted(\$|$b)");
 		$router = $this->getContainer()->getApplication()->getRouter();
 
-		$sql->query($query);
+		$sql->query($query, $data);
 		foreach ($sql as $row) $res[] = $row;
 
 		foreach ($res as $row) {

@@ -70,11 +70,9 @@ if ($isAdmin) {
 print '<tbody>';
 
 foreach ($files as $file) {
-	$id         = $file->getId();
-	$filename   = $file->getFilename();
-	$title      = $file->getTitle();
-	$updatedate = sly_Util_String::formatDatetime($file->getUpdateDate());
-	$updateuser = $file->getUpdateUser();
+	$id       = $file->getId();
+	$filename = $file->getFilename();
+	$title    = $file->getTitle();
 
 	// missing file?
 
@@ -96,7 +94,7 @@ foreach ($files as $file) {
 			$width  = $file->getWidth();
 			$height = $file->getHeight();
 
-			list($width, $height) = $this->getDimensions($width, $height, 80, 70);
+			list($width, $height) = $this->getDimensions($width, $height, 60, 55);
 
 			$attrs = array(
 				'alt'    => $alt,
@@ -134,8 +132,7 @@ foreach ($files as $file) {
 		<td class="sly-col-thumbnail"><a href="<?php echo $ilink ?>"><?php echo $thumbnail ?></a></td>
 		<td class="sly-col-info">
 			<span><a href="<?php echo $ilink ?>"><?php echo sly_html($title) ?></a></span><br />
-			<span><span class="sly-suffix"><?php echo sly_html(sly_Util_String::cutText($filename, 35)) ?> [<?php echo $file->getFormattedSize() ?>]</span></span><br />
-			<span><?php echo $updatedate ?> | <?php echo sly_html($updateuser) ?></span>
+			<span><span class="sly-suffix"><?php echo sly_html(sly_Util_String::cutText($filename, 35)) ?> [<?php echo $file->getFormattedSize() ?>]</span></span>
 		</td>
 		<td class="sly-col-func"><?php
 

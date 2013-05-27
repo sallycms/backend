@@ -777,7 +777,9 @@ var sly = sly || {};
 		// Module selection on content page
 
 		$('.sly-module-select').change(function() {
-			$(this).closest('form').submit();
+			if ($(this).val()) {
+				$(this).closest('form').submit();
+			}
 		});
 
 		// toggle cache options
