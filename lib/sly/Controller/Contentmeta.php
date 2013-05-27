@@ -25,6 +25,10 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		), false);
 	}
 
+	protected function getViewFolder() {
+		return SLY_SALLYFOLDER.'/backend/views/';
+	}
+
 	protected function getPageName() {
 		return 'contentmeta';
 	}

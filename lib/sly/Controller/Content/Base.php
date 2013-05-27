@@ -99,8 +99,14 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 				'category_id' => $art->getCategoryId()
 			));
 
+			print $this->render('content/menus.phtml', array('article' => $art, 'slot' => $this->slot));
+
 			return true;
 		}
+	}
+
+	protected function getViewFolder() {
+		return SLY_SALLYFOLDER.'/backend/views/';
 	}
 
 	public function checkPermission($action) {
