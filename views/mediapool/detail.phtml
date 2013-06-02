@@ -40,38 +40,10 @@ else {
 ////////////////////////////////////////////////////////
 // image container (same for both forms)
 
-$isImage = $this->isImage($medium);
-
-if ($isImage) {
-	$imgn    = Util::mediapoolUri($encoded.'?t='.$updatedate);
-	$resize  = sly_Util_AddOn::isAvailable('sallycms/image-resize');
-	$fwidth  = $medium->getWidth();
-	$fheight = $medium->getHeight();
-
-	if (!$medium->exists()) {
-		$imgn = $this->getMimeIcon($medium);
-	}
-	elseif ($fwidth > 160 || $fheight > 120) {
-		list($rwidth, $rheight) = $this->getDimensions($fwidth, $fheight, 160, 120);
-
-		if ($resize) {
-			$imgn = '../imageresize/'.$rwidth.'w__'.$rheight.'h__'.$encoded.'?t='.$updatedate;
-		}
-	}
-
-	$attrs = array(
-		'src'    => $imgn,
-		'alt'    => $title,
-		'title'  => $title,
-		'width'  => isset($rwidth) ? $rwidth : '',
-		'height' => isset($rheight) ? $rheight : ''
-	);
-
-	$imageContainer = new sly_Form_Container();
-	$imageContainer->setContent('<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />');
-	$imageContainer->addFormRowClass('sly-mediapool-detail-image');
-	$form->add($imageContainer);
-}
+$imageContainer = new sly_Form_Container();
+$imageContainer->setContent($this->getThumbnailTag($medium, 160, 120));
+$imageContainer->addFormRowClass('sly-mediapool-detail-image');
+$form->add($imageContainer);
 
 ////////////////////////////////////////////////////////
 // add more elements to our forms
@@ -138,10 +110,11 @@ else {
 
 // file dimensions, if image
 
-if ($isImage) {
+if ($this->isImage($medium)) {
 	$label      = t('width').' / '.t('height');
-	$dimensions = $fwidth.' px / '.$fheight.' px';
+	$dimensions = $medium->getWidth().' px / '.$medium->getHeight().' px';
 	$dimensions = new sly_Form_Text($label, $dimensions);
+
 	$form->add($dimensions);
 }
 

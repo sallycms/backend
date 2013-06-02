@@ -299,6 +299,46 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return in_array($medium->getExtension(), $exts);
 	}
 
+	protected function getThumbnailTag(sly_Model_Medium $medium, $width, $height) {
+		if (!$medium->exists()) {
+			$thumbnail = '<img src="'.$this->getMimeIcon($medium).'" width="44" height="38" alt="'.ht('file_not_found').'" />';
+		}
+		else {
+			$icon_src  = $this->getMimeIcon($medium);
+			$alt       = $medium->getTitle();
+			$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
+
+			if ($this->isImage($medium)) {
+				$mwidth    = $medium->getWidth();
+				$mheight   = $medium->getHeight();
+				$timestamp = $medium->getUpdateDate();
+				$encoded   = urlencode($medium->getFilename());
+
+				list($width, $height) = $this->getDimensions($mwidth, $mheight, $width, $height);
+
+				$attrs = array(
+					'alt'    => $alt,
+					'title'  => $alt,
+					'width'  => $width,
+					'height' => $height,
+					'src'    => sly\Assets\Util::mediapoolUri($encoded.'?t='.$timestamp)
+				);
+
+				$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
+			}
+		}
+
+		$dispatcher = $this->getContainer()->getDispatcher();
+		$thumbnail  = $dispatcher->filter('SLY_BACKEND_MEDIAPOOL_THUMBNAIL', $thumbnail, array(
+			'medium'  => $medium,
+			'width'   => $width,
+			'height'  => $height,
+			'isImage' => $this->isImage($medium)
+		));
+
+		return $thumbnail;
+	}
+
 	protected function isInUse(sly_Model_Medium $medium) {
 		$container = $this->getContainer();
 		$service   = $container->getMediumService();
