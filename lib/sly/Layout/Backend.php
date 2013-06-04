@@ -50,6 +50,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 {
 
 		if (strlen($locale) === 2) {
 			$this->setLanguage(strtolower($locale));
+			$this->addHttpMeta('Content-Language', $locale);
 		}
 	}
 
