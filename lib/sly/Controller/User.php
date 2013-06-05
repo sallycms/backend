@@ -275,23 +275,24 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	protected function getPossibleStartpages() {
-		$service = $this->getContainer()->getAddOnService();
-		$addons  = $service->getAvailableAddOns();
+		$nav      = new sly_Layout_Navigation_Backend();
+		$user     = $this->getUser() ?: $this->getCurrentUser();
+		$starters = array('profile' => t('profile'));
 
-		$startpages = array();
-		$startpages['structure'] = t('structure');
-		$startpages['profile']   = t('profile');
+		$nav->init($user);
 
-		foreach ($addons as $addon) {
-			$page = $service->getComposerKey($addon, 'page', null);
-			$name = $service->getComposerKey($addon, 'name', $addon);
+		foreach ($nav->getGroups() as $group) {
+			foreach ($group->getPages() as $page) {
+				if ($page->isPopup()) continue;
 
-			if ($page) {
-				$startpages[$page] = sly_translate($name);
+				$pageParam = $page->getPageParam();
+				$name      = $page->getTitle();
+
+				$starters[$pageParam] = $name;
 			}
 		}
 
-		return $startpages;
+		return $starters;
 	}
 
 	protected function getUserService() {
