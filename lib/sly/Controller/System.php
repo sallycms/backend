@@ -55,7 +55,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// clear our own data caches
 		if ($this->isCacheSelected('sly_core')) {
-			sly_Core::cache()->flush('sly', true);
+			sly_Core::cache()->clear('sly', true);
 		}
 
 		// sync develop files
@@ -155,7 +155,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			// flush the old cache
 			// we are no messies
 			$cache = $container->getCache();
-			$cache->flush('sly');
+			$cache->clear('sly', true);
 
 			// make the container create a fresh cache instance once the next
 			// code requires the cache :-)
@@ -167,7 +167,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			// important in case we re-use an existing cache that has something
 			// like a broken addOn load order stored
 			$cache = $container->getCache();
-			$cache->flush('sly');
+			$cache->clear('sly', true);
 		}
 
 		// timezone
