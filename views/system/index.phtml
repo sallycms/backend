@@ -29,13 +29,15 @@ foreach ($languages as $id => $language) {
 	$languages[$id] = $language->getName();
 }
 
+$availAdapters   = sly_Core::getContainer()->get('sly-cache-factory')->getAvailableAdapters();
+$availAdapters   = array_map('basename', $availAdapters);
 $timezoneSelect  = sly_Backend_Form_Helper::getTimezoneSelect();
 $projectName     = new sly_Form_Input_Text('projectname', t('project_name'), sly_Core::getProjectName());
 $startArticle    = new sly_Form_Widget_Link('start_article', t('start_article'), sly_Core::getSiteStartArticleId());
 $notFound        = new sly_Form_Widget_Link('notfound_article', t('not_found_article'), sly_Core::getNotFoundArticleId());
 $backendLocale   = new sly_Form_Select_DropDown('backend_locale', t('backend_locale'), sly_Core::getDefaultLocale(), $locales);
 $defaultType     = new sly_Form_Select_DropDown('default_type', t('default_articletype'), sly_Core::getDefaultArticleType(), $types);
-$cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_strategy'), sly_Core::getCachingStrategy(), sly_Cache::getAvailableCacheImpls());
+$cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_strategy'), sly_Core::getCachingStrategy(), $availAdapters);
 $developerMode   = new sly_Form_Input_Checkbox('developer_mode', t('developer_mode'), '1', t('enabled'));
 
 if (count($languages) === 1) {
