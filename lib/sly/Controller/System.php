@@ -27,11 +27,12 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		// it's not perfect, but let's check whether the setup app actually
 		// exists before showing the 'Setup' button inside the form.
 		$hasSetupApp = is_dir(SLY_SALLYFOLDER.'/setup');
-		$locales             = $this->getBackendLocales();
-		$languages           = sly_Util_Language::findAll();
-		$database            = $container->getConfig()->get('database');
+		$locales     = $this->getBackendLocales();
+		$languages   = sly_Util_Language::findAll();
+		$database    = $container->getConfig()->get('database');
+		$types       = array('' => t('no_articletype'));
+
 		$database['version'] = $container->getPersistence()->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION);
-		$types               = array('' => t('no_articletype'));
 
 		try {
 			$typeService = $this->getContainer()->getArticleTypeService();
@@ -130,7 +131,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		// Standard-Artikeltyp
 
 		try {
-			$service = $this->getContainer()->getArticleTypeService();
+			$service = $container->getArticleTypeService();
 
 			if (!empty($defaultType) && !$service->exists($defaultType)) {
 				$flash->appendWarning(t('invalid_default_articletype_selected'));
@@ -144,7 +145,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		}
 
 		// caching strategy
-		$strategies = sly_Cache::getAvailableCacheImpls();
+		$factory    = $container['sly-cache-factory'];
+		$strategies = $factory->getAvailableAdapters();
 
 		if (!isset($strategies[$cachingStrategy])) {
 			$flash->appendWarning(t('invalid_caching_strategy_selected'));
@@ -160,7 +162,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			// make the container create a fresh cache instance once the next
 			// code requires the cache :-)
 			$container['sly-cache'] = $container->share(function($container) use ($cachingStrategy) {
-				return sly_Cache::factory($cachingStrategy);
+				return $container['sly-cache-factory']->getCache($cachingStrategy);
 			});
 
 			// clear cache if different one was selected
