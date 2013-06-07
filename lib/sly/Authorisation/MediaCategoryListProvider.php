@@ -18,7 +18,7 @@ class sly_Authorisation_MediaCategoryListProvider implements sly_Authorisation_L
 	 * @return array
 	 */
 	public function getObjectIds() {
-		$categories = sly_Core::getContainer()->getMediaCategoryService()->find();
+		$categories = sly_Core::getContainer()->getMediaCategoryService()->findAll();
 		$res        = array(self::ALL);
 
 		foreach ($categories as $category) {
