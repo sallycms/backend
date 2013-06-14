@@ -191,9 +191,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 		$request             = $this->getRequest();
 		$articleSliceService = $this->getContainer()->getArticleSliceService();
-		$sliceService        = $this->getContainer()->getSliceService();
 		$slice_id            = $request->post('slice_id', 'int', 0);
-		$articleSlice        = $articleSliceService->findById($slice_id);
+		$articleSlice        = $articleSliceService->findOne(array('id' => $slice_id));
 		$flash               = sly_Core::getFlashMessage();
 
 		if (!$articleSlice) {
@@ -203,15 +202,10 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$slicedata = $this->preSliceEdit('edit');
 
 			if ($slicedata['SAVE'] === true) {
-				$slice = $articleSlice->getSlice();
-				$slice->setValues($slicedata['VALUES']);
-				$sliceService->save($slice);
-
-				$articleSlice->setUpdateColumns();
-				$articleSliceService->save($articleSlice);
+				$instance = $articleSliceService->edit($this->article, $this->slot, $articleSlice->getPosition(), $slicedata['VALUES']);
 
 				$flash->appendInfo(t('slice_updated'));
-				$this->postSliceEdit('edit', $slice_id);
+				$this->postSliceEdit('edit', $instance->getId());
 
 				$apply = sly_post('btn_update', 'string') !== null;
 				return $this->redirectToArticle('#messages', $articleSlice, $apply);
@@ -323,8 +317,6 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$user       = sly_Util_User::getCurrentUser();
 		$flash      = sly_Core::getFlashMessage();
 		$dispatcher = sly_Core::dispatcher();
-
-		$this->getContainer()->getArticleService()->touch($this->article, $user);
 
 		$dispatcher->notify('SLY_SLICE_POSTSAVE_'.strtoupper($function), $articleSliceId);
 		$dispatcher->notify('SLY_CONTENT_UPDATED', $this->article, array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));
