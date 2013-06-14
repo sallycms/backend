@@ -244,7 +244,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		}
 
 		if ($this->preSliceEdit('delete') !== false) {
-			$ok = sly_Util_ArticleSlice::deleteById($sliceID);
+			//$ok = sly_Util_ArticleSlice::deleteById($sliceID);
+			$ok = $this->getContainer()->getArticleService()->touch($slice->getArticle(), $user, array($slice->getSliceId()));
 		}
 
 		if ($ok) {
