@@ -363,7 +363,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$this->render(self::$viewPath.'category_table.phtml', $renderParams, false);
 
 		$renderParams = array_merge($params, array(
-			'articles'       => $articles,
+			'articles' => $articles,
 		));
 
 		$this->render(self::$viewPath.'article_table.phtml', $renderParams, false);
