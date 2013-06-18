@@ -497,7 +497,7 @@ var sly = sly || {};
 	};
 
 	sly.assetBaseUri = function(addon) {
-		return '../data/dyn/public/' + (addon ? (addon+'/') : '');
+		return '../assets/addon/' + (addon ? (addon+'/') : '');
 	};
 
 	sly.getUrl = function(controller, action, params, sep) {
@@ -752,7 +752,7 @@ var sly = sly || {};
 		var checkboxes = $('.sly-form-i18n-switch input[id^=equal__]');
 
 		if (checkboxes.length > 0) {
-			checkboxes.imgCheckbox('off.png', 'on.png', 'assets/form-i18n-switch-').next().click(function() {
+			checkboxes.imgCheckbox('off.png', 'on.png', '../assets/app/backend/form-i18n-switch-').next().click(function() {
 				var
 					checkbox       = $(this).prev('input'),
 					shown          = !checkbox[0].checked, // was already changed before this event handler
