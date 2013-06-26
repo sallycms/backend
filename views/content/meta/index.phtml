@@ -46,19 +46,34 @@ if ($form->getCurrentFieldset() !== null) {
 
 $form->beginFieldset('', 'sly-article-revisions');
 $table = new sly_Table('sly-article-revisions-table');
-$table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created', '', array('colspan' => '2')));
+$table->addColumn(sly_Table_Column::sprite('article', null));
+$table->addColumn(sly_Table_Column::factory('Rev.', 'sly-col-rev'));
+$table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
 $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
 $table->openBuffer();
 
 foreach ($revisions as $revision) {
-	$selectUrl = $_router->getUrl('content', null, array('article_id' => $revision->getId(), 'clang' => $revision->getClang(), 'revision' => $revision->getRevision()), '&');
+	$id        = $revision->getId();
+	$clang     = $revision->getClang();
+	$rev       = $revision->getRevision();
+	$online    = $revision->isOnline();
+	$current   = $rev === $article->getRevision();
+	$selectUrl = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+
 	?>
-	<tr data-slyid="<?php echo $revision->getId() ?>" data-slyclang="<?php echo $revision->getClang() ?>" data-slyrevision="<?php echo $revision->getRevision() ?>" data-slyonline="<?php echo $revision->isOnline() ? '1' : '0' ?>">
+	<tr data-slyid="<?php echo $id ?>" data-slyclang="<?php echo $clang ?>" data-slyrevision="<?php echo $rev ?>" data-slyonline="<?php echo $online ? '1' : '0' ?>">
 		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($selectUrl, t('contentmeta_select_revision'), 'article') ?></td>
-		<td class="sly-col-created <?php echo $revision->isOnline() ? 'sly-online' : 'sly-offline' ?>"><?php echo sly_Util_String::formatDatetime($revision->getCreateDate()) ?></td>
+		<td class="sly-col-rev"><?php echo sly_Util_String::formatNumber($rev, 0) ?></td>
+		<td class="sly-col-created <?php echo $online ? 'sly-online' : 'sly-offline' ?>">
+			<?php
+			if ($current) print '<strong>';
+			echo sly_Util_HTML::getDatetimeTag($revision->getCreateDate());
+			if ($current) print '</strong>';
+			?>
+		</td>
 		<td class="sly-col-user"><?php echo $revision->getCreateUser() ?></td>
 	</tr>
-<?php
+	<?php
 }
 
 $table->closeBuffer();
