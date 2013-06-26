@@ -521,8 +521,8 @@ var sly = sly || {};
 			params = $.param(params); // always uses '&' as a separator
 
 			// ... fix that if needed
-			if (typeof set === 'string' && sep !== '&') {
-				params = params.replace('&', sep);
+			if (typeof sep === 'string' && sep !== '&') {
+				params = params.replace(/&/g, sep);
 			}
 		}
 		else {
