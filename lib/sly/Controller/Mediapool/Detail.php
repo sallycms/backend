@@ -112,11 +112,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 		$service  = $this->getContainer()->getMediumService();
 
 		if (mb_strlen($fileName) > 0) {
-			$media = $service->find(array('filename' => $fileName), null, null, 'LIMIT 1');
-
-			if (!empty($media)) {
-				return reset($media);
-			}
+			return $service->findByFilename($fileName);
 		}
 		elseif ($fileID > 0) {
 			return $service->findById($fileID);
