@@ -45,11 +45,14 @@ if ($form->getCurrentFieldset() !== null) {
 // revision select
 
 $form->beginFieldset('', 'sly-article-revisions');
+
 $table = new sly_Table('sly-article-revisions-table');
 $table->addColumn(sly_Table_Column::sprite('article', null));
 $table->addColumn(sly_Table_Column::factory('Rev.', 'sly-col-rev'));
 $table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
 $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
+
+$table->setPagerParam('revisions');
 $table->openBuffer();
 
 foreach ($revisions as $revision) {
@@ -59,6 +62,8 @@ foreach ($revisions as $revision) {
 	$online    = $revision->isOnline();
 	$current   = $rev === $article->getRevision();
 	$selectUrl = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+	$user      = $userService->findByLogin($revision->getCreateUser());
+	$username  = $user ? ($user->getName() ?: $user->getLogin()) : $revision->getCreateUser();
 
 	?>
 	<tr data-slyid="<?php echo $id ?>" data-slyclang="<?php echo $clang ?>" data-slyrevision="<?php echo $rev ?>" data-slyonline="<?php echo $online ? '1' : '0' ?>">
@@ -71,13 +76,13 @@ foreach ($revisions as $revision) {
 			if ($current) print '</strong>';
 			?>
 		</td>
-		<td class="sly-col-user"><?php echo $revision->getCreateUser() ?></td>
+		<td class="sly-col-user"><?php echo sly_html($username) ?></td>
 	</tr>
 	<?php
 }
 
 $table->closeBuffer();
-$revSelect = new sly_Form_Fragment($table->render());
+$revSelect = new sly_Form_Fragment($table->render($total));
 $form->addElement($revSelect);
 
 /////////////////////////////////////////////////////////////////

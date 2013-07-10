@@ -14,14 +14,30 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		if ($this->header() !== true) return;
 
-		$post = $this->getRequest()->post;
+		$post        = $this->getRequest()->post;
+		$container   = $this->getContainer();
+		$userService = $container['sly-service-user'];
+		$artService  = $container['sly-service-article'];
+
+		// handle pagination of revision list
+
+		sly_Table::setElementsPerPageStatic(25);
+		$paging = sly_Table::getPagingParameters('revisions', true, false);
+
+		// fetch revisions
+
+		$art       = $this->article;
+		$revisions = $artService->findAllRevisions($art->getId(), $art->getClang(), $paging['start'], $paging['elements']);
+		$total     = $artService->countRevisions($art);
 
 		$this->render('content/meta/index.phtml', array(
-			'article'   => $this->article,
-			'slot'      => $this->slot,
-			'revisions' => $this->getContainer()->getArticleService()->findAllRevisions($this->article->getId(), $this->article->getclang()),
-			'user'      => sly_Util_User::getCurrentUser(),
-			'clangB'    => $post->get('clang_b', 'int')
+			'article'     => $art,
+			'slot'        => $this->slot,
+			'revisions'   => $revisions,
+			'user'        => $userService->getCurrentUser(),
+			'clangB'      => $post->get('clang_b', 'int'),
+			'userService' => $userService,
+			'total'       => $total
 		), false);
 	}
 
