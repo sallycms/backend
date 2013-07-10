@@ -13,12 +13,13 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected $slot;
 
 	protected function init() {
-		$request  = $this->getRequest();
-		$id       = $request->request('article_id', 'int', 0);
-		$clang    = $request->request('clang',      'int', sly_Core::getDefaultClangId());
-		$revision = $request->request('revision',   'int', sly_Service_Article::FIND_REVISION_LATEST);
+		$request   = $this->getRequest();
+		$container = $this->getContainer();
+		$id        = $request->request('article_id', 'int', 0);
+		$clang     = $request->request('clang',      'int', sly_Core::getDefaultClangId());
+		$revision  = $request->request('revision',   'int', sly_Service_Article::FIND_REVISION_LATEST);
 
-		$this->article = $this->getContainer()->getArticleService()->findByPK($id, $clang, $revision);
+		$this->article = $container->getArticleService()->findByPK($id, $clang, $revision);
 
 		if ($this->article === null) {
 			throw new sly_Exception(t('article_not_found', $id), 404);
@@ -30,7 +31,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 		// validate slot
 		if ($this->article->hasTemplate()) {
 			$templateName = $this->article->getTemplateName();
-			$tplService   = $this->getContainer()->getTemplateService();
+			$tplService   = $container->getTemplateService();
 
 			if (!$tplService->hasSlot($templateName, $this->slot)) {
 				$this->slot = $tplService->getFirstSlot($templateName);
@@ -39,7 +40,8 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 
 		$session->set('contentpage_slot', $this->slot);
 
-		sly_Core::setCurrentArticleId($id);
+		$container->setCurrentArticleId($id);
+		$container->setCurrentArticleRevision(sly_Service_Article::FIND_REVISION_LATEST);
 	}
 
 	protected function renderLanguageBar() {
