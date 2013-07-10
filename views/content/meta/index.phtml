@@ -20,7 +20,7 @@
 print sly_Helper_Message::renderFlashMessage();
 
 $category_id = $article->getCategoryId();
-$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article, 'revisions' => $revisions, 'total_revisions' => $total);
 $form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POST', t('general'));
 
 $form->setEncType('multipart/form-data');
