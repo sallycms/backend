@@ -72,15 +72,15 @@ class sly_Router_Backend extends sly_Router_Base {
 
 		foreach ($alternatives as $alt) {
 			try {
-				$controllerClass = $dispatcher->getControllerClass($alt);
-				$dispatcher->checkController($controllerClass);
+				$dispatcher->getController($alt);
 
 				// if we got here, cool, let's update the request
 				$request->get->set(self::CONTROLLER_PARAM, $alt);
+
 				return true;
 			}
 			catch (Exception $e) {
-				// pass ...
+				// pass ... (abstract class, non-existing class, ...)
 			}
 		}
 

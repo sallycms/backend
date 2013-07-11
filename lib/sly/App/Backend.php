@@ -9,8 +9,9 @@
  */
 
 class sly_App_Backend extends sly_App_Base {
-	protected $request = null;
-	protected $router  = null;
+	protected $request    = null;
+	protected $router     = null;
+	protected $dispatcher = null;
 
 	public function isBackend() {
 		return true;
@@ -129,7 +130,7 @@ class sly_App_Backend extends sly_App_Base {
 	 */
 	protected function getDispatcher() {
 		if ($this->dispatcher === null) {
-			$this->dispatcher = new sly_Dispatcher_Backend($this->getContainer(), $this->getControllerClassPrefix());
+			$this->dispatcher = new sly_Dispatcher_Backend($this->getContainer());
 		}
 
 		return $this->dispatcher;
