@@ -11,7 +11,7 @@
 $urlParams = array('article_id' => $article->getId(), 'clang' => $article->getClang(), 'revision' => $article->getRevision());
 $menu      = '';
 $isMeta    = $this instanceof sly_Controller_Contentmeta;
-$url       = sly_Util_HTTP::getBaseUrl(true).'/?'.http_build_query($urlParams);
+$url       = sly_Util_HTTP::getAbsoluteUrl($article, $article->getClang());
 
 $listElements = array();
 $listElements[] = '<a href="'.$_router->getUrl('content', null, $urlParams).'"'.($isMeta ? '' : ' class="sly-active"').'>'.t('edit_mode').'</a>';
