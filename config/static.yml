@@ -1,0 +1,52 @@
+relogindelay: 2
+authorisation:
+  apps:
+    token:
+      backend: 'translate:backend'
+  pages:
+    title: 'translate:pages'
+    token:
+      structure: 'translate:structure'
+      addons: 'translate:addons'
+      user: 'translate:users'
+      mediapool: 'translate:mediapool'
+  article:
+    title: 'translate:articles'
+    token:
+      edit: 'translate:edit'
+      move: 'translate:move'
+      edittype: 'translate:change_articletype'
+      editcontent: 'translate:edit_contents'
+    supers:
+      editcontent: ['edit']
+      edittype: ['edit']
+  module:
+    title: 'translate:modules'
+    list: 'sly_Authorisation_ModuleListProvider'
+    token:
+      add: 'translate:add'
+      edit: 'translate:edit'
+      delete: 'translate:delete'
+      move: 'translate:move'
+    supers:
+      add: ['edit','delete']
+      edit: ['delete', 'move']
+  language:
+    title: 'translate:languages'
+    list: 'sly_Authorisation_LanguageListProvider'
+    token:
+      access: 'translate:grant_access'
+  mediacategory:
+    title: 'translate:media_categories'
+    list: 'sly_Authorisation_MediaCategoryListProvider'
+    token:
+      access: 'translate:grant_access'
+  user:
+    title: 'translate:users'
+    token:
+      add: 'translate:add'
+      edit: 'translate:edit'
+      delete: 'translate:delete'
+backend:
+  favicon: favicon.ico
+  start_page: structure

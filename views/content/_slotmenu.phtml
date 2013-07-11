@@ -1,0 +1,42 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+if (!$article->hasTemplate()) return;
+$container       = sly_Core::getContainer();
+$templateService = $container->getTemplateService();
+$templateName    = $article->getTemplateName();
+$slots           = $templateService->getSlots($templateName);
+
+if (count($slots) < 2) return;
+
+$params['article_id'] = $article->getId();
+$params['clang']      = $article->getClang();
+$params['revision']        = $article->getRevision();
+$listElements         = array();
+
+foreach ($slots as $tmpSlot) {
+	$params['slot'] = $tmpSlot;
+	$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
+	$slotTitle      = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
+	$listElements[] = '<a href="'.$_router->getUrl('content', null, $params).'"'.$class.'>'.$slotTitle.'</a>';
+}
+
+$listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $listElements, array(
+	'article_id' => $article->getId(),
+	'clang'      => $article->getClang()
+));
+
+?>
+<ul class="sly-navi-slots">
+	<li><?php echo t('slots') ?></li>
+	<?php foreach ($listElements as $idx => $listElement): ?>
+	<li><?php echo $listElement ?></li>
+	<?php endforeach ?>
+</ul>

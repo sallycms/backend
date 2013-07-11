@@ -1,0 +1,31 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div id="sly-page">
+	<div id="sly-navi-top">
+		<?php if ($username && $navigation): ?>
+		<ul class="sly-meta">
+			<li class="sly-first"><span><?php print t('logged_in_as').' '.sly_html($username) ?></span></li>
+			<li><a href="<?php print $_router->getUrl('profile') ?>"><?php print t('my_profile') ?></a></li>
+			<li><a href="<?php print $_router->getUrl('login', 'logout') ?>" class="sly-postlink"><?php print t('logout') ?></a></li>
+			<li><a href="../" class="sly-blank"><?php print t('to_website') ?></a></li>
+		</ul>
+		<?php elseif ($this->hasNavigation()): ?>
+		<p class="sly-meta"><?php print t('logged_out') ?></p>
+		<?php endif ?>
+	</div>
+
+	<?php if ($username && $navigation): ?>
+	<div id="sly-navi-main">
+		<?php print $this->renderView('navigation.phtml', array('nav' => $navigation)); ?>
+	</div>
+	<?php endif ?>
+
+	<div id="sly-wrapper">
