@@ -65,8 +65,8 @@ $form->addRow(array($name, $description));
 // third row: created and updated
 
 if ($user) {
-	$created = new sly_Form_Text(t('created_at'), sly_Util_String::formatDatetime($user->getCreateDate()));
-	$updated = new sly_Form_Text(t('updated_at'), sly_Util_String::formatDatetime($user->getUpdateDate()));
+	$created = new sly_Form_Text(t('created_at'), sly_Util_HTML::getDatetimeTag($user->getCreateDate()), null, true);
+	$updated = new sly_Form_Text(t('updated_at'), sly_Util_HTML::getDatetimeTag($user->getUpdateDate()), null, true);
 
 	$form->addRow(array($created, $updated));
 }

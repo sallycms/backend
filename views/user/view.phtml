@@ -35,7 +35,17 @@ $description = new sly_Form_Text(t('description'), $user->getDescription());
 $form->addRow(array($name, $description));
 
 //////////////////////////////////////////////////////////////////
-// third row: admin and status
+// third row: created and updated
+
+if ($user) {
+	$created = new sly_Form_Text(t('created_at'), sly_Util_HTML::getDatetimeTag($user->getCreateDate()), null, true);
+	$updated = new sly_Form_Text(t('updated_at'), sly_Util_HTML::getDatetimeTag($user->getUpdateDate()), null, true);
+
+	$form->addRow(array($created, $updated));
+}
+
+//////////////////////////////////////////////////////////////////
+// fourth row: admin and status
 
 $userAdmin  = new sly_Form_Input_Checkbox('is_admin', '', '1', t('admin'));
 $userStatus = new sly_Form_Input_Checkbox('userstatus', '', '1', t('activated'));
@@ -48,14 +58,21 @@ $userStatus->setDisabled(true);
 $form->addRow(array($userAdmin, $userStatus));
 
 //////////////////////////////////////////////////////////////////
-// fourth row: backend startpage and backend locale
+// fifth row: backend startpage and backend locale
 
 $startPage     = $user->getStartPage();
 $backendLocale = $user->getBackendLocale();
 $startpages    = $this->getPossibleStartpages();
 $locales       = $this->getBackendLocales();
 
-$startpageSelect = new sly_Form_Text(t('startpage'), $startPage ? $startpages[$startPage] : t('structure'));
+if (!$startPage || !isset($startpages[$startPage])) {
+	$startPage = t('profile');
+}
+else {
+	$startPage = $startpages[$startPage];
+}
+
+$startpageSelect = new sly_Form_Text(t('startpage'), $startPage);
 $localeSelect    = new sly_Form_Text(t('backend_locale'), $locales[$backendLocale]);
 
 $form->addRow(array($startpageSelect, $localeSelect));
