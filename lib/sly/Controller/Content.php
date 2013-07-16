@@ -81,7 +81,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				if ($forceModule === null) {
 					$sliceservice = $this->getContainer()->getArticleSliceService();
 					$slice_id     = $request->post('slice_id', 'int', 0);
-					$slice        = $sliceservice->findById($slice_id);
+					$slice        = $sliceservice->findOne(array('id' => $slice_id));
 					$module       = $slice ? $slice->getModule() : null;
 				}
 				else {
