@@ -42,7 +42,7 @@ class sly_Backend_Authorisation_Util {
 				}
 
 				$persistence = sly_Core::getContainer()->getPersistence();
-				$prefix      = $query->getPrefix();
+				$prefix      = $persistence->getPrefix();
 
 				$persistence->query('SELECT DISTINCT id FROM '.$prefix.'article WHERE path LIKE ?', array($path));
 
