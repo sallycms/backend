@@ -8,6 +8,7 @@
 		li {
 			display: inline;
 			margin: 0 0 0 5px; /* Abstand der Listenelemente zu einander, s. Buttons Editier-Modus etc. */
+			line-height: 21px;
 		}
 	}
 
@@ -25,12 +26,27 @@
 			color: #fff;
 		}
 
+		/* if the list has been transformed into a select field, revert the hover styling */
+
+		&.chzn-single {
+			.border-radius(0);
+
+			&:hover {
+				background-color: #fff;
+				color: @drk_grey;
+			}
+		}
+
 		&.sly-active {
 			background-color: @drk_grey;
 			color: #fff;
 
 			&:hover { background-color: #b3b3b3; }
 		}
+	}
+
+	.sly-form-select {
+		width: 250px;
 	}
 }
 

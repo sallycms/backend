@@ -40,7 +40,7 @@ $form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
 // header
 
 ?>
-<div class="sly-content-header">
+<div class="sly-content-header" data-slyid="<?php print $article->getId() ?>" data-slyclang="<?php print $article->getClang() ?>" data-slyrevision="<?php print $article->getRevision() ?>">
 	<?php
 	// navigation
 	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
