@@ -59,7 +59,7 @@ foreach ($users as $user) {
 		$name = $login;
 	}
 
-	$try = ($try === 0 || $try === null) ? t('never') : sly_Util_String::formatDatetime($try);
+	$try = ($try === 0 || $try === null) ? t('never') : sly_Util_HTML::getDatetimeTag($try);
 
 	?>
 	<tr>
