@@ -18,8 +18,8 @@ $form->setApplyButton();
 $form->setResetButton();
 
 // build form elements
-$config = sly_Core::config();
-$yesNo  = array('true' => t('yes'), 'false' => t('no'));
+$container = sly_Core::getContainer();
+$config    = $container['sly-config'];
 
 foreach ($types as $key => $name) {
 	$types[$key] = sly_translate($name);
@@ -29,8 +29,12 @@ foreach ($languages as $id => $language) {
 	$languages[$id] = $language->getName();
 }
 
-$availAdapters   = sly_Core::getContainer()->get('sly-cache-factory')->getAvailableAdapters();
-$availAdapters   = array_map('basename', $availAdapters);
+$availAdapters = $container['sly-cache-factory']->getAvailableAdapters();
+
+foreach ($availAdapters as $name => $className) {
+	$availAdapters[$name] = basename(str_replace('\\', '/', $className));
+}
+
 $timezoneSelect  = sly_Backend_Form_Helper::getTimezoneSelect();
 $projectName     = new sly_Form_Input_Text('projectname', t('project_name'), sly_Core::getProjectName());
 $startArticle    = new sly_Form_Widget_Link('start_article', t('start_article'), sly_Core::getSiteStartArticleId());
