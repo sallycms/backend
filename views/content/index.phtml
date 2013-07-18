@@ -86,7 +86,7 @@ if (!$noContentAllowed) {
 					print sly_Helper_Message::warn(t('no_rights_to_this_module'));
 				}
 				else {
-					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $slot, isset($slicevalues) ? $slicevalues : array());
+					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $article->getRevision(), $slot, isset($slicevalues) ? $slicevalues : array());
 				}
 			}
 			elseif (!$noContentAllowed) {
