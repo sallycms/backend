@@ -140,12 +140,11 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 			// check permission
 			if (sly_Util_ArticleSlice::canMoveSlice($user, $slice_id)) {
-				$success = $this->getContainer()->getArticleSliceService()->move($slice_id, $direction);
-
-				if ($success) {
+				try {
+					$this->getContainer()->getArticleSliceService()->move($slice_id, $direction);
 					$flash->appendInfo(t('slice_moved'));
 				}
-				else {
+				catch (Exception $e) {
 					$flash->appendWarning(t('cannot_move_slice'));
 				}
 			}
@@ -208,7 +207,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				$this->postSliceEdit('edit', $instance->getId());
 
 				$apply = sly_post('btn_update', 'string') !== null;
-				return $this->redirectToArticle('#messages', $articleSlice, $apply);
+				return $this->redirectToArticle('#messages', $instance, $apply);
 			}
 
 			$extraparams = array();
@@ -245,10 +244,11 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 		if ($this->preSliceEdit('delete') !== false) {
 			//$ok = sly_Util_ArticleSlice::deleteById($sliceID);
-			$ok = $this->getContainer()->getArticleService()->touch($slice->getArticle(), $user, array($slice->getSliceId()));
+			$article = $this->getContainer()->getArticleService()->touch($slice->getArticle(), $user, array($slice->getSliceId()));
 		}
 
-		if ($ok) {
+		if ($article) {
+			$this->article = $article;
 			$flash->appendInfo(t('slice_deleted'));
 			$this->postSliceEdit('delete', $sliceID);
 		}
@@ -256,7 +256,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$flash->appendWarning(t('cannot_delete_slice'));
 		}
 
-		return $this->redirectToArticle('#messages', $slice);
+		return $this->redirectToArticle('#messages', null);
 	}
 
 	private function preSliceEdit($function) {
@@ -329,9 +329,11 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	}
 
 	protected function redirectToArticle($anchor, sly_Model_ArticleSlice $slice = null, $edit = false) {
-		$artID   = $this->article->getId();
-		$clang   = $this->article->getClang();
-		$params  = array('article_id' => $artID, 'clang' => $clang, 'slot' => $this->slot);
+		$art     = $slice ? $slice->getArticle() : $this->article;
+		$artID   = $art->getId();
+		$clang   = $art->getClang();
+		$rev     = $art->getRevision();
+		$params  = array('article_id' => $artID, 'clang' => $clang, 'slot' => $this->slot, 'revision' => $rev);
 
 		if ($edit) {
 			$params['slice_id'] = $slice->getId();

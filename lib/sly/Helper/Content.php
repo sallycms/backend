@@ -12,7 +12,7 @@
  * @author zozi@webvariants.de
  */
 class sly_Helper_Content {
-	public static function printAddSliceForm($module, $position, $articleId, $clang, $slot) {
+	public static function printAddSliceForm($module, $position, $articleId, $clang, $revision, $slot) {
 		$moduleService = sly_Core::getContainer()->getModuleService();
 		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
@@ -27,6 +27,7 @@ class sly_Helper_Content {
 				$form->setEncType('multipart/form-data');
 				$form->addHiddenValue('article_id', $articleId);
 				$form->addHiddenValue('clang', $clang);
+				$form->addHiddenValue('revision', $revision);
 				$form->addHiddenValue('slot', $slot);
 				$form->addHiddenValue('module', sly_html($module));
 				$form->addHiddenValue('pos', $position);

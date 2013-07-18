@@ -13,9 +13,10 @@ $user         = sly_Util_User::getCurrentUser();
 $module       = $slice->getModule();
 $slot         = $slice->getSlot();
 $service      = $container->getModuleService();
-$urlParams    = array('article_id' => $slice->getArticleId(), 'slice_id' => $slice->getId(), 'clang' => $slice->getClang());
+$article      = $slice->getArticle();
+$urlParams    = array('article_id' => $slice->getArticleId(), 'slice_id' => $slice->getId(), 'clang' => $slice->getClang(), 'revision' => $article->getRevision());
 $listElements = array();
-$allowed      = $container->getArticleTypeService()->hasModule($slice->getArticle()->getType(), $module, $slot);
+$allowed      = $container->getArticleTypeService()->hasModule($article->getType(), $module, $slot);
 
 if (!$service->exists($module)) {
 	$moduleName = $module;
