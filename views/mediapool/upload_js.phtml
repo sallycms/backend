@@ -16,7 +16,7 @@ $title    = json_encode($file->getTitle());
 <script type="text/javascript">
 var filename = <?php echo $filename ?>;
 var title    = <?php echo $title ?>;
-var link     = 'data/mediapool/' + filename;
+var link     = 'mediapool/' + filename;
 var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
 var fullName = '';
 
