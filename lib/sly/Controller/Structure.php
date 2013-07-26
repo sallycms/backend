@@ -60,7 +60,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependInfo(t('category_deleted'), true);
 		}
 		catch (Exception $e) {
-			$flash->prependWarning($e->getMessage());
+			$flash->prependWarning($e->getMessage(), true);
 		}
 
 		return $this->redirectToCat();
@@ -77,7 +77,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			$flash->prependInfo(t('article_deleted'), true);
 		}
 		catch (Exception $e) {
-			$flash->prependWarning($e->getMessage());
+			$flash->prependWarning($e->getMessage(), true);
 		}
 
 		return $this->redirectToCat();
