@@ -25,7 +25,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$currentUser = sly_Util_User::getCurrentUser();
+			$currentUser = $this->getCurrentUser();
 			$isAdmin     = $currentUser->isAdmin();
 
 			$password = $request->post('userpsw', 'string');
@@ -47,12 +47,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			// backend locale and startpage
 			$backendLocale  = $request->post('userperm_mylang', 'string');
 			$backendLocales = $this->getBackendLocales();
+
 			if (isset($backendLocales[$backendLocale])) {
 				$newuser->setBackendLocale($backendLocale);
 			}
 
 			$startpage  = $request->post('userperm_startpage', 'string');
 			$startpages = $this->getPossibleStartpages();
+
 			if (isset($startpages[$startpage])) {
 				$newuser->setStartPage($startpage);
 			}
@@ -113,12 +115,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			// backend locale and startpage
 			$backendLocale  = $request->post('userperm_mylang', 'string');
 			$backendLocales = $this->getBackendLocales();
+
 			if (isset($backendLocales[$backendLocale])) {
 				$user->setBackendLocale($backendLocale);
 			}
 
 			$startpage  = $request->post('userperm_startpage', 'string');
 			$startpages = $this->getPossibleStartpages();
+
 			if (isset($startpages[$startpage])) {
 				$user->setStartPage($startpage);
 			}
@@ -139,6 +143,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$user = $service->save($user);
 				$flash->prependInfo(t('user_updated'), true);
 				$params = array();
+
 				if ($apply) {
 					$params['id'] = $user->getId();
 				}
