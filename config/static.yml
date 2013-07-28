@@ -4,7 +4,7 @@ authorisation:
     token:
       backend: 'translate:backend'
   pages:
-    title: 'translate:pages'
+    title: 'translate:backend_areas'
     token:
       structure: 'translate:structure'
       addons: 'translate:addons'
