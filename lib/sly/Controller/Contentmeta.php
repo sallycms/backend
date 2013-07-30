@@ -129,6 +129,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 	private function copyContent() {
 		$request        = $this->getRequest();
+		$srcClang       = $request->post('clang', 'int', 0);
 		$dstClangs      = array_unique($request->postArray('clang_b', 'int'));
 		$user           = sly_Util_User::getCurrentUser();
 		$infos          = array();
