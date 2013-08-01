@@ -125,35 +125,45 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$this->init();
 
 		$request   = $this->getRequest();
-		$slice_id  = $request->post('slice_id', 'int');
+		$container = $this->getContainer();
+		$sliceID   = $request->post('slice_id', 'int');
 		$direction = $request->post('direction', 'string');
-		$flash     = sly_Core::getFlashMessage();
+		$flash     = $container['sly-flash-message'];
+		$service   = $container['sly-service-articleslice'];
+		$slice     = $service->findOne(array('id' => $sliceID));
 
-		// check if module exists
-		$module = sly_Util_ArticleSlice::getModule($slice_id);
+		try {
+			// check slice
 
-		if (!$module) {
-			$flash->appendWarning(t('module_not_found'));
-		}
-		else {
-			$user = sly_Util_User::getCurrentUser();
-
-			// check permission
-			if (sly_Util_ArticleSlice::canMoveSlice($user, $slice_id)) {
-				try {
-					$this->getContainer()->getArticleSliceService()->move($slice_id, $direction);
-					$flash->appendInfo(t('slice_moved'));
-				}
-				catch (Exception $e) {
-					$flash->appendWarning(t('cannot_move_slice'));
-				}
+			if (!$slice) {
+				throw new Exception(t('slice_not_found', $sliceID));
 			}
-			else {
-				$flash->appendWarning(t('no_rights_to_this_module'));
+
+			$user = $this->getCurrentUser();
+
+			if (!sly_Util_ArticleSlice::canMoveSlice($user, $sliceID)) {
+				throw new Exception(t('no_rights_to_this_module'));
 			}
+
+			// check if module exists
+
+			$module = $slice->getModule();
+			$module = $container['sly-service-module']->exists($module) ? $module : false;
+
+			if (!$module) {
+				throw new Exception(t('module_not_found'));
+			}
+
+			// move the slice
+
+			$slice = $service->move($sliceID, $direction);
+			$flash->appendInfo(t('slice_moved'));
+		}
+		catch (Exception $e) {
+			$flash->appendWarning(t('cannot_move_slice', $e->getMessage()));
 		}
 
-		return $this->redirectToArticle('#messages', sly_Util_ArticleSlice::findById($slice_id));
+		return $this->redirectToArticle('#messages', $slice);
 	}
 
 	public function addarticlesliceAction() {

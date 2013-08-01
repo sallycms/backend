@@ -400,7 +400,7 @@ slice_updated: Block has been updated.
 slice_added: Block has been added.
 slice_moved: Block has been moved.
 slice_deleted: Slice has been deleted.
-cannot_move_slice: Block could not be moved!
+cannot_move_slice: 'Block could not be moved: {0}'
 cannot_delete_slice: Block could not be deleted!
 cannot_update_slice: Block could not be updated!
 

@@ -400,7 +400,7 @@ slice_updated: Block wurde aktualisiert.
 slice_added: Block wurde hinzugefügt.
 slice_moved: Block wurde verschoben.
 slice_deleted: Block wurde gelöscht.
-cannot_move_slice: Beim Verschieben des Blocks ist ein Fehler aufgetreten!
+cannot_move_slice: 'Der Block konnte nicht verschoben werden: {0}'
 cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
 cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
 
