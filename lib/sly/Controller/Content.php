@@ -100,23 +100,29 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 	public function setarticletypeAction() {
 		$this->init();
 
-		$type    = $this->getRequest()->post('article_type', 'string', '');
-		$service = $this->getContainer()->getArticleTypeService();
+		$type        = $this->getRequest()->post('article_type', 'string', '');
+		$container   = $this->getContainer();
+		$typeService = $container['sly-service-articletype'];
+		$artService  = $container['sly-service-article'];
 
-		if (!empty($type) && $service->exists($type, true)) {
-			$service = $this->getContainer()->getArticleService();
-			$flash   = $this->getContainer()->getFlashMessage();
+		if (!empty($type) && $typeService->exists($type, true)) {
+			$flash = $container['sly-flash-message'];
 
 			// change type and update database
-			$service->setType($this->article, $type);
-			$this->article = $service->findByPK($this->article->getId(), $this->article->getClang());
+			$artService->setType($this->article, $type);
+			$this->article = $artService->findByPK($this->article->getId(), $this->article->getClang());
+
 			$flash->appendInfo(t('article_updated'));
 		}
 
-		sly_Core::dispatcher()->notify('SLY_ART_META_UPDATED', $this->article, array(
+		$container['sly-dispatcher']->notify('SLY_ART_META_UPDATED', $this->article, array(
 			'id'    => $this->article->getId(),   // deprecated
 			'clang' => $this->article->getClang() // deprecated
 		));
+
+		// re-fetch the article, addOns might have created a new version in the background
+		// and we need that one to correct redirect the user
+		$this->article = $artService->findByPK($this->article->getId(), $this->article->getClang());
 
 		return $this->redirectToArticle('', null);
 	}
