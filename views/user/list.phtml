@@ -42,31 +42,29 @@ $table->setIsEmpty(empty($users));
 $table->setEmptyNotice(t('no_users_found'));
 $table->openBuffer();
 
-$tdIcon    = '';
-$user      = sly_Util_User::getCurrentUser();
-$currentID = $user->getId();
-$action    = $canEdit ? 'edit' : 'view';
+$tdIcon      = '';
+$user        = sly_Util_User::getCurrentUser();
+$currentID   = $user->getId();
+$action      = $canEdit ? 'edit' : 'view';
+$actionTitle = t($canEdit ? 'edit' : 'show');
 
 foreach ($users as $user) {
 	$id    = (int) $user->getId();
 	$name  = $user->getName();
 	$login = $user->getLogin();
 	$try   = $user->getLastTryDate();
+	$url   = $_router->getUrl(null, $action, array('id' => $id));
 
 	if (empty($name)) {
 		$name = $login;
 	}
 
-	$try = ($try === 0 || $try === null) ? t('never') : sly_Util_String::formatDatetime($try);
+	$try = ($try === 0 || $try === null) ? t('never') : sly_Util_HTML::getDatetimeTag($try);
 
 	?>
 	<tr>
-		<td class="sly-col-icon sly-icon">
-			<a href="<?php echo $_router->getUrl(null, $action, array('id' => $id)) ?>">
-				<img src="assets/empty.png" class="sly-icon sly-sprite sly-sprite-sly-user" alt="" title="<?php echo t($canEdit ? 'edit' : 'show') ?>" />
-			</a>
-		</td>
-		<td class="sly-col-name"><a href="<?php echo $_router->getUrl(null, $action, array('id' => $id)) ?>"><?php echo sly_html($name) ?></a></td>
+		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($url, $actionTitle, 'user') ?></td>
+		<td class="sly-col-name"><a href="<?php echo $url ?>"><?php echo sly_html($name) ?></a></td>
 		<td class="sly-col-username"><?php echo sly_html($user->getLogin()) ?></td>
 		<td class="sly-col-last-login"><?php echo $try ?></td>
 

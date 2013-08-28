@@ -385,3 +385,84 @@ operation_requires_user_context: 'Die Operation {0} erfordert einen Nutzerkontex
 an_operation_requires_user_context: Diese Operation erfordert einen Nutzerkontext!
 article_slice_not_found: 'Artikel-Slice {0} wurde nicht gefunden!'
 no_users_found: Es wurden keine passenden Benutzer gefunden.
+
+edit_mode: Editier Modus
+metadata: Metadaten/Sonstiges
+preview: Vorschau
+
+module_not_found: 'Das Modul {0} wurde nicht gefunden!'
+module_not_allowed_in_slot: 'Das Modul {0} ist im Slot {1} nicht erlaubt.'
+no_rights_to_this_module: Sie haben keine Rechte für dieses Modul!
+
+edit_slice: Block bearbeiten
+add_slice: Block hinzufügen
+slice_updated: Block wurde aktualisiert.
+slice_added: Block wurde hinzugefügt.
+slice_moved: Block wurde verschoben.
+slice_deleted: Block wurde gelöscht.
+cannot_move_slice: 'Der Block konnte nicht verschoben werden: {0}'
+cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
+cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
+
+select_type_first: Bitte wählen sie zuerst einen Artikeltypen!
+no_template_defined: Dieser Artikel hat kein Template. Es können keine Inhalte eingepflegt werden.
+template_has_no_slots: In diesem Artikel können keine Inhalte eingepflegt werden.
+no_modules_allowed: In diesem Slot können keine Inhalte eingepflegt werden.
+slices_left: 'Der Inhalt dieses Artikels kann nicht bearbeitet werden, aber es sind noch Module vorhanden.'
+delete_this_slice: Bitte löschen sie diesen Block!
+
+metadata_updated: Metadaten wurden aktualisiert.
+move_article: Artikel verschieben
+article_copied: Artikel wurde kopiert.
+article_content_copied: Die Inhalte des Artikels wurden kopiert.
+cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
+cannot_copy_article: Der Artikel konnte nicht kopiert werden!
+cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+
+contentmeta_revisions: Revisionen
+contentmeta_select_revision: Revision auswählen
+create_time: Erstellt am
+
+affected_files: Betroffene Dateien
+apply_file: Medium übernehmen
+category_has_children: 'Die Kategorie kann nicht gelöscht werden, da sie noch Unterkategorien enthält!'
+category_name: Kategoriename
+edit_medium: Medium bearbeiten
+file: Datei
+file_added: Datei wurde hinzugefügt.
+file_changed: Die Datei wurde ausgetauscht.
+file_is_in_use: 'Die Datei {0} kann nicht gelöscht werden, da sie derzeit von folgenden Elementen verwendet wird:'
+file_info: Dateiinfo
+file_not_found_maybe_too_big: Datei wurde nicht gefunden. Vielleicht war sie zu groß?
+filename: Dateiname
+files_synced: '{0} Datei(en) wurden synchronisiert.'
+height: Höhe
+invalid_file_data: Es trat ein Fehler beim Upload der Datei auf!
+max_uploadsize: Maximale Uploadgröße
+media_list: Medien
+medium_deleted: Datei wurde gelöscht.
+medium_updated: Medium wurde aktualisiert.
+move_to_category: in Kategorie verschieben
+no_category: keine Kategorie
+no_file_diffs_found: Es wurden keine Unterschiede festgestellt.
+no_files_selected: Es wurden keine Medien ausgewählt!
+no_media_found: Keine Medien in dieser Medienkategorie gefunden.
+no_title: kein Titel
+replacement_file: Datei austauschen
+select_category: Kategorie auswählen
+selected_category: Ausgewählte Kategorie
+selected_files_moved: Die ausgewählten Medien wurden verschoben.
+selected_media: Ausgewählte Medien
+start: Start
+structure_caption: Liste der Kategorien
+sync_files: Dateien synchronisieren
+synchronize: synchronisieren
+thumbnail: Thumbnail
+types_of_old_and_new_do_not_match: 'Diese Datei kann nicht zum Austausch benutzt werden, da sie von einem anderen Dateityp ist!'
+an_error_happened_during_upload: Es trat ein Fehler beim Hochladen auf!
+upload: hochladen
+upload_and_use: hochladen und übernehmen
+upload_file: Medium hochladen
+width: Breite
+revision: Revision
+backend_areas: Backend-Bereiche

@@ -8,11 +8,11 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$urlParams = array('article_id' => $article->getId(), 'clang' => $article->getClang());
-$menu      = '';
+$urlParams    = array('article_id' => $article->getId(), 'clang' => $article->getClang(), 'revision' => $article->getRevision());
+$menu         = '';
 $isEditActive = $this instanceof sly_Controller_Content;
 $isMetaActive = $this instanceof sly_Controller_Contentmeta;
-$url          = sly_Util_HTTP::getAbsoluteUrl($article);
+$url          = sly_Util_HTTP::getAbsoluteUrl($article, $article->getClang());
 
 $listElements = array();
 $listElements[] = '<a href="'.$_router->getUrl('content', null, $urlParams).'"'.($isEditActive ? ' class="sly-active"' : '').'>'.t('edit_mode').'</a>';
@@ -21,7 +21,8 @@ $listElements[] = '<a href="'.$url.'" class="sly-blank">'.t('show').'</a>';
 
 $listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_ACTIONS_MENU', $listElements, array(
 	'article_id' => $article->getId(),
-	'clang'      => $article->getClang()
+	'clang'      => $article->getClang(),
+	'rev'        => $article->getRevision()
 ));
 ?>
 <ul class="sly-navi-content">

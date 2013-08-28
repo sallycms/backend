@@ -1,11 +1,10 @@
-RELOGINDELAY: 2
-START_PAGE: structure
+relogindelay: 2
 authorisation:
   apps:
     token:
       backend: 'translate:backend'
   pages:
-    title: 'translate:pages'
+    title: 'translate:backend_areas'
     token:
       structure: 'translate:structure'
       addons: 'translate:addons'
@@ -16,7 +15,6 @@ authorisation:
     token:
       edit: 'translate:edit'
       move: 'translate:move'
-      publish: 'translate:publish'
       edittype: 'translate:change_articletype'
       editcontent: 'translate:edit_contents'
     supers:
@@ -50,4 +48,5 @@ authorisation:
       edit: 'translate:edit'
       delete: 'translate:delete'
 backend:
-  favicon: backend/assets/favicon.ico
+  favicon: favicon.ico
+  start_page: structure

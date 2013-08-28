@@ -25,13 +25,13 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$currentUser = sly_Util_User::getCurrentUser();
+			$currentUser = $this->getCurrentUser();
 			$isAdmin     = $currentUser->isAdmin();
 
 			$password = $request->post('userpsw', 'string');
 			$login    = $request->post('userlogin', 'string');
 			$timezone = $request->post('timezone', 'string');
-			$service  = sly_Service_Factory::getUserService();
+			$service  = $this->getUserService();
 			$flash    = sly_Core::getFlashMessage();
 			$newuser  = new sly_Model_User();
 
@@ -47,12 +47,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			// backend locale and startpage
 			$backendLocale  = $request->post('userperm_mylang', 'string');
 			$backendLocales = $this->getBackendLocales();
+
 			if (isset($backendLocales[$backendLocale])) {
 				$newuser->setBackendLocale($backendLocale);
 			}
 
 			$startpage  = $request->post('userperm_startpage', 'string');
 			$startpages = $this->getPossibleStartpages();
+
 			if (isset($startpages[$startpage])) {
 				$newuser->setStartPage($startpage);
 			}
@@ -82,7 +84,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		$request     = $this->getRequest();
 		$save        = $request->isMethod('POST');
-		$service     = sly_Service_Factory::getUserService();
+		$service     = $this->getUserService();
 		$currentUser = sly_Util_User::getCurrentUser();
 		$isSelf      = $currentUser->getId() === $user->getId();
 		$isAdmin     = $currentUser->isAdmin();
@@ -113,12 +115,14 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			// backend locale and startpage
 			$backendLocale  = $request->post('userperm_mylang', 'string');
 			$backendLocales = $this->getBackendLocales();
+
 			if (isset($backendLocales[$backendLocale])) {
 				$user->setBackendLocale($backendLocale);
 			}
 
 			$startpage  = $request->post('userperm_startpage', 'string');
 			$startpages = $this->getPossibleStartpages();
+
 			if (isset($startpages[$startpage])) {
 				$user->setStartPage($startpage);
 			}
@@ -139,6 +143,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$user = $service->save($user);
 				$flash->prependInfo(t('user_updated'), true);
 				$params = array();
+
 				if ($apply) {
 					$params['id'] = $user->getId();
 				}
@@ -169,7 +174,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			return $this->redirectResponse();
 		}
 
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$current = sly_Util_User::getCurrentUser();
 		$flash   = sly_Core::getFlashMessage();
 
@@ -233,11 +238,11 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		$search  = sly_Table::getSearchParameters('users');
 		$paging  = sly_Table::getPagingParameters('users', true, false);
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$where   = null;
 
 		if (!empty($search)) {
-			$db    = sly_DB_Persistence::getInstance();
+			$db    = $this->getContainer()->getPersistence();
 			$where = 'login LIKE ? OR description LIKE ? OR name LIKE ?';
 			$where = str_replace('?', $db->quote('%'.$search.'%'), $where);
 		}
@@ -255,7 +260,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	protected function getUser($forcePost = false) {
 		$request = $this->getRequest();
 		$userID  = $forcePost ? $request->post('id', 'int', 0) : $request->request('id', 'int', 0);
-		$service = sly_Service_Factory::getUserService();
+		$service = $this->getUserService();
 		$user    = $service->findById($userID);
 
 		return $user;
@@ -275,22 +280,27 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	protected function getPossibleStartpages() {
-		$service = sly_Service_Factory::getAddOnService();
-		$addons  = $service->getAvailableAddOns();
+		$nav      = new sly_Layout_Navigation_Backend();
+		$user     = $this->getUser() ?: $this->getCurrentUser();
+		$starters = array('profile' => t('profile'));
 
-		$startpages = array();
-		$startpages['structure'] = t('structure');
-		$startpages['profile']   = t('profile');
+		$nav->init($user);
 
-		foreach ($addons as $addon) {
-			$page = $service->getComposerKey($addon, 'page', null);
-			$name = $service->getComposerKey($addon, 'name', $addon);
+		foreach ($nav->getGroups() as $group) {
+			foreach ($group->getPages() as $page) {
+				if ($page->isPopup()) continue;
 
-			if ($page) {
-				$startpages[$page] = sly_translate($name);
+				$pageParam = $page->getPageParam();
+				$name      = $page->getTitle();
+
+				$starters[$pageParam] = $name;
 			}
 		}
 
-		return $startpages;
+		return $starters;
+	}
+
+	protected function getUserService() {
+		return $this->getContainer()->getUserService();
 	}
 }

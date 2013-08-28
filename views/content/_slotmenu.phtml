@@ -9,8 +9,8 @@
  */
 
 if (!$article->hasTemplate()) return;
-
-$templateService = sly_Service_Factory::getTemplateService();
+$container       = sly_Core::getContainer();
+$templateService = $container->getTemplateService();
 $templateName    = $article->getTemplateName();
 $slots           = $templateService->getSlots($templateName);
 
@@ -18,13 +18,18 @@ if (count($slots) < 2) return;
 
 $params['article_id'] = $article->getId();
 $params['clang']      = $article->getClang();
+$params['revision']   = $article->getRevision();
 $listElements         = array();
 
 foreach ($slots as $tmpSlot) {
 	$params['slot'] = $tmpSlot;
-	$class          = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
-	$slotTitle      = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
-	$listElements[] = '<a href="'.$_router->getUrl('content', null, $params).'"'.$class.'>'.$slotTitle.'</a>';
+
+	$class     = (($this instanceof sly_Controller_Content) && $tmpSlot == $slot) ? ' class="sly-active"' : '';
+	$attr      = ' data-slyslot="'.sly_html($tmpSlot).'"';
+	$url       = $_router->getUrl('content', null, $params);
+	$slotTitle = sly_translate($templateService->getSlotTitle($templateName, $tmpSlot), true);
+
+	$listElements[] = '<a href="'.$url.'"'.$class.$attr.'>'.$slotTitle.'</a>';
 }
 
 $listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $listElements, array(

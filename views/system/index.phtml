@@ -8,16 +8,6 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$config    = sly_Core::config();
-$locales   = $this->getBackendLocales();
-$yesNo     = array('true' => t('yes'), 'false' => t('no'));
-$types     = array('' => t('no_articletype'));
-$languages = sly_Util_Language::findAll();
-
-foreach ($languages as $id => $language) {
-	$languages[$id] = $language->getName();
-}
-
 print sly_Helper_Message::renderFlashMessage();
 
 // build form
@@ -28,26 +18,30 @@ $form->setApplyButton();
 $form->setResetButton();
 
 // build form elements
-
-try {
-	$typeService = sly_Service_Factory::getArticleTypeService();
-	$types       = array_merge($types, $typeService->getArticleTypes());
-}
-catch (Exception $e) {
-	// pass...
-}
+$container = sly_Core::getContainer();
+$config    = $container['sly-config'];
 
 foreach ($types as $key => $name) {
 	$types[$key] = sly_translate($name);
 }
 
-$timezoneSelect  = sly_Form_Helper::getTimezoneSelect();
+foreach ($languages as $id => $language) {
+	$languages[$id] = $language->getName();
+}
+
+$availAdapters = $container['sly-cache-factory']->getAvailableAdapters();
+
+foreach ($availAdapters as $name => $className) {
+	$availAdapters[$name] = basename(str_replace('\\', '/', $className));
+}
+
+$timezoneSelect  = sly_Backend_Form_Helper::getTimezoneSelect();
 $projectName     = new sly_Form_Input_Text('projectname', t('project_name'), sly_Core::getProjectName());
 $startArticle    = new sly_Form_Widget_Link('start_article', t('start_article'), sly_Core::getSiteStartArticleId());
 $notFound        = new sly_Form_Widget_Link('notfound_article', t('not_found_article'), sly_Core::getNotFoundArticleId());
 $backendLocale   = new sly_Form_Select_DropDown('backend_locale', t('backend_locale'), sly_Core::getDefaultLocale(), $locales);
 $defaultType     = new sly_Form_Select_DropDown('default_type', t('default_articletype'), sly_Core::getDefaultArticleType(), $types);
-$cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_strategy'), sly_Core::getCachingStrategy(), sly_Cache::getAvailableCacheImpls());
+$cachingStrategy = new sly_Form_Select_DropDown('caching_strategy', t('caching_strategy'), sly_Core::getCachingStrategy(), $availAdapters);
 $developerMode   = new sly_Form_Input_Checkbox('developer_mode', t('developer_mode'), '1', t('enabled'));
 
 if (count($languages) === 1) {
@@ -76,10 +70,8 @@ $form->addElements(array($projectName, $startArticle, $notFound, $defaultType, $
 // caching form
 
 $caches = array(
-	'sly_core'          => t('sally_core_cache'),
-	'sly_asset'         => t('sally_assetcache'),
-	'sly_develop'       => t('sally_develop_content'),
-	'sly_reinit_addons' => t('reinit_all_addon_assets')
+	'sly_core'    => t('sally_core_cache'),
+	'sly_develop' => t('sally_develop_content')
 );
 
 $selected = array_keys($caches);
@@ -117,23 +109,20 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 			<?php endif ?>
 
 			<h4><?php print t('version') ?></h4>
-			<p>SallyCMS <?php print sly_Core::getVersion() ?> &ndash; PHP <?php print PHP_VERSION ?></p>
+			<p>SallyCMS <?php print sly_Core::getVersion('R') ?> &ndash; PHP <?php print PHP_VERSION ?></p>
 
 			<h4><?php print t('database_connection') ?></h4>
 			<p><?php
-			$database = $config->get('DATABASE');
-			$pdo      = sly_DB_Persistence::getInstance()->getPDO();
-			$version  = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
 
-			if (strtolower($database['DRIVER']) === 'sqlite') {
-				print sly_html(sprintf('%s.sq3 (v%s)', $database['NAME'], $version));
+			if (strtolower($database['driver']) === 'sqlite') {
+				print sly_html(sprintf('%s.sq3 (v%s)', $database['name'], $database['version']));
 			}
 			else {
-				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['LOGIN'], $database['HOST'], $database['NAME'], $version));
+				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['login'], $database['host'], $database['name'], $database['version']));
 			}
 
-			if (strtolower($database['DRIVER']) !== 'mysql') {
-				printf(' (%s)', strtolower($database['DRIVER']));
+			if (strtolower($database['driver']) !== 'mysql') {
+				printf(' (%s)', strtolower($database['driver']));
 			}
 			?>
 		</div>

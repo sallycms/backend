@@ -13,9 +13,10 @@ class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements
 		$request = $this->getRequest();
 		$server  = $request->server('SERVER_SOFTWARE', 'N/A');
 		$ua      = $request->getUserAgent() ? $request->getUserAgent() : 'N/A';
+		$caching = $this->getContainer()->get('sly-config')->get('caching_strategy');
 
 		$this->init();
-		$this->render('credits/bugreport.phtml', array('server' => $server, 'ua' => $ua), false);
+		$this->render('credits/bugreport.phtml', array('server' => $server, 'ua' => $ua, 'caching' => $caching), false);
 	}
 
 	protected function getLanguages() {
@@ -29,14 +30,14 @@ class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements
 	}
 
 	protected function getDatabaseVersion() {
-		$driver = strtolower(sly_Core::config()->get('DATABASE/DRIVER'));
+		$driver = strtolower(sly_Core::config()->get('database/driver'));
 
 		switch ($driver) {
 			case 'mysql':
 			case 'pgsql':
-				$db = sly_DB_Persistence::getInstance();
+				$db = sly_Core::getContainer()->getPersistence();
 				$db->query('SELECT VERSION()');
-				foreach ($db as $row) $version = reset($row);
+				foreach ($db->all() as $row) $version = reset($row);
 				break;
 
 			case 'sqlite':
