@@ -79,7 +79,7 @@ var sly = sly || {};
 			args.args.categories = categories.join('|');
 		}
 
-		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 760, 600);
+		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 857, 600);
 	};
 
 	sly.openLinkmap = function(value, callback, articletypes, categories) {
@@ -497,7 +497,7 @@ var sly = sly || {};
 	};
 
 	sly.assetBaseUri = function(addon) {
-		return '../data/dyn/public/' + (addon ? (addon+'/') : '');
+		return '../assets/addon/' + (addon ? (addon+'/') : '');
 	};
 
 	sly.getUrl = function(controller, action, params, sep) {
@@ -521,8 +521,8 @@ var sly = sly || {};
 			params = $.param(params); // always uses '&' as a separator
 
 			// ... fix that if needed
-			if (typeof set === 'string' && sep !== '&') {
-				params = params.replace('&', sep);
+			if (typeof sep === 'string' && sep !== '&') {
+				params = params.replace(/&/g, sep);
 			}
 		}
 		else {
@@ -752,7 +752,7 @@ var sly = sly || {};
 		var checkboxes = $('.sly-form-i18n-switch input[id^=equal__]');
 
 		if (checkboxes.length > 0) {
-			checkboxes.imgCheckbox('off.png', 'on.png', 'assets/form-i18n-switch-').next().click(function() {
+			checkboxes.imgCheckbox('off.png', 'on.png', '../assets/app/backend/form-i18n-switch-').next().click(function() {
 				var
 					checkbox       = $(this).prev('input'),
 					shown          = !checkbox[0].checked, // was already changed before this event handler
@@ -781,6 +781,45 @@ var sly = sly || {};
 				$(this).closest('form').submit();
 			}
 		});
+
+		// transform overly long slot lists into dropdowns
+
+		var slots = $('.sly-navi-slots li:not(:first-child) a');
+
+		if (slots.length > 5) {
+			var select = $('<select name="sly-slot" id="sly-slot" class="sly-form-select"></select>');
+
+			for (var i = 0; i < slots.length; ++i) {
+				var
+					slot     = $(slots[i]),
+					active   = slot.is('.sly-active'),
+					slotName = slot.data('slyslot'),
+					title    = slot.text(),
+					option   = $('<option></option>').text(title).val(slotName);
+
+				if (active) {
+					option.prop('selected', true);
+				}
+
+				select.append(option);
+			}
+
+			select.change(function() {
+				var
+					slot      = select.val(),
+					header    = $('.sly-content-header'),
+					articleID = header.data('slyid'),
+					clang     = header.data('slyclang'),
+					revision  = header.data('slyrevision');
+
+				window.location = sly.getUrl('content', null, {article_id: articleID, clang: clang, revision: revision, slot: slot}, '&');
+				return false;
+			});
+
+			slots.parent().remove();
+			$('.sly-navi-slots').append($('<li>').append(select));
+			sly_apply_chosen(select.parent());
+		}
 
 		// toggle cache options
 		$('#sly-system-toggle-cache').click(function() {

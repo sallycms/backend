@@ -9,8 +9,9 @@
  */
 
 class sly_App_Backend extends sly_App_Base {
-	protected $request = null;
-	protected $router  = null;
+	protected $request    = null;
+	protected $router     = null;
+	protected $dispatcher = null;
 
 	public function isBackend() {
 		return true;
@@ -54,10 +55,6 @@ class sly_App_Backend extends sly_App_Base {
 
 		// make sure our layout is used later on
 		$this->initLayout($container);
-
-		// instantiate asset service before addOns are loaded to make sure
-		// the CSS processing is first in the line for CSS files
-		$container->getAssetService();
 
 		// and now init the rest (addOns, listeners, ...)
 		parent::initialize();
@@ -133,7 +130,7 @@ class sly_App_Backend extends sly_App_Base {
 	 */
 	protected function getDispatcher() {
 		if ($this->dispatcher === null) {
-			$this->dispatcher = new sly_Dispatcher_Backend($this->getContainer(), $this->getControllerClassPrefix());
+			$this->dispatcher = new sly_Dispatcher_Backend($this->getContainer());
 		}
 
 		return $this->dispatcher;
@@ -174,27 +171,21 @@ class sly_App_Backend extends sly_App_Base {
 	}
 
 	protected function loadStaticConfig(sly_Container $container) {
-		$container->getConfig()->loadStatic(SLY_SALLYFOLDER.'/backend/config/static.yml');
+		$container->getConfig()->setStatic('/', sly_Util_YAML::load(SLY_SALLYFOLDER.'/backend/config/static.yml'));
 	}
 
 	protected function initLayout(sly_Container $container) {
 		$i18n    = $container->getI18N();
 		$config  = $container->getConfig();
 		$request = $container->getRequest();
+		$router  = $this->getRouter();
+		$layout  = new sly_Layout_Backend($i18n, $config, $request);
 
-		$container->setLayout(new sly_Layout_Backend($i18n, $config, $request));
+		$layout->setTopMenuHelper(new sly_Helper_TopMenu($router));
+		$layout->setNavigation(new sly_Layout_Navigation_Backend());
+		$layout->setContainer($container);
 
-		// be the first to init the layout later on, after the possibly available
-		// auth provider has been setup by external addOns / frontend code.
-		$container->getDispatcher()->register('SLY_ADDONS_LOADED', array($this, 'initNavigation'));
-	}
-
-	/**
-	 * Event handler
-	 */
-	public function initNavigation(array $params) {
-		$layout = $this->getContainer()->getLayout();
-		$layout->getNavigation()->init();
+		$container->setLayout($layout);
 	}
 
 	protected function initI18N(sly_Container $container, $locale) {

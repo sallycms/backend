@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+use sly\Assets\Util;
+
 $fileID     = $medium->getId();
 $title      = $medium->getTitle();
 $filename   = $medium->getFilename();
@@ -16,12 +18,6 @@ $filesize   = $medium->getFormattedSize();
 $updatedate = $medium->getUpdateDate();
 $categoryID = $medium->getCategoryId();
 $encoded    = urlencode($filename);
-$file_ext   = $medium->getExtension();
-$icon_src   = 'assets/mime-default.png';
-
-if ($this->isDocType($medium)) {
-	$icon_src = 'assets/mime-'.$file_ext.'.png';
-}
 
 ////////////////////////////////////////////////////////
 // info and error messages
@@ -44,38 +40,10 @@ else {
 ////////////////////////////////////////////////////////
 // image container (same for both forms)
 
-$isImage = $this->isImage($medium);
-
-if ($isImage) {
-	$imgn    = '../data/mediapool/'.$encoded.'?t='.$updatedate;
-	$resize  = sly_Util_AddOn::isAvailable('sallycms/image-resize');
-	$fwidth  = $medium->getWidth();
-	$fheight = $medium->getHeight();
-
-	if (!$medium->exists()) {
-		$imgn = 'assets/mime-error.png';
-	}
-	elseif ($fwidth > 115 || $fheight > 60) {
-		list($rwidth, $rheight) = $this->getDimensions($fwidth, $fheight, 115, 60);
-
-		if ($resize) {
-			$imgn = '../imageresize/'.$rwidth.'w__'.$rheight.'h__'.$encoded.'?t='.$updatedate;
-		}
-	}
-
-	$attrs = array(
-		'src'    => $imgn,
-		'alt'    => $title,
-		'title'  => $title,
-		'width'  => isset($rwidth) ? $rwidth : '',
-		'height' => isset($rheight) ? $rheight : ''
-	);
-
-	$imageContainer = new sly_Form_Container();
-	$imageContainer->setContent('<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />');
-	$imageContainer->addFormRowClass('sly-mediapool-detail-image');
-	$form->add($imageContainer);
-}
+$imageContainer = new sly_Form_Container();
+$imageContainer->setContent($this->getThumbnailTag($medium, 160, 120));
+$imageContainer->addFormRowClass('sly-mediapool-detail-image');
+$form->add($imageContainer);
 
 ////////////////////////////////////////////////////////
 // add more elements to our forms
@@ -142,30 +110,31 @@ else {
 
 // file dimensions, if image
 
-if ($isImage) {
+if ($this->isImage($medium)) {
 	$label      = t('width').' / '.t('height');
-	$dimensions = $fwidth.' px / '.$fheight.' px';
+	$dimensions = $medium->getWidth().' px / '.$medium->getHeight().' px';
 	$dimensions = new sly_Form_Text($label, $dimensions);
+
 	$form->add($dimensions);
 }
 
 // display filename
 
-$filename = '<a href="../data/mediapool/'.$encoded.'">'.sly_html(sly_Util_String::cutText($filename, 55)).'</a> ['.$filesize.']';
+$filename = '<a href="'.Util::mediapoolUri($encoded).'">'.sly_html(sly_Util_String::cutText($filename, 55)).'</a> ['.$filesize.']';
 $filename = new sly_Form_Text(t('filename'), $filename);
 $filename->setIsHTML(true);
 $form->add($filename);
 
 // display update date
 
-$updated = sly_Util_String::formatDatetime($medium->getUpdateDate()).' ['.$medium->getUpdateUser().']';
-$updated = new sly_Form_Text(t('updated_at'), $updated);
+$updated = sly_Util_HTML::getDatetimeTag($medium->getUpdateDate()).' ['.sly_html($medium->getUpdateUser()).']';
+$updated = new sly_Form_Text(t('updated_at'), $updated, null, true);
 $form->add($updated);
 
 // display creation date
 
-$created = sly_Util_String::formatDatetime($medium->getCreateDate()).' ['.$medium->getCreateUser().']';
-$created = new sly_Form_Text(t('created_at'), $created);
+$created = sly_Util_HTML::getDatetimeTag($medium->getCreateDate()).' ['.sly_html($medium->getCreateUser()).']';
+$created = new sly_Form_Text(t('created_at'), $created, null, true);
 $form->add($created);
 
 if ($this->canAccessFile($medium)) {

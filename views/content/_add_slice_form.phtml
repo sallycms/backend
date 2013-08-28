@@ -28,6 +28,7 @@ $form = new sly_Form($_router->getPlainUrl(null).'#addslice', 'GET', t('add_slic
 $form->setCsrfEnabled(false);
 $form->addClass('sly-form-add-slice');
 $form->addHiddenValue('article_id', $article->getId());
+$form->addHiddenValue('revision', $article->getRevision());
 $form->addHiddenValue('clang', $article->getClang());
 $form->addHiddenValue('pos', $pos);
 $form->addHiddenValue('function', 'add');

@@ -18,16 +18,18 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$service  = sly_Service_Factory::getMediaCategoryService();
-			$name     = $request->post('catname', 'string', '');
-			$parentID = $request->post('cat_id', 'int', 0);
-			$flash    = sly_Core::getFlashMessage();
+			$container = $this->getContainer();
+			$service   = $container->getMediaCategoryService();
+			$flash     = $container->getFlashMessage();
+			$name      = $request->post('catname', 'string', '');
+			$parentID  = $request->post('cat_id', 'int', 0);
 
 			try {
 				$parent = $service->findById($parentID); // may be null
 				$service->add($name, $parent);
 
 				$flash->appendInfo(t('category_added', $name));
+
 				return $this->redirectResponse(array('cat_id' => $parentID));
 			}
 			catch (Exception $e) {
@@ -42,19 +44,21 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$editID   = $request->post('edit_id', 'int', 0);
-			$service  = sly_Service_Factory::getMediaCategoryService();
-			$category = $service->findById($editID);
+			$container = $this->getContainer();
+			$service   = $container->getMediaCategoryService();
+			$flash     = $container->getFlashMessage();
+			$editID    = $request->post('edit_id', 'int', 0);
+			$category  = $service->findById($editID);
 
 			if ($category) {
-				$name  = $request->post('catname', 'string', '');
-				$flash = sly_Core::getFlashMessage();
+				$name = $request->post('catname', 'string', '');
 
 				try {
 					$category->setName($name);
 					$service->update($category);
 
 					$flash->appendInfo(t('category_updated', $name));
+
 					return $this->redirectResponse(array('cat_id' => $category->getParentId()));
 				}
 				catch (Exception $e) {
@@ -67,17 +71,19 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 	}
 
 	public function deleteAction() {
-		$editID   = $this->getRequest()->post('edit_id', 'int', 0);
-		$service  = sly_Service_Factory::getMediaCategoryService();
-		$category = $service->findById($editID);
+		$container = $this->getContainer();
+		$service   = $container->getMediaCategoryService();
+		$flash     = $container->getFlashMessage();
+		$editID    = $this->getRequest()->post('edit_id', 'int', 0);
+		$category  = $service->findById($editID);
 
 		if ($category) {
 			$parent = $category->getParentId();
-			$flash  = sly_Core::getFlashMessage();
 
 			try {
 				$service->deleteByCategory($category);
 				$flash->appendInfo(t('category_deleted'));
+
 				return $this->redirectResponse(array('cat_id' => $parent));
 			}
 			catch (Exception $e) {
@@ -99,14 +105,16 @@ class sly_Controller_Mediapool_Structure extends sly_Controller_Mediapool_Base {
 	}
 
 	protected function indexView($action = '') {
-		$request = $this->getRequest();
-		$cat     = $request->request('cat_id', 'int', 0);
-		$active  = $request->request('edit_id', 'int', 0);
-		$cat     = sly_Util_MediaCategory::findById($cat);
-		$active  = sly_Util_MediaCategory::findById($active);
+		$container = $this->getContainer();
+		$request   = $this->getRequest();
+		$service   = $container->getMediaCategoryService();
+		$cat       = $request->request('cat_id', 'int', 0);
+		$active    = $request->request('edit_id', 'int', 0);
+		$cat       = $service->findById($cat);
+		$active    = $service->findById($active);
 
 		if ($cat === null) {
-			$children = sly_Util_MediaCategory::getRootCategories();
+			$children = $service->findByParentId(0);
 		}
 		else {
 			$children = $cat->getChildren();

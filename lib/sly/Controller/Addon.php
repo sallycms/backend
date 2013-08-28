@@ -62,9 +62,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 */
 	protected function getServices() {
 		return array(
-			'aservice' => sly_Service_Factory::getAddOnService(),
-			'manager'  => sly_Service_Factory::getAddOnManagerService(),
-			'pservice' => sly_Service_Factory::getAddOnPackageService()
+			'aservice' => $this->getContainer()->getAddOnService(),
+			'manager'  => $this->getContainer()->getAddOnManagerService(),
+			'pservice' => $this->getContainer()->getAddOnPackageService()
 		);
 	}
 
@@ -120,17 +120,6 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	public function deactivateAction() {
 		try {
 			$this->call('deactivate', 'deactivated');
-		}
-		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
-		}
-
-		return $this->sendResponse();
-	}
-
-	public function reinitAction() {
-		try {
-			$this->call('copyAssets', 'assets_copied');
 		}
 		catch (Exception $e) {
 			sly_Core::getFlashMessage()->appendWarning($e->getMessage());

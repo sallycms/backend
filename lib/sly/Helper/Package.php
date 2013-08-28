@@ -19,10 +19,11 @@ class sly_Helper_Package {
 	 * @return string            a comma separated list of links to authors
 	 */
 	public static function getSupportPage($package) {
-		$service = sly_Service_Factory::getAddOnPackageService();
+		$container = sly_Core::getContainer();
+		$service   = $container->getAddOnPackageService();
 
 		if (!$service->exists($package)) {
-			$service = sly_Service_Factory::getVendorPackageService();
+			$service = $container->getVendorPackageService();
 
 			if (!$service->exists($package)) {
 				return '';

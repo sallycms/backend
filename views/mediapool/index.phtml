@@ -70,52 +70,10 @@ if ($isAdmin) {
 print '<tbody>';
 
 foreach ($files as $file) {
-	$id       = $file->getId();
-	$filename = $file->getFilename();
-	$title    = $file->getTitle();
-
-	// missing file?
-
-	if (!$file->exists()) {
-		$thumbnail = '<img src="assets/mime-error.png" width="44" height="38" alt="'.ht('file_not_found').'" />';
-	}
-	else {
-		$file_ext = $file->getExtension();
-		$icon_src = 'assets/mime-default.png';
-
-		if ($this->isDocType($file)) {
-			$icon_src = 'assets/mime-'.$file_ext.'.png';
-		}
-
-		$alt       = $file->getTitle();
-		$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
-
-		if ($this->isImage($file)) {
-			$width  = $file->getWidth();
-			$height = $file->getHeight();
-
-			list($width, $height) = $this->getDimensions($width, $height, 60, 55);
-
-			$attrs = array(
-				'alt'    => $alt,
-				'title'  => $alt,
-				'width'  => $width,
-				'height' => $height
-			);
-
-			$encoded   = urlencode($filename);
-			$timestamp = $file->getUpdateDate();
-
-			if ($resize && $width) {
-				$attrs['src'] = '../imageresize/'.$width.'w__'.$height.'h__'.$encoded.'?t='.$timestamp;
-			}
-			else {
-				$attrs['src'] = '../data/mediapool/'.$encoded.'?t='.$timestamp;
-			}
-
-			$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
-		}
-	}
+	$id        = $file->getId();
+	$filename  = $file->getFilename();
+	$title     = $file->getTitle();
+	$thumbnail = $this->getThumbnailTag($file, 60, 55);
 
 	if ($title == '') $title = '['.t('no_title').']';
 

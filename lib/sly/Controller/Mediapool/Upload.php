@@ -17,10 +17,26 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 	public function uploadAction() {
 		$this->init();
 
-		$flash   = sly_Core::getFlashMessage();
-		$request = $this->getRequest();
+		$container = $this->getContainer();
+		$request   = $this->getRequest();
+		$flash     = $container->getFlashMessage();
 
-		if (!empty($_FILES['file_new']['name']) && $_FILES['file_new']['name'] != 'none') {
+		try {
+			// check if a file was received at all
+			// the medium service will do a more thoroughly check later on
+
+			if (empty($request->files['file_new']['name']) || $request->files['file_new']['name'] === 'none') {
+				throw new Exception(t('file_not_found_maybe_too_big'));
+			}
+
+			// move the file into the media filesystem
+
+			$service = $container->getMediumService();
+			$fileURI = $service->uploadFile($request->files['file_new'], true, true); // 'sly://media/myfile.jpg'
+
+			// add new medium to database
+
+			$file  = basename($fileURI);
 			$title = $request->post('ftitle', 'string');
 			$cat   = $this->getCurrentCategory();
 
@@ -28,8 +44,8 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 				$cat = 0;
 			}
 
-			// add the actual database record
-			$file = $this->saveMedium($_FILES['file_new'], $cat, $title);
+			$service->add($file, $title, $cat);
+			$flash->appendInfo(t('file_added'));
 
 			// close the popup, if requested
 
@@ -43,8 +59,8 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 				return $this->redirectResponse(null, 'mediapool');
 			}
 		}
-		else {
-			$flash->appendWarning(t('file_not_found_maybe_too_big'));
+		catch (Exception $e) {
+			$flash->appendWarning($e->getMessage());
 		}
 
 		$this->indexAction();
@@ -58,20 +74,5 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 		}
 
 		return true;
-	}
-
-	protected function saveMedium(array $fileData, $category, $title) {
-		$file  = null;
-		$flash = sly_Core::getFlashMessage();
-
-		try {
-			$file = sly_Util_Medium::upload($fileData, $category, $title);
-			$flash->appendInfo(t('file_added'));
-		}
-		catch (sly_Exception $e) {
-			$flash->appendWarning($e->getMessage());
-		}
-
-		return $file;
 	}
 }
