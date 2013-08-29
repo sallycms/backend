@@ -105,12 +105,12 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$typeService = $container['sly-service-articletype'];
 		$artService  = $container['sly-service-article'];
 
+
 		if (!empty($type) && $typeService->exists($type, true)) {
 			$flash = $container['sly-flash-message'];
 
 			// change type and update database
-			$artService->setType($this->article, $type);
-			$this->article = $artService->findByPK($this->article->getId(), $this->article->getClang());
+			$this->article = $artService->setType($this->article, $type);
 
 			$flash->appendInfo(t('article_updated'));
 		}
