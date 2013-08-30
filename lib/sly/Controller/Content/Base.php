@@ -99,7 +99,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 				'category_id' => $this->article->getCategoryId()
 			));
 
-			print $this->render('content/menus.phtml', array('article' => $art, 'slot' => $this->slot));
+			print $this->render('content/menus.phtml', array('article' => $this->article, 'slot' => $this->slot));
 
 			return true;
 		}
