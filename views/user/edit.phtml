@@ -1,0 +1,138 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+// Daten vorbereiten
+
+$label     = t($func == 'edit' ? 'edit_user' : 'add_user');
+$curUser   = sly_Util_User::getCurrentUser();
+$currentID = $curUser->getId();
+$safeMode  = $user && $user->isAdmin() && !$curUser->isAdmin();
+
+//////////////////////////////////////////////////////////////////
+// start the form
+
+$form = new sly_Form($_router->getPlainUrl(null, $func), 'POST', '');
+$form->addHiddenValue('save', '1');
+$form->addHiddenValue('id', $user ? $user->getId() : 0);
+
+//////////////////////////////////////////////////////////////////
+// first row: login and password
+
+if ($user) {
+	$login = new sly_Form_Text(t('username'), $user->getLogin());
+}
+else {
+	$login = new sly_Form_Input_Text('userlogin', t('username'), '');
+	$form->setFocus('userlogin');
+	$login->setRequired();
+}
+
+$form->beginFieldset($label, '', 2);
+
+// non-admins may not change admin's passwords
+if ($safeMode) {
+	$form->add($login);
+}
+else {
+	$password = new sly_Form_Input_Text('userpsw', t('password'), '');
+	$password->setRequired($user === null);
+
+	$form->addRow(array($login, $password));
+}
+
+//////////////////////////////////////////////////////////////////
+// second row: name and description
+
+$name        = new sly_Form_Input_Text('username', t('name'), $user ? $user->getName() : '');
+$description = new sly_Form_Input_Text('userdesc', t('description'), $user ? $user->getDescription() : '');
+
+if ($user) {
+	$form->setFocus('username');
+}
+
+$form->addRow(array($name, $description));
+
+//////////////////////////////////////////////////////////////////
+// third row: created and updated
+
+if ($user) {
+	$created = new sly_Form_Text(t('created_at'), sly_Util_HTML::getDatetimeTag($user->getCreateDate()), null, true);
+	$updated = new sly_Form_Text(t('updated_at'), sly_Util_HTML::getDatetimeTag($user->getUpdateDate()), null, true);
+
+	$form->addRow(array($created, $updated));
+}
+
+//////////////////////////////////////////////////////////////////
+// fourth row: admin and status
+
+$userAdmin  = new sly_Form_Input_Checkbox('is_admin', '', '1', t('admin'));
+$userStatus = new sly_Form_Input_Checkbox('userstatus', '', '1', t('activated'));
+
+if ($user) {
+	$userAdmin->setChecked($user->isAdmin());
+	$userStatus->setChecked($user->getStatus());
+
+	// one may not change one's own status
+	if ($currentID == $user->getId()) {
+		$userAdmin->setDisabled(true);
+		$userStatus->setDisabled(true);
+	}
+}
+
+// non-admins may not create admin accounts
+if (!$curUser->isAdmin()) {
+	$userAdmin->setDisabled(true);
+}
+
+// non-admins may not create admin accounts
+if ($safeMode) {
+	$userStatus->setDisabled(true);
+}
+
+$form->addRow(array($userAdmin, $userStatus));
+
+//////////////////////////////////////////////////////////////////
+// fifth row: backend startpage and backend locale
+
+$startPage     = $user ? $user->getStartPage() : array();
+$backendLocale = $user ? $user->getBackendLocale() : array();
+
+$startpageSelect = new sly_Form_Select_DropDown('userperm_startpage', t('startpage'), $startPage, $this->getPossibleStartpages());
+$localeSelect    = new sly_Form_Select_DropDown('userperm_mylang', t('backend_locale'), $backendLocale, $this->getBackendLocales());
+
+$form->addRow(array($startpageSelect, $localeSelect));
+
+//////////////////////////////////////////////////////////////////
+// let listeners extend the form
+
+$eventparams = array('user' => $user);
+$form = sly_Core::dispatcher()->filter('SLY_USER_FORM', $form, $eventparams);
+
+//////////////////////////////////////////////////////////////////
+// Finally, render it!
+
+$form->setSubmitButton(null);
+$form->setResetButton(null);
+
+if ($user) {
+	$buttonBar = new sly_Form_ButtonBar(array(
+		'submit' => new sly_Form_Input_Button('submit', 'save', t('save')),
+		'apply'  => new sly_Form_Input_Button('submit', 'apply', t('apply'))
+	));
+}
+else {
+	$buttonBar = new sly_Form_ButtonBar(array('submit' => new sly_Form_Input_Button('submit', 'submit', t('add'))));
+}
+
+$form->addRow(array($buttonBar));
+
+print $form->render();

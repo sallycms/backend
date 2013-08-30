@@ -1,0 +1,125 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$version  = $this->getDatabaseVersion();
+$langs    = $this->getLanguages();
+$extlists = $this->getExtensions();
+$uname    = php_uname('s').' '.php_uname('r').' '.php_uname('v').' '.php_uname('m'); // leave out the hostname ('n')
+
+// put it all together
+
+$sysinfo = array(
+	'```',
+	'Versionen',
+	'---------',
+	'',
+	'Sally.............: '.sly_Core::getVersion('R'),
+	'PHP...............: '.PHP_VERSION.' ('.$uname.')',
+	'Datenbank.........: '.$version['driver'].' (v'.$version['version'].')',
+	'Webserver.........: '.$server,
+	'User Agent........: '.$ua,
+	'',
+	'Einstellungen',
+	'-------------',
+	'',
+	'Entwicklermodus...: '.(sly_Core::isDeveloperMode() ? 'ja' : 'nein'),
+	'Caching...........: '.$caching,
+	'Sprachen..........: '.implode("\n                        ", $langs),
+	'',
+	'PHP-Einstellungen',
+	'-----------------',
+	'',
+	'register_globals..: '.(sly_ini_get('register_globals') ? 'aktiviert' : 'deaktiviert'),
+	'magic_quotes_gpc..: '.(sly_ini_get('magic_quotes_gpc') ? 'aktiviert' : 'deaktiviert'),
+	'safe_mode.........: '.(sly_ini_get('safe_mode') ? 'aktiviert' : 'deaktiviert'),
+	'max_execution_time: '.sly_ini_get('max_execution_time').' Sekunden',
+	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
+	'Extensions........: '.implode("\n                        ", $extlists),
+	'',
+	'AddOns',
+	'------',
+	'',
+);
+
+// add addon details
+$container = sly_Core::getContainer();
+$service   = $container->getAddOnService();
+$pservice  = $service->getPackageService();
+$list      = $service->getRegisteredAddOns();
+$isEmpty   = true;
+
+foreach ($list as $addon) {
+	if (!$service->isInstalled($addon)) continue;
+
+	$status    = $service->isActivated($addon) ? 'aktiviert' : 'deaktiviert';
+	$version   = '('.$pservice->getVersion($addon).')';
+	$sysinfo[] = sprintf('%-40s %-9s [%s]', $addon, $version, $status);
+	$isEmpty   = false;
+}
+
+if ($isEmpty) {
+	$sysinfo[] = '(keine)';
+}
+
+$sysinfo[] = '```';
+
+$sysinfo = sly_html(rtrim(implode("\n", $sysinfo)));
+$height  = substr_count($sysinfo, "\n") + 1;
+
+?>
+<div class="sly-area sly-credits">
+	<h2>Du hast einen Fehler in SallyCMS gefunden?</h2>
+
+	<div class="sly-area-content">
+		<p>
+			Bevor du einen Fehler meldest, versuche einige Tipps, die häufig kleine
+			Problemchen bereits bereinigen.
+		</p>
+
+		<ol>
+			<li>Hast du deinen <a href="<?php print $_router->getUrl('system') ?>">Sally-Cache</a> und
+			ggf. deinen Browser-Cache geleert?</li>
+			<li>Tritt der Fehler auch in anderen Browsern auf?</li>
+			<li>Tritt der Fehler auch auf, wenn du das Caching abschaltest (heißt,
+			den Blackhole-Cache benutzt)?</li>
+			<li>Stelle sicher, dass du die
+			<a href="https://bitbucket.org/SallyCMS/trunk/downloads" class="sly-blank">aktuellste
+			Sally-Version</a> einsetzt.</li>
+			<li>Stelle sicher, dass die von dir eingesetzten Pakete aktuell sind.</li>
+		</ol>
+
+		<p>
+			Wenn die obigen Tipps nicht helfen, kannst du einen
+			<a href="https://bitbucket.org/SallyCMS/trunk/issues/new" class="sly-blank">Bugreport
+			erstellen</a>. Um dem SallyCMS-Team zu ermöglichen, den Fehler schnell
+			zu identifizieren	und zu lösen, beachte bitte unbedingt die folgenden
+			Hinweise.
+		</p>
+
+		<ul>
+			<li>Gib uns so viele Informationen wie möglich. Welche
+			PHP/MySQL/Sally/Browser-Version setzt du ein?</li>
+			<li>Versuche, dein Problem <strong>präzise</strong> und <strong>klar</strong>
+			zu beschreiben. Reports wie "Kann keine Benutzer anlegen" helfen uns
+			nicht weiter.</li>
+			<li>Tritt das Problem im Frontend, Backend oder in beiden auf?</li>
+			<li>Handelt es sich wirklich um einen Sally-Fehler oder liegt das Problem
+			bei einem AddOn? AddOns haben üblicherweise ihre eigenen Bugtracker.</li>
+		</ul>
+
+		<p>
+			Wir empfehlen, die folgenden Informationen direkt in den Bugreport zu
+			kopieren. Projektspezifische Details können auf Wunsch natürlich
+			entfernt werden, wenn nötig.
+		</p>
+
+		<textarea class="sly-sysinfo" rows="<?php echo $height ?>" cols="50"><?php echo $sysinfo ?></textarea>
+	</div>
+</div>
