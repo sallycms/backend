@@ -9,15 +9,13 @@
  */
 
 $callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
-$filename = json_encode($file->getFilename());
-$title    = json_encode($file->getTitle());
 
 ?>
 <script type="text/javascript">
-var filename = <?php echo $filename ?>;
-var title    = <?php echo $title ?>;
+var filename = <?php print json_encode($file) ?>;
+var title    = <?php print json_encode($title) ?>;
 var link     = 'mediapool/' + filename;
-var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
+var callback = '<?php print $callback ?>' in window.opener ? window.opener['<?php print $callback ?>'] : null;
 var fullName = '';
 
 if (title.length === 0) {
