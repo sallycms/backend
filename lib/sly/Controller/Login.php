@@ -80,6 +80,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 				$msg    = t('redirect_startpage', $url);
 			}
 
+			while (ob_get_level()) ob_end_clean();
 			sly_Util_HTTP::redirect($url, array(), $msg, 302);
 		}
 	}
