@@ -35,31 +35,31 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 			$flash    = sly_Core::getFlashMessage();
 			$newuser  = new sly_Model_User();
 
-			$newuser->setLogin($login);
-			$newuser->setName($request->post('username', 'string'));
-			$newuser->setDescription($request->post('userdesc', 'string'));
-			$newuser->setStatus($request->post('userstatus', 'boolean', false));
-			$newuser->setTimeZone($timezone ? $timezone : null);
-			$newuser->setPassword($password);
-			$newuser->setIsAdmin($isAdmin && $request->post('is_admin', 'boolean', false));
-			$newuser->setRevision(0);
-
-			// backend locale and startpage
-			$backendLocale  = $request->post('userperm_mylang', 'string');
-			$backendLocales = $this->getBackendLocales();
-
-			if (isset($backendLocales[$backendLocale])) {
-				$newuser->setBackendLocale($backendLocale);
-			}
-
-			$startpage  = $request->post('userperm_startpage', 'string');
-			$startpages = $this->getPossibleStartpages();
-
-			if (isset($startpages[$startpage])) {
-				$newuser->setStartPage($startpage);
-			}
-
 			try {
+				$newuser->setLogin($login);
+				$newuser->setName($request->post('username', 'string'));
+				$newuser->setDescription($request->post('userdesc', 'string'));
+				$newuser->setStatus($request->post('userstatus', 'boolean', false));
+				$newuser->setTimeZone($timezone ? $timezone : null);
+				$newuser->setPassword($password); // this could fail if the password is too long
+				$newuser->setIsAdmin($isAdmin && $request->post('is_admin', 'boolean', false));
+				$newuser->setRevision(0);
+
+				// backend locale and startpage
+				$backendLocale  = $request->post('userperm_mylang', 'string');
+				$backendLocales = $this->getBackendLocales();
+
+				if (isset($backendLocales[$backendLocale])) {
+					$newuser->setBackendLocale($backendLocale);
+				}
+
+				$startpage  = $request->post('userperm_startpage', 'string');
+				$startpages = $this->getPossibleStartpages();
+
+				if (isset($startpages[$startpage])) {
+					$newuser->setStartPage($startpage);
+				}
+
 				$service->save($newuser, $currentUser);
 				$flash->prependInfo(t('user_added'), true);
 
@@ -89,6 +89,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$isSelf      = $currentUser->getId() === $user->getId();
 		$isAdmin     = $currentUser->isAdmin();
 		$safeMode    = $user->isAdmin() && !$isAdmin;
+		$flash       = sly_Core::getFlashMessage();
 
 		if ($save) {
 			$status = $request->post('userstatus', 'boolean', false) ? 1 : 0;
@@ -98,48 +99,47 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 				$status = $user->getStatus();
 			}
 
-			$user->setName($request->post('username', 'string'));
-			$user->setDescription($request->post('userdesc', 'string'));
-			$user->setStatus($status);
-			$user->setUpdateColumns();
-			$user->setTimezone($tz ? $tz : null);
-
-			// change password
-
-			$password = $request->post('userpsw', 'string');
-
-			if (!empty($password) && $password != $user->getPassword()) {
-				$user->setPassword($password);
-			}
-
-			// backend locale and startpage
-			$backendLocale  = $request->post('userperm_mylang', 'string');
-			$backendLocales = $this->getBackendLocales();
-
-			if (isset($backendLocales[$backendLocale])) {
-				$user->setBackendLocale($backendLocale);
-			}
-
-			$startpage  = $request->post('userperm_startpage', 'string');
-			$startpages = $this->getPossibleStartpages();
-
-			if (isset($startpages[$startpage])) {
-				$user->setStartPage($startpage);
-			}
-
-			/* set the isAdmin info but there are some rules:
-			 * - admin flags can only be removed by admins
-			 * - an admin can not remove this flag from himself
-			 *
-			 * we use reverse logic so it is hard to understand
-			 */
-			$user->setIsAdmin($safeMode || ($isAdmin && ($isSelf || $request->post('is_admin', 'boolean', false))));
-
-			// save it
-			$apply = $request->post('apply', 'string');
-			$flash = sly_Core::getFlashMessage();
-
 			try {
+				$user->setName($request->post('username', 'string'));
+				$user->setDescription($request->post('userdesc', 'string'));
+				$user->setStatus($status);
+				$user->setUpdateColumns();
+				$user->setTimezone($tz ? $tz : null);
+
+				// change password
+
+				$password = $request->post('userpsw', 'string');
+
+				if (!empty($password) && $password != $user->getPassword()) {
+					$user->setPassword($password);
+				}
+
+				// backend locale and startpage
+				$backendLocale  = $request->post('userperm_mylang', 'string');
+				$backendLocales = $this->getBackendLocales();
+
+				if (isset($backendLocales[$backendLocale])) {
+					$user->setBackendLocale($backendLocale);
+				}
+
+				$startpage  = $request->post('userperm_startpage', 'string');
+				$startpages = $this->getPossibleStartpages();
+
+				if (isset($startpages[$startpage])) {
+					$user->setStartPage($startpage);
+				}
+
+				/* set the isAdmin info but there are some rules:
+				 * - admin flags can only be removed by admins
+				 * - an admin can not remove this flag from himself
+				 *
+				 * we use reverse logic so it is hard to understand
+				 */
+				$user->setIsAdmin($safeMode || ($isAdmin && ($isSelf || $request->post('is_admin', 'boolean', false))));
+
+				// save it
+				$apply = $request->post('apply', 'string');
+
 				$user = $service->save($user);
 				$flash->prependInfo(t('user_updated'), true);
 				$params = array();
