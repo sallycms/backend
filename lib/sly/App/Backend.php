@@ -40,16 +40,19 @@ class sly_App_Backend extends sly_App_Base {
 
 			sly_Util_HTTP::tempRedirect($target, array(), $text);
 		}
+		
+		// load static config
+		$this->loadStaticConfig($container);
 
 		// init the current language
 		$this->initLanguage($container, $this->request);
+		
+		// make sure our layout is used later on
+		$this->initLayout($container);
 
 		// init the core (addOns, listeners, ...)
 		parent::initialize();
 
-		// start session
-		sly_Util_Session::start();
-		
 		$user = $container->getUserService()->getCurrentUser(true);
 		
 		// if it is develop mode the parent has already synced
@@ -57,14 +60,8 @@ class sly_App_Backend extends sly_App_Base {
 			$this->syncDevelopFiles();
 		}
 
-		// load static config
-		$this->loadStaticConfig($container);
-
 		// init timezone and locale
 		$this->initUserSettings($user);
-
-		// make sure our layout is used later on
-		$this->initLayout($container);
 	}
 
 	/**
@@ -128,6 +125,17 @@ class sly_App_Backend extends sly_App_Base {
 		$response->setContent(t('redirect_to', $url));
 
 		return $response;
+	}
+	
+	protected function loadAddons() {
+		$container = $this->getContainer();
+
+		$container->getAddOnManagerService()->loadAddOns($container);
+		
+		// start session here
+		sly_Util_Session::start();
+		
+		$container->getDispatcher()->notify('SLY_ADDONS_LOADED', $container);
 	}
 	
 	/**
