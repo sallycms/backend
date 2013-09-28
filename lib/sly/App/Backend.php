@@ -44,20 +44,27 @@ class sly_App_Backend extends sly_App_Base {
 		// init the current language
 		$this->initLanguage($container, $this->request);
 
+		// init the core (addOns, listeners, ...)
+		parent::initialize();
+
 		// start session
 		sly_Util_Session::start();
+		
+		$user = $container->getUserService()->getCurrentUser(true);
+		
+		// if it is develop mode the parent has already synced
+		if (!sly_Core::isDeveloperMode() && $user && $user->isAdmin()) {
+			$this->syncDevelopFiles();
+		}
 
 		// load static config
 		$this->loadStaticConfig($container);
 
 		// init timezone and locale
-		$this->initUserSettings();
+		$this->initUserSettings($user);
 
 		// make sure our layout is used later on
 		$this->initLayout($container);
-
-		// and now init the rest (addOns, listeners, ...)
-		parent::initialize();
 	}
 
 	/**
@@ -122,7 +129,7 @@ class sly_App_Backend extends sly_App_Base {
 
 		return $response;
 	}
-
+	
 	/**
 	 * get request dispatcher
 	 *
@@ -148,14 +155,13 @@ class sly_App_Backend extends sly_App_Base {
 		$container->setCurrentLanguageId($clangID);
 	}
 
-	protected function initUserSettings() {
+	protected function initUserSettings($user) {
 		$container = $this->getContainer();
 
 		// set timezone
 		$this->setDefaultTimezone();
 
 		$locale = sly_Core::getDefaultLocale();
-		$user   = $container->getUserService()->getCurrentUser();
 
 		// get user values
 		if ($user instanceof sly_Model_User) {
