@@ -49,9 +49,6 @@ class sly_App_Backend extends sly_App_Base {
 		// init the current language
 		$this->initLanguage($container, $this->request);
 
-		// make sure our layout is used later on
-		$this->initLayout($container);
-
 		// init the core (addOns, listeners, ...)
 		parent::initialize();
 
@@ -61,9 +58,6 @@ class sly_App_Backend extends sly_App_Base {
 		if (!sly_Core::isDeveloperMode() && $user && $user->isAdmin()) {
 			$this->syncDevelopFiles();
 		}
-
-		// init timezone and locale
-		$this->initUserSettings($user);
 	}
 
 	/**
@@ -136,6 +130,14 @@ class sly_App_Backend extends sly_App_Base {
 
 		// start session here
 		sly_Util_Session::start();
+
+		$user = $container->getUserService()->getCurrentUser(true);
+
+		// init timezone and locale
+		$this->initUserSettings($user);
+
+		// make sure our layout is used later on
+		$this->initLayout($container);
 
 		$container->getDispatcher()->notify('SLY_ADDONS_LOADED', $container);
 	}
