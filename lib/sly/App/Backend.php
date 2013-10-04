@@ -27,6 +27,8 @@ class sly_App_Backend extends sly_App_Base {
 	public function initialize() {
 		$container = $this->getContainer();
 
+		$this->setDefaultTimezone();
+
 		// init basic error handling
 		$container->getErrorHandler()->init();
 
@@ -40,13 +42,13 @@ class sly_App_Backend extends sly_App_Base {
 
 			sly_Util_HTTP::tempRedirect($target, array(), $text);
 		}
-		
+
 		// load static config
 		$this->loadStaticConfig($container);
 
 		// init the current language
 		$this->initLanguage($container, $this->request);
-		
+
 		// make sure our layout is used later on
 		$this->initLayout($container);
 
@@ -54,7 +56,7 @@ class sly_App_Backend extends sly_App_Base {
 		parent::initialize();
 
 		$user = $container->getUserService()->getCurrentUser(true);
-		
+
 		// if it is develop mode the parent has already synced
 		if (!sly_Core::isDeveloperMode() && $user && $user->isAdmin()) {
 			$this->syncDevelopFiles();
@@ -126,18 +128,18 @@ class sly_App_Backend extends sly_App_Base {
 
 		return $response;
 	}
-	
+
 	protected function loadAddons() {
 		$container = $this->getContainer();
 
 		$container->getAddOnManagerService()->loadAddOns($container);
-		
+
 		// start session here
 		sly_Util_Session::start();
-		
+
 		$container->getDispatcher()->notify('SLY_ADDONS_LOADED', $container);
 	}
-	
+
 	/**
 	 * get request dispatcher
 	 *
@@ -165,9 +167,6 @@ class sly_App_Backend extends sly_App_Base {
 
 	protected function initUserSettings($user) {
 		$container = $this->getContainer();
-
-		// set timezone
-		$this->setDefaultTimezone();
 
 		$locale = sly_Core::getDefaultLocale();
 
