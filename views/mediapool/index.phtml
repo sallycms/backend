@@ -1,0 +1,116 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$resize   = sly_Util_AddOn::isAvailable('sallycms/image-resize');
+$selected = $this->getCurrentCategory();
+
+////////////////////////////////////////////////////////
+// list all files in the current category
+
+$form = new sly_Form($_router->getPlainUrl(null, 'batch'), 'POST', t('selected_category'), '', 'sly-form-mediapool-media');
+$form->addHiddenValue('page', 'mediapool');
+$form->addHiddenValue('func', 'batch');
+$this->appendParamsToForm($form);
+
+$isAdmin = $this->isMediaAdmin();
+
+////////////////////////////////////////////////////////
+// prepare table
+
+$table = new sly_Table('', array('sly-mediapool-list'));
+
+$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-icon sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('thumbnail'), 'sly-col-thumbnail'));
+$table->addColumn(sly_Table_Column::factory(t('file_info').' / '.t('description'), 'sly-col-info'));
+$table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
+
+$table->setIsEmpty(empty($files));
+$table->setEmptyNotice(t('no_media_found'));
+$table->openBuffer();
+
+////////////////////////////////////////////////////////
+// move and delete selected items
+
+if ($isAdmin) {
+	$inputs = '';
+	$select = $this->getCategorySelect();
+
+	if ($select->getValueCount() > 1) {
+		$select->setAttribute('id', 'sly_dest_category');
+		$select->setAttribute('onchange', '');
+
+		$inputs =
+			'<label for="sly_dest_category">'.t('selected_media').'</label>'.$select->render().
+			'<input class="sly-form-submit-2 sly-button-changecat sly-form-submit" type="submit" name="move" value="'.t('move_to_category').'" />';
+	}
+
+	$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
+
+	?>
+	<tfoot><tr>
+		<td class="sly-col-icon sly-icon">
+			<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
+			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
+		</td>
+		<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
+	</tr></tfoot>
+	<?php
+}
+
+////////////////////////////////////////////////////////
+// list files
+
+print '<tbody>';
+
+foreach ($files as $file) {
+	$id        = $file->getId();
+	$filename  = $file->getFilename();
+	$title     = $file->getTitle();
+	$thumbnail = $this->getThumbnailTag($file, 60, 55);
+
+	if ($title == '') $title = '['.t('no_title').']';
+
+	$ilink  = $_router->getUrl('mediapool_detail', null, $this->appendQueryString(array('file_id' => $id)));
+	$add_td = '<td>&nbsp;</td>';
+
+	if ($isAdmin) {
+		$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="selectedmedia[]" value="'.$id.'" /></td>';
+	}
+
+	?>
+	<tr>
+		<?php echo $add_td ?>
+		<td class="sly-col-thumbnail"><a href="<?php echo $ilink ?>"><?php echo $thumbnail ?></a></td>
+		<td class="sly-col-info">
+			<span><a href="<?php echo $ilink ?>"><?php echo sly_html($title) ?></a></span><br />
+			<span><span class="sly-suffix"><?php echo sly_html(sly_Util_String::cutText($filename, 35)) ?> [<?php echo $file->getFormattedSize() ?>]</span></span>
+		</td>
+		<td class="sly-col-func"><?php
+
+		$opener_link = $this->getOpenerLink($file);
+		print sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_FUNCTIONS', $opener_link, array('medium' => $file));
+
+		?></td>
+	</tr>
+	<?php
+}
+
+$table->closeBuffer();
+
+////////////////////////////////////////////////////////
+// putting it all together
+
+$container = new sly_Form_Container();
+$container->setContent($table->render());
+
+$form->add($container);
+$form->setResetButton(null);
+$form->setSubmitButton(null);
+print $form->render();
