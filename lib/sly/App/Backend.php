@@ -27,6 +27,8 @@ class sly_App_Backend extends sly_App_Base {
 	public function initialize() {
 		$container = $this->getContainer();
 
+		$this->setDefaultTimezone();
+
 		// init basic error handling
 		$container->getErrorHandler()->init();
 
@@ -41,23 +43,21 @@ class sly_App_Backend extends sly_App_Base {
 			sly_Util_HTTP::tempRedirect($target, array(), $text);
 		}
 
-		// init the current language
-		$this->initLanguage($container, $this->request);
-
-		// start session
-		sly_Util_Session::start();
-
 		// load static config
 		$this->loadStaticConfig($container);
 
-		// init timezone and locale
-		$this->initUserSettings();
+		// init the current language
+		$this->initLanguage($container, $this->request);
 
-		// make sure our layout is used later on
-		$this->initLayout($container);
-
-		// and now init the rest (addOns, listeners, ...)
+		// init the core (addOns, listeners, ...)
 		parent::initialize();
+
+		$user = $container->getUserService()->getCurrentUser(true);
+
+		// if it is develop mode the parent has already synced
+		if (!sly_Core::isDeveloperMode() && $user && $user->isAdmin()) {
+			$this->syncDevelopFiles();
+		}
 	}
 
 	/**
@@ -123,6 +123,25 @@ class sly_App_Backend extends sly_App_Base {
 		return $response;
 	}
 
+	protected function loadAddons() {
+		$container = $this->getContainer();
+
+		$container->getAddOnManagerService()->loadAddOns($container);
+
+		// start session here
+		sly_Util_Session::start();
+
+		$user = $container->getUserService()->getCurrentUser(true);
+
+		// init timezone and locale
+		$this->initUserSettings($user);
+
+		// make sure our layout is used later on
+		$this->initLayout($container);
+
+		$container->getDispatcher()->notify('SLY_ADDONS_LOADED', $container);
+	}
+
 	/**
 	 * get request dispatcher
 	 *
@@ -148,14 +167,10 @@ class sly_App_Backend extends sly_App_Base {
 		$container->setCurrentLanguageId($clangID);
 	}
 
-	protected function initUserSettings() {
+	protected function initUserSettings($user) {
 		$container = $this->getContainer();
 
-		// set timezone
-		$this->setDefaultTimezone();
-
 		$locale = sly_Core::getDefaultLocale();
-		$user   = $container->getUserService()->getCurrentUser();
 
 		// get user values
 		if ($user instanceof sly_Model_User) {
