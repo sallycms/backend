@@ -21,6 +21,7 @@ dateformat: '%Y-%b-%d'
 timeformat: '%H:%M'
 datetimeformat: '%Y-%b-%d %H:%M'
 setlocale: 'en_GB,en_UK,en_US,en_EN,en_AU,en_CA,American,ENG,English'
+intl_locale: 'en-GB'
 
 home: Home
 input: Input
