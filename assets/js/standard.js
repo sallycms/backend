@@ -674,7 +674,13 @@ var sly = sly || {};
 					}
 				}
 
-				$('.sly-form-select:not(.sly-no-chosen)', container).data('placeholder', 'Bitte auswählen').chosen();
+				$('.sly-form-select:not(.sly-no-chosen)', container).each(function() {
+					var select = $(this);
+					if (select.data('placeholder') === undefined) {
+						select.data('placeholder', 'Bitte auswählen');
+					}
+					select.chosen();
+				});
 			}
 		};
 
