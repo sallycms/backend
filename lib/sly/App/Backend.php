@@ -166,7 +166,7 @@ class sly_App_Backend extends sly_App_Base {
 			$timezone = $user->getTimeZone();
 
 			// set user's timezone
-			if ($timezone) date_default_timezone_set($timezone);
+			if ($timezone) $this->setTimezone($timezone);
 		}
 
 		// set the i18n object
