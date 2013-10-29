@@ -1,0 +1,31 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$request = $this->getRequest();
+$viewURL = $_router->getPlainUrl(null, null, array('category_id' => $category->getParentId(), 'clang' => $this->clangId));
+$name    = $request->post('category_name', 'string', $category->getCatName());
+$pos     = $request->post('category_position', 'int', $category->getCatPosition());
+
+?>
+<tr class="sly-active" data-slyid="<?php echo $category->getId() ?>" data-slystatus="<?php echo $category->getStatus() ?>">
+	<td class="sly-col-icon sly-icon">
+		<input type="hidden" name="edit_id" value="<?php echo $category->getId() ?>" />
+		<?php echo sly_Util_HTML::getSpriteLink($viewURL, $category->getCatName(), 'category') ?>
+	</td>
+	<td class="sly-col-name sly-has-input"><div><input type="text" class="sly-form-text" name="category_name" autofocus="autofocus" required="required" placeholder="<?php echo ht('category') ?>" value="<?php echo sly_html($name) ?>" /></div></td>
+	<td class="sly-col-pos sly-has-input"><div><input type="number" class="sly-form-text" name="category_position" value="<?php echo sly_html($pos) ?>" required="required" min="1" max="<?php echo $maxCatPosition ?>" /></div></td>
+	<td class="sly-col-status sly-has-input"><div><input type="submit" name="do_edit_category" class="sly-form-submit" value="<?php echo t('save') ?>" /></div></td>
+</tr>
+<?php
+
+print sly_Core::dispatcher()->filter('CAT_FORM_EDIT', '', array(
+	'category'     => $category,
+	'data_colspan' => 4
+));
