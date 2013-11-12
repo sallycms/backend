@@ -94,6 +94,9 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 	}
 
 	public function printHeader() {
+		// trim title
+		$this->title = rtrim($this->title, ' -');
+
 		parent::printHeader();
 
 		$user     = $this->container->getUserService()->getCurrentUser();
@@ -148,7 +151,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 			throw new InvalidArgumentException('$topMenu must either be a navigation page, a string or null, got '.gettype($topMenu).'.');
 		}
 
-		$this->appendToTitle($title);
+		$this->appendToTitle($title.' - ');
 
 		$menu  = $topMenu; // assuming $topMenu is a pre-rendered string
 		$app   = $this->container->getApplication();
