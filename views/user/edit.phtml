@@ -36,7 +36,7 @@ else {
 	$login->setRequired();
 }
 
-$form->beginFieldset($label, '', 2);
+$form->beginFieldset($label, 'sly-user-main-fieldset', 2);
 
 // non-admins may not change admin's passwords
 if ($safeMode) {
