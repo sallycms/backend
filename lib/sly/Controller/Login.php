@@ -14,11 +14,26 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		$layout->showNavigation(false);
 		$layout->pageHeader(t('login_title'));
 
-		if (in_array(strtolower($action), array('index', 'login', 'logout'))) {
-			$method = $action.'Action';
+		$action = strtolower($action);
+
+		if ($action === 'logout') {
+			$method = 'logoutAction';
 		}
 		else {
-			$method = 'indexAction';
+			// if already logged in, forward to the startpage
+			$user     = $this->getCurrentUser();
+			$loggedIn = $user && ($user->isAdmin() || $user->hasPermission('apps', 'backend'));
+
+			if ($loggedIn) {
+				return $this->redirectToStartpage($user, null);
+			}
+
+			if (in_array(strtolower($action), array('index', 'login'))) {
+				$method = $action.'Action';
+			}
+			else {
+				$method = 'indexAction';
+			}
 		}
 
 		try {
@@ -45,7 +60,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		// login was only successful if the user is either admin or has apps/backend permission
 		if ($loginOK === true) {
 			$user    = $uService->getCurrentUser();
-			$loginOK = $user->isAdmin() || $user->hasRight('apps', 'backend');
+			$loginOK = $user->isAdmin() || $user->hasPermission('apps', 'backend');
 		}
 
 		if ($loginOK !== true) {
@@ -60,27 +75,9 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			// notify system
 			$container->getDispatcher()->notify('SLY_BE_LOGIN', $user);
 
-			// if relogin, forward to previous page
+			// redirect to referer
 			$referer = $request->post('referer', 'string', false);
-			$refbase = basename($referer);
-			$valid   =
-				$referer &&
-				!sly_Util_String::startsWith($refbase, 'index.php?page=login') &&
-				strpos($referer, '/login') === false &&
-				strpos($referer, '/setup') === false
-			;
-
-			if ($valid) {
-				$url = $referer;
-				$msg = t('redirect_previous_page', $referer);
-			}
-			else {
-				$router = $container->getApplication()->getRouter();
-				$url    = $router->getAbsoluteUrl($user->getStartPage());
-				$msg    = t('redirect_startpage', $url);
-			}
-
-			sly_Util_HTTP::redirect($url, array(), $msg, 302);
+			$this->redirectToStartpage($user, $referer);
 		}
 	}
 
@@ -104,5 +101,33 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 
 	public function checkPermission($action) {
 		return true;
+	}
+
+	protected function redirectToStartpage(sly_Model_User $user, $target) {
+		$base  = basename($target);
+		$valid =
+			$target &&
+			!sly_Util_String::startsWith($base, 'index.php?page=login') &&
+			strpos($target, '/login') === false &&
+			strpos($target, '/setup') === false
+		;
+
+		if ($valid) {
+			$url = $target;
+			$msg = t('redirect_previous_page', $target);
+		}
+		else {
+			$router = $this->getContainer()->getApplication()->getRouter();
+			$url    = $router->getAbsoluteUrl($user->getStartPage());
+			$msg    = t('redirect_startpage', $url);
+		}
+
+		$response = $this->getContainer()->getResponse();
+
+		$response->setStatusCode(302);
+		$response->setHeader('Location', $url);
+		$response->setContent($msg);
+
+		return $response;
 	}
 }
