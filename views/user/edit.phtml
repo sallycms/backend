@@ -36,7 +36,7 @@ else {
 	$login->setRequired();
 }
 
-$form->beginFieldset($label, '', 2);
+$form->beginFieldset($label, 'sly-user-main-fieldset', 2);
 
 // non-admins may not change admin's passwords
 if ($safeMode) {
@@ -65,8 +65,8 @@ $form->addRow(array($name, $description));
 // third row: created and updated
 
 if ($user) {
-	$created = new sly_Form_Text(t('created_at'), sly_Util_String::formatDatetime($user->getCreateDate()));
-	$updated = new sly_Form_Text(t('updated_at'), sly_Util_String::formatDatetime($user->getUpdateDate()));
+	$created = new sly_Form_Text(t('created_at'), sly_Util_HTML::getDatetimeTag($user->getCreateDate()), null, true);
+	$updated = new sly_Form_Text(t('updated_at'), sly_Util_HTML::getDatetimeTag($user->getUpdateDate()), null, true);
 
 	$form->addRow(array($created, $updated));
 }
@@ -124,15 +124,15 @@ $form->setSubmitButton(null);
 $form->setResetButton(null);
 
 if ($user) {
-	$form->addRow(array(
-		new sly_Form_ButtonBar(array('submit' => new sly_Form_Input_Button('submit', 'submit', t('update')))),
-		new sly_Form_ButtonBar(array('apply' => new sly_Form_Input_Button('submit', 'apply', t('apply'))))
+	$buttonBar = new sly_Form_ButtonBar(array(
+		'submit' => new sly_Form_Input_Button('submit', 'save', t('save')),
+		'apply'  => new sly_Form_Input_Button('submit', 'apply', t('apply'))
 	));
 }
 else {
-	$form->addRow(array(
-		new sly_Form_ButtonBar(array('submit' => new sly_Form_Input_Button('submit', 'submit', t('add'))))
-	));
+	$buttonBar = new sly_Form_ButtonBar(array('submit' => new sly_Form_Input_Button('submit', 'submit', t('add'))));
 }
+
+$form->addRow(array($buttonBar));
 
 print $form->render();

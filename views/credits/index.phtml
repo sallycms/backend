@@ -9,7 +9,7 @@
  */
 ?>
 <div class="sly-area sly-credits">
-	<h2>SallyCMS <?php echo sly_Core::getVersion() ?></h2>
+	<h2>SallyCMS <?php echo sly_Core::getVersion('R') ?></h2>
 
 	<div class="sly-area-content">
 		<p><?php echo t('credits_text') ?></p>
@@ -17,11 +17,11 @@
 	</div>
 </div>
 <?php
-
-$service  = sly_Service_Factory::getAddOnService();
-$pservice = $service->getPackageService();
-$addons   = $service->getRegisteredAddOns();
-$skip     = array();
+$container = sly_Core::getContainer();
+$service   = $container->getAddOnService();
+$pservice  = $service->getPackageService();
+$addons    = $service->getRegisteredAddOns();
+$skip      = array();
 
 $table = new sly_Table('', array('sly-pkglist'));
 $table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-col-icon sly-icon'));
@@ -67,7 +67,7 @@ $table->getColumn(1)->setContent(t('package'));
 $table->setIsEmpty(false);
 $table->openBuffer();
 
-$service  = sly_Service_Factory::getVendorPackageService();
+$service  = $container->getVendorPackageService();
 $packages = $service->getPackages();
 $link     = false;
 

@@ -19,7 +19,7 @@ $localeSelect = new sly_Form_Select_DropDown('locale', t('backend_locale'), $use
 
 $timezone = $user->getTimeZone();
 $timezone = $timezone ? $timezone : array();
-$tzSelect = sly_Form_Helper::getTimezoneSelect('timezone', $timezone);
+$tzSelect = sly_Backend_Form_Helper::getTimezoneSelect('timezone', $timezone);
 $zones    = $tzSelect->getValues();
 $zones    = array_merge(array('' => t('use_default_locale')), $zones);
 

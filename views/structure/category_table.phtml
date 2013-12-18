@@ -67,7 +67,7 @@ foreach ($categories as $category) {
 	else {
 		$this->render(
 			sly_Controller_Structure::$viewPath.'category_table_row.phtml',
-			array('category' => $category, 'statusTypes' => $statusTypes, 'isActive' => $isActive),
+			array('category' => $category, 'isActive' => $isActive),
 			false
 		);
 	}

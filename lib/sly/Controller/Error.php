@@ -16,6 +16,14 @@ class sly_Controller_Error extends sly_Controller_Backend implements sly_Control
 	}
 
 	public function indexAction() {
+		// use the system error handler to process the exception
+		$container    = $this->getContainer();
+		$errorHandler = $container['sly-error-handler'];
+
+		if ($errorHandler && $errorHandler instanceof sly_ErrorHandler) {
+			$errorHandler->handleException($this->exception);
+		}
+
 		$this->render('error/index.phtml', array('e' => $this->exception), false);
 	}
 

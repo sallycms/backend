@@ -22,9 +22,6 @@ if (!empty($info['author'])) {
 <li class="name"><?php
 	print '<h2>'.sly_html($addon).'</h2>';
 ?></li>
-<li class="buttons reinit">
-	<span class="reinit"><a class="sly-button" href="<?php echo str_replace('_action_', 'reinit', $base) ?>"><?php echo t('reinit_assets') ?></a></span>
-</li>
 <li class="buttons installer">
 	<span class="reinstall"><a class="sly-button" href="<?php echo str_replace('_action_', 'install', $base) ?>"><?php echo t('reinstall') ?></a></span>
 	<span class="install"><a class="sly-button" href="<?php echo str_replace('_action_', 'install', $base) ?>"><?php echo t('install') ?></a></span>

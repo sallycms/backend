@@ -12,8 +12,8 @@
  * @author zozi@webvariants.de
  */
 class sly_Helper_Content {
-	public static function printAddSliceForm($module, $position, $articleId, $clang, $slot) {
-		$moduleService = sly_Service_Factory::getModuleService();
+	public static function printAddSliceForm($module, $position, $articleId, $clang, $revision, $slot) {
+		$moduleService = sly_Core::getContainer()->getModuleService();
 		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
 		if (!$moduleService->exists($module)) {
@@ -27,14 +27,16 @@ class sly_Helper_Content {
 				$form->setEncType('multipart/form-data');
 				$form->addHiddenValue('article_id', $articleId);
 				$form->addHiddenValue('clang', $clang);
+				$form->addHiddenValue('revision', $revision);
 				$form->addHiddenValue('slot', $slot);
 				$form->addHiddenValue('module', sly_html($module));
 				$form->addHiddenValue('pos', $position);
 				$form->setSubmitButton(new sly_Form_Input_Button('submit', 'btn_save', t('add_slice')));
 
-				$renderer   = new sly_Slice_Renderer($module);
+				$container  = sly_Core::getContainer();
+				$renderer   = $container['sly-slice-renderer'];
 				$sliceinput = new sly_Form_Fragment();
-				$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput('slicevalue').'</div>');
+				$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($module, array(), 'slicevalue').'</div>');
 
 				$form->add($sliceinput);
 				$form->addClass('sly-slice-form');
@@ -62,7 +64,7 @@ class sly_Helper_Content {
 	}
 
 	public static function printEditSliceForm(sly_Model_ArticleSlice $articleSlice, $values = array()) {
-		$moduleService = sly_Service_Factory::getModuleService();
+		$moduleService = sly_Core::getContainer()->getModuleService();
 		$module        = $articleSlice->getModule();
 		$moduleTitle   = $moduleService->getTitle($module);
 		$router        = sly_Core::getContainer()->getApplication()->getRouter();
@@ -79,9 +81,10 @@ class sly_Helper_Content {
 			$form->setApplyButton(new sly_Form_Input_Button('submit', 'btn_update', t('apply')));
 			$form->setResetButton(new sly_Form_Input_Button('reset', 'reset', t('reset')));
 
-			$renderer   = new sly_Slice_Renderer($module, $values);
+			$container  = sly_Core::getContainer();
+			$renderer   = $container['sly-slice-renderer'];
 			$sliceinput = new sly_Form_Fragment();
-			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput('slicevalue').'</div>');
+			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($module, $values, 'slicevalue').'</div>');
 
 			$form->add($sliceinput);
 			$form->addClass('sly-slice-form');
