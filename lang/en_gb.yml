@@ -21,6 +21,7 @@ dateformat: '%Y-%b-%d'
 timeformat: '%H:%M'
 datetimeformat: '%Y-%b-%d %H:%M'
 setlocale: 'en_GB,en_UK,en_US,en_EN,en_AU,en_CA,American,ENG,English'
+intl_locale: 'en-GB'
 
 home: Home
 input: Input
@@ -333,8 +334,8 @@ file_has_no_internal_name: 'File {0} has no internal name!'
 from_language: from language
 to_language: to language
 importer_database_imported: 'The database dump has been successfully imported, {0} queries have been executed.'
-importer_no_valid_import_file_prefix: Import file is invalid: Table prefix could not be found!
-importer_no_valid_import_file_version: Import file is invalid: Version stamp could not be found!
+importer_no_valid_import_file_prefix: 'Import file is invalid: Table prefix could not be found!'
+importer_no_valid_import_file_version: 'Import file is invalid: Version stamp could not be found!'
 invalid_develop_param: 'Detected invalid parameter {0}.'
 language_not_found: 'Language {0} could not be found!'
 login_welcome: Please log in.

@@ -31,7 +31,7 @@ $sysinfo = array(
 	'',
 	'Entwicklermodus...: '.(sly_Core::isDeveloperMode() ? 'ja' : 'nein'),
 	'Caching...........: '.$caching,
-	'Sprachen..........: '.implode("\n                        ", $langs),
+	'Sprachen..........: '.implode("\n                    ", $langs),
 	'',
 	'PHP-Einstellungen',
 	'-----------------',
@@ -41,7 +41,7 @@ $sysinfo = array(
 	'safe_mode.........: '.(sly_ini_get('safe_mode') ? 'aktiviert' : 'deaktiviert'),
 	'max_execution_time: '.sly_ini_get('max_execution_time').' Sekunden',
 	'memory_limit......: '.sly_Util_String::formatFilesize(sly_ini_get('memory_limit')),
-	'Extensions........: '.implode("\n                        ", $extlists),
+	'Extensions........: '.implode("\n                    ", $extlists),
 	'',
 	'AddOns',
 	'------',
@@ -90,14 +90,14 @@ $height  = substr_count($sysinfo, "\n") + 1;
 			<li>Tritt der Fehler auch auf, wenn du das Caching abschaltest (heißt,
 			den Blackhole-Cache benutzt)?</li>
 			<li>Stelle sicher, dass du die
-			<a href="https://bitbucket.org/SallyCMS/trunk/downloads" class="sly-blank">aktuellste
+			<a href="https://bitbucket.org/SallyCMS/sallycms/downloads" class="sly-blank">aktuellste
 			Sally-Version</a> einsetzt.</li>
 			<li>Stelle sicher, dass die von dir eingesetzten Pakete aktuell sind.</li>
 		</ol>
 
 		<p>
 			Wenn die obigen Tipps nicht helfen, kannst du einen
-			<a href="https://bitbucket.org/SallyCMS/trunk/issues/new" class="sly-blank">Bugreport
+			<a href="https://bitbucket.org/SallyCMS/sallycms/issues/new" class="sly-blank">Bugreport
 			erstellen</a>. Um dem SallyCMS-Team zu ermöglichen, den Fehler schnell
 			zu identifizieren	und zu lösen, beachte bitte unbedingt die folgenden
 			Hinweise.

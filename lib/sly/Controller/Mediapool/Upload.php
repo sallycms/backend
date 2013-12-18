@@ -52,7 +52,7 @@ class sly_Controller_Mediapool_Upload extends sly_Controller_Mediapool_Base {
 			$callback = $this->popupHelper->get('callback');
 
 			if ($callback && $request->post('saveandexit', 'boolean', false) && $file !== null) {
-				$this->render('mediapool/upload_js.phtml', compact('file', 'callback'), false);
+				$this->render('mediapool/upload_js.phtml', compact('file', 'title', 'callback'), false);
 				exit;
 			}
 			elseif ($file !== null) {
