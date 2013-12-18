@@ -77,7 +77,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 
 			// redirect to referer
 			$referer = $request->post('referer', 'string', false);
-			$this->redirectToStartpage($user, $referer);
+
+			return $this->redirectToStartpage($user, $referer);
 		}
 	}
 
