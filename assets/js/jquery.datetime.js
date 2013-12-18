@@ -154,7 +154,7 @@
 	$.fn.slyDateTime = function(settings) {
 		var
 			opts   = $.extend({}, $.fn.slyDateTime.defaults, settings),
-			inputs = $(this).filter('input[type*="date"]'),
+			inputs = $(this).filter('input[type*="date"]:not(.noSlyDateTime)'),
 			labels = {
 				months:      opts.lngMonths,
 				shortMonths: opts.lngShortMonths,

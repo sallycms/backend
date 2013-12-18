@@ -12,13 +12,18 @@
  * @ingroup authorisation
  */
 class sly_Authorisation_ModuleListProvider implements sly_Authorisation_ListProvider {
+	protected $moduleService;
+
+	public function __construct() {
+		$this->moduleService = sly_Core::getContainer()->getModuleService();
+	}
 	/**
 	 * get object IDs
 	 *
 	 * @return array
 	 */
 	public function getObjectIds() {
-		$ids = array_keys(sly_Service_Factory::getModuleService()->getModules());
+		$ids = array_keys($this->moduleService->getModules());
 		array_unshift($ids, self::ALL);
 		return $ids;
 	}
@@ -32,6 +37,6 @@ class sly_Authorisation_ModuleListProvider implements sly_Authorisation_ListProv
 	 */
 	public function getObjectTitle($id) {
 		if ($id === self::ALL) return t('all');
-		return sly_Service_Factory::getModuleService()->getTitle($id);
+		return $this->moduleService->getTitle($id);
 	}
 }
