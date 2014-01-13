@@ -16,6 +16,14 @@ var sly = sly || {};
 		// ensure names are somewhat unique
 		name += (new Date()).getTime();
 
+		// expand relative url to absolute. hopefully helps IE10
+		if (url.substr(0, 2) === './') {
+			var base = $('base').attr('href');
+			if (base) {
+				url = base + (base.substr(base.length - 1) === '/' ? '' : '/') + url.substr(2);
+			}
+		}
+
 		this.name = name;
 		this.url  = url;
 		this.obj  = win.open(url, name, 'width='+width+',height='+height+extra);
