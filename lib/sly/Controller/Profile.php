@@ -32,7 +32,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		$user->setDescription($request->post('description', 'string'));
 		$user->setUpdateColumns();
 
-		// Backend-Sprache
+		// backend locale
 
 		$backendLocale  = $request->post('locale', 'string');
 		$backendLocales = $this->getBackendLocales();
@@ -42,10 +42,20 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		}
 
 		// timezone
-		$timezone  = $request->post('timezone', 'string');
+
+		$timezone = $request->post('timezone', 'string');
 		$user->setTimezone($timezone ? $timezone : null);
 
-		// Passwort ändern?
+		// homepage
+
+		$startpage  = $request->post('startpage', 'string');
+		$startpages = $this->getPossibleStartpages();
+
+		if (isset($startpages[$startpage])) {
+			$user->setStartPage($startpage);
+		}
+
+		// change password if one was given
 
 		$password = $request->post('password', 'string');
 		$service  = $this->getContainer()->getUserService();
@@ -54,7 +64,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 			$user->setPassword($password);
 		}
 
-		// Speichern, fertig.
+		// save, done
 
 		$service->save($user);
 
@@ -85,6 +95,27 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		}
 
 		return $result;
+	}
+
+	protected function getPossibleStartpages() {
+		$nav      = new sly_Layout_Navigation_Backend();
+		$user     = $this->getUser();
+		$starters = array('profile' => t('profile'));
+
+		$nav->init($user);
+
+		foreach ($nav->getGroups() as $group) {
+			foreach ($group->getPages() as $page) {
+				if ($page->isPopup()) continue;
+
+				$pageParam = $page->getPageParam();
+				$name      = $page->getTitle();
+
+				$starters[$pageParam] = $name;
+			}
+		}
+
+		return $starters;
 	}
 
 	protected function getUser() {

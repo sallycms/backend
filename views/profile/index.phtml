@@ -17,11 +17,13 @@ $username     = new sly_Form_Input_Text('username', t('name'), $user->getName())
 $userdesc     = new sly_Form_Input_Text('description', t('description'), $user->getDescription());
 $localeSelect = new sly_Form_Select_DropDown('locale', t('backend_locale'), $user->getBackendLocale(), $this->getBackendLocales());
 
-$timezone = $user->getTimeZone();
-$timezone = $timezone ? $timezone : array();
-$tzSelect = sly_Backend_Form_Helper::getTimezoneSelect('timezone', $timezone);
-$zones    = $tzSelect->getValues();
-$zones    = array_merge(array('' => t('use_default_locale')), $zones);
+$startPage  = $user->getStartPage();
+$timezone   = $user->getTimeZone();
+$timezone   = $timezone ? $timezone : array();
+$tzSelect   = sly_Backend_Form_Helper::getTimezoneSelect('timezone', $timezone);
+$homeSelect = new sly_Form_Select_DropDown('startpage', t('startpage'), $startPage, $this->getPossibleStartpages());
+$zones      = $tzSelect->getValues();
+$zones      = array_merge(array('' => t('use_default_locale')), $zones);
 
 $tzSelect->setValues($zones);
 
@@ -30,7 +32,8 @@ $localeSelect->setMultiple(false);
 $form->beginFieldset(t('my_profile'), '', 2);
 $form->addRow(array($login, $password));
 $form->addRow(array($username, $userdesc));
-$form->addRow(array($localeSelect, $tzSelect));
+$form->addRow(array($homeSelect, $localeSelect));
+$form->addRow(array($tzSelect));
 
 $form->getSubmitButton()->setAttribute('value', t('save'));
 $form->setResetButton(null);
