@@ -129,7 +129,6 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		$response->setHeader('Location', $url);
 		$response->setContent($msg);
 
-		while (ob_get_level()) ob_end_clean();
 		return $response;
 	}
 }
