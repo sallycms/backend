@@ -388,3 +388,151 @@ a.sly-button {
 	input { width: 15px !important; }
 	img   { vertical-align: top; cursor: pointer; }
 }
+
+/* custom styling for Select2 */
+
+.select2-container {
+	font-size: 14px;
+	vertical-align: top;
+}
+
+.select2-container .select2-choice,
+.select2-container-multi .select2-choices,
+.select2-container.select2-drop-above .select2-choice,
+.select2-container .select2-choice .select2-arrow,
+.select2-search input {
+	background: #fff none;
+}
+
+.select2-drop,
+.select2-drop.select2-drop-above,
+.select2-search input,
+.select2-container-multi.select2-container-active .select2-choices,
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.select2-container .select2-choice,
+.select2-container-multi .select2-choices {
+	border-color: @lt_grey;
+	border-radius: 0;
+	padding: 0 2px;
+	height: 19px;
+
+	> .select2-chosen {
+		line-height: 19px;
+	}
+}
+
+.select2-container-multi .select2-choices {
+	padding: 1px 0;
+}
+
+.select2-container .select2-choice .select2-arrow b {
+	background: url('../select2.png') no-repeat 0 -3px;
+}
+
+.select2-search {
+	min-height: 24px;
+}
+
+.select2-search input {
+	min-height: 0px;
+	line-height: 15px;
+	padding: 2px 2px;
+	border-color: @lt_grey;
+}
+
+.select2-search input.select2-active {
+	background: #fff url('../select2-spinner.gif') no-repeat 100%;
+}
+
+.select2-container .select2-choice .select2-arrow {
+	border-radius: 0;
+	background: white;
+	border-left: 0 none;
+}
+
+.select2-drop-active,
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices,
+.select2-container-multi.select2-container-active .select2-choices,
+.select2-drop.select2-drop-above.select2-drop-active {
+	border-color: @md_grey;
+	border-radius: 0;
+}
+
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices {
+	border-top-color: transparent;
+}
+
+.select2-dropdown-open,
+.select2-container-active {
+	.select2-choice {
+		background: #fff;
+		background-image: none;
+		border-color: @md_grey;
+	}
+}
+
+.select2-search {
+	margin-top: 4px;
+}
+
+.select2-results {
+	margin-right: 0;
+}
+
+.select2-results .select2-highlighted {
+	background: @md_grey;
+}
+
+.select2-results .select2-result-label {
+	padding: 3px 5px;
+}
+
+.select2-result {
+	margin-right: 4px;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+	border-color: @lt_grey;
+	background: #F3F3F3;
+	margin: 2px 0 2px 3px;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice-focus {
+	border-color: @md_grey;
+	background: #EAEAEA;
+}
+
+.select2-search-choice-close {
+	background: url('../select2.png') right -1px no-repeat;
+}
+
+.select2-container-multi .select2-choices .select2-search-field input {
+	padding: 3px;
+}
+
+.select2-more-results.select2-active {
+	background: #f4f4f4 url('../select2-spinner.gif') no-repeat 100%;
+}
+
+.select2-container-multi .select2-choices .select2-search-field input.select2-active {
+    background: #fff url('../select2-spinner.gif') no-repeat 100% !important;
+}
+
+/* add indentation to result items in the drop box */
+@indenterLoop(@selector, @index) when (@index > 0) {
+	@{selector}@{index} {
+		padding-left: @index * 5px;
+	}
+	@indenterLoop(@selector, @index - 1);
+}
+
+.select2-results {
+	@indenterLoop(~'.sly-lvl-', 15);
+}
