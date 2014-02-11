@@ -31,7 +31,7 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 		$this->addJavaScriptFile(Util::appUri('js/iso8601.min.js'), 'if lt IE 8');
 		$this->addJavaScriptFile(Util::appUri('js/jquery.min.js'));
 		$this->addJavaScriptFile(Util::appUri('js/json2.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/jquery.chosen.min.js'));
+		$this->addJavaScriptFile(Util::appUri('js/jquery.select2.min.js'));
 		$this->addJavaScriptFile(Util::appUri('js/jquery.tools.min.js'));
 		$this->addJavaScriptFile(Util::appUri('js/jquery.datetime.min.js'));
 		$this->addJavaScriptFile(Util::appUri('js/locales/'.$locale.'.min.js'));

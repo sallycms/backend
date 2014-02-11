@@ -666,12 +666,12 @@ var sly = sly || {};
 			});
 		}
 
-		var sly_apply_chosen = function(container) {
-			// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
+		var sly_apply_select2 = function(container) {
+			// run Select2, but transform manual indentation (aka prefixing values with '&nbsp;'s)
 			// into lvl-N classes, or else the quick filter function of Chosen will not work
 			// properly.
-			if (typeof $.fn.chosen !== 'undefined') {
-				var options = $('select:not(.sly-no-chosen) option', container), len = options.length, i = 0, depth, option;
+			if (typeof $.fn.select2 !== 'undefined') {
+				var options = $('select:not(.sly-no-select2):not(.sly-no-chosen) option', container), len = options.length, i = 0, depth, option;
 
 				for (; i < len; ++i) {
 					option = $(options[i]);
@@ -682,21 +682,23 @@ var sly = sly || {};
 					}
 				}
 
-				$('.sly-form-select:not(.sly-no-chosen)', container).each(function() {
+				$('.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function() {
 					var select = $(this);
 					if (select.data('placeholder') === undefined) {
 						select.data('placeholder', 'Bitte auswählen');
 					}
-					select.chosen();
+					select.select2({
+						width: 'resolve'
+					});
 				});
 			}
 		};
 
-		sly_apply_chosen($('body'));
+		sly_apply_select2($('body'));
 
 		// listen to rowAdded event
 		$('body').bind('rowAdded', function(event) {
-			sly_apply_chosen(event.currentTarget);
+			sly_apply_select2(event.currentTarget);
 		});
 
 		$('body').delegate('a.sly-postlink', 'click', function() {
