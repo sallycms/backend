@@ -30,8 +30,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-default": "0.10.x-dev",
-            "dev-select2": "0.9.x-dev"
+            "dev-default": "0.10.x-dev"
         }
     }
 }
