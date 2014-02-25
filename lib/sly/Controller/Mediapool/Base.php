@@ -360,6 +360,30 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 						'clang'      => $article->getClang(),
 						'revision'   => $article->getRevision()
 					));
+
+					break;
+
+				case 'sly-category':
+					$category = $usage['object'];
+					$title    = $category->getCatName();
+					$link     = $router->getPlainUrl('structure', null,  array(
+						'category_id' => $category->getId(),
+						'clang'       => $category->getClang()
+					));
+
+					break;
+
+				case 'sly-medium':
+					$medium = $usage['object'];
+					$title  = $medium->getTitle();
+					$link   = $router->getPlainUrl('mediapool_detail', null, array('file_id' => $medium->getId()));
+
+					break;
+
+				case 'sly-user':
+					$user  = $usage['object'];
+					$title = $obj->getName()?: $obj->getLogin();
+					$link  = $router->getPlainUrl('user', 'edit', array('id' => $user->getId()));
 			}
 
 			$usages[$idx]['link']  = $link;
