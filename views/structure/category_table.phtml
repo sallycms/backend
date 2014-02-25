@@ -1,0 +1,83 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$addURI   = $canAdd ? $_router->getPlainUrl(null, 'addCategory', array('category_id' => $categoryId, 'clang' => $clangId)) : '';
+$table    = new sly_Table('sly-structure-categories');
+$isActive = $renderAddCategory || $renderEditCategory;
+
+$table->addColumn(sly_Table_Column::sprite('category-add', $addURI, t('add_category'), 'sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('category'), 'sly-col-name'));
+
+if ($isActive) {
+	$table->addClass('sly-active');
+	$table->addColumn(sly_Table_Column::factory(t('position_short'), 'sly-col-pos'));
+}
+
+$table->addColumn(sly_Table_Column::factory(t('status'), 'sly-col-status'));
+$table->setIsEmpty(empty($categories) && !$renderAddCategory && $categoryId === 0);
+$table->setEmptyNotice(t('no_categories_yet'));
+
+if ($isActive) {
+	?>
+	<form action="<?php print $_router->getUrl(null, $action) ?>" method="post">
+		<fieldset>
+			<input type="hidden" name="category_id" value="<?php echo $categoryId ?>" />
+			<input type="hidden" name="clang" value="<?php echo $clangId ?>" />
+			<?php print sly_Util_Csrf::renderInputTag() ?>
+		</fieldset>
+		<?php
+}
+
+$table->openBuffer();
+
+if ($categoryId !== 0 && $currentCategory) {
+	?>
+	<tr data-slyid="<?php echo $currentCategory->getParentId() ?>">
+		<td class="sly-col-icon sly-icon">&nbsp;</td>
+		<td class="sly-col-name"><a href="<?php print $_router->getUrl(null, null, array('category_id' => $currentCategory->getParentId(), 'clang' => $clangId)) ?>">..</a></td>
+		<?php if ($isActive): ?><td class="sly-col-pos">&nbsp;</td><?php endif ?>
+		<td class="sly-col-status">&nbsp;</td>
+	</tr>
+	<?php
+}
+
+if ($renderAddCategory) {
+	$this->render(
+		sly_Controller_Structure::$viewPath.'category_table_row_add.phtml',
+		array('maxCatPosition' => $maxCatPosition),
+		false
+	);
+}
+
+foreach ($categories as $category) {
+	if ($renderEditCategory && $renderEditCategory == $category->getId()) {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'category_table_row_edit.phtml',
+			array('category' => $category, 'maxCatPosition' => $maxCatPosition),
+			false
+		);
+	}
+	else {
+		$this->render(
+			sly_Controller_Structure::$viewPath.'category_table_row.phtml',
+			array('category' => $category, 'isActive' => $isActive),
+			false
+		);
+	}
+}
+
+$table->closeBuffer();
+print $table->render();
+
+if ($isActive) {
+	?>
+	</form>
+	<?php
+}

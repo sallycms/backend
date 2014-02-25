@@ -1,0 +1,7 @@
+<div class="sly-content-header" data-slyid="<?php print $article->getId() ?>" data-slyclang="<?php print $article->getClang() ?>" data-slyrevision="<?php print $article->getRevision() ?>">
+	<?php
+	// navigation
+	$this->render('content/_slotmenu.phtml',    array('article' => $article, 'slot' => $slot), false);
+	$this->render('content/_subpagemenu.phtml', array('article' => $article), false);
+	?>
+</div>
