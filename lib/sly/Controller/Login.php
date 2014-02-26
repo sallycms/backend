@@ -119,7 +119,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		}
 		else {
 			$router = $this->getContainer()->getApplication()->getRouter();
-			$url    = $router->getAbsoluteUrl($user->getStartPage());
+			$url    = $router->getAbsoluteUrl($user->getStartPage() ?: 'profile');
 			$msg    = t('redirect_startpage', $url);
 		}
 
@@ -129,7 +129,6 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		$response->setHeader('Location', $url);
 		$response->setContent($msg);
 
-		while (ob_get_level()) ob_end_clean();
 		return $response;
 	}
 }
