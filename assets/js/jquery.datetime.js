@@ -214,6 +214,7 @@
 					selectors:   false, // seems to be buggy
 					lang:        'slydatetime',
 					offset:      [5,0],
+					yearRange:   [-100, 100],
 					firstDay:    1
 				});
 
