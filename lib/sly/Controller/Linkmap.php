@@ -17,6 +17,12 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	protected $forced      = array();
 	protected $popupHelper = array();
 	protected $category    = null;
+	protected $router      = null;
+
+	public function setContainer(sly_Container $container) {
+		parent::setContainer($container);
+		$this->router = $this->getContainer()->getApplication()->getRouter();
+	}
 
 	protected function init() {
 		$request    = $this->getRequest();
@@ -161,7 +167,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 		$extra   = $this->popupHelper->getValues();
 		$params  = array_merge($globals, $extra, $local);
 
-		return 'index.php?'.http_build_query($params, '', '&amp;');
+		return $this->router->getUrl('linkmap', 'index', $params);
 	}
 
 	protected function formatLabel($object) {
