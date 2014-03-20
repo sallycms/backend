@@ -1,0 +1,63 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$sublist = dirname(__FILE__).'/sublist.phtml';
+
+if (empty($tree)) {
+	print sly_Helper_Message::info(t('no_addons_found'));
+}
+else {
+	?>
+	<ul class="sly-addonlist">
+		<?php
+		foreach ($tree as $addon => $info) {
+			$base    = $_router->getUrl(null, '_action_', array('addon' => $addon));
+			$classes = $stati[$addon]['classes'];
+
+			?>
+			<li class="<?php echo $classes ?> pkg" data-key="<?php echo $addon ?>">
+				<ul class="details">
+					<?php include $sublist; ?>
+				</ul>
+				<?php
+				if (!empty($info['children'])) {
+					print '<ul class="children">';
+					$close = 1;
+				}
+				else {
+					$close = 0;
+				}
+
+				foreach ($info['children'] as $addon => $info) {
+					$base    = $_router->getUrl(null, '_action_', array('addon' => $addon));
+					$classes = $stati[$addon]['classes'];
+
+					?>
+					<li class="<?php echo $classes ?> pkg" data-key="<?php echo $addon ?>">
+						<ul class="details">
+							<?php include $sublist; ?>
+						</ul>
+					</li>
+					<?php
+				}
+
+				if ($close) print '</ul>';
+				?>
+			</li>
+			<?php
+		}
+
+		?>
+		<li class="error"><?php echo sly_Helper_Message::warn('dummy') ?></li>
+	</ul>
+	<?php
+}

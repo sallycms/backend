@@ -1,0 +1,21 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+?>
+<div id="sly-page">
+	<div id="sly-navi-top">
+		<?php print $this->renderView('navi_logout.phtml'); ?>
+	</div>
+	<?php if (sly_Util_User::getCurrentUser() && $this->hasNavigation()): ?>
+	<div id="sly-navi-main">
+		<?php print $this->renderView('navi_main.phtml'); ?>
+	</div>
+	<?php endif ?>
+
+	<div id="sly-wrapper">
