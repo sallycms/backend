@@ -23,7 +23,7 @@ class sly_Helper_Content {
 			try {
 				ob_start();
 				$moduleTitle = $moduleService->getTitle($module);
-				$form = new sly_Form($router->getPlainUrl('content', 'addArticleSlice'), 'post', t('add_slice').': '.sly_translate($moduleTitle, true), '', 'addslice');
+				$form = new sly_Form($router->getPlainUrl('content', 'addArticleSlice'), 'post', t('add_slice').': '.sly_translate($moduleTitle), '', 'addslice');
 				$form->setEncType('multipart/form-data');
 				$form->addHiddenValue('article_id', $articleId);
 				$form->addHiddenValue('clang', $clang);
