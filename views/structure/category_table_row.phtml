@@ -1,0 +1,33 @@
+<?php
+/*
+ * Copyright (c) 2013, webvariants GbR, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$viewURL      = $_router->getPlainUrl('structure', null, array('category_id' => $category->getId(), 'clang' => $this->clangId));
+$editParams   = array('category_id' => $category->getParentId(), 'clang' => $this->clangId, 'edit_id' => $category->getId());
+
+?>
+<tr data-slyid="<?php echo $category->getId() ?>" data-slyonline="<?php echo $category->isOnline() ?>">
+	<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($viewURL, $category->getCatName(), 'category') ?></td>
+	<td class="sly-col-name"><a href="<?php echo sly_html($viewURL) ?>"><?php echo sly_html($category->getCatName()) ?></a></td>
+	<?php if ($isActive): ?>
+	<td class="sly-col-pos"><?php echo sly_html($category->getCatPosition()) ?></td>
+	<?php endif ?>
+	<td class="sly-col-status">
+		<?php
+		if ($this->canEditCategory($category->getId())) {
+			echo '<a href="'.$_router->getUrl(null, 'editCategory', $editParams).'">'.t('change').'</a>&nbsp;';
+			echo '<a href="'.$_router->getUrl(null, 'deleteCategory', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>';
+		}
+		else {
+			echo '<span class="sly-na">'.t('change').'</span>&nbsp;';
+			echo '<span class="sly-na">'.t('delete').'</span>';
+		}
+		?>
+	</td>
+</tr>
