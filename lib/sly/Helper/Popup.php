@@ -71,19 +71,27 @@ class sly_Helper_Popup {
 		return isset($this->values['args'][$name]) ? $this->values['args'][$name] : null;
 	}
 
-	public function appendParamsToForm(sly_Form $form) {
+	public function appendParamsToForm(sly_Form $form, $appendToAction = false) {
 		if (empty($this->values)) {
 			return;
 		}
 
-		foreach ($this->values as $param => $value) {
-			if (is_array($value)) {
-				foreach ($value as $key => $v) {
-					$form->addHiddenValue($param.'['.$key.']', $v);
+		if ($appendToAction) {
+			$action = $form->getAction();
+			$action = $this->appendQueryString($action, '&');
+
+			$form->setAction($action);
+		}
+		else {
+			foreach ($this->values as $param => $value) {
+				if (is_array($value)) {
+					foreach ($value as $key => $v) {
+						$form->addHiddenValue($param.'['.$key.']', $v);
+					}
 				}
-			}
-			else {
-				$form->addHiddenValue($param, $value);
+				else {
+					$form->addHiddenValue($param, $value);
+				}
 			}
 		}
 	}
