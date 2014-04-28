@@ -96,8 +96,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return $this->popupHelper->appendQueryString($url, $separator);
 	}
 
-	protected function appendParamsToForm(sly_Form $form) {
-		return $this->popupHelper->appendParamsToForm($form);
+	protected function appendParamsToForm(sly_Form $form, $appendToAction = false) {
+		return $this->popupHelper->appendParamsToForm($form, $appendToAction);
  	}
 
 	protected function getCurrentCategory() {

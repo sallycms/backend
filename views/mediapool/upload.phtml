@@ -17,7 +17,7 @@ $callback = $this->getRequest()->request('callback', 'string', '');
 
 $form = new sly_Form($_router->getUrl(null, 'upload'), 'POST', t('upload_medium'), '', 'sly-form-mediapool-other');
 $form->setEncType('multipart/form-data');
-$this->appendParamsToForm($form);
+$this->appendParamsToForm($form, true);
 
 ////////////////////////////////////////////////////////
 // file title
