@@ -63,7 +63,7 @@ foreach ($revisions as $revision) {
 		<td class="sly-col-created <?php echo $online ? 'sly-online' : 'sly-offline' ?>">
 			<?php
 			if ($current) print '<strong>';
-			echo sly_Util_HTML::getDatetimeTag($revision->getCreateDate());
+			echo sly_Util_HTML::getDatetimeTag($revision->getUpdateDate());
 			if ($current) print '</strong>';
 			?>
 		</td>
