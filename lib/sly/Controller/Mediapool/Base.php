@@ -290,7 +290,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function isImage(sly_Model_Medium $medium) {
-		static $exts = array('gif', 'jpeg', 'jpg', 'png', 'bmp', 'tif', 'tiff', 'webp');
+		static $exts = array('gif', 'jpeg', 'jpg', 'png', 'webp');
 		return in_array($medium->getExtension(), $exts);
 	}
 
