@@ -39,7 +39,7 @@ $form->beginFieldset('', 'sly-article-revisions');
 
 $table = new sly_Table('sly-article-revisions-table');
 $table->addColumn(sly_Table_Column::sprite('article', null));
-$table->addColumn(sly_Table_Column::factory('Rev.', 'sly-col-rev'));
+$table->addColumn(sly_Table_Column::factory(t('abbreviation_revision'), 'sly-col-rev'));
 $table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
 $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
 
