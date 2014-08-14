@@ -93,7 +93,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 			$request  = $this->getRequest();
 			$category = $request->request('category', 'int', -1);
 			$service  = $this->getContainer()->getMediaCategoryService();
-			$session  = sly_Core::getSession();
+			$session  = $this->getContainer()->getSession();
 
 			if ($category === -1) {
 				$category = $session->get('sly-media-category', 'int', 0);
@@ -130,7 +130,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected function getFiles() {
 		$cat   = $this->getCurrentCategory();
 		$where = 'f.category_id = '.$cat;
-		$where = sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
+		$where = $this->getContainer()->getDispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
 		$where = '('.$where.')';
 		$types = $this->popupHelper->getArgument('types');
 

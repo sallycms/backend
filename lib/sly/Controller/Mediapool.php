@@ -16,7 +16,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		$files = $this->getFiles();
 
 		if (empty($files)) {
-			sly_Core::getFlashMessage()->addInfo(t('no_media_found'));
+			$this->getFlashMessage()->addInfo(t('no_media_found'));
 		}
 
 		print sly_Helper_Message::renderFlashMessage();

@@ -416,9 +416,11 @@ metadata_updated: Metadaten wurden aktualisiert.
 move_article: Artikel verschieben
 article_copied: Artikel wurde kopiert.
 article_content_copied: Die Inhalte des Artikels wurden kopiert.
+article_revision_deleted: Die Revision wurde gelöscht.
 cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
 cannot_copy_article: Der Artikel konnte nicht kopiert werden!
 cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+cannot_delete_article_revision: Die Revision konnte nicht gelöscht werden.
 
 contentmeta_revisions: Revisionen
 contentmeta_select_revision: Revision auswählen
@@ -467,4 +469,5 @@ upload_file: Medium hochladen
 width: Breite
 revision: Revision
 abbreviation_revision: Rev.
+delete_revision: Revision löschen
 backend_areas: Backend-Bereiche

@@ -416,9 +416,11 @@ metadata_updated: Metadata has been updated.
 move_article: Move article
 article_copied: Article has been copied.
 article_content_copied: Article content has been copied.
+article_revision_deleted: Revision has been deleted.
 cannot_copy_article_content: 'Article content could not be copied!'
 cannot_copy_article: Article could not be moved!
 cannot_move_category: Category could not be moved!
+cannot_delete_article_revision: Could not delete article revision.
 
 contentmeta_revisions: revisions
 contentmeta_select_revision: select revision
@@ -467,4 +469,5 @@ upload_file: Upload file
 width: Width
 revision: revision
 abbreviation_revision: Rev.
+delete_revision: delete revision
 backend_areas: Backend Areas
