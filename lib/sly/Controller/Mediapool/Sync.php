@@ -28,7 +28,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	public function syncAction() {
 		$request  = $this->getRequest();
 		$selected = $request->postArray('sync_files', 'string');
-		$flash    = sly_Core::getFlashMessage();
+		$flash    = $this->getFlashMessage();
 
 		if (!empty($selected)) {
 			$title = $request->post('ftitle', 'string', '');

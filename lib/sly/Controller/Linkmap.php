@@ -127,7 +127,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 		$this->category = $category;
 
 		$naviPath .= '</ul>';
-		$layout    = sly_Core::getLayout();
+		$layout    = $this->getContainer()->getLayout();
 
 		$layout->setBodyAttr('class', 'sly-popup');
 		$layout->showNavigation(false);
@@ -158,7 +158,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user && ($user->isAdmin() || $user->hasRight('pages', 'structure'));
 	}
 
@@ -171,7 +171,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	}
 
 	protected function formatLabel($object) {
-		$user  = sly_Util_User::getCurrentUser();
+		$user  = $this->getCurrentUser();
 		$label = trim($object->getName());
 
 		if (empty($label)) $label = '&nbsp;';

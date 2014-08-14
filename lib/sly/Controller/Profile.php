@@ -13,19 +13,19 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 
 	protected function init() {
 		if ($this->init++) return;
-		$layout = sly_Core::getLayout();
+		$layout = $this->getContainer()->getLayout();
 		$layout->pageHeader(t('my_profile'));
 	}
 
 	public function indexAction() {
 		$this->init();
-		$this->render('profile/index.phtml', array('user' => $this->getUser()), false);
+		$this->render('profile/index.phtml', array('user' => $this->getCurrentUser()), false);
 	}
 
 	public function updateAction() {
 		$this->init();
 
-		$user    = $this->getUser();
+		$user    = $this->getCurrentUser();
 		$request = $this->getRequest();
 
 		$user->setName($request->post('username', 'string'));
@@ -68,13 +68,13 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 
 		$service->save($user);
 
-		sly_Core::getFlashMessage()->appendInfo(t('profile_updated'));
+		$this->getFlashMessage()->appendInfo(t('profile_updated'));
 
 		return $this->redirectResponse();
 	}
 
 	public function checkPermission($action) {
-		$user = $this->getUser();
+		$user = $this->getCurrentUser();
 		if (!$user) return false;
 
 		if ($action === 'update') {
@@ -99,7 +99,7 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 
 	protected function getPossibleStartpages() {
 		$nav      = new sly_Layout_Navigation_Backend();
-		$user     = $this->getUser();
+		$user     = $this->getCurrentUser();
 		$starters = array('profile' => t('profile'));
 
 		$nav->init($user);
@@ -116,9 +116,5 @@ class sly_Controller_Profile extends sly_Controller_Backend implements sly_Contr
 		}
 
 		return $starters;
-	}
-
-	protected function getUser() {
-		return sly_Util_User::getCurrentUser();
 	}
 }

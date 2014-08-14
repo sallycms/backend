@@ -25,7 +25,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			throw new sly_Exception(t('article_not_found', $id), 404);
 		}
 
-		$session    = sly_Core::getSession();
+		$session    = $this->getContainer()->getSession();
 		$this->slot = $request->request('slot', 'string', $session->get('contentpage_slot', 'string', ''));
 
 		// validate slot
@@ -59,7 +59,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	protected function getBreadcrumb() {
 		$art    = $this->article;
 		$clang  = $art->getClang();
-		$user   = sly_Util_User::getCurrentUser();
+		$user   = $this->getCurrentUser();
 		$cat    = $art->getCategory();
 		$router = $this->getContainer()->getApplication()->getRouter();
 		$result = '<ul class="sly-navi-path">
@@ -82,18 +82,20 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	}
 
 	protected function header() {
+		$layout = $this->getContainer()->getLayout();
+
 		if ($this->article === null) {
-			sly_Core::getLayout()->pageHeader(t('content'));
+			$layout->pageHeader(t('content'));
 			print sly_Helper_Message::warn(t('no_articles_available'));
 			return false;
 		}
 		else {
-			sly_Core::getLayout()->pageHeader(t('content'), $this->getBreadcrumb());
+			$layout->pageHeader(t('content'), $this->getBreadcrumb());
 
 			$this->renderLanguageBar();
 
 			// extend menu
-			print sly_Core::dispatcher()->filter('PAGE_CONTENT_HEADER', '', array(
+			print $this->getContainer()->getDispatcher()->filter('PAGE_CONTENT_HEADER', '', array(
 				'article_id'  => $this->article->getId(),
 				'clang'       => $this->article->getClang(),
 				'category_id' => $this->article->getCategoryId()
@@ -110,7 +112,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		if ($user === null) return false;
 
 		$request   = $this->getRequest();

@@ -83,7 +83,7 @@ class sly_Controller_Mediapool_Detail extends sly_Controller_Mediapool_Base {
 	}
 
 	protected function performDelete() {
-		$this->deleteMedium($this->medium, sly_Core::getFlashMessage());
+		$this->deleteMedium($this->medium, $this->getFlashMessage());
 		return $this->redirectResponse(null, 'mediapool');
 	}
 

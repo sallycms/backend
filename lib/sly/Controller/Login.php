@@ -64,7 +64,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 		}
 
 		if ($loginOK !== true) {
-			$msg = t('login_error', '<strong>'.sly_Core::config()->get('relogindelay').'</strong>');
+			$msg = t('login_error', '<strong>'.$container->getConfig()->get('relogindelay').'</strong>');
 
 			$container->getFlashMessage()->appendWarning($msg);
 			$container->getResponse()->setStatusCode(403);

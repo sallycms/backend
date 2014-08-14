@@ -10,7 +10,7 @@
 
 abstract class sly_Controller_Backend extends sly_Controller_Base {
 	public function __construct() {
-		$response = sly_Core::getContainer()->get('sly-response');
+		$response = sly_Core::getContainer()->getResponse();
 		$response->setContentType('text/html', 'UTF-8');
 	}
 
@@ -45,7 +45,21 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
 	}
 
+	/**
+	 * get the current logged in user
+	 *
+	 * @return sly_Model_User
+	 */
 	protected function getCurrentUser() {
 		return $this->getContainer()->getUserService()->getCurrentUser();
+	}
+
+	/**
+	 * get backend flash message
+	 *
+	 * @return sly_Util_FlashMessage
+	 */
+	protected function getFlashMessage() {
+		return $this->getContainer()->getFlashMessage();
 	}
 }

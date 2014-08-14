@@ -30,12 +30,12 @@ class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements
 	}
 
 	protected function getDatabaseVersion() {
-		$driver = strtolower(sly_Core::config()->get('database/driver'));
+		$driver = strtolower($this->getContainer()->getConfig()->get('database/driver'));
 
 		switch ($driver) {
 			case 'mysql':
 			case 'pgsql':
-				$db = sly_Core::getContainer()->getPersistence();
+				$db = $this->getContainer()->getPersistence();
 				$db->query('SELECT VERSION()');
 				foreach ($db->all() as $row) $version = reset($row);
 				break;
@@ -68,7 +68,7 @@ class sly_Controller_Credits_Bugreport extends sly_Controller_Credits implements
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user && $user->isAdmin();
 	}
 }

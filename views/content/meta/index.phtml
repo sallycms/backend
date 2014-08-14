@@ -42,6 +42,7 @@ $table->addColumn(sly_Table_Column::sprite('article', null));
 $table->addColumn(sly_Table_Column::factory(t('abbreviation_revision'), 'sly-col-rev'));
 $table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
 $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
+$table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
 
 $table->setPagerParam('revisions');
 $table->openBuffer();
@@ -53,6 +54,7 @@ foreach ($revisions as $revision) {
 	$online    = $revision->isOnline();
 	$current   = $rev === $article->getRevision();
 	$selectUrl = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+	$deleteUrl = $_router->getUrl('contentmeta', 'deleterevision', array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
 	$user      = $userService->findByLogin($revision->getCreateUser());
 	$username  = $user ? ($user->getName() ?: $user->getLogin()) : $revision->getCreateUser();
 
@@ -68,6 +70,7 @@ foreach ($revisions as $revision) {
 			?>
 		</td>
 		<td class="sly-col-user"><?php echo sly_html($username) ?></td>
+		<td class="sly-col-func"><a href="<?php echo $deleteUrl ?>" class="sly-delete sly-postlink"><?php echo t('delete_revision') ?></a></td>
 	</tr>
 	<?php
 }
