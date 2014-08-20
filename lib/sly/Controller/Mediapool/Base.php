@@ -139,35 +139,6 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return $link;
 	}
 
-	protected function getFiles() {
-		$cat   = $this->getCurrentCategory();
-		$where = 'f.category_id = '.$cat;
-		$where = sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
-		$where = '('.$where.')';
-		$types = $this->popupHelper->getArgument('types');
-
-		if (!empty($types)) {
-			$types = explode('|', preg_replace('#[^a-z0-9/+.-|]#i', '', $types));
-
-			if (!empty($types)) {
-				$where .= ' AND filetype IN ("'.implode('","', $types).'")';
-			}
-		}
-
-		$db     = $this->getContainer()->getPersistence();
-		$prefix = sly_Core::getTablePrefix();
-		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.title ASC';
-		$files  = array();
-
-		$db->query($query);
-
-		foreach ($db as $row) {
-			$files[$row['id']] = sly_Util_Medium::findById($row['id']);
-		}
-
-		return $files;
-	}
-
 	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg, $revalidate = true) {
 		$filename = $medium->getFileName();
 		$user     = sly_Util_User::getCurrentUser();
