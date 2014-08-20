@@ -8,9 +8,6 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$selected   = $this->getCurrentCategory();
-$dispatcher = sly_Core::dispatcher();
-
 ////////////////////////////////////////////////////////
 // header
 
@@ -29,10 +26,20 @@ if (count($values) > 1 || $dispatcher->hasListeners('SLY_MEDIA_LIST_TOOLBAR')) {
 	$form->setSubmitButton(null);
 	$this->appendParamsToForm($form);
 
+	$orderSelect = $this->getFileOrderSelect();
+	$orderSelect->setAttribute('onchange', 'this.form.submit()');
+
+	$row = array($orderSelect);
+
 	if (count($values) > 1) {
 		$select->setAttribute('onchange', 'this.form.submit()');
-		$form->add($select);
+		//$form->add($select);
+		array_unshift($row, $select);
 	}
+
+	$form->addRow($row);
+	$form->getCurrentFieldset()->setColumns(count($row));
+	$form->beginFieldset('');
 
 	$form = $dispatcher->filter('SLY_MEDIA_LIST_TOOLBAR', $form, array('category_id' => $selected));
 

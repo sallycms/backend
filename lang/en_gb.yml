@@ -69,6 +69,7 @@ by: by
 select_all: select all
 select_none: select none
 
+sort: Sort
 sort_asc: Sort ascending
 sort_desc: Sort descending
 sort_none: No sorting
@@ -97,6 +98,7 @@ profile: Profile
 my_profile: My Profile
 login_title: Login
 base_navigation: Base Navigation
+createdate: date of creation
 
 username: Username
 password: Password
