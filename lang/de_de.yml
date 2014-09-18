@@ -471,3 +471,4 @@ revision: Revision
 abbreviation_revision: Rev.
 delete_revision: Revision löschen
 backend_areas: Backend-Bereiche
+deleted_files_cannot_be_replaced: Medien im Papierkorb können nicht durch neue Dateien ersetzt werden.
