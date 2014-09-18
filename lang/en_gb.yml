@@ -471,3 +471,4 @@ revision: revision
 abbreviation_revision: Rev.
 delete_revision: delete revision
 backend_areas: Backend Areas
+deleted_files_cannot_be_replaced: Files in the trash bin cannot be replaced by new files.
