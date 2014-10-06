@@ -50,6 +50,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->isMediaAdmin()) {
 			$menu->addSubpage('mediapool_structure', t('categories'));
 			$menu->addSubpage('mediapool_sync',      t('sync_files'));
+			$menu->addSubpage('mediapool_trash',     t('recycle_bin'));
 		}
 
 		if (!empty($values)) {

@@ -471,3 +471,11 @@ revision: Revision
 abbreviation_revision: Rev.
 delete_revision: Revision löschen
 backend_areas: Backend-Bereiche
+
+permanent_delete: unwiderruflich löschen
+restore: wiederherstellen
+recycle_bin: Papierkorb
+media_restored: Medien wurden wiederhergestellt.
+could_not_restore_media: Medien konnten nicht wiederhergestellt werden.
+media_permanently_deleted: Medien wurden unwiderruflich gelöscht.
+could_not_permanently_delete_media: Medien konnten nicht unwiderruflich gelöscht werden.

@@ -471,3 +471,11 @@ revision: revision
 abbreviation_revision: Rev.
 delete_revision: delete revision
 backend_areas: Backend Areas
+
+permanent_delete: delete permanent
+restore: restore
+recycle_bin: Recycle bin
+media_restored: Media restored.
+could_not_restore_media: Could not restore media.
+media_permanently_deleted: Media deleted permanently.
+could_not_delete_media_permanently: Could not delete media permanently.
