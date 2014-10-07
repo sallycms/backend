@@ -35,9 +35,14 @@ $table->openBuffer();
 ////////////////////////////////////////////////////////
 // move and delete selected items
 
-if ($isAdmin) {
-	$inputs = '<input class="sly-form-submit-2 sly-form-submit" type="submit" name="restore" value="'.t('restore').'" />';
-	$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="permanent_delete" value="'.t('permanent_delete').'" />';
+if ($canDelete || $canRestore) {
+	$inputs = '';
+	if ($canRestore) {
+		$inputs .= '<input class="sly-form-submit-2 sly-form-submit" type="submit" name="restore" value="'.t('restore').'" />';
+	}
+	if ($canDelete) {
+		$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete_permanent" value="'.t('delete_permanent').'" />';
+	}
 
 	?>
 	<tfoot><tr>
@@ -66,7 +71,7 @@ foreach ($files as $file) {
 	$ilink  = $_router->getUrl('mediapool_detail', null, $this->appendQueryString(array('file_id' => $id)));
 	$add_td = '<td>&nbsp;</td>';
 
-	if ($isAdmin) {
+	if ($canDelete || $canRestore) {
 		$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="selectedmedia[]" value="'.$id.'" /></td>';
 	}
 
@@ -81,10 +86,14 @@ foreach ($files as $file) {
 		<td class="sly-col-func">
 			<?php
 				$restoreUrl = $_router->getPlainUrl(null, 'batch', array('restore' => 1, 'media' => array($file->getId())));
-				$deleteUrl  = $_router->getPlainUrl(null, 'batch', array('permanent_delete' => 1, 'media' => array($file->getId())));
+				$deleteUrl  = $_router->getPlainUrl(null, 'batch', array('delete_permanent' => 1, 'media' => array($file->getId())));
 			?>
+			<?php if($canRestore) { ?>
 			<a class="sly-postlink sly-confirm-me" href="<?php echo  $restoreUrl; ?>"><?php echo t('restore'); ?></a>
-			<a class="sly-postlink sly-delete" href="<?php echo  $deleteUrl; ?>"><?php echo t('permanent_delete'); ?></a>
+			<?php } ?>
+			<?php if($canDelete) { ?>
+			<a class="sly-postlink sly-delete" href="<?php echo  $deleteUrl; ?>"><?php echo t('delete_permanent'); ?></a>
+			<?php } ?>
 		</td>
 	</tr>
 	<?php

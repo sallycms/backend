@@ -50,7 +50,10 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->isMediaAdmin()) {
 			$menu->addSubpage('mediapool_structure', t('categories'));
 			$menu->addSubpage('mediapool_sync',      t('sync_files'));
-			$menu->addSubpage('mediapool_trash',     t('recycle_bin'));
+		}
+
+		if ($this->canRestore() || $this->canDeletePermanent()) {
+			$menu->addSubpage('mediapool_trash', t('recycle_bin'));
 		}
 
 		if (!empty($values)) {
@@ -414,5 +417,17 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$params = array_merge($values, sly_makeArray($params));
 
 		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
+	}
+
+	protected function canDeletePermanent() {
+		$user = $this->getCurrentUser();
+
+		return $user->isAdmin() || $user->hasPermission('media', 'delete_permanent');
+	}
+
+	protected function canRestore() {
+		$user = $this->getCurrentUser();
+
+		return $user->isAdmin() || $user->hasPermission('media', 'restore');
 	}
 }
