@@ -472,7 +472,7 @@ abbreviation_revision: Rev.
 delete_revision: delete revision
 backend_areas: Backend Areas
 
-permanent_delete: delete permanent
+delete_permanent: delete permanent
 restore: restore
 recycle_bin: Recycle bin
 media_restored: Media restored.

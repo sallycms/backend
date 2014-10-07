@@ -14,7 +14,9 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 	public function indexAction() {
 		$this->init();
 
-		$files = $this->getFiles();
+		$files      = $this->getFiles();
+		$canDelete  = $this->canDeletePermanent();
+		$canRestore = $this->canRestore();
 
 		if (empty($files)) {
 			$this->getFlashMessage()->addInfo(t('no_deleted_media_found'));
@@ -23,7 +25,7 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 		print sly_Helper_Message::renderFlashMessage();
 
 		if (!empty($files)) {
-			$this->render('mediapool/trash.phtml', compact('files'), false);
+			$this->render('mediapool/trash.phtml', compact('files', 'canDelete', 'canRestore'), false);
 		}
 	}
 
@@ -31,7 +33,7 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 		$request = $this->getRequest();
 		$media   = $request->postArray('media', 'int');
 		$restore = $request->post('restore', 'boolean');
-		$delete  = $request->post('permanent_delete', 'boolean');
+		$delete  = $request->post('delete_permanent', 'boolean');
 		$flash   = $this->getFlashMessage();
 
 		if ($restore) {
@@ -42,9 +44,7 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 			$success = t('media_permanently_deleted');
 			$error   = t('could_not_permanently_delete_media');
 		}
-		else {
-			throw new sly_Exception('Recycle bin action must either permanently delete or restore media');
-		}
+
 		try {
 			foreach($media as $mediaID) {
 				if ($restore) {
@@ -73,5 +73,31 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 
 	protected function getFiles() {
 		return parent::getFiles();
+	}
+
+	public function checkPermission($action) {
+		if(parent::checkPermission($action) === false) {
+			return false;
+		}
+
+		if ($action === 'batch') {
+			$request = $this->getRequest();
+			$restore = $request->post('restore', 'boolean');
+			$delete  = $request->post('delete_permanent', 'boolean');
+
+			if ($restore && $delete) {
+				throw new sly_Authorisation_Exception('Recycle bin batch action must either permanently delete or restore media');
+			}
+
+			if ($restore) {
+				return $this->canRestore();
+			}
+
+			if ($delete) {
+				return $this->canDeletePermanent();
+			}
+		}
+
+		return true;
 	}
 }
