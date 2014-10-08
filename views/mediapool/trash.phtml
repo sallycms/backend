@@ -48,7 +48,7 @@ if ($canDelete || $canRestore) {
 	<tfoot><tr>
 		<td class="sly-col-icon sly-icon">
 			<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
-			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
+			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="media[]" />
 		</td>
 		<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
 	</tr></tfoot>
@@ -72,7 +72,7 @@ foreach ($files as $file) {
 	$add_td = '<td>&nbsp;</td>';
 
 	if ($canDelete || $canRestore) {
-		$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="selectedmedia[]" value="'.$id.'" /></td>';
+		$add_td = '<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="media[]" value="'.$id.'" /></td>';
 	}
 
 	?>
@@ -85,8 +85,8 @@ foreach ($files as $file) {
 		</td>
 		<td class="sly-col-func">
 			<?php
-				$restoreUrl = $_router->getPlainUrl(null, 'batch', array('restore' => 1, 'media' => array($file->getId())));
-				$deleteUrl  = $_router->getPlainUrl(null, 'batch', array('delete_permanent' => 1, 'media' => array($file->getId())));
+				$restoreUrl = $_router->getPlainUrl(null, 'batch', array('restore' => 1, 'media' => $file->getId()));
+				$deleteUrl  = $_router->getPlainUrl(null, 'batch', array('delete_permanent' => 1, 'media' => $file->getId()));
 			?>
 			<?php if($canRestore) { ?>
 			<a class="sly-postlink sly-confirm-me" href="<?php echo  $restoreUrl; ?>"><?php echo t('restore'); ?></a>
