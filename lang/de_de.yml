@@ -434,7 +434,8 @@ edit_medium: Medium bearbeiten
 file: Datei
 file_added: Datei wurde hinzugefügt.
 file_changed: Die Datei wurde ausgetauscht.
-file_is_in_use: 'Die Datei {0} kann nicht gelöscht werden, da sie derzeit von folgenden Elementen verwendet wird:'
+file_is_in_use: 'Die Datei {0} wird noch von folgenden Elementen verwendet:'
+file_is_in_use_blocked: 'Die Datei {0} kann nicht gelöscht werden, da sie derzeit von folgenden Elementen verwendet wird:'
 file_info: Dateiinfo
 file_not_found_maybe_too_big: Datei wurde nicht gefunden. Vielleicht war sie zu groß?
 filename: Dateiname
@@ -475,6 +476,7 @@ backend_areas: Backend-Bereiche
 delete_permanent: unwiderruflich löschen
 restore: wiederherstellen
 recycle_bin: Papierkorb
+recycle_bin_is_empty: Der Papierkorb ist leer.
 media_restored: Medien wurden wiederhergestellt.
 could_not_restore_media: Medien konnten nicht wiederhergestellt werden.
 media_permanently_deleted: Medien wurden unwiderruflich gelöscht.

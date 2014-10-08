@@ -19,7 +19,7 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 		$canRestore = $this->canRestore();
 
 		if (empty($files)) {
-			$this->getFlashMessage()->addInfo(t('no_deleted_media_found'));
+			$this->getFlashMessage()->addInfo(t('recycle_bin_is_empty'));
 		}
 
 		print sly_Helper_Message::renderFlashMessage();
@@ -48,31 +48,32 @@ class sly_Controller_Mediapool_Trash extends sly_Controller_Mediapool_Base {
 		try {
 			foreach($media as $mediaID) {
 				if ($restore) {
-					$this->restore($mediaID);
+					$this->restoreMedium($mediaID);
 				}
 				elseif ($delete) {
-					$this->permanentDelete($mediaID);
+					$this->deleteMediumPermanent($mediaID);
 				}
 			}
 			$flash->addInfo($success);
 		}
 		catch (Exception $e) {
 			$flash->addWarning($error);
+			$flash->addWarning($e->getMessage());
 		}
 
 		return $this->redirectResponse(array(), null, 'index');
 	}
 
-	protected function permanentDelete($mediaID) {
-
+	protected function deleteMediumPermanent($mediumID) {
+		$this->getContainer()->getDeletedMediumService()->deletePermanentById($mediumID);
 	}
 
-	protected function restore($mediaID) {
-
+	protected function restoreMedium($mediumID) {
+		$this->getContainer()->getDeletedMediumService()->restoreMediumById($mediumID);
 	}
 
 	protected function getFiles() {
-		return parent::getFiles();
+		return $this->getContainer()->getDeletedMediumService()->find();
 	}
 
 	public function checkPermission($action) {
