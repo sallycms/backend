@@ -1,6 +1,6 @@
 {
     "name": "sallycms/backend",
-    "description": "The legacy backend for SallyCMS projects.",
+    "description": "The default backend for SallyCMS projects.",
     "keywords": [
         "cms",
         "backend",
@@ -10,7 +10,7 @@
     ],
     "authors": [
         {
-            "name": "webvariants GbR",
+            "name": "webvariants GmbH & Co. KG",
             "homepage": "http://www.webvariants.de/"
         }
     ],
