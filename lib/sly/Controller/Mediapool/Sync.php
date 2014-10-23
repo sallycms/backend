@@ -15,7 +15,10 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 		$diff = $this->getFileDiff();
 
 		if (empty($diff)) {
-			print sly_Helper_Message::info(t('no_file_diffs_found'));
+			$flash = $this->getContainer()->getFlashMessage();
+			$flash->appendInfo(t('no_file_diffs_found'));
+
+			print sly_Helper_Message::renderFlashMessage($flash);
 		}
 		else {
 			$this->render('mediapool/sync.phtml', array('diffFiles' => $diff), false);
@@ -25,7 +28,7 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	public function syncAction() {
 		$request  = $this->getRequest();
 		$selected = $request->postArray('sync_files', 'string');
-		$flash    = sly_Core::getFlashMessage();
+		$flash    = $this->getFlashMessage();
 
 		if (!empty($selected)) {
 			$title = $request->post('ftitle', 'string', '');
@@ -58,25 +61,26 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	protected function syncMedium($filename, $category, $title) {
-		$absFile = SLY_MEDIAFOLDER.'/'.$filename;
-		if (!file_exists($absFile)) return false;
+		$fixedName = sly_Util_Directory::fixWindowsDisplayFilename($filename);
+		$container = $this->getContainer();
+		$service   = $container->getMediumService();
+		$fs        = $container->get('sly-filesystem-media');
 
-		// get cleaned filename
-		$filename = sly_Util_Directory::fixWindowsDisplayFilename($filename);
-		if (empty($title)) $title = $filename;
-		$newName  = SLY_MEDIAFOLDER.'/'.sly_Util_Medium::createFilename($filename, false);
-
-		if ($newName !== $absFile) {
+		if ($fixedName !== $filename) {
 			// move file to cleaned filename
-			rename($absFile, $newName);
+			$fs->rename($filename, $fixedName);
 		}
 
-		// create and save the file
+		if ($title === '') {
+			$title = sly_Util_File::stripExtension($fixedName);
+			$title = str_replace('_', ' ', $title);
+			$title = ucfirst($title);
+		}
 
-		$service = sly_Service_Factory::getMediumService();
+		// add file to database
 
 		try {
-			$service->add($newName, $title, $category);
+			$service->add($fixedName, $title, $category);
 			return true;
 		}
 		catch (sly_Exception $e) {
@@ -85,18 +89,18 @@ class sly_Controller_Mediapool_Sync extends sly_Controller_Mediapool {
 	}
 
 	protected function getFilesFromFilesystem() {
-		$dir   = new sly_Util_Directory(SLY_MEDIAFOLDER);
-		$files = $dir->listPlain(true, false);
+		$fs   = $this->getContainer()->get('sly-filesystem-media');
+		$list = $fs->listKeys();
 
-		return $files ? $files : array();
+		return $list['keys'];
 	}
 
 	protected function getFilesFromDatabase() {
-		$db    = sly_DB_Persistence::getInstance();
+		$db    = $this->getContainer()->getPersistence();
 		$files = array();
 
 		$db->select('file', 'filename');
-		foreach ($db as $row) $files[] = $row['filename'];
+		foreach ($db->all() as $row) $files[] = $row['filename'];
 
 		return $files;
 	}

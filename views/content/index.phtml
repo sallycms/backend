@@ -20,6 +20,7 @@ $hasTemplate = $article->hasTemplate();
 $form->setEncType('multipart/form-data');
 $form->addHiddenValue('article_id', $article->getId());
 $form->addHiddenValue('clang', $article->getClang());
+$form->addHiddenValue('revision', $article->getRevision());
 
 /////////////////////////////////////////////////////////////////
 // article type
@@ -73,7 +74,7 @@ if (!$noContentAllowed) {
 					print sly_Helper_Message::warn(t('no_rights_to_this_module'));
 				}
 				else {
-					sly_Helper_Content::printAddSliceForm($module, $pos, $article->getId(), $article->getClang(), $slot, isset($slicevalues) ? $slicevalues : array());
+					sly_Helper_Content::printAddSliceForm($slot, $module, $pos, $article);
 				}
 			}
 			elseif (!$noContentAllowed) {

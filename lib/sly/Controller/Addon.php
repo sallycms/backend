@@ -16,7 +16,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		if ($this->init++) return;
 
 		if (!$this->getRequest()->isAjax()) {
-			$layout = sly_Core::getLayout();
+			$layout = $this->getContainer()->getLayout();
 			$layout->pageHeader(t('addons'));
 		}
 	}
@@ -62,9 +62,9 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 	 */
 	protected function getServices() {
 		return array(
-			'aservice' => sly_Service_Factory::getAddOnService(),
-			'manager'  => sly_Service_Factory::getAddOnManagerService(),
-			'pservice' => sly_Service_Factory::getAddOnPackageService()
+			'aservice' => $this->getContainer()->getAddOnService(),
+			'manager'  => $this->getContainer()->getAddOnManagerService(),
+			'pservice' => $this->getContainer()->getAddOnPackageService()
 		);
 	}
 
@@ -89,7 +89,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$this->call('activate', 'activated');
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -100,7 +100,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$this->call('uninstall', 'uninstalled');
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -111,7 +111,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$this->call('activate', 'activated');
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -122,18 +122,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			$this->call('deactivate', 'deactivated');
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
-		}
-
-		return $this->sendResponse();
-	}
-
-	public function reinitAction() {
-		try {
-			$this->call('copyAssets', 'assets_copied');
-		}
-		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
@@ -168,14 +157,14 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 			}
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		return $this->sendResponse();
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 
 		if (!$user || (!$user->isAdmin() && !$user->hasRight('pages', 'addons'))) {
 			return false;
@@ -221,7 +210,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 		if ($this->getRequest()->isAjax()) {
 			$data  = $this->buildDataList();
 			$data  = $this->resolveParentRelationships($data);
-			$flash = sly_Core::getFlashMessage();
+			$flash = $this->getFlashMessage();
 			$msgs  = $flash->getMessages(sly_Util_FlashMessage::TYPE_WARNING);
 
 			foreach ($msgs as $idx => $list) {
@@ -237,7 +226,7 @@ class sly_Controller_Addon extends sly_Controller_Backend implements sly_Control
 
 			$flash->clear();
 
-			$response = sly_Core::getResponse();
+			$response = $this->getContainer()->getResponse();
 			$response->setContentType('application/json', 'UTF-8');
 			$response->setContent(json_encode($content));
 

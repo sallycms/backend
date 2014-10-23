@@ -8,6 +8,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+use sly\Assets\Util;
+
 abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected $args;
 	protected $category;
@@ -16,11 +18,6 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	protected $popupHelper;
 
 	private $init = false;
-
-	public function __construct() {
-		// load our i18n stuff
-		sly_Core::getI18N()->appendFile(SLY_SALLYFOLDER.'/backend/lang/pages/mediapool/');
-	}
 
 	protected function init() {
 		if ($this->init) return;
@@ -42,40 +39,35 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 		// build navigation
 
-		$layout = sly_Core::getLayout();
-		$nav    = $layout->getNavigation();
-		$page   = $nav->find('mediapool');
+		$app    = $this->getContainer()->getApplication();
+		$cur    = $app->getCurrentControllerName();
+		$menu   = new sly_Layout_Navigation_Page('');
+		$values = $this->popupHelper->getValues();
 
-		if ($page) {
-			$cur     = sly_Core::getCurrentControllerName();
-			$values  = $this->popupHelper->getValues();
-			$subline = array(
-				array('mediapool',        t('media_list')),
-				array('mediapool_upload', t('upload_file'))
-			);
+		$menu->addSubpage('mediapool',        t('media_list'));
+		$menu->addSubpage('mediapool_upload', t('upload_file'));
 
-			if ($this->isMediaAdmin()) {
-				$subline[] = array('mediapool_structure', t('categories'));
-				$subline[] = array('mediapool_sync',      t('sync_files'));
-			}
+		if ($this->isMediaAdmin()) {
+			$menu->addSubpage('mediapool_structure', t('categories'));
+			$menu->addSubpage('mediapool_sync',      t('sync_files'));
+		}
 
-			foreach ($subline as $item) {
-				$sp = $page->addSubpage($item[0], $item[1]);
+		if ($this->canRestore() || $this->canDeletePermanent()) {
+			$menu->addSubpage('mediapool_trash', t('recycle_bin'));
+		}
 
-				if (!empty($values)) {
-					$sp->setExtraParams($values);
+		if (!empty($values)) {
+			foreach ($menu->getSubpages() as $sp) {
+				$sp->setExtraParams($values);
 
-					// ignore the extra params when detecting the current page
-					if ($cur === $item[0]) $sp->forceStatus(true);
-				}
+				// ignore the extra params when detecting the current page
+				if ($cur === $sp->getPageParam()) $sp->forceStatus(true);
 			}
 		}
 
-		$dispatcher = $this->container->getDispatcher();
-		$page       = $dispatcher->filter('SLY_MEDIAPOOL_MENU', $page);
-
+		$layout = $this->getContainer()->getLayout();
 		$layout->showNavigation(false);
-		$layout->pageHeader(t('media_list'), $page);
+		$layout->pageHeader(t('media_list'), $menu);
 		$layout->setBodyAttr('class', 'sly-popup sly-mediapool');
 
 		$this->render('mediapool/javascript.phtml', array(), false);
@@ -104,8 +96,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		if ($this->category === null) {
 			$request  = $this->getRequest();
 			$category = $request->request('category', 'int', -1);
-			$service  = sly_Service_Factory::getMediaCategoryService();
-			$session  = sly_Core::getSession();
+			$service  = $this->getContainer()->getMediaCategoryService();
+			$session  = $this->getContainer()->getSession();
 
 			if ($category === -1) {
 				$category = $session->get('sly-media-category', 'int', 0);
@@ -139,31 +131,29 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return $link;
 	}
 
-	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg, $revalidate = true) {
+	protected function deleteMedium(sly_Model_Medium $medium, sly_Util_FlashMessage $msg) {
 		$filename = $medium->getFileName();
-		$user     = sly_Util_User::getCurrentUser();
-		$service  = sly_Service_Factory::getMediumService();
+		$user     = $this->getCurrentUser();
+		$service  = $this->getContainer()->getMediumService();
 
 		if ($this->canAccessCategory($medium->getCategoryId())) {
-			$usages = $this->isInUse($medium);
+			$usages  = $this->isInUse($medium);
+			$blocked = false;
 
-			if ($usages === false) {
-				try {
-					$service->deleteByMedium($medium);
-					if ($revalidate) $this->revalidate();
-					$msg->appendInfo($filename.': '.t('medium_deleted'));
-				}
-				catch (sly_Exception $e) {
-					$msg->appendWarning($filename.': '.$e->getMessage());
-				}
-			}
-			else {
+			if ($usages !== false) {
 				$tmp   = array();
-				$tmp[] = t('file_is_in_use', $filename);
-				$tmp[] = '<ul>';
+
 
 				foreach ($usages as $usage) {
 					$title = sly_html($usage['title']);
+
+					if (isset($usage['type']) && $usage['type'] === 'sly-article') {
+						$blocked = $blocked && $usage['object']->isOnline();
+						$title  .= $usage['object']->isOnline() ? '' : ' ('.t('status_offline').')';
+					}
+					else {
+						$blocked = true;
+					}
 
 					if (!empty($usage['link'])) {
 						$tmp[] = '<li><a class="sly-blank" target="_blank" href="'.$usage['link'].'">'.$title.'</a></li>';
@@ -173,8 +163,26 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 					}
 				}
 
+				if ($blocked) {
+					array_unshift($tmp, t('file_is_in_use_blocked', $filename));
+				}
+				else {
+					array_unshift($tmp, t('file_is_in_use', $filename));
+				}
+
+				array_unshift($tmp, '<ul>');
 				$tmp[] = '</ul>';
 				$msg->appendWarning(implode("\n", $tmp));
+			}
+
+			if ($blocked === false) {
+				try {
+					$service->deleteByMedium($medium);
+					$msg->appendInfo($filename.': '.t('medium_deleted'));
+				}
+				catch (sly_Exception $e) {
+					$msg->appendWarning($filename.': '.$e->getMessage());
+				}
 			}
 		}
 		else {
@@ -183,7 +191,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 
 		if (!$user || (!$user->isAdmin() && !$user->hasRight('pages', 'mediapool'))) {
 			return false;
@@ -197,7 +205,7 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function isMediaAdmin() {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('mediacategory', 'access', sly_Authorisation_ListProvider::ALL);
 	}
 
@@ -206,15 +214,15 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 	}
 
 	protected function canAccessCategory($cat) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $this->isMediaAdmin() || $user->hasRight('mediacategory', 'access', intval($cat));
 	}
 
 	protected function getCategorySelect() {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 
 		if ($this->selectBox === null) {
-			$this->selectBox = sly_Form_Helper::getMediaCategorySelect('category', null, $user);
+			$this->selectBox = sly_Backend_Form_Helper::getMediaCategorySelect('category', null, $user);
 			$this->selectBox->setLabel(t('categories'));
 			$this->selectBox->setMultiple(false);
 			$this->selectBox->setAttribute('value', $this->getCurrentCategory());
@@ -250,14 +258,32 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return array(ceil($width), ceil($height));
 	}
 
-	protected function isDocType(sly_Model_Medium $medium) {
-		static $docTypes = array(
-			'bmp', 'css', 'doc', 'docx', 'eps', 'gif', 'gz', 'jpg', 'mov', 'mp3',
-			'ogg', 'pdf', 'png', 'ppt', 'pptx','pps', 'ppsx', 'rar', 'rtf', 'swf',
-			'tar', 'tif', 'txt', 'wma', 'xls', 'xlsx', 'zip'
+	protected function getMimeIcon(sly_Model_Medium $medium) {
+		$mapping = array(
+			'compressed' => array('gz', 'gzip', 'tar', 'zip', 'tgz', 'bz', 'bz2', '7zip', '7z', 'rar'),
+			'audio'      => array('mp3', 'flac', 'aac', 'wav', 'ac3', 'ogg', 'wma'),
+			'document'   => array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'odt', 'rtf'),
+			'executable' => array('sh', 'exe', 'bin', 'com', 'bat'),
+			'pdf'        => array('pdf'),
+			'text'       => array('txt', 'java', 'css', 'markdown', 'textile', 'md'),
+			'vector'     => array('svg', 'eps'),
+			'video'      => array('mkv', 'avi', 'swf', 'mov', 'flv', 'ogv', 'vp8')
 		);
 
-		return in_array($medium->getExtension(), $docTypes);
+		$extension = $medium->getExtension();
+		$base      = 'mime/';
+
+		if (!$medium->exists()) {
+			return Util::appUri($base.'missing.png');
+		}
+
+		foreach ($mapping as $type => $exts) {
+			if (in_array($extension, $exts, true)) {
+				return Util::appUri($base.$type.'.png');
+			}
+		}
+
+		return Util::appUri($base.'unknown.png');
 	}
 
 	protected function isImage(sly_Model_Medium $medium) {
@@ -265,46 +291,98 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		return in_array($medium->getExtension(), $exts);
 	}
 
-	protected function isInUse(sly_Model_Medium $medium) {
-		$sql      = sly_DB_Persistence::getInstance();
-		$filename = $medium->getFilename();
-		$prefix   = sly_Core::getTablePrefix();
-		$query    =
-			'SELECT s.article_id, s.clang FROM '.$prefix.'slice sv, '.$prefix.'article_slice s, '.$prefix.'article a '.
-			'WHERE sv.id = s.slice_id AND a.id = s.article_id AND a.clang = s.clang '.
-			'AND serialized_values REGEXP ? GROUP BY s.article_id, s.clang';
+	protected function getThumbnailTag(sly_Model_Medium $medium, $width, $height) {
+		if (!$medium->exists()) {
+			$thumbnail = '<img src="'.$this->getMimeIcon($medium).'" width="44" height="38" alt="'.ht('file_not_found').'" />';
+		}
+		else {
+			$icon_src  = $this->getMimeIcon($medium);
+			$alt       = $medium->getTitle();
+			$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
 
-		$res    = array();
-		$usages = array();
-		$b      = '[^[:alnum:]_+-]'; // more or less like a \b in PCRE
-		$quoted = str_replace(array('.', '+'), array('\.', '\+'), $filename);
-		$data   = array("(^|$b)$quoted(\$|$b)");
-		$router = $this->getContainer()->getApplication()->getRouter();
+			if ($this->isImage($medium)) {
+				$mwidth    = $medium->getWidth();
+				$mheight   = $medium->getHeight();
+				$timestamp = $medium->getUpdateDate();
+				$encoded   = urlencode($medium->getFilename());
 
-		$sql->query($query, $data);
-		foreach ($sql as $row) $res[] = $row;
+				list($width, $height) = $this->getDimensions($mwidth, $mheight, $width, $height);
 
-		foreach ($res as $row) {
-			$article = sly_Util_Article::findById($row['article_id'], $row['clang']);
+				$attrs = array(
+					'alt'    => $alt,
+					'title'  => $alt,
+					'width'  => $width,
+					'height' => $height,
+					'src'    => sly\Assets\Util::mediapoolUri($encoded.'?t='.$timestamp)
+				);
 
-			$usages[] = array(
-				'title' => $article->getName(),
-				'type'  => 'sly-article',
-				'link'  => $router->getPlainUrl('content', null, array('article_id' => $row['article_id'], 'clang' => $row['clang']))
-			);
+				$thumbnail = '<img '.sly_Util_HTML::buildAttributeString($attrs, array('alt')).' />';
+			}
 		}
 
-		$usages = sly_Core::dispatcher()->filter('SLY_MEDIA_USAGES', $usages, array(
-			'filename' => $medium->getFilename(),
-			'media'    => $medium
+		$dispatcher = $this->getContainer()->getDispatcher();
+		$thumbnail  = $dispatcher->filter('SLY_BACKEND_MEDIAPOOL_THUMBNAIL', $thumbnail, array(
+			'medium'  => $medium,
+			'width'   => $width,
+			'height'  => $height,
+			'isImage' => $this->isImage($medium)
 		));
 
-		return empty($usages) ? false : $usages;
+		return $thumbnail;
 	}
 
-	protected function revalidate() {
-		// re-validate asset cache
-		sly_Service_Factory::getAssetService()->validateCache();
+	protected function isInUse(sly_Model_Medium $medium) {
+		$container = $this->getContainer();
+		$service   = $container->getMediumService();
+		$router    = $container->getApplication()->getRouter();
+		$usages    = $service->getUsages($medium);
+
+		foreach ($usages as $idx => $usage) {
+			// properly setup object
+			if (!empty($usage['link']) && !empty($usage['title'])) {
+				continue;
+			}
+
+			switch ($usage['type']) {
+				case 'sly-article':
+					$article = $usage['object'];
+					$title   = $article->getName();
+					$link    = $router->getPlainUrl('content', null, array(
+						'article_id' => $article->getId(),
+						'clang'      => $article->getClang(),
+						'revision'   => $article->getRevision()
+					));
+
+					break;
+
+				case 'sly-category':
+					$category = $usage['object'];
+					$title    = $category->getCatName();
+					$link     = $router->getPlainUrl('structure', null,  array(
+						'category_id' => $category->getId(),
+						'clang'       => $category->getClang()
+					));
+
+					break;
+
+				case 'sly-medium':
+					$medium = $usage['object'];
+					$title  = $medium->getTitle();
+					$link   = $router->getPlainUrl('mediapool_detail', null, array('file_id' => $medium->getId()));
+
+					break;
+
+				case 'sly-user':
+					$user  = $usage['object'];
+					$title = $obj->getName()?: $obj->getLogin();
+					$link  = $router->getPlainUrl('user', 'edit', array('id' => $user->getId()));
+			}
+
+			$usages[$idx]['link']  = $link;
+			$usages[$idx]['title'] = $title;
+		}
+
+		return empty($usages) ? false : $usages;
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {
@@ -327,5 +405,17 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		$params = array_merge($values, sly_makeArray($params));
 
 		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
+	}
+
+	protected function canDeletePermanent() {
+		$user = $this->getCurrentUser();
+
+		return $user->isAdmin() || $user->hasPermission('media', 'delete_permanent');
+	}
+
+	protected function canRestore() {
+		$user = $this->getCurrentUser();
+
+		return $user->isAdmin() || $user->hasPermission('media', 'restore');
 	}
 }

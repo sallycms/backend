@@ -16,16 +16,16 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		$selected   = $this->getCurrentCategory();
 		$files      = $this->getFiles();
 
-		print $this->render('mediapool/toolbar.phtml', compact('selected', 'dispatcher'));
+		$this->render('mediapool/toolbar.phtml', compact('selected', 'dispatcher'), false);
 
 		if (empty($files)) {
-			$this->container->getFlashMessage()->addInfo(t('no_media_found'));
+			$this->getFlashMessage()->addInfo(t('no_media_found'));
 		}
 
 		print sly_Helper_Message::renderFlashMessage();
 
 		if (!empty($files)) {
-			print $this->render('mediapool/index.phtml', compact('files'));
+			$this->render('mediapool/index.phtml', compact('files'), false);
 		}
 	}
 
@@ -36,10 +36,11 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 			return $this->indexAction();
 		}
 
-		$request = $this->getRequest();
-		$media   = $request->postArray('selectedmedia', 'int');
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getMediumService();
+		$container = $this->getContainer();
+		$request   = $this->getRequest();
+		$service   = $container->getMediumService();
+		$flash     = $container->getFlashMessage();
+		$media     = $request->postArray('selectedmedia', 'int');
 
 		// check selection
 
@@ -51,7 +52,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		// pre-filter the selected media
 
 		foreach ($media as $idx => $mediumID) {
-			$medium = sly_Util_Medium::findById($mediumID);
+			$medium = $service->findById($mediumID);
 
 			if (!$medium) {
 				$flash->appendWarning(t('file_not_found', $mediumID));
@@ -66,7 +67,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 
 		if ($request->post->has('delete')) {
 			foreach ($media as $medium) {
-				$this->deleteMedium($medium, $flash, false);
+				$this->deleteMedium($medium, $flash);
 			}
 		}
 		else {
@@ -78,16 +79,16 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 			$flash->appendInfo(t('selected_files_moved'));
 		}
 
-		// refresh asset cache
-		$this->revalidate();
-
 		return $this->redirectResponse();
 	}
 
 	protected function getFiles() {
-		$cat   = $this->getCurrentCategory();
+		$service = $this->getContainer()->getMediumService();
+		$db      = $this->getContainer()->getPersistence();
+		$cat     = $this->getCurrentCategory();
+
 		$where = 'f.category_id = '.$cat;
-		$where = sly_Core::dispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
+		$where = $this->getContainer()->getDispatcher()->filter('SLY_MEDIA_LIST_QUERY', $where, array('category_id' => $cat));
 		$where = '('.$where.')';
 		$types = $this->popupHelper->getArgument('types');
 
@@ -99,9 +100,11 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 			}
 		}
 
+		$where .= ' AND deleted = 0';
+
 		$db     = $this->getContainer()->getPersistence();
-		$prefix = sly_Core::getTablePrefix();
-		$order  = $this->getfileOrder();
+		$prefix = $db->getPrefix();
+		$order  = $this->getFileOrder();
 		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.'.$order;
 		$files  = array();
 
@@ -114,7 +117,7 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		return $files;
 	}
 
-	protected function getfileOrder() {
+	protected function getFileOrder() {
 		$id      = 'fileorder';
 		$user    = $this->getCurrentUser();
 		$default = $user->getAttribute($id, 'title ASC');
@@ -132,11 +135,11 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 	protected function getFileOrderSelect() {
 		$id     = 'fileorder';
 		$user   = $this->getCurrentUser();
-		$value  = $this->getfileOrder	();
+		$value  = $this->getFileOrder();
 		$values = array(
-						'title ASC' => t('title'),
-						'createdate DESC' => t('createdate')
-					);
+			'title ASC'       => t('title'),
+			'createdate DESC' => t('createdate')
+		);
 
 		return new sly_Form_Select_DropDown($id, t('sort'), $value, $values);
 	}

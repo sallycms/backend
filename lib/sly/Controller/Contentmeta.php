@@ -14,14 +14,30 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 		if ($this->header() !== true) return;
 
-		$post = $this->getRequest()->post;
+		$post        = $this->getRequest()->post;
+		$container   = $this->getContainer();
+		$userService = $container['sly-service-user'];
+		$artService  = $container['sly-service-article'];
+
+		// handle pagination of revision list
+
+		sly_Table::setElementsPerPageStatic(25);
+		$paging = sly_Table::getPagingParameters('revisions', true, false);
+
+		// fetch revisions
+
+		$art       = $this->article;
+		$revisions = $artService->findAllRevisions($art->getId(), $art->getClang(), $paging['start'], $paging['elements']);
+		$total     = $artService->countRevisions($art);
 
 		$this->render('content/meta/index.phtml', array(
-			'article' => $this->article,
-			'slot'    => $this->slot,
-			'user'    => sly_Util_User::getCurrentUser(),
-			'clangA'  => $post->get('clang_a', 'int', $this->container->getCurrentLanguageID()),
-			'clangB'  => $post->get('clang_b', 'int')
+			'article'     => $art,
+			'slot'        => $this->slot,
+			'revisions'   => $revisions,
+			'user'        => $userService->getCurrentUser(),
+			'clangB'      => $post->get('clang_b', 'int'),
+			'userService' => $userService,
+			'total'       => $total
 		), false);
 	}
 
@@ -34,15 +50,20 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	public function checkPermission($action) {
-		if (parent::checkPermission($action)) {
-			if ($this->getRequest()->isMethod('POST')) {
-				sly_Util_Csrf::checkToken();
-			}
+		$hasPermission = parent::checkPermission($action);
+		$request       = $this->getRequest();
 
-			return true;
+		if ($action === 'deleterevision') {
+			$user          = $this->getCurrentUser();
+			$articleId     = $request->request('article_id', 'int', 0);
+			$hasPermission = sly_Backend_Authorisation_Util::canEditArticle($user, $articleId);
 		}
 
-		return false;
+		if ($request->isMethod('POST')) {
+			sly_Util_Csrf::checkToken();
+		}
+
+		return $hasPermission;
 	}
 
 	public function processmetaformAction() {
@@ -80,22 +101,34 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			}
 		}
 		catch (Exception $e) {
-			sly_Core::getFlashMessage()->appendWarning($e->getMessage());
+			$this->getFlashMessage()->appendWarning($e->getMessage());
 		}
 
 		$this->indexAction();
 	}
 
-	private function saveMeta() {
-		$name  = $this->getRequest()->post('meta_article_name', 'string');
-		$flash = sly_Core::getFlashMessage();
+	public function deleterevisionAction() {
+		$this->init();
 
-		sly_Service_Factory::getArticleService()->edit($this->article->getId(), $this->article->getClang(), $name);
+		$flash = $this->getFlashMessage();
+
+		try {
+			$this->getContainer()->getArticleService()->purgeArticleRevision($this->article);
+			$flash->appendInfo(t('article_revision_deleted'));
+		} catch (Exception $e) {
+			$flash->appendWarning(t('cannont_delete_article_revision'));
+		}
+
+		$this->redirectToArticle();
+	}
+
+	private function saveMeta() {
+		$flash = $this->getContainer()->getFlashMessage();
 
 		// notify system
 		$flash->appendInfo(t('metadata_updated'));
 
-		sly_Core::dispatcher()->notify('SLY_ART_META_UPDATED', $this->article, array(
+		$this->getContainer()->getDispatcher()->notify('SLY_ART_META_UPDATED', $this->article, array(
 			'id'    => $this->article->getId(),   // deprecated
 			'clang' => $this->article->getClang() // deprecated
 		));
@@ -104,8 +137,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function convertToStartArticle() {
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$flash   = $this->getContainer()->getFlashMessage();
+		$service = $this->getContainer()->getArticleService();
 
 		try {
 			$service->convertToStartArticle($this->article->getId());
@@ -119,13 +152,13 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	}
 
 	private function copyContent() {
-		$request   = $this->getRequest();
-		$srcClang  = $request->post('clang_a', 'int', 0);
-		$dstClangs = array_unique($request->postArray('clang_b', 'int'));
-		$user      = sly_Util_User::getCurrentUser();
-		$infos     = array();
-		$errs      = array();
-		$articleID = $this->article->getId();
+		$request        = $this->getRequest();
+		$srcClang       = $request->post('clang', 'int', 0);
+		$dstClangs      = array_unique($request->postArray('clang_b', 'int'));
+		$user           = $this->getCurrentUser();
+		$infos          = array();
+		$errs           = array();
+		$articleService = $this->getContainer()->getArticleService();
 
 		if (empty($dstClangs)) {
 			throw new sly_Authorisation_Exception(t('no_language_selected'));
@@ -143,13 +176,18 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 				continue;
 			}
 
-			if (!$this->canCopyContent($srcClang, $targetClang)) {
+			if (!$this->canCopyContent($targetClang)) {
 				$errs[$targetClang] = t('no_rights_to_this_function');
 				continue;
 			}
 
 			try {
-				sly_Service_Factory::getArticleService()->copyContent($articleID, $articleID, $srcClang, $targetClang);
+				if ($targetClang === $this->article->getClang()) {
+					continue;
+				}
+				$target = $articleService->findByPK($this->article->getId(), $targetClang);
+				$target = $articleService->touch($target);
+				$articleService->copyContent($this->article, $target, $user);
 				$infos[$targetClang] = t('article_content_copied');
 			}
 			catch (sly_Exception $e) {
@@ -170,18 +208,23 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 			}
 		}
 
-		$flash = sly_Core::getFlashMessage();
+		$flash = $this->getFlashMessage();
 
-		foreach ($infos as $msg) $flash->appendInfo($info);
-		foreach ($errs  as $msg) $flash->appendWarning($msg);
+		foreach ($infos as $msg) {
+			$flash->appendInfo($msg);
+		}
+
+		foreach ($errs as $msg) {
+			$flash->appendWarning($msg);
+		}
 
 		return $this->redirectToArticle();
 	}
 
 	private function moveArticle() {
 		$target  = $this->getRequest()->post('category_id_new', 'int', 0);
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$flash   = $this->getFlashMessage();
+		$service = $this->getContainer()->getArticleService();
 
 		if ($this->canMoveArticle()) {
 			try {
@@ -201,13 +244,12 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 	private function copyArticle() {
 		$target  = $this->getRequest()->post('category_copy_id_new', 'int', 0);
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getArticleService();
+		$flash   = $this->getFlashMessage();
+		$service = $this->getContainer()->getArticleService();
 
 		if ($this->canCopyArticle($target)) {
 			try {
-				$newID         = $service->copy($this->article->getId(), $target);
-				$this->article = sly_Util_Article::findById($newID);
+				$this->article = $service->copy($this->article->getId(), $target);
 
 				$flash->appendInfo(t('article_copied'));
 			}
@@ -224,11 +266,11 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 
 	private function moveCategory() {
 		$target  = $this->getRequest()->post('category_id_new', 'int');
-		$user    = sly_Util_User::getCurrentUser();
-		$flash   = sly_Core::getFlashMessage();
-		$service = sly_Service_Factory::getCategoryService();
+		$user    = $this->getCurrentUser();
+		$flash   = $this->getFlashMessage();
+		$service = $this->getContainer()->getCategoryService();
 
-		if ($this->canMoveCategory() && sly_Util_Article::canEditArticle($user, $target)) {
+		if ($this->canMoveCategory() && \sly_Backend_Authorisation_Util::canEditArticle($user, $target)) {
 			try {
 				$service->move($this->article->getCategoryId(), $target);
 				$flash->appendInfo(t('category_moved'));
@@ -249,7 +291,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 */
 	protected function canMoveArticle() {
 		if ($this->article->isStartArticle()) return false;
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('article', 'move', 0) || $user->hasRight('article', 'move', $this->article->getId());
 	}
 
@@ -257,18 +299,17 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 * @return boolean
 	 */
 	protected function canConvertToStartArticle() {
-		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditArticle($user, $this->article->getCategoryId());
+		$user = $this->getCurrentUser();
+		return sly_Backend_Authorisation_Util::canEditArticle($user, $this->article->getCategoryId());
 	}
 
 	/**
 	 * @return boolean
 	 */
-	protected function canCopyContent($clang_a, $clang_b) {
-		$user    = sly_Util_User::getCurrentUser();
-		$editok  = sly_Util_Article::canEditContent($user, $this->article->getId());
-		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_a);
-		$clangok = $clangok && sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
+	protected function canCopyContent($clang_b) {
+		$user    = $this->getCurrentUser();
+		$editok  = sly_Backend_Authorisation_Util::canEditContent($user, $this->article->getId());
+		$clangok = sly_Util_Language::hasPermissionOnLanguage($user, $clang_b);
 
 		return $editok && $clangok;
 	}
@@ -277,8 +318,8 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 * @return boolean
 	 */
 	protected function canCopyArticle($target) {
-		$user = sly_Util_User::getCurrentUser();
-		return sly_Util_Article::canEditArticle($user, $target);
+		$user = $this->getCurrentUser();
+		return sly_Backend_Authorisation_Util::canEditArticle($user, $target);
 	}
 
 	/**
@@ -286,7 +327,7 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 	 */
 	protected function canMoveCategory() {
 		if (!$this->article->isStartArticle()) return false;
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return $user->isAdmin() || $user->hasRight('article', 'move', sly_Authorisation_ArticleListProvider::ALL) || $user->hasRight('article', 'move', $this->article->getId());
 	}
 

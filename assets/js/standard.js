@@ -16,6 +16,14 @@ var sly = sly || {};
 		// ensure names are somewhat unique
 		name += (new Date()).getTime();
 
+		// expand relative url to absolute. hopefully helps IE10
+		if (url.substr(0, 2) === './') {
+			var base = $('base').attr('href');
+			if (base) {
+				url = base + (base.substr(base.length - 1) === '/' ? '' : '/') + url.substr(2);
+			}
+		}
+
 		this.name = name;
 		this.url  = url;
 		this.obj  = win.open(url, name, 'width='+width+',height='+height+extra);
@@ -79,7 +87,7 @@ var sly = sly || {};
 			args.args.categories = categories.join('|');
 		}
 
-		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 760, 600);
+		return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 857, 600);
 	};
 
 	sly.openLinkmap = function(value, callback, articletypes, categories) {
@@ -497,7 +505,7 @@ var sly = sly || {};
 	};
 
 	sly.assetBaseUri = function(addon) {
-		return '../data/dyn/public/' + (addon ? (addon+'/') : '');
+		return '../assets/addon/' + (addon ? (addon+'/') : '');
 	};
 
 	sly.getUrl = function(controller, action, params, sep) {
@@ -521,8 +529,8 @@ var sly = sly || {};
 			params = $.param(params); // always uses '&' as a separator
 
 			// ... fix that if needed
-			if (typeof set === 'string' && sep !== '&') {
-				params = params.replace('&', sep);
+			if (typeof sep === 'string' && sep !== '&') {
+				params = params.replace(/&/g, sep);
 			}
 		}
 		else {
@@ -658,12 +666,12 @@ var sly = sly || {};
 			});
 		}
 
-		var sly_apply_chosen = function(container) {
-			// run Chosen, but transform manual indentation (aka prefixing values with '&nbsp;'s)
+		var sly_apply_select2 = function(container) {
+			// run Select2, but transform manual indentation (aka prefixing values with '&nbsp;'s)
 			// into lvl-N classes, or else the quick filter function of Chosen will not work
 			// properly.
-			if (typeof $.fn.chosen !== 'undefined') {
-				var options = $('select:not(.sly-no-chosen) option', container), len = options.length, i = 0, depth, option;
+			if (typeof $.fn.select2 !== 'undefined') {
+				var options = $('select:not(.sly-no-select2):not(.sly-no-chosen) option', container), len = options.length, i = 0, depth, option;
 
 				for (; i < len; ++i) {
 					option = $(options[i]);
@@ -674,15 +682,23 @@ var sly = sly || {};
 					}
 				}
 
-				$('.sly-form-select:not(.sly-no-chosen)', container).data('placeholder', 'Bitte auswählen').chosen();
+				$('.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function() {
+					var select = $(this);
+					if (select.data('placeholder') === undefined) {
+						select.data('placeholder', 'Bitte auswählen');
+					}
+					select.select2({
+						width: 'resolve'
+					});
+				});
 			}
 		};
 
-		sly_apply_chosen($('body'));
+		sly_apply_select2($('body'));
 
 		// listen to rowAdded event
 		$('body').bind('rowAdded', function(event) {
-			sly_apply_chosen(event.currentTarget);
+			sly_apply_select2(event.currentTarget);
 		});
 
 		$('body').delegate('a.sly-postlink', 'click', function() {
@@ -752,7 +768,7 @@ var sly = sly || {};
 		var checkboxes = $('.sly-form-i18n-switch input[id^=equal__]');
 
 		if (checkboxes.length > 0) {
-			checkboxes.imgCheckbox('off.png', 'on.png', 'assets/form-i18n-switch-').next().click(function() {
+			checkboxes.imgCheckbox('off.png', 'on.png', '../assets/app/backend/form-i18n-switch-').next().click(function() {
 				var
 					checkbox       = $(this).prev('input'),
 					shown          = !checkbox[0].checked, // was already changed before this event handler
@@ -781,6 +797,45 @@ var sly = sly || {};
 				$(this).closest('form').submit();
 			}
 		});
+
+		// transform overly long slot lists into dropdowns
+
+		var slots = $('.sly-navi-slots li:not(:first-child) a');
+
+		if (slots.length > 5) {
+			var select = $('<select name="sly-slot" id="sly-slot" class="sly-form-select"></select>');
+
+			for (var i = 0; i < slots.length; ++i) {
+				var
+					slot     = $(slots[i]),
+					active   = slot.is('.sly-active'),
+					slotName = slot.data('slyslot'),
+					title    = slot.text(),
+					option   = $('<option></option>').text(title).val(slotName);
+
+				if (active) {
+					option.prop('selected', true);
+				}
+
+				select.append(option);
+			}
+
+			select.change(function() {
+				var
+					slot      = select.val(),
+					header    = $('.sly-content-header'),
+					articleID = header.data('slyid'),
+					clang     = header.data('slyclang'),
+					revision  = header.data('slyrevision');
+
+				window.location = sly.getUrl('content', null, {article_id: articleID, clang: clang, revision: revision, slot: slot}, '&');
+				return false;
+			});
+
+			slots.parent().remove();
+			$('.sly-navi-slots').append($('<li>').append(select));
+			sly_apply_select2(select.parent());
+		}
 
 		// toggle cache options
 		$('#sly-system-toggle-cache').click(function() {

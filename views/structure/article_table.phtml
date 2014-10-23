@@ -58,7 +58,7 @@ foreach ($articles as $article) {
 		$this->render(
 			sly_Controller_Structure::$viewPath.'article_table_row.phtml',
 			array(
-				'article' => $article, 'statusTypes' => $statusTypes,
+				'article' => $article,
 				'canEdit' => $canEdit, 'isActive' => $isActive
 			),
 			false

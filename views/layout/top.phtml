@@ -10,11 +10,21 @@
 ?>
 <div id="sly-page">
 	<div id="sly-navi-top">
-		<?php print $this->renderView('navi_logout.phtml'); ?>
+		<?php if ($username && $navigation): ?>
+		<ul class="sly-meta">
+			<li class="sly-first"><span><?php print t('logged_in_as').' '.sly_html($username) ?></span></li>
+			<li><a href="<?php print $_router->getUrl('profile') ?>"><?php print t('my_profile') ?></a></li>
+			<li><a href="<?php print $_router->getUrl('login', 'logout') ?>" class="sly-postlink"><?php print t('logout') ?></a></li>
+			<li><a href="../" class="sly-blank"><?php print t('to_website') ?></a></li>
+		</ul>
+		<?php elseif ($this->hasNavigation()): ?>
+		<p class="sly-meta"><?php print t('logged_out') ?></p>
+		<?php endif ?>
 	</div>
-	<?php if (sly_Util_User::getCurrentUser() && $this->hasNavigation()): ?>
+
+	<?php if ($username && $navigation): ?>
 	<div id="sly-navi-main">
-		<?php print $this->renderView('navi_main.phtml'); ?>
+		<?php print $this->renderView('navigation.phtml', array('nav' => $navigation)); ?>
 	</div>
 	<?php endif ?>
 
