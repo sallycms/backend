@@ -179,7 +179,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$module    = $request->post('module', 'string');
 		$params    = array();
 		$slicedata = $this->preSliceEdit('add');
-		$flash     = sly_Core::getFlashMessage();
+		$flash     = $this->getFlashMessage();
 
 		if ($slicedata['SAVE'] === true) {
 			$service  = $this->getContainer()->getArticleSliceService();
@@ -208,7 +208,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$articleSliceService = $this->getContainer()->getArticleSliceService();
 		$slice_id            = $request->post('slice_id', 'int', 0);
 		$articleSlice        = $articleSliceService->findOne(array('id' => $slice_id));
-		$flash               = sly_Core::getFlashMessage();
+		$flash               = $this->getFlashMessage();
 
 		if (!$articleSlice) {
 			$flash->appendWarning(t('slice_not_found', $slice_id));
@@ -243,7 +243,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 		$ok      = false;
 		$sliceID = $this->getRequest()->post('slice_id', 'int', 0);
 		$slice   = sly_Util_ArticleSlice::findById($sliceID);
-		$flash   = sly_Core::getFlashMessage();
+		$flash   = $this->getFlashMessage();
 
 		if (!$slice) {
 			$flash->appendWarning(t('module_not_found', $sliceID));
@@ -289,7 +289,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 			$module = $request->post('module', 'string');
 		}
 
-		$flash = sly_Core::getFlashMessage();
+		$flash = $this->getFlashMessage();
 
 		if ($function !== 'delete') {
 			if (!$this->getContainer()->getModuleService()->exists($module)) {
@@ -315,7 +315,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 		// ----- PRE SAVE EVENT [ADD/EDIT/DELETE]
 		$eventparams = array('module' => $module, 'article_id' => $this->article->getId(), 'clang' => $this->article->getClang());
-		$slicedata   = sly_Core::dispatcher()->filter('SLY_SLICE_PRESAVE_'.strtoupper($function), $slicedata, $eventparams);
+		$slicedata   = $this->getContainer()->getDispatcher()->filter('SLY_SLICE_PRESAVE_'.strtoupper($function), $slicedata, $eventparams);
 
 		// don't save
 		if (!$slicedata['SAVE']) {
@@ -332,8 +332,8 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 
 	private function postSliceEdit($function, $articleSliceId) {
 		$user       = sly_Util_User::getCurrentUser();
-		$flash      = sly_Core::getFlashMessage();
-		$dispatcher = sly_Core::dispatcher();
+		$flash      = $this->getFlashMessage();
+		$dispatcher = $this->getContainer()->getDispatcher();
 
 		$dispatcher->notify('SLY_SLICE_POSTSAVE_'.strtoupper($function), $articleSliceId);
 		$dispatcher->notify('SLY_CONTENT_UPDATED', $this->article, array('article_id' => $this->article->getId(), 'clang' => $this->article->getClang()));

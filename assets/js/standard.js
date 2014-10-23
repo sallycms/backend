@@ -834,7 +834,7 @@ var sly = sly || {};
 
 			slots.parent().remove();
 			$('.sly-navi-slots').append($('<li>').append(select));
-			sly_apply_chosen(select.parent());
+			sly_apply_select2(select.parent());
 		}
 
 		// toggle cache options

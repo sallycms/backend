@@ -45,6 +45,10 @@
 		textarea {
 			height: 75px;
 		}
+
+		label {
+			width: 110px;
+		}
 	}
 
 	.sly-mediapool-list {
@@ -107,6 +111,17 @@
 #sly-form-mediapool-selectcategory {
 	input[type=submit] {
 		margin-left: 10px;
+	}
+
+	.sly-form-wrapper {
+		min-height: 4px;
+	}
+
+	fieldset:first-child {
+		.sly-form-wrapper {
+			margin-bottom: 0;
+			.border-radius(0);
+		}
 	}
 }
 

@@ -15,7 +15,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		if ($this->init) return;
 		$this->init = true;
 
-		$layout = sly_Core::getLayout();
+		$layout = $this->getContainer()->getLayout();
 		$layout->pageHeader(t('system'));
 	}
 
@@ -48,7 +48,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function clearcacheAction() {
 		$this->init();
 
-		$container = $this->getContainer();
+		$container  = $this->getContainer();
+		$dispatcher = $container->getDispatcher();
 
 		// do not call sly_Core::clearCache(), since we want to have fine-grained
 		// control over what caches get cleared
@@ -56,7 +57,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// clear our own data caches
 		if ($this->isCacheSelected('sly_core')) {
-			sly_Core::cache()->clear('sly', true);
+			$container->getCache()->clear('sly', true);
 		}
 
 		// sync develop files
@@ -65,8 +66,8 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			$container->getModuleService()->refresh();
 		}
 
-		sly_Core::getFlashMessage()->addInfo(t('delete_cache_message'));
-		sly_Core::dispatcher()->notify('SLY_CACHE_CLEARED', null, array('backend' => true));
+		$this->getFlashMessage()->addInfo(t('delete_cache_message'));
+		$dispatcher->notify('SLY_CACHE_CLEARED', null, array('backend' => true));
 
 		$this->indexAction();
 	}
@@ -97,9 +98,10 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 
 		// Änderungen speichern
 
-		$container = $this->getContainer();
-		$conf      = $container->getConfig();
-		$flash     = $container->getFlashMessage();
+		$container  = $this->getContainer();
+		$conf       = $container->getConfig();
+		$flash      = $container->getFlashMessage();
+		$dispatcher = $container->getDispatcher();
 
 		$flash->appendInfo(t('configuration_updated'));
 
@@ -195,20 +197,22 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$conf->set('projectname', $projectName);
 		$conf->store();
 		// notify system
-		sly_Core::dispatcher()->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
+		$dispatcher->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
 
 		return $this->redirectResponse();
 	}
 
 	public function setupAction() {
 		$this->init();
-		sly_Core::config()->set('setup', true)->store();
+		$this->getContainer()->getConfig()->set('setup', true)->store();
 		$this->redirect(array(), '');
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
-		if (!$user) return false;
+		$user = $this->getCurrentUser();
+		if (!$user) {
+			return false;
+		}
 
 		if (in_array($action, array('setup', 'update', 'clearcache'))) {
 			sly_Util_Csrf::checkToken();

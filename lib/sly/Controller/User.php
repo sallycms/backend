@@ -10,7 +10,7 @@
 
 class sly_Controller_User extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected function init() {
-		$layout = sly_Core::getLayout();
+		$layout = $this->getContainer()->getLayout();
 		$layout->pageHeader(t('users'));
 	}
 
@@ -25,17 +25,17 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$request = $this->getRequest();
 
 		if ($request->isMethod('POST')) {
-			$currentUser = $this->getCurrentUser();
-			$isAdmin     = $currentUser->isAdmin();
-
-			$password = $request->post('userpsw', 'string');
-			$login    = $request->post('userlogin', 'string');
-			$timezone = $request->post('timezone', 'string');
-			$service  = $this->getUserService();
-			$flash    = sly_Core::getFlashMessage();
-			$newuser  = new sly_Model_User();
-
 			try {
+				$currentUser = $this->getCurrentUser();
+				$isAdmin     = $currentUser->isAdmin();
+
+				$password = $request->post('userpsw', 'string');
+				$login    = $request->post('userlogin', 'string');
+				$timezone = $request->post('timezone', 'string');
+				$service  = $this->getUserService();
+				$flash    = $this->getFlashMessage();
+				$newuser  = new sly_Model_User();
+
 				$newuser->setLogin($login);
 				$newuser->setName($request->post('username', 'string'));
 				$newuser->setDescription($request->post('userdesc', 'string'));
@@ -85,11 +85,11 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		$request     = $this->getRequest();
 		$save        = $request->isMethod('POST');
 		$service     = $this->getUserService();
-		$currentUser = sly_Util_User::getCurrentUser();
+		$currentUser = $service->getCurrentUser();
 		$isSelf      = $currentUser->getId() === $user->getId();
 		$isAdmin     = $currentUser->isAdmin();
 		$safeMode    = $user->isAdmin() && !$isAdmin;
-		$flash       = sly_Core::getFlashMessage();
+		$flash       = $this->getFlashMessage();
 
 		if ($save) {
 			$status = $request->post('userstatus', 'boolean', false) ? 1 : 0;
@@ -175,8 +175,8 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 		}
 
 		$service = $this->getUserService();
-		$current = sly_Util_User::getCurrentUser();
-		$flash   = sly_Core::getFlashMessage();
+		$current = $service->getCurrentUser();
+		$flash   = $this->getFlashMessage();
 
 		try {
 			if ($current->getId() == $user->getId()) {
@@ -211,7 +211,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getUserService()->getCurrentUser();
 		if (!$user) return false;
 
 		if ($this->getRequest()->isMethod('POST') && in_array($action, array('add', 'edit', 'delete'))) {
@@ -249,7 +249,7 @@ class sly_Controller_User extends sly_Controller_Backend implements sly_Controll
 
 		// allow addOns to filter on their own and append something like ' AND id IN (the,ids,the,addon,found)'
 		// do not only do this when !empty($search) to allow addOns to have their own filtering GUI
-		$where = sly_Core::dispatcher()->filter('SLY_USER_FILTER_WHERE', $where, array('search' => $search, 'paging' => $paging));
+		$where = $this->getContainer()->getDispatcher()->filter('SLY_USER_FILTER_WHERE', $where, array('search' => $search, 'paging' => $paging));
 
 		$users = $service->find($where, null, 'name', $paging['start'], $paging['elements']);
 		$total = $service->count($where);

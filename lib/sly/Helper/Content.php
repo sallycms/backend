@@ -12,65 +12,91 @@
  * @author zozi@webvariants.de
  */
 class sly_Helper_Content {
-	public static function printAddSliceForm($module, $position, $articleId, $clang, $revision, $slot) {
-		$moduleService = sly_Core::getContainer()->getModuleService();
-		$router        = sly_Core::getContainer()->getApplication()->getRouter();
+	public static function printAddSliceForm($slot, $module, $position, sly_Model_Base_Article $article) {
+		$container     = sly_Core::getContainer();
+		$moduleService = $container['sly-service-module'];
+		$router        = $container['sly-app']->getRouter();
 
 		if (!$moduleService->exists($module)) {
-			$slice_content = sly_Helper_Message::warn(ht('module_not_found', $module));
+			print sly_Helper_Message::warn(ht('module_not_found', $module));
+			return;
 		}
-		else {
-			try {
-				ob_start();
-				$moduleTitle = $moduleService->getTitle($module);
-				$form = new sly_Form($router->getPlainUrl('content', 'addArticleSlice'), 'post', t('add_slice').': '.sly_translate($moduleTitle, true), '', 'addslice');
-				$form->setEncType('multipart/form-data');
-				$form->addHiddenValue('article_id', $articleId);
-				$form->addHiddenValue('clang', $clang);
-				$form->addHiddenValue('revision', $revision);
-				$form->addHiddenValue('slot', $slot);
-				$form->addHiddenValue('module', sly_html($module));
-				$form->addHiddenValue('pos', $position);
-				$form->setSubmitButton(new sly_Form_Input_Button('submit', 'btn_save', t('add_slice')));
-
-				$container  = sly_Core::getContainer();
-				$renderer   = $container['sly-slice-renderer'];
-				$sliceinput = new sly_Form_Fragment();
-				$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($module, array(), 'slicevalue').'</div>');
-
-				$form->add($sliceinput);
-				$form->addClass('sly-slice-form');
-
-				print $form->render();
-
-				self::focusFirstElement();
-
-				sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_ADD', array(), array(
-					'module'     => $module,
-					'article_id' => $articleId,
-					'clang'      => $clang,
-					'slot'       => $slot
-				));
-
-				$slice_content = ob_get_clean();
-			}
-			catch (Exception $e) {
-				ob_end_clean();
-				throw $e;
-			}
-		}
-
-		print $slice_content;
-	}
-
-	public static function printEditSliceForm(sly_Model_ArticleSlice $articleSlice, $values = array()) {
-		$moduleService = sly_Core::getContainer()->getModuleService();
-		$module        = $articleSlice->getModule();
-		$moduleTitle   = $moduleService->getTitle($module);
-		$router        = sly_Core::getContainer()->getApplication()->getRouter();
 
 		try {
 			ob_start();
+
+			$moduleTitle = $moduleService->getTitle($module);
+			$form        = new sly_Form($router->getPlainUrl('content', 'addArticleSlice'), 'post', t('add_slice').': '.sly_translate($moduleTitle), '', 'addslice');
+
+			$form->setEncType('multipart/form-data');
+			$form->addHiddenValue('article_id', $article->getId());
+			$form->addHiddenValue('clang', $article->getClang());
+			$form->addHiddenValue('revision', $article->getRevision());
+			$form->addHiddenValue('slot', $slot);
+			$form->addHiddenValue('module', $module);
+			$form->addHiddenValue('pos', $position);
+			$form->setSubmitButton(new sly_Form_Input_Button('submit', 'btn_save', t('add_slice')));
+
+			$renderer   = $container['sly-slice-renderer'];
+			$sliceinput = new sly_Form_Fragment();
+
+			// prepare a fake slice object for the input module, so it has
+			// access to the slot and template via the same interface as the
+			// output module
+			$now          = time();
+			$articleSlice = new sly_Model_ArticleSlice(array(
+				'id'         => -2,
+				'pos'        => $position,
+				'article_id' => $article->getId(),
+				'clang'      => $article->getClang(),
+				'revision'   => $article->getRevision(),
+				'slot'       => $slot,
+				'updateuser' => '',
+				'createuser' => '',
+				'createdate' => $now,
+				'updatedate' => $now
+			));
+
+			$articleSlice->setSlice(new sly_Model_Slice(array(
+				'id'                => -2,
+				'module'            => $module,
+				'serialized_values' => json_encode(array())
+			)));
+
+			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($articleSlice, 'slicevalue').'</div>');
+
+			$form->add($sliceinput);
+			$form->addClass('sly-slice-form');
+
+			print $form->render();
+
+			self::focusFirstElement();
+
+			$container['sly-dispatcher']->notify('SLY_SLICE_POSTVIEW_ADD', array(), array(
+				'module'     => $module,
+				'article_id' => $article->getId(),
+				'clang'      => $article->getClang(),
+				'slot'       => $slot
+			));
+
+			ob_end_flush();
+		}
+		catch (Exception $e) {
+			ob_end_clean();
+			throw $e;
+		}
+	}
+
+	public static function printEditSliceForm(sly_Model_ArticleSlice $articleSlice, $values = array()) {
+		$container     = sly_Core::getContainer();
+		$moduleService = $container['sly-service-module'];
+		$router        = $container['sly-app']->getRouter();
+		$module        = $articleSlice->getModule();
+		$moduleTitle   = $moduleService->getTitle($module);
+
+		try {
+			ob_start();
+
 			$form = new sly_Form($router->getPlainUrl('content', 'editArticleSlice'), 'post', t('edit_slice').': '.sly_translate($moduleTitle, true), '', 'editslice');
 			$form->setEncType('multipart/form-data');
 			$form->addHiddenValue('article_id', $articleSlice->getArticleId());
@@ -84,7 +110,7 @@ class sly_Helper_Content {
 			$container  = sly_Core::getContainer();
 			$renderer   = $container['sly-slice-renderer'];
 			$sliceinput = new sly_Form_Fragment();
-			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($module, $values, 'slicevalue').'</div>');
+			$sliceinput->setContent('<div class="sly-contentpage-slice-input">'.$renderer->renderInput($articleSlice, 'slicevalue').'</div>');
 
 			$form->add($sliceinput);
 			$form->addClass('sly-slice-form');
@@ -93,7 +119,7 @@ class sly_Helper_Content {
 
 			self::focusFirstElement();
 
-			sly_Core::dispatcher()->notify('SLY_SLICE_POSTVIEW_EDIT', $values, array(
+			$container['sly-dispatcher']->notify('SLY_SLICE_POSTVIEW_EDIT', $values, array(
 				'module'     => $articleSlice->getModule(),
 				'article_id' => $articleSlice->getArticleId(),
 				'clang'      => $articleSlice->getClang(),
@@ -101,14 +127,12 @@ class sly_Helper_Content {
 				'slice'      => $articleSlice
 			));
 
-			$slice_content = ob_get_clean();
+			ob_end_flush();
 		}
 		catch (Exception $e) {
 			ob_end_clean();
 			throw $e;
 		}
-
-		print $slice_content;
 	}
 
 	private static function focusFirstElement() {

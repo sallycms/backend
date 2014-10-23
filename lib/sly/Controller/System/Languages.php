@@ -23,9 +23,6 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
-		if (!$user) return false;
-
 		if ($this->getRequest()->isMethod('POST')) {
 			sly_Util_Csrf::checkToken();
 		}
@@ -40,7 +37,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 			$this->id    = $request->post('clang_id', 'int', -1);
 			$clangName   = $request->post('clang_name', 'string');
 			$clangLocale = $request->post('clang_locale', 'string');
-			$flash       = sly_Core::getFlashMessage();
+			$flash       = $this->getFlashMessage();
 
 			if (!empty($clangName)) {
 				try {
@@ -79,7 +76,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 				$clang->setLocale($clangLocale);
 				$languageService->save($clang);
 
-				sly_Core::getFlashMessage()->appendInfo(t('language_updated'));
+				$this->getFlashMessage()->appendInfo(t('language_updated'));
 				return $this->redirectResponse();
 			}
 		}
@@ -91,7 +88,7 @@ class sly_Controller_System_Languages extends sly_Controller_System {
 	public function deleteAction() {
 		$clangID   = $this->getRequest()->post('clang_id', 'int', -1);
 		$languages = sly_Util_Language::findAll();
-		$flash     = sly_Core::getFlashMessage();
+		$flash     = $this->getFlashMessage();
 
 		if (isset($languages[$clangID])) {
 			$deleted = $this->getLanguageService()->deleteById($clangID);

@@ -70,6 +70,7 @@ by: von
 select_all: alle auswählen
 select_none: nichts auswählen
 
+sort: Sortierung
 sort_asc: Aufsteigend sortieren
 sort_desc: Absteigend sortieren
 sort_none: Keine Sortierung
@@ -98,6 +99,7 @@ profile: Profil
 my_profile: Mein Profil
 login_title: Login
 base_navigation: Basis-Navigation
+createdate: Erstelldatum
 
 username: Benutzername
 password: Passwort
@@ -416,9 +418,11 @@ metadata_updated: Metadaten wurden aktualisiert.
 move_article: Artikel verschieben
 article_copied: Artikel wurde kopiert.
 article_content_copied: Die Inhalte des Artikels wurden kopiert.
+article_revision_deleted: Die Revision wurde gelöscht.
 cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
 cannot_copy_article: Der Artikel konnte nicht kopiert werden!
 cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+cannot_delete_article_revision: Die Revision konnte nicht gelöscht werden.
 
 contentmeta_revisions: Revisionen
 contentmeta_select_revision: Revision auswählen
@@ -432,7 +436,8 @@ edit_medium: Medium bearbeiten
 file: Datei
 file_added: Datei wurde hinzugefügt.
 file_changed: Die Datei wurde ausgetauscht.
-file_is_in_use: 'Die Datei {0} kann nicht gelöscht werden, da sie derzeit von folgenden Elementen verwendet wird:'
+file_is_in_use: 'Die Datei {0} wird noch von folgenden Elementen verwendet:'
+file_is_in_use_blocked: 'Die Datei {0} kann nicht gelöscht werden, da sie derzeit von folgenden Elementen verwendet wird:'
 file_info: Dateiinfo
 file_not_found_maybe_too_big: Datei wurde nicht gefunden. Vielleicht war sie zu groß?
 filename: Dateiname
@@ -466,4 +471,15 @@ upload_and_use: hochladen und übernehmen
 upload_file: Medium hochladen
 width: Breite
 revision: Revision
+abbreviation_revision: Rev.
+delete_revision: Revision löschen
 backend_areas: Backend-Bereiche
+
+delete_permanent: unwiderruflich löschen
+restore: wiederherstellen
+recycle_bin: Papierkorb
+recycle_bin_is_empty: Der Papierkorb ist leer.
+media_restored: Medien wurden wiederhergestellt.
+could_not_restore_media: Medien konnten nicht wiederhergestellt werden.
+media_permanently_deleted: Medien wurden unwiderruflich gelöscht.
+could_not_permanently_delete_media: Medien konnten nicht unwiderruflich gelöscht werden.

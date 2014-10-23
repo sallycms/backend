@@ -25,7 +25,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 
 	protected function redirectToBaseLanguage() {
 		if (!$this->dontRedirect) {
-			$user    = sly_Util_User::getCurrentUser();
+			$user    = $this->getCurrentUser();
 			$allowed = $user->getAllowedCLangs();
 			$request = $this->getRequest();
 
@@ -53,7 +53,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$this->init();
 
 		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
+		$flash  = $this->getFlashMessage();
 
 		try {
 			$this->catService->deleteById($editId);
@@ -70,7 +70,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$this->init();
 
 		$editId = $this->getRequest()->post('edit_id', 'int', 0);
-		$flash  = sly_Core::getFlashMessage();
+		$flash  = $this->getFlashMessage();
 
 		try {
 			$this->artService->deleteById($editId);
@@ -91,7 +91,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if ($request->isMethod('POST')) {
 			$name     = $request->post('category_name',     'string', '');
 			$position = $request->post('category_position', 'int',    0);
-			$flash    = sly_Core::getFlashMessage();
+			$flash    = $this->getFlashMessage();
 
 			try {
 				$this->catService->add($this->categoryId, $name, $position);
@@ -115,7 +115,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if ($request->isMethod('POST')) {
 			$name     = $request->post('article_name',     'string', '');
 			$position = $request->post('article_position', 'int',    0);
-			$flash    = sly_Core::getFlashMessage();
+			$flash    = $this->getFlashMessage();
 
 			try {
 				$this->artService->add($this->categoryId, $name, $position);
@@ -140,7 +140,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if ($request->isMethod('POST')) {
 			$name     = $request->post('category_name',     'string', '');
 			$position = $request->post('category_position', 'int',    0);
-			$flash    = sly_Core::getFlashMessage();
+			$flash    = $this->getFlashMessage();
 
 			try {
 				$editCategory = $this->catService->findByPK($editId, $this->clangId);
@@ -166,7 +166,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if ($request->isMethod('POST')) {
 			$name     = $request->post('article_name',     'string', '');
 			$position = $request->post('article_position', 'int',    0);
-			$flash    = sly_Core::getFlashMessage();
+			$flash    = $this->getFlashMessage();
 
 			try {
 				$editArticle = $this->artService->findByPK($editId, $this->clangId);
@@ -219,7 +219,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 * @return boolean
 	 */
 	protected function canEditCategory($categoryId) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return sly_Backend_Authorisation_Util::canEditArticle($user, $categoryId);
 	}
 
@@ -230,7 +230,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 * @return boolean
 	 */
 	protected function canViewCategory($categoryId) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return sly_Backend_Authorisation_Util::canReadCategory($user, $categoryId);
 	}
 
@@ -241,7 +241,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 * @return boolean
 	 */
 	protected function canEditContent($articleId) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		return sly_Backend_Authorisation_Util::canEditContent($user, $articleId);
 	}
 
@@ -255,7 +255,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		$categoryId = $request->request('category_id', 'int', 0);
 		$editId     = $request->request('edit_id', 'int');
 		$clang      = $request->request('clang', 'int', sly_Core::getDefaultClangId());
-		$user       = sly_Util_User::getCurrentUser();
+		$user       = $this->getCurrentUser();
 
 		if ($user === null) {
 			return false;
@@ -295,13 +295,16 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		 * stop the view if no languages are available
 		 * but present a nice message
 		 */
+		$layout     = $this->getContainer()->getLayout();
+		$dispatcher = $this->getContainer()->getDispatcher();
+
 		if (count(sly_Util_Language::findAll()) === 0) {
-			sly_Core::getLayout()->pageHeader(t('structure'));
+			$layout->pageHeader(t('structure'));
 			print sly_Helper_Message::info(t('no_languages_yet'));
 			return;
 		}
 
-		sly_Core::getLayout()->pageHeader(t('structure'), $this->getBreadcrumb());
+		$layout->pageHeader(t('structure'), $this->getBreadcrumb());
 
 		$this->render('toolbars/languages.phtml', array(
 			'controller' => 'structure',
@@ -309,7 +312,7 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			'params'     => array('category_id' => $this->categoryId)
 		), false);
 
-		print sly_Core::dispatcher()->filter('PAGE_STRUCTURE_HEADER', '', array(
+		print $dispatcher->filter('PAGE_STRUCTURE_HEADER', '', array(
 			'category_id' => $this->categoryId,
 			'clang'       => $this->clangId
 		));

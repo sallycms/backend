@@ -41,6 +41,11 @@ authorisation:
     list: 'sly_Authorisation_MediaCategoryListProvider'
     token:
       access: 'translate:grant_access'
+  media:
+    title: 'translate:media'
+    token:
+      restore: 'translate:restore'
+      delete_permanent: 'translate:delete_permanent'
   user:
     title: 'translate:users'
     token:
