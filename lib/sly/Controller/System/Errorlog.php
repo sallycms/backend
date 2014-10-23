@@ -12,7 +12,7 @@ class sly_Controller_System_Errorlog extends sly_Controller_System {
 	protected function init() {
 		parent::init();
 
-		$this->handler = sly_Core::getErrorHandler();
+		$this->handler = $this->getContainer()->getErrorHandler();
 
 		if (get_class($this->handler) !== 'sly_ErrorHandler_Production') {
 			print sly_Helper_Message::warn(t('cant_work_with_foreign_errorhandler', get_class($this->handler)));
@@ -21,7 +21,7 @@ class sly_Controller_System_Errorlog extends sly_Controller_System {
 	}
 
 	public function checkPermission($action) {
-		$user = sly_Util_User::getCurrentUser();
+		$user = $this->getCurrentUser();
 		if (!$user) return false;
 
 		if ($action === 'clear') {

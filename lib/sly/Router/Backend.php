@@ -25,8 +25,8 @@ class sly_Router_Backend extends sly_Router_Base {
 		$this->app        = $app;
 		$this->dispatcher = $dispatcher;
 
-		$this->addRoute('/:page/?',       array('func' => 'index'));
-		$this->addRoute('/:page/:func/?', array());
+		$this->appendRoute('/:page/?',       array('func' => 'index'));
+		$this->appendRoute('/:page/:func/?', array());
 	}
 
 	/**
@@ -63,7 +63,7 @@ class sly_Router_Backend extends sly_Router_Base {
 		$user         = $container->getUserService()->getCurrentUser();
 		$alternatives = array_filter(array(
 			$user ? $user->getStartpage() : null,
-			strtolower($config->get('START_PAGE')),
+			strtolower($config->get('backend/start_page')),
 			'profile'
 		));
 
@@ -72,15 +72,15 @@ class sly_Router_Backend extends sly_Router_Base {
 
 		foreach ($alternatives as $alt) {
 			try {
-				$controllerClass = $dispatcher->getControllerClass($alt);
-				$dispatcher->checkController($controllerClass);
+				$dispatcher->getController($alt);
 
 				// if we got here, cool, let's update the request
 				$request->get->set(self::CONTROLLER_PARAM, $alt);
+
 				return true;
 			}
 			catch (Exception $e) {
-				// pass ...
+				// pass ... (abstract class, non-existing class, ...)
 			}
 		}
 

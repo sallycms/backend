@@ -10,19 +10,18 @@
 
 class sly_Controller_Credits extends sly_Controller_Backend implements sly_Controller_Interface {
 	protected function init() {
-		$subline = null;
+		$menu = null;
 
 		// add link to help page for bugreports
 
-		if (sly_Util_User::getCurrentUser()->isAdmin()) {
-			$subline = array(
-				array('page' => 'credits',           'label' => ht('credits')),
-				array('page' => 'credits_bugreport', 'label' => 'Fehler gefunden?')
-			);
+		if ($this->getCurrentUser()->isAdmin()) {
+			$menu = new sly_Layout_Navigation_Page('');
+			$menu->addSubpage('credits', t('credits'));
+			$menu->addSubpage('credits_bugreport', 'Fehler gefunden?');
 		}
 
-		$layout = sly_Core::getLayout();
-		$layout->pageHeader(t('credits'), $subline);
+		$layout = $this->getContainer()->getLayout();
+		$layout->pageHeader(t('credits'), $menu);
 	}
 
 	public function indexAction() {

@@ -10,8 +10,8 @@
 
 abstract class sly_Controller_Backend extends sly_Controller_Base {
 	public function __construct() {
-		$this->setContentType('text/html');
-		$this->setCharset('UTF-8');
+		$response = sly_Core::getContainer()->getResponse();
+		$response->setContentType('text/html', 'UTF-8');
 	}
 
 	protected function getViewFolder() {
@@ -45,7 +45,21 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 		return $this->container->getApplication()->redirectResponse($controller, $action, $params, $code);
 	}
 
+	/**
+	 * get the current logged in user
+	 *
+	 * @return sly_Model_User
+	 */
 	protected function getCurrentUser() {
 		return $this->getContainer()->getUserService()->getCurrentUser();
+	}
+
+	/**
+	 * get backend flash message
+	 *
+	 * @return sly_Util_FlashMessage
+	 */
+	protected function getFlashMessage() {
+		return $this->getContainer()->getFlashMessage();
 	}
 }
