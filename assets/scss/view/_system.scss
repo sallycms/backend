@@ -1,0 +1,28 @@
+#sly-form-system-caches {
+	padding-top: $gap-layout-sm;
+	padding-bottom: $gap-layout-sm;
+
+	p {
+		margin: 0;
+		display: none;
+	}
+
+	p > span {
+		padding-top: $gap-layout-sm;
+		margin-bottom: $gap-layout-sm;
+	}
+}
+
+/* table icons*/
+.sly-icon .sly-sprite-language-add,
+.sly-icon .sly-sprite-language {
+	@extend .sallycms-icon;
+}
+
+.sly-icon .sly-sprite-language-add {
+	@extend .sallycms-icon-system-language-add;
+}
+
+.sly-icon .sly-sprite-language {
+	@extend .sallycms-icon-system-language;
+}

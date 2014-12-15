@@ -1,0 +1,41 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+// @edge put revisions into a separate view/controller
+
+$urlParams        = array('article_id' => $article->getId(), 'clang' => $article->getClang(), 'revision' => $article->getRevision());
+$menu             = '';
+$isEditActive     = $this instanceof sly_Controller_Content;
+$isMetaActive     = $this instanceof sly_Controller_Contentmeta;
+$isRevisionActive = $this instanceof sly_Controller_Contentrevision;
+$url              = sly_Util_HTTP::getAbsoluteUrl($article, $article->getClang());
+
+$listElements = array();
+$listElements[] = '<a href="'.$_router->getUrl('content', null, $urlParams).'"'.($isEditActive ? ' class="sly-active"' : '').'>'.t('edit_mode').'</a>';
+$listElements[] = '<a href="'.$_router->getUrl('contentmeta', null, $urlParams).'"'.($isMetaActive ? ' class="sly-active"' : '').'>'.t('metadata').'</a>';
+$listElements[] = '<a href="'.$_router->getUrl('contentrevision', null, $urlParams).'"'.($isRevisionActive ? ' class="sly-active"' : '').'>'.t('contentmeta_revisions').'</a>';
+$listElements[] = '<a href="'.$url.'" class="sly-blank">'.t('preview').'</a>'; // @edge fixed wording
+
+$listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_ACTIONS_MENU', $listElements, array(
+	'article_id' => $article->getId(),
+	'clang'      => $article->getClang(),
+	'rev'        => $article->getRevision()
+));
+?>
+<ul class="sly-navi-content">
+	<?php
+	foreach ($listElements as $idx => $element) {
+		$class = $idx == 0 ? ' class="sly-first"' : '';
+		$menu .= '<li'.$class.'>'.$element.'</li>';
+	}
+
+	print $menu;
+	?>
+</ul>

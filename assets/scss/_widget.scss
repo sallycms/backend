@@ -1,0 +1,9 @@
+.sly-widget a {
+	color: $color-grey-medium-extra;
+
+	&:hover,
+	&:focus,
+	&:active {
+		outline: none;
+	}
+}

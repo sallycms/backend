@@ -1,0 +1,311 @@
+#sly-page {
+	width: 100%;
+}
+
+#sly-navi-top {
+	padding: $gap-layout-md $gap-layout-sm;
+	background-color: $color-white;
+
+	@extend .clearfix;
+
+	.home {
+		color: $brand-primary;
+		font-size: 24px;
+	}
+
+	.sly-meta {
+		@extend .pull-right;
+	}
+
+	a {
+		float: left;
+		display: block;
+		padding: 0 $gap-layout-md;
+	}
+}
+
+#sly-navi-main {
+	flex: 0 0 72px;
+	flex-direction: column;
+	background-color: $color-blue-dark;
+	min-height: 100vh;
+
+	@media (min-width: $screen-md-min) {
+		flex: 0 0 300px;
+	}
+
+	.sly-navigation {
+		ul {
+			margin: 0;
+			padding: 0;
+
+			@extend .list-unstyled;
+		}
+
+		#sly-navi-system,
+		#sly-navi-addon {
+
+			/* variables */
+
+			$menu-border-color:        transparentize($color-white, 0.95);
+			$menu-chevron-color:       transparentize($color-white, 0.75);
+			$menu-inactive-color:      transparentize($color-white, 0.5);
+			$menu-inactive-icon-color: transparentize($color-white, 0.75);
+			$menu-submenu-bg-color:    darken($color-blue-dark, 5);
+
+			/* general styles */
+
+			a:hover,
+			a:focus,
+			a:active {
+				outline: none;
+				text-decoration: none;
+			}
+
+			li {
+				display: block;
+
+				a {
+					display: block;
+					padding-left: 20px;
+					position: relative;
+					line-height: 60px;
+					border-bottom: 1px solid $menu-border-color;
+
+					.sly-page-title {
+						display: none;
+
+						@media (min-width: $screen-md-min) {
+							display: inline-block;
+						}
+					}
+				}
+
+				// @edge / TODO
+				//
+				// fix subpages to work on mobile devices
+
+				[data-toggle="collapse"] {
+					&:after {
+						width: $input-height-base;
+						height: $input-height-base;
+						font-size: 32px;
+						content: $sallycms-icon-component-select2-arrow;
+						color: $menu-chevron-color;
+						line-height: $input-height-base;
+						position: absolute;
+						top: 5px;
+						right: 0;
+
+						@extend .sallycms-icon;
+					}
+				}
+			}
+
+			> li > a {
+				&:before {
+					width: 32px;
+					font-size: 32px;
+					margin-right: 20px;
+					vertical-align: middle;
+					position: relative;
+					display: inline-block;
+					top: -2px;
+
+					@extend .sallycms-icon;
+					@extend .sallycms-icon-navigation-default;
+				}
+			}
+
+			/* inactive styles */
+
+			li:not(.sly-active) {
+				a {
+					color: $menu-inactive-color;
+
+					&:hover {
+						color: $color-green;
+
+						&:before {
+							color: $color-green;
+						}
+					}
+
+					&:before {
+						color: $menu-inactive-icon-color;
+					}
+				}
+			}
+
+			/* active styles */
+
+			> li.sly-active > a {
+				color: $color-white;
+				background-color: $color-green;
+			}
+
+			> li.sly-active > ul > li.sly-active > a {
+				color: $color-green;
+			}
+
+			/* icon styles */
+
+			#sly-navi-page-structure > a {
+				&:before {
+					@extend .sallycms-icon-navigation-structure;
+				}
+			}
+
+			#sly-navi-page-mediapool > a {
+				&:before {
+					@extend .sallycms-icon-navigation-mediapool;
+				}
+			}
+
+			#sly-navi-page-user > a {
+				&:before {
+					@extend .sallycms-icon-navigation-user;
+				}
+			}
+
+			#sly-navi-page-addon > a {
+				&:before {
+					@extend .sallycms-icon-navigation-addon;
+				}
+			}
+
+			#sly-navi-page-system > a {
+				&:before {
+					@extend .sallycms-icon-navigation-system;
+				}
+			}
+
+			/* submenu styles */
+
+			> li > ul {
+				background-color: $menu-submenu-bg-color;
+
+				@extend .hidden-xs;
+				@extend .hidden-sm;
+			}
+		}
+	}
+}
+
+#sly-page-content {
+	display: flex;
+	flex-direction: row;
+}
+
+#sly-wrapper {
+	flex: 1;
+	flex-direction: column;
+	background-color: $color-grey-light-extra;
+	padding: $gap-layout-lg;
+}
+
+.sly-form-col-2 .sly-form-col-a {
+	margin-bottom: $gap-layout-md;
+}
+
+@media (min-width: $screen-md-min) {
+	.sly-area-col-2 {
+		display: flex;
+		flex-direction: row;
+		margin-left: -$gap-layout-md;
+		margin-right: -$gap-layout-md;
+	}
+
+	.sly-form-col-2 {
+		.sly-form-row {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.sly-form-col-a {
+			flex: 1;
+			flex-direction: column;
+			padding-right: $gap-layout-sm;
+			margin-bottom: 0;
+		}
+
+		.sly-form-col-b {
+			flex: 0 0 50%;
+			flex-direction: column;
+			padding-left: $gap-layout-sm;
+		}
+	}
+}
+
+.sly-area {
+	flex-direction: column;
+	padding: 0 $gap-layout-md;
+
+	&.col-a {
+		flex: 1;
+	}
+
+	&.col-b {
+		flex: 0 0 50%;
+	}
+}
+
+// @edge / TODO
+//
+// avoid negative margin by wrapping an extra
+// container around the content stuff
+
+#sly-pagehead {
+	background-color: $color-blue-light;
+	position: relative;
+	left: -40px;
+	top: -40px;
+	padding: 40px;
+	margin-right: -80px;
+
+	h1 {
+		color: $color-blue-dark;
+		margin-bottom: 0;
+	}
+
+	#sly-navi-page ul {
+		margin-top: $gap-layout-md;
+		margin-bottom: 0;
+
+		@extend .list-inline;
+	}
+}
+
+.sly-navi-language,
+.sly-navi-path {
+	padding-left: $gap-layout-md;
+	padding-right: $gap-layout-md;
+	background-color: $color-white;
+	margin-bottom: $gap-layout-lg;
+	line-height: $input-height-base;
+
+	@extend .breadcrumb;
+
+	@include border-radius(0);
+
+	> li + li:before {
+		padding-left: $gap-layout-sm;
+	}
+
+	.sly-active {
+		text-decoration: underline;
+	}
+}
+
+.sly-navi-language {
+	border-bottom: 1px solid $color-grey-light;
+	margin-bottom: 0;
+}
+
+#sly-footer {
+	background-color: $color-white;
+
+	ul {
+		@extend .list-inline;
+	}
+}

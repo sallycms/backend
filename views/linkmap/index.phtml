@@ -1,0 +1,80 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$category = $this->category ? $this->category : null;
+$articles = $category ? $category->getArticles() : sly_Util_Article::getRootArticles();
+$catID    = $category ? $category->getId() : 0;
+$cats     = count(sly_Util_Category::findByParentId(0));
+
+foreach ($articles as $idx => $article) {
+	if (!empty($this->types) && !in_array($article->getType(), $this->types)) {
+		unset($articles[$idx]);
+	}
+}
+
+ // @edge navi path see controller
+print $this->path;
+
+?>
+<div id="sly-linkmap">
+	<div class="sly-area-col-2">
+		<?php
+		if ($cats === 0) {
+			print '<div class="col-a" style="float:left">';
+			print sly_Helper_Message::info(t('no_categories_available'));
+			print '</div>';
+		}
+		else {
+			?>
+			<div class="sly-area col-a">
+				<h2><?php echo t('categories') ?></h2>
+				<div class="sly-area-content">
+				<?php
+				print $this->tree($this->roots);
+				?>
+				</div>
+			</div>
+			<?php
+		}
+
+		if (empty($articles)) {
+			print '<div class="col-b">';
+			print sly_Helper_Message::info(t('no_articles_available'));
+			print '</div>';
+		}
+		else {
+			?>
+			<div class="sly-area col-b">
+				<h2><?php echo t('articles') ?></h2>
+				<div class="sly-area-content articlelist">
+					<ul>
+						<?php
+						foreach ($articles as $article) {
+							$label    = $this->formatLabel($article);
+							$selected = $article->getId() == $catID;
+							$class    = $article->isOnline() ? 'sly-online' : 'sly-offline';
+
+							if ($selected) {
+								$class .= ' startarticle';
+							}
+
+							$linkAttr = 'class="'.$class.'" data-id="'.$article->getId().'" data-name="'.sly_html($article->getName()).'"';
+
+							print '<li><a href="#" '.$linkAttr.'>'.sly_html($label).'</a></li>';
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+			<?php
+		}
+		?>
+	</div>
+</div>
