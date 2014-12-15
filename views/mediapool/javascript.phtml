@@ -21,7 +21,7 @@ jQuery(function($) {
 		var filename = self.data('filename');
 		var title    = self.data('title');
 		var link     = 'mediapool/' + filename;
-		var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
+		var callback = '<?php echo $callback ?>' in window.parent ? window.parent['<?php echo $callback ?>'] : null;
 		var close    = true;
 		var fullName = '';
 
@@ -38,7 +38,9 @@ jQuery(function($) {
 		}
 
 		// close the popup
-		if (close) window.close();
+		// @edge more comfortable popups
+		// if (close) window.close();
+		if (close) window.parent.$.magnificPopup.close();
 		return false;
 	});
 });
@@ -46,8 +48,10 @@ jQuery(function($) {
 }
 ?>
 function openPage(src) {
-	window.opener.location.href = src;
-	self.close();
+	window.self.location.href = src;
+	// @edge more comfortable popups
+	// self.close();
+	window.parent.$.magnificPopup.close();
 }
 <?php
 $javascript = ob_get_clean();

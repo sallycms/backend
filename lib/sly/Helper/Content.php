@@ -97,7 +97,9 @@ class sly_Helper_Content {
 		try {
 			ob_start();
 
-			$form = new sly_Form($router->getPlainUrl('content', 'editArticleSlice'), 'post', t('edit_slice').': '.sly_translate($moduleTitle, true), '', 'editslice');
+			// @edge save space
+			// $form = new sly_Form($router->getPlainUrl('content', 'editArticleSlice'), 'post', t('edit_slice').': '.sly_translate($moduleTitle, true), '', 'editslice');
+			$form = new sly_Form($router->getPlainUrl('content', 'editArticleSlice'), 'post', sly_translate($moduleTitle, true), '', 'editslice');
 			$form->setEncType('multipart/form-data');
 			$form->addHiddenValue('article_id', $articleSlice->getArticleId());
 			$form->addHiddenValue('clang', $articleSlice->getClang());

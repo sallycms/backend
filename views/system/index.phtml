@@ -91,11 +91,13 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 			<p><?php print t('delete_cache_description') ?></p>
 
 			<form method="post" action="<?php print $_router->getUrl(null, 'clearcache') ?>">
-				<p>
-					<?php print sly_Util_Csrf::renderInputTag() ?>
-					<input type="submit" class="sly-button" value="<?php print t('delete_cache') ?>" />
-					<a href="#" id="sly-system-toggle-cache">(&hellip;)</a>
-				</p>
+				<?php print sly_Util_Csrf::renderInputTag() ?>
+				<div class="btn-group">
+					<button type="submit" class="sly-button"><?php print t('delete_cache') ?></button>
+					<button type="button" class="sly-button dropdown-toggle" id="sly-system-toggle-cache">
+						<span class="caret"></span>
+					</button>
+				</div>
 
 				<div class="sly-form" id="sly-form-system-caches">
 					<p class="sly-form-col-a sly-form-select-row"><?php print $caches->render(); ?></p>

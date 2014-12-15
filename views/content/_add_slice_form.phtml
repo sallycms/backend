@@ -12,7 +12,9 @@ $user = sly_Util_User::getCurrentUser();
 
 $moduleSelect = new sly_Form_Select_DropDown('add_module', '', '', array(), 'module'.$pos);
 $moduleSelect->addClass('sly-module-select');
-$moduleSelect->addValue('', '---------------------------- '.t('add_slice'));
+// @edge save space
+// $moduleSelect->addValue('', '---------------------------- '.t('add_slice'));
+$moduleSelect->addValue('', t('add_slice'));
 
 foreach ($modules as $module => $moduleTitle) {
 	if (sly_Util_ArticleSlice::canAddModule($user, $module)) {

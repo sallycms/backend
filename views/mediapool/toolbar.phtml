@@ -16,34 +16,32 @@ print $dispatcher->filter('PAGE_MEDIAPOOL_HEADER', '', array('category_id' => $s
 ////////////////////////////////////////////////////////
 // category selection form
 
+// @edge rewritten view logic
+
+$form = new sly_Form($_router->getPlainUrl(null), 'GET', t('select_category'), '', 'sly-form-mediapool-selectcategory');
+$form->setCsrfEnabled(false);
+$form->setResetButton(null);
+$form->setSubmitButton(null);
+$this->appendParamsToForm($form);
+
 $select = $this->getCategorySelect();
 $values = $select->getValues();
 
-if (count($values) > 1 || $dispatcher->hasListeners('SLY_MEDIA_LIST_TOOLBAR')) {
-	$form = new sly_Form($_router->getPlainUrl(null), 'GET', t('select_category'), '', 'sly-form-mediapool-selectcategory');
-	$form->setCsrfEnabled(false);
-	$form->setResetButton(null);
-	$form->setSubmitButton(null);
-	$this->appendParamsToForm($form);
+$order = $this->getFileOrderSelect();
+$order->setAttribute('onchange', 'this.form.submit()');
 
-	$orderSelect = $this->getFileOrderSelect();
-	$orderSelect->setAttribute('onchange', 'this.form.submit()');
+if (count($values) > 1) {
+	$select->setAttribute('onchange', 'this.form.submit()');
 
-	$row = array($orderSelect);
-
-	if (count($values) > 1) {
-		$select->setAttribute('onchange', 'this.form.submit()');
-		//$form->add($select);
-		array_unshift($row, $select);
-	}
-
-	$form->addRow($row);
-	$form->getCurrentFieldset()->setColumns(count($row));
-	$form->beginFieldset('');
-
-	$form = $dispatcher->filter('SLY_MEDIA_LIST_TOOLBAR', $form, array('category_id' => $selected));
-
-	if ($form instanceof sly_Form) {
-		print $form->render();
-	}
+	$form->beginFieldset(t('select_category'), 'sly-user-main-fieldset', 2);
+	$form->addRow(array($select, $order));
 }
+else {
+	$form->add($order);
+}
+
+if ($dispatcher->hasListeners('SLY_MEDIA_LIST_TOOLBAR')) {
+	$form = $dispatcher->filter('SLY_MEDIA_LIST_TOOLBAR', $form, array('category_id' => $selected));
+}
+
+print $form->render();

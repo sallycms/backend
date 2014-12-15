@@ -26,7 +26,8 @@
         "php": ">=5.2.1",
         "sallycms/core": "0.9.*",
         "sallycms/less-mixins": ">=2.2.0,<3.0.0",
-        "sallycms/composer-installer": "~1.1"
+        "sallycms/composer-installer": "~1.1",
+        "phpspec/php-diff": "~1.0"
     },
     "extra": {
         "branch-alias": {

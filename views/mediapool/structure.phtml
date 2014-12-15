@@ -11,7 +11,7 @@
 ////////////////////////////////////////////////////////
 // print breadcrumb path
 
-$path    = '<li> : <a href="'.$_router->getUrl(null, null, $this->appendQueryString(array())).'">'.ht('start').'</a></li>';
+$path    = '<li><a href="'.$_router->getUrl(null, null, $this->appendQueryString(array())).'">'.ht('start').'</a></li>';
 $isForm  = $action === 'add' || $action === 'edit';
 $addMode = $action === 'add';
 $catID   = $cat    ? $cat->getId()    : 0;
@@ -21,19 +21,17 @@ if ($cat) {
 	$parents = $cat->getParentTree();
 
 	foreach ($parents as $parent) {
-		$path .= '<li> : <a href="'.$_router->getUrl(null, null, $this->appendQueryString(array('cat_id' => $parent->getId()))).'">'.sly_html($parent->getName()).'</a></li>';
+		$path .= '<li><a href="'.$_router->getUrl(null, null, $this->appendQueryString(array('cat_id' => $parent->getId()))).'">'.sly_html($parent->getName()).'</a></li>';
 	}
 
-	$path .= '<li> : <a href="'.$_router->getUrl(null, null, $this->appendQueryString(array('cat_id' => $catID))).'">'.sly_html($cat->getName()).'</a></li>';
+	$path .= '<li><a href="'.$_router->getUrl(null, null, $this->appendQueryString(array('cat_id' => $catID))).'">'.sly_html($cat->getName()).'</a></li>';
 }
 
 ?>
-<div class="sly-navi-path">
-	<ul>
-		<li><?php echo t('path') ?></li>
-		<?php echo $path ?>
-	</ul>
-</div>
+<ul class="sly-navi-path">
+	<li><?php echo t('path') ?></li>
+	<?php echo $path ?>
+</ul>
 <?php
 
 print sly_Helper_Message::renderFlashMessage();

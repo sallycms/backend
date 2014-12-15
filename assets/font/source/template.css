@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+<% if (fontfaceStyles) { %>
+<% if (fontSrc1 && embed.length) { %>
+@font-face {
+	font-family: "<%= fontBaseName %>";
+	src: <%= fontSrc1 %>;
+	font-weight: normal;
+	font-style: normal;
+}
+<% } %>@font-face {
+	font-family: "<%= fontBaseName %>";<% if (fontSrc1) { %>
+	src: <%= fontSrc1 %>;<% }%>
+	src: <%= fontSrc2 %>;
+	font-weight: normal;
+	font-style: normal;
+}
+<% } %>
+<% if (baseStyles) { %>.<%= baseClass %> {
+	font-family: "<%= fontBaseName %>";
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+	font-weight: normal;
+	font-style: normal;
+	speak: none;
+	text-decoration: inherit;
+	text-transform: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+<% } %><% if (iconsStyles) { %><% for (var glyphIdx = 0; glyphIdx < glyphs.length; glyphIdx++) { %>
+$<%= classPrefix %><%= glyphs[glyphIdx] %>: "\<%= codepoints[glyphIdx] %>";<% } %>
+<% for (var glyphIdx = 0; glyphIdx < glyphs.length; glyphIdx++) { %>
+.<%= classPrefix %><%= glyphs[glyphIdx] %>:before {
+	content: $<%= classPrefix %><%= glyphs[glyphIdx] %>;
+}
+<% } } %>

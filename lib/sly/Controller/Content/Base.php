@@ -57,32 +57,38 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 	 * @return string
 	 */
 	protected function getBreadcrumb() {
+		// @edge / TODO
+		//
+		// move breadcrumb markup from controller to view (toolbars/breadcrumb.phtml)
+
 		$art    = $this->article;
 		$clang  = $art->getClang();
 		$user   = $this->getCurrentUser();
 		$cat    = $art->getCategory();
 		$router = $this->getContainer()->getApplication()->getRouter();
-		$result = '<ul class="sly-navi-path">
-			<li>'.t('path').'</li>
-			<li> : <a href="'.$router->getUrl('structure', null, array('clang' => $clang)).'">'.t('home').'</a></li>';
+
+		// @edge removed whitespace
+		$result = '<ul class="sly-navi-path"><li>'.t('path').'</li><li><a href="'.$router->getUrl('structure', null, array('clang' => $clang)).'">'.t('home').'</a></li>';
 
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if (sly_Backend_Authorisation_Util::canReadCategory($user, $parent->getId())) {
-					$result .= '<li> : <a href="'.$router->getUrl('structure', null, array('category_id' => $parent->getId(), 'clang' => $clang)).'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li><a href="'.$router->getUrl('structure', null, array('category_id' => $parent->getId(), 'clang' => $clang)).'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
 
-		$result .= '<li> | '.($art->isStartArticle() ? t('startarticle') : t('article')).'</li>';
-		$result .= '<li> : <a href="'.$router->getUrl($this->getPageName(), null, array('article_id' => $art->getId(), 'clang' => $clang)).'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
+		// @edge save space
+		// $result .= '<li>'.($art->isStartArticle() ? t('startarticle') : t('article')).'</li>';
+		$result .= '<li><a href="'.$router->getUrl($this->getPageName(), null, array('article_id' => $art->getId(), 'clang' => $clang)).'">'.str_replace(' ', '&nbsp;', sly_html($art->getName())).'</a></li>';
 		$result .= '</ul>';
 
 		return $result;
 	}
 
 	protected function header() {
-		$layout = $this->getContainer()->getLayout();
+		$layout  = $this->getContainer()->getLayout();
+		$request = $this->getRequest();
 
 		if ($this->article === null) {
 			$layout->pageHeader(t('content'));
@@ -90,9 +96,13 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 			return false;
 		}
 		else {
-			$layout->pageHeader(t('content'), $this->getBreadcrumb());
+			$layout->pageHeader(t('content')/*, $this->getBreadcrumb()*/);
 
 			$this->renderLanguageBar();
+
+			$this->render('toolbars/breadcrumb.phtml', array(
+				'breadcrumb' => $this->getBreadcrumb()
+			), false);
 
 			// extend menu
 			print $this->getContainer()->getDispatcher()->filter('PAGE_CONTENT_HEADER', '', array(
@@ -101,7 +111,7 @@ abstract class sly_Controller_Content_Base extends sly_Controller_Backend implem
 				'category_id' => $this->article->getCategoryId()
 			));
 
-			print $this->render('content/menus.phtml', array('article' => $this->article, 'slot' => $this->slot));
+			print $this->render('content/menus.phtml', array('article' => $this->article, 'slot' => $this->slot, 'localmsg' => $request->request('pos', 'int', null) !== null));
 
 			return true;
 		}

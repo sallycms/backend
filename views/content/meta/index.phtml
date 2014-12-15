@@ -8,10 +8,12 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+// @edge put revisions into a separate view/controller
+
 print sly_Helper_Message::renderFlashMessage();
 
 $category_id = $article->getCategoryId();
-$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article, 'revisions' => $revisions, 'total_revisions' => $total);
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
 $form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POST', t('general'));
 
 $form->setEncType('multipart/form-data');
@@ -31,53 +33,6 @@ if ($form->getCurrentFieldset() !== null) {
 	$button = new sly_Form_Input_Button('submit', 'save_meta', t('save'));
 	$form->add(new sly_Form_ButtonBar(array('submit' => $button)));
 }
-
-/////////////////////////////////////////////////////////////////
-// revision select
-
-$form->beginFieldset('', 'sly-article-revisions');
-
-$table = new sly_Table('sly-article-revisions-table');
-$table->addColumn(sly_Table_Column::sprite('article', null));
-$table->addColumn(sly_Table_Column::factory(t('abbreviation_revision'), 'sly-col-rev'));
-$table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
-$table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
-$table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
-
-$table->setPagerParam('revisions');
-$table->openBuffer();
-
-foreach ($revisions as $revision) {
-	$id        = $revision->getId();
-	$clang     = $revision->getClang();
-	$rev       = $revision->getRevision();
-	$online    = $revision->isOnline();
-	$current   = $rev === $article->getRevision();
-	$selectUrl = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
-	$deleteUrl = $_router->getUrl('contentmeta', 'deleterevision', array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
-	$user      = $userService->findByLogin($revision->getCreateUser());
-	$username  = $user ? ($user->getName() ?: $user->getLogin()) : $revision->getCreateUser();
-
-	?>
-	<tr data-slyid="<?php echo $id ?>" data-slyclang="<?php echo $clang ?>" data-slyrevision="<?php echo $rev ?>" data-slyonline="<?php echo $online ? '1' : '0' ?>">
-		<td class="sly-col-icon sly-icon"><?php echo sly_Util_HTML::getSpriteLink($selectUrl, t('contentmeta_select_revision'), 'article') ?></td>
-		<td class="sly-col-rev"><?php echo sly_Util_String::formatNumber($rev, 0) ?></td>
-		<td class="sly-col-created <?php echo $online ? 'sly-online' : 'sly-offline' ?>">
-			<?php
-			if ($current) print '<strong>';
-			echo sly_Util_HTML::getDatetimeTag($revision->getUpdateDate());
-			if ($current) print '</strong>';
-			?>
-		</td>
-		<td class="sly-col-user"><?php echo sly_html($username) ?></td>
-		<td class="sly-col-func"><a href="<?php echo $deleteUrl ?>" class="sly-delete sly-postlink"><?php echo t('delete_revision') ?></a></td>
-	</tr>
-	<?php
-}
-
-$table->closeBuffer();
-$revSelect = new sly_Form_Fragment($table->render($total));
-$form->addElement($revSelect);
 
 /////////////////////////////////////////////////////////////////
 // misc

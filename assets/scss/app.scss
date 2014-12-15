@@ -1,0 +1,68 @@
+@import 'compass/css3';
+
+@import url(//fonts.googleapis.com/css?family=Roboto:400,300,500,700);
+
+@import 'variable';
+@import 'mixin';
+@import 'icon/sallycms';
+
+$font-family-sans-serif: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
+$font-size-base: 18px !default;
+$font-size-h1: 30px !default;
+$font-size-h2: 25px !default;
+$font-size-h3: 20px !default;
+$font-size-h4: 15px !default;
+$headings-font-weight: 400 !default;
+$line-height-base: 1.66666666667 !default;
+$padding-base-vertical: 9px !default;
+$padding-base-horizontal: 18px !default;
+$text-color: $color-grey-medium !default;
+$input-color: $color-grey-medium !default;
+$input-border: $color-grey-light !default;
+$brand-primary: $color-blue !default;
+$brand-success: $color-green !default;
+$icon-font-path: '../vendor/bootstrap-sass-official/assets/fonts/bootstrap/' !default;
+$border-radius-base: 0 !default;
+
+$alert-success-bg: transparentize($color-green, 0.5) !default;
+$alert-success-text: $color-white !default;
+
+$alert-danger-bg: transparentize($color-red, 0.5) !default;
+$alert-danger-text: $color-white !default;
+
+@import '../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap';
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background-color: $color-grey-light-extra;
+
+	* {
+		text-rendering: optimizelegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+@import 'typo';
+@import 'form';
+@import 'button';
+@import 'table';
+@import 'message';
+@import 'widget';
+@import 'view/default';
+@import 'view/structure';
+@import 'view/login';
+@import 'view/content';
+@import 'view/addon';
+@import 'view/user';
+@import 'view/system';
+@import 'view/mediapool';
+@import 'view/linkmap';
+@import 'component/select2';
+@import 'component/icheck';
+@import 'component/nprogress';
+@import 'component/magnificpopup';

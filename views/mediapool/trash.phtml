@@ -8,11 +8,12 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$resize   = sly_Util_AddOn::isAvailable('sallycms/image-resize');
+// @edge rewritten view logic
 $selected = $this->getCurrentCategory();
 
 ////////////////////////////////////////////////////////
 // list all files in the current category
+
 $form = new sly_Form($_router->getPlainUrl(null, 'batch'), 'POST', t('recycle_bin'), '', 'sly-form-mediapool-media');
 $this->appendParamsToForm($form);
 
@@ -23,7 +24,7 @@ $isAdmin = $this->isMediaAdmin();
 
 $table = new sly_Table('', array('sly-mediapool-list'));
 
-$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-icon sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory('<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="media[]" />', 'sly-icon sly-col-icon'));
 $table->addColumn(sly_Table_Column::factory(t('thumbnail'), 'sly-col-thumbnail'));
 $table->addColumn(sly_Table_Column::factory(t('file_info').' / '.t('description'), 'sly-col-info'));
 $table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
@@ -33,32 +34,7 @@ $table->setEmptyNotice(t('no_media_found'));
 $table->openBuffer();
 
 ////////////////////////////////////////////////////////
-// move and delete selected items
-
-if ($canDelete || $canRestore) {
-	$inputs = '';
-	if ($canRestore) {
-		$inputs .= '<input class="sly-form-submit-2 sly-form-submit" type="submit" name="restore" value="'.t('restore').'" />';
-	}
-	if ($canDelete) {
-		$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete_permanent" value="'.t('delete_permanent').'" />';
-	}
-
-	?>
-	<tfoot><tr>
-		<td class="sly-col-icon sly-icon">
-			<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
-			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="media[]" />
-		</td>
-		<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
-	</tr></tfoot>
-	<?php
-}
-
-////////////////////////////////////////////////////////
 // list files
-
-print '<tbody>';
 
 foreach ($files as $file) {
 	$id        = $file->getId();
@@ -106,8 +82,29 @@ $table->closeBuffer();
 
 $container = new sly_Form_Container();
 $container->setContent($table->render());
-
 $form->add($container);
+
+////////////////////////////////////////////////////////
+// move and delete buttons
+
+if ($canDelete || $canRestore) {
+	$buttons = new sly_Form_ButtonBar();
+
+	if ($canRestore) {
+		$restore = new sly_Form_Input_Button('submit', 'restore', t('restore'));
+		$buttons->addButton($restore);
+	}
+
+	if ($canDelete) {
+		$delete = new sly_Form_Input_Button('submit', 'delete_permanent', t('delete_permanent'));
+		$buttons->addButton($delete);
+	}
+
+	if ($buttons->getButtons()) {
+		$form->add($buttons);
+	}
+}
+
 $form->setResetButton(null);
 $form->setSubmitButton(null);
 print $form->render();

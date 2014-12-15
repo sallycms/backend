@@ -20,8 +20,16 @@ if (!empty($info['author'])) {
 
 ?>
 <li class="name"><?php
-	print '<h2>'.sly_html($addon).'</h2>';
+	print '<h1>'.sly_html($addon).'</h1>';
 ?></li>
+<?php if (!empty($subline)): ?>
+<li class="version">
+	<span class="version"><?php print implode(', ', $subline) ?></span>
+</li>
+<?php endif ?>
+<li class="depsinfo">
+	<span class="deps"><?php echo $stati[$addon]['deps'] ?></span>
+</li>
 <li class="buttons installer">
 	<span class="reinstall"><a class="sly-button" href="<?php echo str_replace('_action_', 'install', $base) ?>"><?php echo t('reinstall') ?></a></span>
 	<span class="install"><a class="sly-button" href="<?php echo str_replace('_action_', 'install', $base) ?>"><?php echo t('install') ?></a></span>
@@ -38,8 +46,4 @@ if (!empty($info['author'])) {
 	<span class="deactivate"><a class="sly-button" href="<?php echo str_replace('_action_', 'deactivate', $base) ?>"><?php echo t('deactivate') ?></a></span>
 	<span class="hasdeps"><del class="sly-button"><?php echo t('deactivate') ?></del></span>
 	<?php if ($info['requirements']): ?><span class="fullactivate"><a class="sly-button" href="<?php echo str_replace('_action_', 'fullinstall', $base) ?>"><?php echo t('activate_including_requirements') ?></a></span><?php endif ?>
-</li>
-<li class="buttons depsinfo">
-	<?php if (!empty($subline)) print '<span class="version">('.implode(', ', $subline).')</span>'; ?>
-	<span class="deps"><?php echo $stati[$addon]['deps'] ?></span>
 </li>

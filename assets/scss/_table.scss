@@ -1,0 +1,115 @@
+.sly-table {
+	background-color: $color-white;
+	margin-bottom: $gap-layout-md;
+
+	@extend .table;
+
+	> thead > tr > th {
+		font-weight: normal;
+		padding: $gap-layout-md;
+		// background-color: $color-blue-light-extra;
+		border-width: 1px;
+	}
+
+	> tbody > tr > td,
+	> tbody > tr > th,
+	> tfoot > tr > td,
+	> tfoot > tr > th  {
+		padding: $gap-layout-md - $gap-layout-xs $gap-layout-md;
+		vertical-align: middle;
+
+		.sly-form-text {
+			margin-bottom: 0;
+		}
+	}
+
+	caption:empty {
+		display: none;
+	}
+
+	.sly-col-icon {
+		width: 32px;
+		padding-right: 0;
+		vertical-align: middle;
+	}
+
+	.sly-icon .sly-sprite {
+		display: block;
+		font-size: 32px;
+		color: $color-grey-medium-extra;
+
+		&:hover {
+			text-decoration: none;
+		}
+
+		span {
+			display: none;
+		}
+	}
+
+	.sly-col-func,
+	.sly-col-status {
+		width: 200px;
+	}
+}
+
+// .sly-table-extras-pager {
+// 	// border-left: 1px solid $color-grey-light-extra;
+// 	position: relative;
+// 	text-indent: 999px;
+// 	overflow: hidden;
+// 	white-space: nowrap;
+// 	text-align: right;
+
+// 	a, span {
+// 		display: inline-block;
+// 		// padding: 0 $gap-layout-xs;
+// 		// width: 50px;
+// 		// height: 50px;
+// 		// line-height: 50px;
+// 		// border: 1px solid $color-grey-light-extra;
+// 		// border-left: none;
+// 			position: relative;
+// 			left: -999px;
+// 			text-indent: 0;
+// 			overflow: hidden;
+// 			width: 32px;
+// 			text-align: center;
+
+// 		&.first {
+// 			// padding-left: $gap-layout-sm;
+// 		}
+
+// 		&.first,
+// 		&.prev,
+// 		&.next,
+// 		&.last {
+// 			// font-size: 32px;
+
+// 			// @extend .sallycms-icon;
+
+// 			&:before {
+// 				position: relative;
+// 				left: 999px;
+// 				// top: -1px;
+// 				// line-height: 50px;
+// 			}
+// 		}
+
+// 		// &.first {
+// 		// 	@extend .sallycms-icon-table-pager-first;
+// 		// }
+
+// 		// &.prev {
+// 		// 	@extend .sallycms-icon-table-pager-prev;
+// 		// }
+
+// 		// &.next {
+// 		// 	@extend .sallycms-icon-table-pager-next;
+// 		// }
+
+// 		// &.last {
+// 		// 	@extend .sallycms-icon-table-pager-last;
+// 		// }
+// 	}
+// }

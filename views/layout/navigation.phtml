@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-print '<dl class="sly-navigation">';
+print '<nav class="sly-navigation">';
 
 $groups = $nav->getGroups();
 
@@ -25,7 +25,6 @@ foreach ($groups as $group) {
 
 	if ($count == 0) continue;
 
-	print '<dt>'.$headline.'</dt><dd>';
 	print '<ul id="sly-navi-'.$topic.'">';
 
 	$first   = true;
@@ -42,7 +41,7 @@ foreach ($groups as $group) {
 		if ($page->isHidden()) continue;
 
 		$liclass  = 'sly-navigation-level-1';
-		$liclass .= $page->isActive() ? ' sly-active' : '';
+		$liclass .= $page->isActive() ? ' sly-active' : ($page->getSubpages() ? ' collapsed' : '');
 		$liclass .= $page->isPopup()  ? ' popup'      : '';
 		$li       = array(
 			'class' => $liclass,
@@ -62,11 +61,21 @@ foreach ($groups as $group) {
 		$liAttr   = sly_Util_HTML::buildAttributeString($li);
 		$aAttr    = sly_Util_HTML::buildAttributeString($a);
 
-		print '<li '.$liAttr.'><a '.$aAttr.'>'.$page->getTitle().'</a>';
+
+		// @edge / TODO
+		//
+		// fix subpages to work on mobile devices
+
+		if (!empty($subpages)) {
+			print '<li '.$liAttr.'><a '.$aAttr.' data-toggle="collapse" data-target="#sly-navi-page-'.$page->getPageParam().'-collapse" onclick="return false;"><span class="sly-page-title">'.$page->getTitle().'</span></a>';
+		}
+		else {
+			print '<li '.$liAttr.'><a '.$aAttr.'><span class="sly-page-title">'.$page->getTitle().'</span></a>';
+		}
 
 		// ***** Subnavi
-		if ($page->isActive() && !empty($subpages)) {
-			print '<ul>';
+		if (!empty($subpages)) {
+			print '<ul id="sly-navi-page-'.$page->getPageParam().'-collapse" class="collapse'.($page->isActive() ? ' in' : '').'">';
 			$first = true;
 
 			foreach ($subpages as $sp) {
@@ -89,10 +98,11 @@ foreach ($groups as $group) {
 		}
 
 		print '</li>';
+
 		$first = false;
 	}
 
-	print '</ul></dd>';
+	print '</ul>';
 }
 
-print '</dl>';
+print '</nav>';
