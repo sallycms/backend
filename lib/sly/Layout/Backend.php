@@ -35,10 +35,10 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 		// $this->addJavaScriptFile(Util::appUri('js/locales/'.$locale.'.min.js'));
 
 		$this->addCSSFile(Util::appUri('dist/css/vendor.min.css'));
-		$this->addCSSFile(Util::appUri('dist/css/app.min.css'));
+		$this->addCSSFile(Util::appUri('dist/css/app.css'));
 
 		$this->addJavaScriptFile(Util::appUri('dist/js/vendor.min.js'));
-		$this->addJavaScriptFile(Util::appUri('dist/js/app.min.js'));
+		$this->addJavaScriptFile(Util::appUri('dist/js/app.js'));
 
 		if ($project) {
 			$this->setTitle($project.' - ');
