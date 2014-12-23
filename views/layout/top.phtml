@@ -9,25 +9,21 @@
  */
 ?>
 <div id="sly-page">
-
 	<div id="sly-navi-top">
-
 		<!--
 			@edge / TODO
 
-			re-add branding when new ci is finished
+			add branding when new ci is finished
 		-->
-
-		<!-- <a href="./" class="home">SallyCMS</a> -->
-
+		<a href="./" class="sly-home">
+			<span>Sallycms</span>
+		</a>
 		<?php if ($username && $navigation): ?>
-
 		<!--
 			@edge / TODO
 
 			wrap navigation into a mobile collapsible markup
 		-->
-
 		<nav class="sly-meta">
 			<!-- @edge save space
 			<li class="sly-first"><span><?php print t('logged_in_as').' '.sly_html($username) ?></span></li>

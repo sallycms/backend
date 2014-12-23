@@ -3,14 +3,13 @@
 }
 
 #sly-navi-top {
-	padding: $gap-layout-md $gap-layout-sm;
+	padding-right: $gap-layout-md;
 	background-color: $color-white;
 
 	@extend .clearfix;
 
-	.home {
-		color: $brand-primary;
-		font-size: 24px;
+	.sly-home {
+		display: none;
 	}
 
 	.sly-meta {
@@ -21,6 +20,8 @@
 		float: left;
 		display: block;
 		padding: 0 $gap-layout-md;
+		height: 60px;
+		line-height: 60px;
 	}
 }
 
@@ -69,7 +70,7 @@
 					display: block;
 					padding-left: 20px;
 					position: relative;
-					line-height: 60px;
+					line-height: 59px;
 					border-bottom: 1px solid $menu-border-color;
 
 					.sly-page-title {
@@ -255,6 +256,9 @@
 // avoid negative margin by wrapping an extra
 // container around the content stuff
 
+#sly-wrapper {
+}
+
 #sly-pagehead {
 	background-color: $color-blue-light;
 	position: relative;
@@ -265,6 +269,7 @@
 
 	h1 {
 		color: $color-blue-dark;
+		line-height: $gap-layout-lg;
 		margin-bottom: 0;
 	}
 
