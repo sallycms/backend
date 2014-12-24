@@ -4763,29 +4763,58 @@ fieldset[disabled] .active.sly-form-submit {
 }
 
 /* line 79, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/_buttons.scss */
-.btn-danger {
+.btn-danger, .sly-button.sly-button-danger,
+.sly-form-submit.sly-button-danger {
   color: white;
-  background-color: #d9534f;
-  border-color: #d43f3a;
+  background-color: rgba(243, 50, 47, 0.75);
+  border-color: rgba(242, 26, 23, 0.75);
 }
 /* line 16, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
-.btn-danger:hover, .btn-danger:focus, .btn-danger.focus, .btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {
+.btn-danger:hover, .sly-button.sly-button-danger:hover,
+.sly-form-submit.sly-button-danger:hover, .btn-danger:focus, .sly-button.sly-button-danger:focus,
+.sly-form-submit.sly-button-danger:focus, .btn-danger.focus, .focus.sly-button.sly-button-danger,
+.focus.sly-form-submit.sly-button-danger, .btn-danger:active, .sly-button.sly-button-danger:active,
+.sly-form-submit.sly-button-danger:active, .btn-danger.active, .active.sly-button.sly-button-danger,
+.active.sly-form-submit.sly-button-danger, .open > .btn-danger.dropdown-toggle, .open > .dropdown-toggle.sly-button.sly-button-danger,
+.open > .dropdown-toggle.sly-form-submit.sly-button-danger {
   color: white;
-  background-color: #c9302c;
-  border-color: #ac2925;
+  background-color: rgba(226, 16, 13, 0.75);
+  border-color: rgba(192, 14, 11, 0.75);
 }
 /* line 23, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
-.btn-danger:active, .btn-danger.active, .open > .btn-danger.dropdown-toggle {
+.btn-danger:active, .sly-button.sly-button-danger:active,
+.sly-form-submit.sly-button-danger:active, .btn-danger.active, .active.sly-button.sly-button-danger,
+.active.sly-form-submit.sly-button-danger, .open > .btn-danger.dropdown-toggle, .open > .dropdown-toggle.sly-button.sly-button-danger,
+.open > .dropdown-toggle.sly-form-submit.sly-button-danger {
   background-image: none;
 }
 /* line 34, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
-.btn-danger.disabled, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger.disabled.focus, .btn-danger.disabled:active, .btn-danger.disabled.active, .btn-danger[disabled], .btn-danger[disabled]:hover, .btn-danger[disabled]:focus, .btn-danger[disabled].focus, .btn-danger[disabled]:active, .btn-danger[disabled].active, fieldset[disabled] .btn-danger, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .btn-danger.focus, fieldset[disabled] .btn-danger:active, fieldset[disabled] .btn-danger.active {
-  background-color: #d9534f;
-  border-color: #d43f3a;
+.btn-danger.disabled, .disabled.sly-button.sly-button-danger,
+.disabled.sly-form-submit.sly-button-danger, .btn-danger.disabled:hover, .disabled.sly-button.sly-button-danger:hover,
+.disabled.sly-form-submit.sly-button-danger:hover, .btn-danger.disabled:focus, .disabled.sly-button.sly-button-danger:focus,
+.disabled.sly-form-submit.sly-button-danger:focus, .btn-danger.disabled.focus, .disabled.focus.sly-button.sly-button-danger,
+.disabled.focus.sly-form-submit.sly-button-danger, .btn-danger.disabled:active, .disabled.sly-button.sly-button-danger:active,
+.disabled.sly-form-submit.sly-button-danger:active, .btn-danger.disabled.active, .disabled.active.sly-button.sly-button-danger,
+.disabled.active.sly-form-submit.sly-button-danger, .btn-danger[disabled], [disabled].sly-button.sly-button-danger,
+[disabled].sly-form-submit.sly-button-danger, .btn-danger[disabled]:hover, [disabled].sly-button.sly-button-danger:hover,
+[disabled].sly-form-submit.sly-button-danger:hover, .btn-danger[disabled]:focus, [disabled].sly-button.sly-button-danger:focus,
+[disabled].sly-form-submit.sly-button-danger:focus, .btn-danger[disabled].focus, [disabled].focus.sly-button.sly-button-danger,
+[disabled].focus.sly-form-submit.sly-button-danger, .btn-danger[disabled]:active, [disabled].sly-button.sly-button-danger:active,
+[disabled].sly-form-submit.sly-button-danger:active, .btn-danger[disabled].active, [disabled].active.sly-button.sly-button-danger,
+[disabled].active.sly-form-submit.sly-button-danger, fieldset[disabled] .btn-danger, fieldset[disabled] .sly-button.sly-button-danger,
+fieldset[disabled] .sly-form-submit.sly-button-danger, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .sly-button.sly-button-danger:hover,
+fieldset[disabled] .sly-form-submit.sly-button-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .sly-button.sly-button-danger:focus,
+fieldset[disabled] .sly-form-submit.sly-button-danger:focus, fieldset[disabled] .btn-danger.focus, fieldset[disabled] .focus.sly-button.sly-button-danger,
+fieldset[disabled] .focus.sly-form-submit.sly-button-danger, fieldset[disabled] .btn-danger:active, fieldset[disabled] .sly-button.sly-button-danger:active,
+fieldset[disabled] .sly-form-submit.sly-button-danger:active, fieldset[disabled] .btn-danger.active, fieldset[disabled] .active.sly-button.sly-button-danger,
+fieldset[disabled] .active.sly-form-submit.sly-button-danger {
+  background-color: rgba(243, 50, 47, 0.75);
+  border-color: rgba(242, 26, 23, 0.75);
 }
 /* line 40, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
-.btn-danger .badge {
-  color: #d9534f;
+.btn-danger .badge, .sly-button.sly-button-danger .badge,
+.sly-form-submit.sly-button-danger .badge {
+  color: rgba(243, 50, 47, 0.75);
   background-color: white;
 }
 
@@ -6777,11 +6806,11 @@ a.label:hover, a.label:focus {
 
 /* line 64, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/_labels.scss */
 .label-danger {
-  background-color: #d9534f;
+  background-color: rgba(243, 50, 47, 0.75);
 }
 /* line 8, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_labels.scss */
 .label-danger[href]:hover, .label-danger[href]:focus {
-  background-color: #c9302c;
+  background-color: rgba(226, 16, 13, 0.75);
 }
 
 /* line 7, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/_badges.scss */
@@ -7127,7 +7156,7 @@ a.thumbnail.active {
 
 /* line 85, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/_progress-bars.scss */
 .progress-bar-danger {
-  background-color: #d9534f;
+  background-color: rgba(243, 50, 47, 0.75);
 }
 /* line 7, ../../vendor/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_progress-bar.scss */
 .progress-striped .progress-bar-danger {
@@ -9001,17 +9030,17 @@ button.close {
     display: none !important;
   }
 }
-/* line 35, ../../scss/app.scss */
+/* line 36, ../../scss/app.scss */
 html, body {
   width: 100%;
   height: 100%;
 }
 
-/* line 40, ../../scss/app.scss */
+/* line 41, ../../scss/app.scss */
 body {
   background-color: #ececec;
 }
-/* line 43, ../../scss/app.scss */
+/* line 44, ../../scss/app.scss */
 body * {
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
@@ -9088,14 +9117,46 @@ fieldset {
   padding-top: 0;
 }
 
+/* line 34, ../../scss/_form.scss */
+.sly-form-col-2 .sly-form-col-a {
+  margin-bottom: 20px;
+}
+
+@media (min-width: 992px) {
+  /* line 39, ../../scss/_form.scss */
+  .sly-area-col-2 {
+    display: flex;
+    flex-direction: row;
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  /* line 47, ../../scss/_form.scss */
+  .sly-form-col-2 .sly-form-row {
+    display: flex;
+    flex-direction: row;
+  }
+  /* line 52, ../../scss/_form.scss */
+  .sly-form-col-2 .sly-form-col-a {
+    flex: 1;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+  /* line 58, ../../scss/_form.scss */
+  .sly-form-col-2 .sly-form-col-b {
+    flex: 0 0 50%;
+    flex-direction: column;
+    padding-left: 20px;
+  }
+}
 /* annotations */
-/* line 36, ../../scss/_form.scss */
+/* line 69, ../../scss/_form.scss */
 .sly-form-text-row,
 .sly-form-number-row {
   position: relative;
 }
 
-/* line 40, ../../scss/_form.scss */
+/* line 73, ../../scss/_form.scss */
 .sly-form-annotation {
   position: absolute;
   right: 5px;
@@ -9107,7 +9168,7 @@ fieldset {
 }
 
 /* checkbox radio inputs */
-/* line 57, ../../scss/_form.scss */
+/* line 90, ../../scss/_form.scss */
 .sly-form-radio-row span label, .sly-form-radio-row span input,
 .sly-select-radio-list span label,
 .sly-select-radio-list span input,
@@ -9118,20 +9179,33 @@ fieldset {
   margin: 0;
   display: inline-block;
 }
+/* line 96, ../../scss/_form.scss */
+.sly-form-radio-row + .sly-select-checkbox-list.sly-form-helptext,
+.sly-select-radio-list + .sly-select-checkbox-list.sly-form-helptext,
+.sly-form-checkbox-row + .sly-select-checkbox-list.sly-form-helptext,
+.sly-select-checkbox-list + .sly-select-checkbox-list.sly-form-helptext {
+  font-size: 18px;
+}
 
-/* line 65, ../../scss/_form.scss */
+/* line 103, ../../scss/_form.scss */
+.sly-form-radio-row span,
+.sly-form-checkbox-row span {
+  line-height: 50px;
+}
+
+/* line 109, ../../scss/_form.scss */
 .sly-form-text, .sly-form-read,
 .sly-form-textarea {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-/* line 70, ../../scss/_form.scss */
+/* line 114, ../../scss/_form.scss */
 .sly-form-text:focus, .sly-form-read:focus,
 .sly-form-textarea:focus {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-/* line 74, ../../scss/_form.scss */
+/* line 118, ../../scss/_form.scss */
 .sly-form-text[readonly], [readonly].sly-form-read,
 .sly-form-textarea[readonly] {
   font-style: italic;
@@ -9139,7 +9213,7 @@ fieldset {
   background-color: rgba(238, 238, 238, 0.5);
 }
 
-/* line 81, ../../scss/_form.scss */
+/* line 125, ../../scss/_form.scss */
 .sly-form-read {
   cursor: default;
   white-space: nowrap;
@@ -9149,13 +9223,13 @@ fieldset {
   overflow: hidden;
 }
 
-/* line 92, ../../scss/_form.scss */
+/* line 136, ../../scss/_form.scss */
 .sly-widget.sly-medialist {
   display: block;
   display: flex;
   flex-direction: row;
 }
-/* line 99, ../../scss/_form.scss */
+/* line 143, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-form-select {
   flex: 1;
   flex-direction: column;
@@ -9164,12 +9238,12 @@ fieldset {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-/* line 109, ../../scss/_form.scss */
+/* line 153, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-form-select:focus {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-/* line 114, ../../scss/_form.scss */
+/* line 158, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons {
   display: inline-block;
   border-top: 1px solid gainsboro;
@@ -9178,21 +9252,21 @@ fieldset {
   align-self: stretch;
   flex: 0 0 50px;
 }
-/* line 122, ../../scss/_form.scss */
+/* line 166, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons.move {
   order: 3;
   border-right: 1px solid gainsboro;
 }
-/* line 128, ../../scss/_form.scss */
+/* line 172, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons.move a:last-child {
   border-bottom: none;
 }
-/* line 133, ../../scss/_form.scss */
+/* line 177, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons.edit {
   order: 1;
   border-left: 1px solid gainsboro;
 }
-/* line 140, ../../scss/_form.scss */
+/* line 184, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons a {
   display: block;
   text-align: center;
@@ -9201,28 +9275,28 @@ fieldset {
   width: 50px;
   height: 50px;
 }
-/* line 148, ../../scss/_form.scss */
+/* line 192, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons a:before {
   line-height: 50px;
 }
-/* line 154, ../../scss/_form.scss */
+/* line 198, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons a:hover, .sly-widget.sly-medialist .sly-icons a:focus, .sly-widget.sly-medialist .sly-icons a:active {
   text-decoration: none;
 }
-/* line 174, ../../scss/_form.scss */
+/* line 218, ../../scss/_form.scss */
 .sly-widget.sly-medialist .sly-icons .fct-bottom {
   /* @edge correct in core */
   margin-right: 0 !important;
 }
 
-/* line 204, ../../scss/_form.scss */
+/* line 248, ../../scss/_form.scss */
 .sly-widget.sly-link .sly-icons,
 .sly-widget.sly-media .sly-icons {
   padding: 0;
   background-color: white;
   border-left: none;
 }
-/* line 211, ../../scss/_form.scss */
+/* line 255, ../../scss/_form.scss */
 .sly-widget.sly-link .sly-icons a,
 .sly-widget.sly-media .sly-icons a {
   text-align: center;
@@ -9231,14 +9305,14 @@ fieldset {
   height: 48px;
   font-size: 32px;
 }
-/* line 218, ../../scss/_form.scss */
+/* line 262, ../../scss/_form.scss */
 .sly-widget.sly-link .sly-icons a:before,
 .sly-widget.sly-media .sly-icons a:before {
   position: relative;
   left: 0.5px;
   line-height: 48px;
 }
-/* line 226, ../../scss/_form.scss */
+/* line 270, ../../scss/_form.scss */
 .sly-widget.sly-link .sly-icons a:hover, .sly-widget.sly-link .sly-icons a:focus, .sly-widget.sly-link .sly-icons a:active,
 .sly-widget.sly-media .sly-icons a:hover,
 .sly-widget.sly-media .sly-icons a:focus,
@@ -9246,22 +9320,22 @@ fieldset {
   text-decoration: none;
 }
 
-/* line 248, ../../scss/_form.scss */
+/* line 292, ../../scss/_form.scss */
 .sly-form-select {
   width: 100%;
 }
 
-/* line 252, ../../scss/_form.scss */
+/* line 296, ../../scss/_form.scss */
 .sly-select-checkbox-list {
   display: block;
   margin-bottom: 10px;
 }
-/* line 256, ../../scss/_form.scss */
+/* line 300, ../../scss/_form.scss */
 .sly-select-checkbox-list span {
   display: block;
 }
 
-/* line 261, ../../scss/_form.scss */
+/* line 305, ../../scss/_form.scss */
 legend {
   margin: 0;
   padding: 10px 20px;
@@ -9271,33 +9345,33 @@ legend {
   font-weight: 300;
 }
 
-/* line 270, ../../scss/_form.scss */
+/* line 314, ../../scss/_form.scss */
 label {
   font-weight: normal;
 }
 
-/* line 274, ../../scss/_form.scss */
+/* line 318, ../../scss/_form.scss */
 .sly-form-wrapper {
   padding: 20px;
   background-color: white;
 }
-/* line 278, ../../scss/_form.scss */
+/* line 322, ../../scss/_form.scss */
 .sly-form-wrapper:empty {
   display: none;
 }
 
 /* slice form + elements */
-/* line 285, ../../scss/_form.scss */
+/* line 329, ../../scss/_form.scss */
 .sly-form-add-slice .sly-form-wrapper {
   padding: 0;
   background: none;
 }
-/* line 289, ../../scss/_form.scss */
+/* line 333, ../../scss/_form.scss */
 .sly-form-add-slice .sly-form-wrapper .sly-form-select .select2-choice {
   text-align: center;
 }
 
-/* line 295, ../../scss/_form.scss */
+/* line 339, ../../scss/_form.scss */
 .sly-form-add-slice legend,
 .sly-form-add-slice label {
   position: absolute;
@@ -9305,17 +9379,17 @@ label {
   left: -9999px;
 }
 
-/* line 301, ../../scss/_form.scss */
+/* line 345, ../../scss/_form.scss */
 .sly-form-add-slice .sly-form-select {
   margin-bottom: 0;
 }
 
-/* line 305, ../../scss/_form.scss */
+/* line 349, ../../scss/_form.scss */
 .sly-contentpage-slice-input .sly-form-wrapper {
   padding: 0;
 }
 
-/* line 309, ../../scss/_form.scss */
+/* line 353, ../../scss/_form.scss */
 .sly-form-helptext {
   display: block;
   font-size: 80%;
@@ -9347,31 +9421,31 @@ label {
   background-color: #20b169;
 }
 
-/* line 29, ../../scss/_button.scss */
+/* line 33, ../../scss/_button.scss */
 .btn-group > .sly-button + .dropdown-toggle {
   padding: 0;
   background-color: #24c775;
 }
-/* line 33, ../../scss/_button.scss */
+/* line 37, ../../scss/_button.scss */
 .btn-group > .sly-button + .dropdown-toggle:hover {
   background-color: #20b169;
 }
 
-/* line 38, ../../scss/_button.scss */
+/* line 42, ../../scss/_button.scss */
 .sly-form-buttonbar .sly-button {
   margin-left: 10px;
 }
-/* line 41, ../../scss/_button.scss */
+/* line 45, ../../scss/_button.scss */
 .sly-form-buttonbar .sly-button:first-child {
   margin-left: 0;
 }
 
-/* line 46, ../../scss/_button.scss */
+/* line 50, ../../scss/_button.scss */
 .sly-button-file {
   position: relative;
   overflow: hidden;
 }
-/* line 50, ../../scss/_button.scss */
+/* line 54, ../../scss/_button.scss */
 .sly-button-file input[type=file] {
   position: absolute;
   top: 0;
@@ -9388,7 +9462,7 @@ label {
   filter: alpha(opacity=0);
 }
 
-/* line 67, ../../scss/_button.scss */
+/* line 71, ../../scss/_button.scss */
 .sly-button-file-fileinfo {
   margin-left: 10px;
   vertical-align: middle;
@@ -9424,30 +9498,40 @@ label {
   margin-bottom: 0;
 }
 /* line 26, ../../scss/_table.scss */
+.sly-table caption {
+  margin: 0;
+  padding: 10px 20px;
+  border-bottom: 1px solid gainsboro;
+  color: #3399ff;
+  background-color: white;
+  font-weight: 300;
+  font-size: 27px;
+}
+/* line 36, ../../scss/_table.scss */
 .sly-table caption:empty {
   display: none;
 }
-/* line 30, ../../scss/_table.scss */
+/* line 40, ../../scss/_table.scss */
 .sly-table .sly-col-icon {
   width: 32px;
   padding-right: 0;
   vertical-align: middle;
 }
-/* line 36, ../../scss/_table.scss */
+/* line 46, ../../scss/_table.scss */
 .sly-table .sly-icon .sly-sprite {
   display: block;
   font-size: 32px;
   color: #b3b3b3;
 }
-/* line 41, ../../scss/_table.scss */
+/* line 51, ../../scss/_table.scss */
 .sly-table .sly-icon .sly-sprite:hover {
   text-decoration: none;
 }
-/* line 45, ../../scss/_table.scss */
+/* line 55, ../../scss/_table.scss */
 .sly-table .sly-icon .sly-sprite span {
   display: none;
 }
-/* line 51, ../../scss/_table.scss */
+/* line 61, ../../scss/_table.scss */
 .sly-table .sly-col-func,
 .sly-table .sly-col-status {
   width: 200px;
@@ -9641,53 +9725,20 @@ label {
 }
 
 /* line 208, ../../scss/view/_default.scss */
-.sly-form-col-2 .sly-form-col-a {
-  margin-bottom: 20px;
-}
-
-@media (min-width: 992px) {
-  /* line 213, ../../scss/view/_default.scss */
-  .sly-area-col-2 {
-    display: flex;
-    flex-direction: row;
-    margin-left: -20px;
-    margin-right: -20px;
-  }
-
-  /* line 221, ../../scss/view/_default.scss */
-  .sly-form-col-2 .sly-form-row {
-    display: flex;
-    flex-direction: row;
-  }
-  /* line 226, ../../scss/view/_default.scss */
-  .sly-form-col-2 .sly-form-col-a {
-    flex: 1;
-    flex-direction: column;
-    padding-right: 10px;
-    margin-bottom: 0;
-  }
-  /* line 233, ../../scss/view/_default.scss */
-  .sly-form-col-2 .sly-form-col-b {
-    flex: 0 0 50%;
-    flex-direction: column;
-    padding-left: 10px;
-  }
-}
-/* line 241, ../../scss/view/_default.scss */
 .sly-area {
   flex-direction: column;
   padding: 0 20px;
 }
-/* line 245, ../../scss/view/_default.scss */
+/* line 212, ../../scss/view/_default.scss */
 .sly-area.col-a {
   flex: 1;
 }
-/* line 249, ../../scss/view/_default.scss */
+/* line 216, ../../scss/view/_default.scss */
 .sly-area.col-b {
   flex: 0 0 50%;
 }
 
-/* line 262, ../../scss/view/_default.scss */
+/* line 229, ../../scss/view/_default.scss */
 #sly-pagehead {
   background-color: #e0e6ed;
   position: relative;
@@ -9696,19 +9747,19 @@ label {
   padding: 40px;
   margin-right: -80px;
 }
-/* line 270, ../../scss/view/_default.scss */
+/* line 237, ../../scss/view/_default.scss */
 #sly-pagehead h1 {
   color: #2a2d33;
   line-height: 40px;
   margin-bottom: 0;
 }
-/* line 276, ../../scss/view/_default.scss */
+/* line 243, ../../scss/view/_default.scss */
 #sly-pagehead #sly-navi-page ul {
   margin-top: 20px;
   margin-bottom: 0;
 }
 
-/* line 285, ../../scss/view/_default.scss */
+/* line 252, ../../scss/view/_default.scss */
 .sly-navi-language,
 .sly-navi-path {
   padding-left: 20px;
@@ -9722,24 +9773,24 @@ label {
   -o-border-radius: 0;
   border-radius: 0;
 }
-/* line 296, ../../scss/view/_default.scss */
+/* line 263, ../../scss/view/_default.scss */
 .sly-navi-language > li + li:before,
 .sly-navi-path > li + li:before {
   padding-left: 10px;
 }
-/* line 300, ../../scss/view/_default.scss */
+/* line 267, ../../scss/view/_default.scss */
 .sly-navi-language .sly-active,
 .sly-navi-path .sly-active {
   text-decoration: underline;
 }
 
-/* line 305, ../../scss/view/_default.scss */
+/* line 272, ../../scss/view/_default.scss */
 .sly-navi-language {
   border-bottom: 1px solid gainsboro;
   margin-bottom: 0;
 }
 
-/* line 310, ../../scss/view/_default.scss */
+/* line 277, ../../scss/view/_default.scss */
 #sly-footer {
   background-color: white;
 }
@@ -10104,6 +10155,34 @@ label {
 }
 
 /* table icons*/
+/* environment */
+/* line 32, ../../scss/view/_system.scss */
+#sly-page-system-environment .sly-table .caret {
+  width: auto;
+  height: auto;
+  line-height: 1;
+  cursor: pointer;
+}
+/* line 39, ../../scss/view/_system.scss */
+#sly-page-system-environment .sly-table .collapsing {
+  -webkit-transition-duration: 0.001s;
+  transition-duration: 0.001s;
+}
+/* line 43, ../../scss/view/_system.scss */
+#sly-page-system-environment dl {
+  margin-bottom: 0;
+  margin-left: 250px;
+}
+/* line 47, ../../scss/view/_system.scss */
+#sly-page-system-environment dl dt {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+/* line 51, ../../scss/view/_system.scss */
+#sly-page-system-environment dl dt:first-child {
+  margin-top: 0;
+}
+
 /* line 1, ../../scss/view/_mediapool.scss */
 [id^=sly-page-mediapool] {
   background-color: transparent;
@@ -10332,7 +10411,7 @@ label {
 
 /* line 62, ../../scss/component/_select2.scss */
 .control-group.error [class^="select2-choice"] {
-  border-color: #d9534f;
+  border-color: rgba(243, 50, 47, 0.75);
 }
 
 /* line 66, ../../scss/component/_select2.scss */
