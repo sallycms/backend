@@ -24,6 +24,10 @@
 	&[type=reset] {
 		@extend .btn-primary;
 	}
+
+	&.sly-button-danger {
+		@extend .btn-danger;
+	}
 }
 
 .btn-group > .sly-button + .dropdown-toggle {
