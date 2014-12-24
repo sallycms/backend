@@ -1,0 +1,42 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form = new sly_Form($_router->getUrl(null, 'clearcache'), 'POST', '', '', 'sly-form-system-cache');
+$form->setSubmitButton(new sly_Form_Input_Button('submit', 'sendit', t('submit')));
+$form->setApplyButton();
+$form->setResetButton();
+
+$description = new sly_Form_Freeform('delete_cache', null, null);
+$description->setContent(t('delete_cache_description'));
+
+$form->beginFieldset(t('delete_cache'), 'sly-system-cache');
+$form->add($description);
+
+$caches = array(
+	'sly_core'    => t('sally_core_cache'),
+	'sly_develop' => t('sally_develop_content')
+);
+
+$selected   = array_keys($caches);
+$core       = new sly_Form_Select_Checkbox('caches', '', $selected, $caches);
+$extensions = new sly_Form_Select_Checkbox('caches', '', null, array());
+$extensions = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $extensions);
+
+$form->beginFieldset(t('cache_core'), 'sly-system-cache');
+$form->add($core);
+
+if (count($extensions->getValues()) > 0) {
+	$form->beginFieldset(t('cache_extensions'), 'sly-system-cache');
+	$form->add($extensions);
+}
+
+print $form->render();
