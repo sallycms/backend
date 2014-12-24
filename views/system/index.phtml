@@ -12,14 +12,14 @@ print sly_Helper_Message::renderFlashMessage();
 
 // build form
 
-$form = new sly_Form($_router->getPlainUrl(null, 'update'), 'POST', '', '', 'sly-form-system-setup');
+$form = new sly_Form($_router->getPlainUrl(null, 'update'), 'POST', '', '', 'sly-form-system');
 $form->setSubmitButton(new sly_Form_Input_Button('submit', 'sendit', t('update')));
 $form->setApplyButton();
 $form->setResetButton();
 
 // build form elements
+
 $container = sly_Core::getContainer();
-$config    = $container['sly-config'];
 
 foreach ($types as $key => $name) {
 	$types[$key] = sly_translate($name);
@@ -52,10 +52,6 @@ else {
 	$defaultClang = new sly_Form_Select_DropDown('default_clang', t('default_language'), sly_Core::getDefaultClangId(), $languages);
 }
 
-$buttonBar = new sly_Form_ButtonBar(array(
-	'submit' => new sly_Form_Input_Button('submit', 'sendit', t('update'))
-));
-
 // configure elements
 
 $projectName->setRequired();
@@ -65,76 +61,13 @@ $developerMode->setChecked(sly_Core::isDeveloperMode());
 
 // assemble form
 
-$form->addElements(array($projectName, $startArticle, $notFound, $defaultType, $defaultClang, $developerMode, $backendLocale, $cachingStrategy, $timezoneSelect));
+$form->beginFieldset(t('settings'), 'sly-system', 2);
 
-// caching form
+$form->addRow(array($projectName));
+$form->addRow(array($startArticle, $notFound));
+$form->addRow(array($defaultClang, $defaultType));
+$form->addRow(array($timezoneSelect, $backendLocale));
+$form->addRow(array($cachingStrategy));
+$form->addRow(array($developerMode));
 
-$caches = array(
-	'sly_core'    => t('sally_core_cache'),
-	'sly_develop' => t('sally_develop_content')
-);
-
-$selected = array_keys($caches);
-unset($selected[3]); // do not re-init all addOns by default
-
-$caches = new sly_Form_Select_Checkbox('caches', '', $selected, $caches);
-$caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
-
-?>
-
-<div class="sly-area-col-2">
-	<div class="sly-area col-a">
-		<h2><?php print t('features') ?></h2>
-
-		<div class="sly-area-content">
-			<h4><?php print t('delete_cache') ?></h4>
-			<p><?php print t('delete_cache_description') ?></p>
-
-			<form method="post" action="<?php print $_router->getUrl(null, 'clearcache') ?>">
-				<?php print sly_Util_Csrf::renderInputTag() ?>
-				<div class="btn-group">
-					<button type="submit" class="sly-button"><?php print t('delete_cache') ?></button>
-					<button type="button" class="sly-button dropdown-toggle" id="sly-system-toggle-cache">
-						<span class="caret"></span>
-					</button>
-				</div>
-
-				<div class="sly-form" id="sly-form-system-caches">
-					<p class="sly-form-col-a sly-form-select-row"><?php print $caches->render(); ?></p>
-				</div>
-			</form>
-
-			<?php if ($hasSetupApp): ?>
-			<h4><?php print t('setup') ?></h4>
-			<p><?php print t('setup_text') ?></p>
-			<p class="button"><a class="sly-button sly-postlink sly-confirm-me" href="<?php print $_router->getUrl(null, 'setup') ?>"><?php print t('setup') ?></a></p>
-			<?php endif ?>
-
-			<h4><?php print t('version') ?></h4>
-			<p>SallyCMS <?php print sly_Core::getVersion('R') ?> &ndash; PHP <?php print PHP_VERSION ?></p>
-
-			<h4><?php print t('database_connection') ?></h4>
-			<p><?php
-
-			if (strtolower($database['driver']) === 'sqlite') {
-				print sly_html(sprintf('%s.sq3 (v%s)', $database['name'], $database['version']));
-			}
-			else {
-				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['login'], $database['host'], $database['name'], $database['version']));
-			}
-
-			if (strtolower($database['driver']) !== 'mysql') {
-				printf(' (%s)', strtolower($database['driver']));
-			}
-			?>
-		</div>
-	</div>
-
-	<div class="sly-area col-b">
-		<h2><?php print t('settings') ?></h2>
-
-		<div class="sly-area-content">
-			<?php print $form->render() ?>
-		</div>
-	</div>
-</div>
+print $form->render();
