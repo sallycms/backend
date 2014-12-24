@@ -21,6 +21,7 @@ $input-color: $color-grey-medium !default;
 $input-border: $color-grey-light !default;
 $brand-primary: $color-blue !default;
 $brand-success: $color-green !default;
+$brand-danger: transparentize($color-red, 0.25) !default;
 $icon-font-path: '../vendor/bootstrap-sass-official/assets/fonts/bootstrap/' !default;
 $border-radius-base: 0 !default;
 
