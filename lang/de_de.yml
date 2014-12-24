@@ -194,9 +194,12 @@ startpage: Startseite
 
 plase_enter_a_name: Bitte geben Sie einen Namen an.
 configuration_updated: Systemkonfiguration wurde aktualisiert.
-delete_cache: Cache löschen
-delete_cache_description: 'Mit dieser Funktion können Sie den Zwischenspeicher leeren, in dem häufig benötigte Daten abgelegt werden. Der Cache wird automatisch während der nächsten Aufrufe Ihrer Website neu aufgebaut.'
-delete_cache_message: Der Cache wurde gelöscht.
+cache: Cache
+cache_core: System
+cache_extensions: Erweiterungen
+delete_cache: Cache leeren
+delete_cache_description: 'Mit Hilfe dieser Funktion können Sie den Cache des Systems leeren. Im Cache werden häufig benötigte Daten abgelegt um schneller auf sie zugreifen zu können. Der Cache wird während der nächsten Aufrufe Ihrer Website wieder automatisch neu aufgebaut.'
+delete_cache_message: Der Cache wurde geleert.
 features: Features
 settings: Einstellungen
 invalid_start_article_selected: Es wurde eine ungültige Startseite ausgewählt.
@@ -217,7 +220,7 @@ locale: Locale
 version: Version
 host: Host
 database: Datenbank
-database_connection: Datenbank-Verbindung
+database_connection: Datenbank-Verbindung # @edge deprecated
 caching_strategy: Cache-Strategie
 developer_mode: Entwicklermodus
 project_name: Projektname
@@ -225,6 +228,15 @@ default_articletype: Standard-Artikeltyp
 timezone: Zeitzone
 not_found_article: Artikel bei fehlender Seite
 default_language: Standard-Frontendsprache
+
+# @edge added new translations
+
+environment: Umgebung
+environment_system_component: Komponente
+environment_system_version: Version
+environment_version_system: Sally
+environment_version_php: PHP
+environment_version_database: Datenbank
 
 setup: Setup
 setup_text: Hier können Sie das Setup erneut starten. Dies sollten Sie nur im Notfall machen. Unter normalen Umständen ist es nicht nötig.
@@ -383,9 +395,9 @@ media_categories: Medienkategorien
 move: verschieben
 query_uses_forbidden_storage_engine: 'Die {0}. Query verwendet nicht InnoDB, sondern {1} als Storage Engine. Wenn Sie sich absolut sicher sind, {1} verwenden zu wollen, können Sie in der static.yml den Key allow_non_innodb auf true setzen.'
 no_language_selected: Es wurden keine Sprachen ausgewählt.
-sally_core_cache: 'SallyCMS-Cache (Artikel, Inhalte)'
+sally_core_cache: System (Artikel und Inhalte) #'SallyCMS-Cache (Artikel, Inhalte)'
 sally_assetcache: Asset-Cache
-sally_develop_content: 'Templates & Module synchronisieren'
+sally_develop_content: Entwickler (Templates und Module) #'Templates & Module synchronisieren'
 slice_not_found: 'Block {0} wurde nicht gefunden.'
 applications: Anwendungen
 backend: Backend

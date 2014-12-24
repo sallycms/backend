@@ -193,6 +193,9 @@ startpage: Startpage
 
 plase_enter_a_name: Please enter a name.
 configuration_updated: System configuration has been updated.
+cache: Cache
+cache_core: Core
+cache_extensions: Extensions
 delete_cache: Delete cache
 delete_cache_description: 'With this function you can clear the temporary storage holding frequently used data. The cache will be re automatically rebuilt during the next visits to your website.'
 delete_cache_message: Cache has been cleared.
@@ -224,6 +227,13 @@ default_articletype: Default article type
 timezone: Timezone
 not_found_article: Not found article
 default_language: Default language
+
+environment: Environment
+environment_system_component: Component
+environment_system_version: Version
+environment_version_system: Sally
+environment_version_php: PHP
+environment_version_database: Database
 
 setup: Setup
 setup_text: 'You can initiate the setup process here. This is only for emergency and not required under normal circumstances.'
