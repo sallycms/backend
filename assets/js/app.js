@@ -610,7 +610,7 @@ var sly = sly || {};
 		// something like 'Are you sure you want to delete...?', existing code does
 		// not look weird.
 
-		$('a.sly-confirm-me').click(function() {
+		$('a.sly-confirm-me, input.sly-confirm-me').click(function() {
 			return confirm('Sicher?');
 		});
 
