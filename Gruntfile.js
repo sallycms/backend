@@ -57,19 +57,17 @@ module.exports = function (grunt) {
                 files: ['assets/scss/**/*.scss'],
                 tasks: ['compass:app']
             },
-            // js: {
-            //     files: ['assets/js/**/*.js'],
-            //     tasks: ['scripts:app']
-            // },
+            js: {
+                files: ['assets/js/**/*.js'],
+                tasks: ['jshint:app', 'concat:app', 'uglify:app']
+            },
             webfont: {
                 files: ['assets/font/source/**/*.svg'],
                 tasks: ['webfont:icons']
             },
             livereload: {
                 files: [
-                    'assets/dist/css/*.css',
-                    // 'assets/dist/js/*.js',
-                    'assets/font/source/**/*.svg'
+                    'assets/dist/css/*.css'
                 ],
                 options: {
                     livereload: true
