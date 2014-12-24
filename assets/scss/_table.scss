@@ -23,6 +23,16 @@
 		}
 	}
 
+	caption {
+		margin: 0;
+		padding: $gap-layout-sm $gap-layout-md;
+		border-bottom: 1px solid $color-grey-light;
+		color: $color-blue;
+		background-color: $color-white;
+		font-weight: 300;
+		font-size: ($font-size-base * 1.5);
+	}
+
 	caption:empty {
 		display: none;
 	}
