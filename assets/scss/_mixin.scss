@@ -1,6 +1,0 @@
-@mixin chevron-down ($size: 5px, $color: #ccc) {
-	content: '';
-	border-left: $size solid transparent;
-	border-right: $size solid transparent;
-	border-top: $size * 1.5 solid $color;
-}

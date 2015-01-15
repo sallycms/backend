@@ -24,7 +24,7 @@ module.exports = function (grunt) {
                 cwd: 'assets/vendor/',
                 src: [
                     'select2/*.{gif,png}',
-                    'bootstrap-sass-official/assets/fonts/bootstrap/*.{eot,svg,ttf,woff}'
+                    'bootstrap/fonts/*.{eot,svg,ttf,woff}'
                 ],
                 dest: 'assets/dist/vendor/'
             },
@@ -37,14 +37,33 @@ module.exports = function (grunt) {
         },
 
         /************************************************************************\
-         * compass                                                              *
+         * less                                                                 *
         \************************************************************************/
 
-        compass: {
+        less: {
             app: {
                 options: {
-                    config: 'compass.rb'
+                    paths: ['assets/less']
+                },
+                files: {
+                    'assets/css/app.css': 'assets/less/app.less'
                 }
+            }
+        },
+
+        /************************************************************************\
+         * autoprefixer                                                         *
+        \************************************************************************/
+
+        autoprefixer: {
+            options: {
+                browsers: ['> 1%', 'last 2 versions', 'Android 4.0', 'Firefox ESR', 'Opera 12.1', 'ie 9']
+            },
+            files: {
+                expand: true,
+                flatten: true,
+                src: 'assets/css/**/*.css',
+                dest: 'assets/dist/css/'
             }
         },
 
@@ -53,16 +72,18 @@ module.exports = function (grunt) {
         \************************************************************************/
 
         watch: {
-            scss: {
-                files: ['assets/scss/**/*.scss'],
-                tasks: ['compass:app']
+            less: {
+                files: [
+                    'assets/less/**/*.less'
+                ],
+                tasks: ['less:app']
             },
             js: {
                 files: ['assets/js/**/*.js'],
                 tasks: ['jshint:app', 'concat:app', 'uglify:app']
             },
             webfont: {
-                files: ['assets/font/source/**/*.svg'],
+                files: ['assets/font/svg/**/*.svg'],
                 tasks: ['webfont:icons']
             },
             livereload: {
@@ -109,7 +130,8 @@ module.exports = function (grunt) {
                     'assets/vendor/modernizr/modernizr.js',
                     'assets/vendor/jquery/dist/jquery.js',
                     'assets/vendor/select2/select2.js',
-                    'assets/vendor/bootstrap-sass-official/assets/javascripts/bootstrap.js',
+                    'assets/vendor/bootstrap/js/collapse.js',
+                    'assets/vendor/bootstrap/js/transition.js',
                     'assets/vendor/iCheck/icheck.js',
                     'assets/vendor/nprogress/nprogress.js',
                     'assets/vendor/magnific-popup/dist/jquery.magnific-popup.js'
@@ -178,18 +200,18 @@ module.exports = function (grunt) {
 
         webfont: {
             icons: {
-                src: 'assets/font/source/*.svg',
-                dest: 'assets/scss/icon',
+                src: 'assets/font/svg/*.svg',
+                dest: 'assets/less/font',
                 options: {
                     font: 'sallycms',
                     hashes: false,
                     types: 'woff,ttf',
-                    template: 'assets/font/source/template.css',
+                    template: 'assets/font/template/template.css',
                     templateOptions: {
                         baseClass: 'sallycms-icon',
                         classPrefix: 'sallycms-icon-'
                     },
-                    stylesheet: 'scss',
+                    stylesheet: 'less',
                     htmlDemo: false,
                     embed: 'woff,ttf',
                     engine: 'node'
@@ -201,12 +223,13 @@ module.exports = function (grunt) {
     // load tasks
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-compass');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-autoprefixer');
     grunt.loadNpmTasks('grunt-webfont');
 
     // assets tasks
@@ -220,7 +243,8 @@ module.exports = function (grunt) {
     // styles task
     grunt.registerTask('styles', [
         'clean:styles',
-        'compass:app',
+        'less:app',
+        'autoprefixer',
         'cssmin:vendor',
         'cssmin:app',
         'cssmin:vendor'
