@@ -1,0 +1,72 @@
+.sly-button,
+.sly-form-submit {
+	border: 0;
+	outline: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+
+	&:extend(.btn all);
+	&:extend(.btn-success all);
+
+	&:focus,
+	&:active,
+	&:active:focus {
+		outline: 0;
+		box-shadow: none;
+	}
+
+	&:hover {
+		background-color: darken(@color-green, 10%)
+	}
+
+	&[type=reset] {
+		&:extend(.btn-primary all);
+	}
+
+	&.sly-button-danger {
+		&:extend(.btn-danger all);
+	}
+}
+
+.btn-group > .sly-button + .dropdown-toggle {
+	padding: 0;
+	background-color: darken(@color-green, 5);
+
+	&:hover {
+		background-color: darken(@color-green, 10);
+	}
+}
+
+.sly-form-buttonbar .sly-button {
+	margin-left: @gap-layout-sm;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}
+
+.sly-button-file {
+	position: relative;
+	overflow: hidden;
+
+	input[type=file] {
+		position: absolute;
+		top: 0;
+		right: 0;
+		min-width: 100%;
+		min-height: 100%;
+		font-size: 100px;
+		text-align: right;
+		outline: none;
+		background: white;
+		cursor: inherit;
+		display: block;
+		opacity: 0;
+	}
+}
+
+.sly-button-file-fileinfo {
+	margin-left: @gap-layout-sm;
+	vertical-align: middle;
+}
