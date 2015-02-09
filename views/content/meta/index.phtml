@@ -70,7 +70,7 @@ foreach ($revisions as $revision) {
 			?>
 		</td>
 		<td class="sly-col-user"><?php echo sly_html($username) ?></td>
-		<?php if(!$revision->isStartArticle() && $revision->getRevision !== 0) { ?>
+		<?php if(!$revision->isStartArticle() && $revision->getRevision() !== 0) { ?>
 		<td class="sly-col-func"><a href="<?php echo $deleteUrl ?>" class="sly-delete sly-postlink"><?php echo t('delete_revision') ?></a></td>
 		<?php } ?>
 	</tr>
