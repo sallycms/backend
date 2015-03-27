@@ -46,10 +46,10 @@ else {
 		}
 
 		if ($canEdit && !$article->isStartArticle()) {
-			echo '<a href="'.$_router->getUrl(null, 'deleteArticle', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>';
+			echo '<a href="'.$_router->getUrl(null, 'deleteArticle', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>&nbsp;';
 		}
 		else {
-			echo '<span class="sly-na">'.t('delete').'</span>';
+			echo '<span class="sly-na">'.t('delete').'</span>&nbsp;';
 		}
 		?>
 	</td>

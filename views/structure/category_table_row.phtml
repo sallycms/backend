@@ -22,11 +22,11 @@ $editParams   = array('category_id' => $category->getParentId(), 'clang' => $thi
 		<?php
 		if ($this->canEditCategory($category->getId())) {
 			echo '<a href="'.$_router->getUrl(null, 'editCategory', $editParams).'">'.t('change').'</a>&nbsp;';
-			echo '<a href="'.$_router->getUrl(null, 'deleteCategory', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>';
+			echo '<a href="'.$_router->getUrl(null, 'deleteCategory', $editParams).'" class="sly-delete sly-postlink">'.t('delete').'</a>&nbsp;';
 		}
 		else {
 			echo '<span class="sly-na">'.t('change').'</span>&nbsp;';
-			echo '<span class="sly-na">'.t('delete').'</span>';
+			echo '<span class="sly-na">'.t('delete').'</span>&nbsp;';
 		}
 		?>
 	</td>
