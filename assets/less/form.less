@@ -18,12 +18,14 @@ fieldset {
 	vertical-align: middle;
 }
 
+
 .sly-form label.sly-inline,
 .sly-area-content.sly-form label,
 .sly-form .sly-select-group label {
 	width: auto;
 }
 
+.sly-form-select-row label,
 .sly-form-textarea-row label {
 	vertical-align: top;	
 }
@@ -410,4 +412,16 @@ label {
 	font-size: 80%;
 	color: @color-grey-medium-extra;
 	padding-top: @gap-layout-sm;
+}
+
+#severity {
+	display: inline-block;
+
+	span {
+		display: block;
+	}
+}
+
+.iradio {
+	.sly-iradio;
 }
