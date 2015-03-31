@@ -115,9 +115,9 @@ fieldset {
 }
 
 .sly-form-annotation {
-	position: absolute;
+	/*position: absolute;
 	right: @gap-layout-xs;
-	top: 4px;
+	top: 4px;*/
 	font-size: 80%;
 	color: @color-grey-medium-extra;
 	background-color: @color-white;
@@ -412,6 +412,23 @@ label {
 	font-size: 80%;
 	color: @color-grey-medium-extra;
 	padding-top: @gap-layout-sm;
+	line-height: normal;
+}
+
+.sly-form-checkbox-row .sly-form-helptext {
+	line-height: normal;
+}
+
+.sly-form-text-row .sly-form-helptext {
+	display: inline-block;
+	width: ~"calc(100% - 500px)";
+	min-height: 50px;
+	vertical-align: top;
+	font-size: 80%;
+	color: @color-grey-medium-extra;
+	padding-top: 0px;
+	margin-left: 10px;
+
 }
 
 #severity {
