@@ -682,7 +682,7 @@ var sly = sly || {};
 					}
 				}
 
-				$('.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function() {
+				$('select.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function() {
 					var select = $(this);
 					if (select.data('placeholder') === undefined) {
 						select.data('placeholder', 'Bitte auswählen');
