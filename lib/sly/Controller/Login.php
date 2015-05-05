@@ -67,9 +67,8 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 			$msg = t('login_error', '<strong>'.$container->getConfig()->get('relogindelay').'</strong>');
 
 			$container->getFlashMessage()->appendWarning($msg);
-			$container->getResponse()->setStatusCode(403);
 
-			$this->indexAction();
+			return $this->redirectResponse(array(), 'login', 'index', 302);
 		}
 		else {
 			// notify system

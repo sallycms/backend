@@ -12,9 +12,20 @@ class sly_App_Backend extends sly_App_Base {
 	protected $request    = null;
 	protected $router     = null;
 	protected $dispatcher = null;
+	protected $isBackend;
+
+	public function __construct(sly_Container $container = null) {
+		parent::__construct($container);
+
+		$this->setIsBackend(true);
+	}
 
 	public function isBackend() {
-		return true;
+		return $this->isBackend;
+	}
+
+	public function setIsBackend($isBackend) {
+		$this->isBackend = (bool) $isBackend;
 	}
 
 	/**
