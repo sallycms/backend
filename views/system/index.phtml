@@ -118,7 +118,7 @@ $caches = sly_Core::dispatcher()->filter('SLY_SYSTEM_CACHES', $caches);
 				print sly_html(sprintf('%s.sq3 (v%s)', $database['name'], $database['version']));
 			}
 			else {
-				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['login'], $database['host'], $database['name'], $database['version']));
+				print sly_html(sprintf('%s @ %s/%s (v%s)', $database['user'], $database['host'], $database['dbname'], $database['version']));
 			}
 
 			if (strtolower($database['driver']) !== 'mysql') {
