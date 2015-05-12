@@ -56,14 +56,14 @@ $system->openBuffer();
 				<dd><?php print $database['driver'] ?></dd>
 				<?php if (strtolower($database['driver']) === 'sqlite'): ?>
 				<dt>Name</dt>
-				<dd><?php print $database['name'] ?></dd>
+				<dd><?php print $database['dbname'] ?></dd>
 				<?php else: ?>
 				<dt>Host</dt>
 				<dd><?php print $database['host'] ?></dd>
 				<dt>Name</dt>
-				<dd><?php print $database['name'] ?></dd>
+				<dd><?php print $database['dbname'] ?></dd>
 				<dt>Login</dt>
-				<dd><?php print $database['login'] ?></dd>
+				<dd><?php print $database['user'] ?></dd>
 				<?php endif ?>
 			</dl>
 		</td>
