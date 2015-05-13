@@ -24,7 +24,8 @@ module.exports = function (grunt) {
                 cwd: 'assets/vendor/',
                 src: [
                     'select2/*.{gif,png}',
-                    'bootstrap/fonts/*.{eot,svg,ttf,woff}'
+                    'bootstrap/fonts/*',
+					'roboto-fontface/fonts/*'
                 ],
                 dest: 'assets/dist/vendor/'
             },
@@ -43,10 +44,14 @@ module.exports = function (grunt) {
         less: {
             app: {
                 options: {
+					banner: '/*! <%= pkg.name %> app | version <%= pkg.version %> | <%= grunt.template.today("dd-mm-yyyy") %> */',
+					compress: true,
+                    cleancss: true,
+					ieCompat: true,
                     paths: ['assets/less']
                 },
                 files: {
-                    'assets/css/app.css': 'assets/less/app.less'
+                    'assets/dist/css/app.min.css': 'assets/less/app.less'
                 }
             }
         },
@@ -80,7 +85,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['assets/js/**/*.js'],
-                tasks: ['jshint:app', 'concat:app', 'uglify:app']
+                tasks: ['jshint:app', 'uglify:app']
             },
             webfont: {
                 files: ['assets/font/svg/**/*.svg'],
@@ -109,38 +114,6 @@ module.exports = function (grunt) {
         },
 
         /************************************************************************\
-         * concat                                                               *
-        \************************************************************************/
-
-        concat: {
-            app: {
-                options: {
-                    separator: ';',
-                },
-                src: [
-                    'assets/js/app.js'
-                ],
-                dest: 'assets/dist/js/app.js'
-            },
-            vendor: {
-                options: {
-                    separator: ';',
-                },
-                src: [
-                    'assets/vendor/modernizr/modernizr.js',
-                    'assets/vendor/jquery/dist/jquery.js',
-                    'assets/vendor/select2/select2.js',
-                    'assets/vendor/bootstrap/js/collapse.js',
-                    'assets/vendor/bootstrap/js/transition.js',
-                    'assets/vendor/iCheck/icheck.js',
-                    'assets/vendor/nprogress/nprogress.js',
-                    'assets/vendor/magnific-popup/dist/jquery.magnific-popup.js'
-                ],
-                dest: 'assets/dist/js/vendor.js'
-            }
-        },
-
-        /************************************************************************\
          * uglify                                                               *
         \************************************************************************/
 
@@ -150,7 +123,7 @@ module.exports = function (grunt) {
                     banner: '/*! <%= pkg.name %> app | version <%= pkg.version %> | <%= grunt.template.today("dd-mm-yyyy") %> */\n'
                 },
                 files: {
-                    'assets/dist/js/app.min.js': ['assets/dist/js/app.js']
+                    'assets/dist/js/app.min.js': ['assets/js/app.js']
                 }
             },
             vendor: {
@@ -158,7 +131,16 @@ module.exports = function (grunt) {
                     banner: '/*! <%= pkg.name %> app | version <%= pkg.version %> | <%= grunt.template.today("dd-mm-yyyy") %> */\n'
                 },
                 files: {
-                    'assets/dist/js/vendor.min.js': ['assets/dist/js/vendor.js']
+                    'assets/dist/js/vendor.min.js': [
+                        'assets/vendor/modernizr/modernizr.js',
+                        'assets/vendor/jquery/dist/jquery.js',
+                        'assets/vendor/select2/select2.js',
+                        'assets/vendor/bootstrap/js/collapse.js',
+                        'assets/vendor/bootstrap/js/transition.js',
+                        'assets/vendor/iCheck/icheck.js',
+                        'assets/vendor/nprogress/nprogress.js',
+                        'assets/vendor/magnific-popup/dist/jquery.magnific-popup.js'
+                    ]
                 }
             }
         },
@@ -168,16 +150,6 @@ module.exports = function (grunt) {
         \************************************************************************/
 
         cssmin: {
-            app: {
-                options: {
-                    banner: '/*! <%= pkg.name %> app | version <%= pkg.version %> | <%= grunt.template.today("dd-mm-yyyy") %> */',
-                    keepSpecialComments: 0,
-                    processImport: false
-                },
-                files: {
-                    'assets/dist/css/app.min.css': ['assets/dist/css/app.css']
-                }
-            },
             vendor: {
                 options: {
                     keepSpecialComments: '*',
@@ -246,7 +218,6 @@ module.exports = function (grunt) {
         'less:app',
         'autoprefixer',
         'cssmin:vendor',
-        'cssmin:app',
         'cssmin:vendor'
     ]);
 
@@ -254,8 +225,6 @@ module.exports = function (grunt) {
     grunt.registerTask('scripts', [
         'clean:scripts',
         'jshint:app',
-        'concat:app',
-        'concat:vendor',
         'uglify:app',
         'uglify:vendor'
     ]);

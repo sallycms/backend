@@ -8,10 +8,10 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$category = $this->category ? $this->category : null;
-$articles = $category ? $category->getArticles() : sly_Util_Article::getRootArticles();
-$catID    = $category ? $category->getId() : 0;
-$cats     = count(sly_Util_Category::findByParentId(0));
+$category   = $this->category ? $this->category : null;
+$articles   = $category ? $category->getArticles() : sly_Util_Article::getRootArticles();
+$catID      = $category ? $category->getId() : 0;
+$categories = count(sly_Util_Category::findByParentId(0));
 
 foreach ($articles as $idx => $article) {
 	if (!empty($this->types) && !in_array($article->getType(), $this->types)) {
@@ -24,56 +24,57 @@ print $this->path;
 
 ?>
 <div id="sly-linkmap">
-	<div class="sly-area-col-2">
-		<?php
-		if ($cats === 0) {
-			print '<div class="col-a" style="float:left">';
-			print sly_Helper_Message::info(t('no_categories_available'));
-			print '</div>';
+	<div class="sly-area col-a">
+	<?php
+	if ($categories === 0) {
+		print sly_Helper_Message::info(t('no_categories_available'));
 		}
 		else {
 			?>
-			<div class="sly-area col-a">
-				<h2><?php echo t('categories') ?></h2>
-				<div class="sly-area-content">
+				<h2 class="sly-area-head"><?php echo t('categories') ?></h2>
+				<div class="sly-area-content category-tree">
 				<?php
-				print $this->tree($this->roots);
+					print $this->tree($this->roots);
 				?>
 				</div>
-			</div>
 			<?php
 		}
 
+	?>
+	</div>
+	<div class="sly-area col-b">
+		<?php
 		if (empty($articles)) {
-			print '<div class="col-b">';
 			print sly_Helper_Message::info(t('no_articles_available'));
-			print '</div>';
 		}
 		else {
-			?>
-			<div class="sly-area col-b">
-				<h2><?php echo t('articles') ?></h2>
-				<div class="sly-area-content articlelist">
-					<ul>
-						<?php
-						foreach ($articles as $article) {
-							$label    = $this->formatLabel($article);
-							$selected = $article->getId() == $catID;
-							$class    = $article->isOnline() ? 'sly-online' : 'sly-offline';
+		?>
+			<h2 class="sly-area-head"><?php echo t('articles') ?></h2>
+			<div class="sly-area-content article-list">
+				<ul>
+					<?php
+					foreach ($articles as $article) {
+						$label    = $this->formatLabel($article);
+						$selected = $article->getId() == $catID;
+						$class    = $article->isOnline() ? 'sly-online' : 'sly-offline';
 
-							if ($selected) {
-								$class .= ' startarticle';
-							}
-
-							$linkAttr = 'class="'.$class.'" data-id="'.$article->getId().'" data-name="'.sly_html($article->getName()).'"';
-
-							print '<li><a href="#" '.$linkAttr.'>'.sly_html($label).'</a></li>';
+						if ($selected) {
+							$class .= ' startarticle';
 						}
-						?>
-					</ul>
-				</div>
+
+						$attributes = array(
+											'href'      => '#',
+											'class'     => $class,
+											'data-id'   => $article->getId(),
+											'data-name' => $article->getName()
+										);
+						$link = sly_Util_HTML::buildNode('a', sly_html($label), $attributes);
+							print sly_Util_HTML::buildNode('li', $link);
+					}
+					?>
+				</ul>
 			</div>
-			<?php
+		<?php
 		}
 		?>
 	</div>

@@ -15,7 +15,7 @@ if ($callback) {
 	ob_start();
 	?>
 jQuery(function($) {
-	$('.articlelist').delegate('a', 'click', function() {
+	$('.article-list').delegate('a', 'click', function() {
 		var self     = $(this);
 		var id       = self.data('id');
 		var name     = self.data('name');
