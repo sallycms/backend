@@ -1,5 +1,5 @@
 {
-    "name": "sallycms-edge",
+    "name": "sallycms-backend",
     "version": "0.10.0",
     "devDependencies": {
         "grunt": "~0.4",

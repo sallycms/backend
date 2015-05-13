@@ -25,20 +25,11 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 		$favicon = $config->get('backend/favicon');
 		$project = $config->get('projectname');
 
-		// @edge new assets structure managed with bower and grunt
-
-		// $this->addJavaScriptFile(Util::appUri('js/json2.min.js'));
-		// $this->addJavaScriptFile(Util::appUri('js/jquery.select2.min.js'));
-		// $this->addJavaScriptFile(Util::appUri('js/jquery.tools.min.js'));
-
-		// $this->addJavaScriptFile(Util::appUri('js/jquery.datetime.min.js'));
-		// $this->addJavaScriptFile(Util::appUri('js/locales/'.$locale.'.min.js'));
-
 		$this->addCSSFile(Util::appUri('dist/css/vendor.min.css'));
-		$this->addCSSFile(Util::appUri('dist/css/app.css'));
+		$this->addCSSFile(Util::appUri('dist/css/app.min.css'));
 
 		$this->addJavaScriptFile(Util::appUri('dist/js/vendor.min.js'));
-		$this->addJavaScriptFile(Util::appUri('dist/js/app.js'));
+		$this->addJavaScriptFile(Util::appUri('dist/js/app.min.js'));
 
 		if ($project) {
 			$this->setTitle($project.' - ');
