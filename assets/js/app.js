@@ -663,7 +663,7 @@ var sly = sly || {};
 
 		// @edge fix for icheck
 
-		$('.sly-form .sly-select-checkbox-list a').on('click', function() {
+		$('.sly-form .sly-select-checkbox-list a[rel]').on('click', function() {			
 			var rel   = $(this).attr('rel');
 			var boxes = $(this).closest('div').find('input');
 			// boxes.prop('checked', rel === 'all');
