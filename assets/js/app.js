@@ -1044,41 +1044,6 @@ var sly = sly || {};
 		});
 
 		////////////////////////////////////////////////////
-		// fix annotations (should be done in the core)
-
-		// findTextNodes
-		// @author: http://stackoverflow.com/a/4399718
-
-		function findTextNodes(node) {
-			var nodes = [], pattern = /\S/;
-
-			function getTextNode(node) {
-				if (node.nodeType === 3 && pattern.test(node.nodeValue)) {
-					nodes.push(node);
-				}
-				else {
-					for (var i = 0, len = node.childNodes.length; i < len; ++i) {
-						getTextNode(node.childNodes[i]);
-					}
-				}
-			}
-
-			getTextNode(node);
-
-			return nodes;
-		}
-
-		$.map($('.sly-form-text-row, .sly-form-number-row'), function (row) {
-			var textNodes = findTextNodes(row);
-
-			if (textNodes.length > 1) {
-				var textNode = textNodes[1];
-				textNode.nodeValue = '(' + $.trim(textNode.nodeValue) + ')';
-				$(textNode).wrap('<span class="sly-form-annotation"/>');
-			}
-		});
-
-		////////////////////////////////////////////////////
 		// fix file inputs (should be done in the core)
 
 		// formatFileSize
