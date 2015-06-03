@@ -1,0 +1,78 @@
+.sly-table {
+	background-color: @color-white;
+	margin-bottom: @gap-layout-md;
+
+	&:extend(.table all);
+
+	> thead > tr > th {
+		font-weight: normal;
+		padding: @gap-layout-md;
+		border-width: 1px;
+	}
+
+	> tbody > tr > td,
+	> tbody > tr > th,
+	> tfoot > tr > td,
+	> tfoot > tr > th  {
+		padding: @gap-layout-md - @gap-layout-xs @gap-layout-md;
+		vertical-align: middle;
+
+		.sly-form-text {
+			margin-bottom: 0;
+		}
+		
+		&.sly-icon {
+			width: 56px;
+		}
+	}
+
+	caption {
+		margin: 0;
+		padding: @gap-layout-sm @gap-layout-md;
+		border-bottom: 1px solid @color-grey-light;
+		color: @color-blue;
+		background-color: @color-white;
+		font-weight: 300;
+		font-size: (@font-size-base * 1.5);
+	}
+
+	caption:empty {
+		display: none;
+	}
+
+	.sly-col-icon {
+		width: 32px;
+		padding-right: 0;
+		vertical-align: middle;
+	}
+
+	.sly-icon .sly-sprite {
+		display: block;
+		font-size: 32px;
+		color: @color-grey-medium-extra;
+
+		&:hover {
+			text-decoration: none;
+		}
+
+		span {
+			display: none;
+		}
+	}		
+
+	.sly-col-func,
+	.sly-col-status {
+		width: 225px;
+	}
+}
+
+#environment_system {
+	dt {
+		display: inline-block;
+		width: 250px;
+	}
+	dd {
+		display: inline-block;
+		width: ~"calc(100% - 255px)";
+	}
+}

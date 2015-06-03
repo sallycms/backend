@@ -1,0 +1,81 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$category   = $this->category ? $this->category : null;
+$articles   = $category ? $category->getArticles() : sly_Util_Article::getRootArticles();
+$catID      = $category ? $category->getId() : 0;
+$categories = count(sly_Util_Category::findByParentId(0));
+
+foreach ($articles as $idx => $article) {
+	if (!empty($this->types) && !in_array($article->getType(), $this->types)) {
+		unset($articles[$idx]);
+	}
+}
+
+ // @edge navi path see controller
+print $this->path;
+
+?>
+<div id="sly-linkmap">
+	<div class="sly-area col-a">
+	<?php
+	if ($categories === 0) {
+		print sly_Helper_Message::info(t('no_categories_available'));
+		}
+		else {
+			?>
+				<h2 class="sly-area-head"><?php echo t('categories') ?></h2>
+				<div class="sly-area-content category-tree">
+				<?php
+					print $this->tree($this->roots);
+				?>
+				</div>
+			<?php
+		}
+
+	?>
+	</div>
+	<div class="sly-area col-b">
+		<?php
+		if (empty($articles)) {
+			print sly_Helper_Message::info(t('no_articles_available'));
+		}
+		else {
+		?>
+			<h2 class="sly-area-head"><?php echo t('articles') ?></h2>
+			<div class="sly-area-content article-list">
+				<ul>
+					<?php
+					foreach ($articles as $article) {
+						$label    = $this->formatLabel($article);
+						$selected = $article->getId() == $catID;
+						$class    = $article->isOnline() ? 'sly-online' : 'sly-offline';
+
+						if ($selected) {
+							$class .= ' startarticle';
+						}
+
+						$attributes = array(
+											'href'      => '#',
+											'class'     => $class,
+											'data-id'   => $article->getId(),
+											'data-name' => $article->getName()
+										);
+						$link = sly_Util_HTML::buildNode('a', sly_html($label), $attributes);
+							print sly_Util_HTML::buildNode('li', $link);
+					}
+					?>
+				</ul>
+			</div>
+		<?php
+		}
+		?>
+	</div>
+</div>

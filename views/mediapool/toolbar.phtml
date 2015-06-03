@@ -1,0 +1,47 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+////////////////////////////////////////////////////////
+// header
+
+print $dispatcher->filter('PAGE_MEDIAPOOL_HEADER', '', array('category_id' => $selected));
+
+////////////////////////////////////////////////////////
+// category selection form
+
+// @edge rewritten view logic
+
+$form = new sly_Form($_router->getPlainUrl(null), 'GET', t('select_category'), '', 'sly-form-mediapool-selectcategory');
+$form->setCsrfEnabled(false);
+$form->setResetButton(null);
+$form->setSubmitButton(null);
+$this->appendParamsToForm($form);
+
+$select = $this->getCategorySelect();
+$values = $select->getValues();
+
+$order = $this->getFileOrderSelect();
+$order->setAttribute('onchange', 'this.form.submit()');
+
+if (count($values) > 1) {
+	$select->setAttribute('onchange', 'this.form.submit()');
+
+	$form->beginFieldset(t('select_category'), 'sly-user-main-fieldset', 2);
+	$form->addRow(array($select, $order));
+}
+else {
+	$form->add($order);
+}
+
+if ($dispatcher->hasListeners('SLY_MEDIA_LIST_TOOLBAR')) {
+	$form = $dispatcher->filter('SLY_MEDIA_LIST_TOOLBAR', $form, array('category_id' => $selected));
+}
+
+print $form->render();

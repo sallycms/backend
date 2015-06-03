@@ -1,0 +1,72 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$languages = array_values(sly_Util_Language::findAll());
+$user      = sly_Util_User::getCurrentUser();
+
+if (!isset($controller)) {
+	$controller = null;
+}
+
+if (!isset($action)) {
+	$action = null;
+}
+
+if (!isset($curClang) || !sly_Util_Language::exists($curClang)) {
+	$curClang = sly_Core::getCurrentClang();
+}
+
+if (!isset($params)) {
+	$params = array();
+}
+
+if (count($languages) > 1) {
+	$forbidden = null;
+	$links     = array();
+
+	foreach ($languages as $i => $language) {
+		$clangID = $language->getId();
+		$class   = 'sly-navi-language-'.$clangID.($i === 0 ? ' sly-first' : '');
+		$name    = sly_translate($language->getName());
+		$active  = $clangID === $curClang;
+
+		if (!sly_Util_Language::hasPermissionOnLanguage($user, $clangID)) {
+			$content   = '<span class="sly-na">'.sly_html($name).'</span>';
+			$forbidden = $active ? $name : null;
+		}
+		else {
+			$params['clang'] = $clangID;
+
+			$aclass  = $active ? ' class="sly-active"' : '';
+			$content = '<a'.$aclass.' href="'.$_router->getUrl($controller, $action, $params).'">'.sly_html($name).'</a>';
+		}
+
+		$links[] = '<li class="'.$class.'">'.$content.'</li>';
+	}
+
+	?>
+	<!--
+	@edge remove unnecessary markup
+	<div class="sly-clang-toolbar sly-toolbar">
+		<div class="sly-toolbar-content">
+	-->
+			<ul class="sly-navi-language">
+				<li><?php print t('languages') ?></li><?php print implode('', $links) ?>
+			</ul>
+	<!--
+		</div>
+	</div>
+	-->
+	<?php
+
+	if ($forbidden !== null) {
+		throw new sly_Authorisation_Exception(t('you_have_no_access_to_this_language', $forbidden));
+	}
+}
