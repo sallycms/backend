@@ -27,8 +27,6 @@ foreach ($groups as $group) {
 
 	print '<ul id="sly-navi-'.$topic.'">';
 
-	$first   = true;
-
 	// Sort the addon group automatically, since we can't load the addOns in
 	// a translated sorted way.
 
@@ -40,66 +38,64 @@ foreach ($groups as $group) {
 	foreach ($pages as $page) {
 		if ($page->isHidden()) continue;
 
-		$liclass  = 'sly-navigation-level-1';
-		$liclass .= $page->isActive() ? ' sly-active' : ($page->getSubpages() ? ' collapsed' : '');
-		$liclass .= $page->isPopup()  ? ' popup'      : '';
-		$li       = array(
-			'class' => $liclass,
+		$p        = $page->getName();
+		$subpages = $page->getSubpages();
+
+		$li = array(
+			'class' => $page->isActive() ? ' sly-active' : ($page->getSubpages() ? ' collapsed' : ''),
 			'id'    => 'sly-navi-page-'.$page->getPageParam()
 		);
 
-		$a = array('href' => $_router->getPlainUrl($page->getPageParam()));
-
-		if ($first) {
-			$li['class'] .= ' sly-first';
+		if ($page->isPopup()) {
+			$li['class'] = 'popup';
 		}
 
-		$a['class'] = $li['class'];
+		if (!empty($subpages)) {
+			$li['data-toggle'] = 'collapse';
+			$li['data-target'] = '#sly-navi-page-'.$page->getPageParam().'-collapse';
+		}
 
-		$p        = $page->getName();
-		$subpages = $page->getSubpages();
+		$a = array(
+			'class' => $li['class'],
+			'href'  => $_router->getPlainUrl($page->getPageParam())
+		);
+		
 		$liAttr   = sly_Util_HTML::buildAttributeString($li);
 		$aAttr    = sly_Util_HTML::buildAttributeString($a);
-
 
 		// @edge / TODO
 		//
 		// fix subpages to work on mobile devices
 
 		if (!empty($subpages)) {
-			print '<li '.$liAttr.'><a '.$aAttr.' data-toggle="collapse" data-target="#sly-navi-page-'.$page->getPageParam().'-collapse" onclick="return false;"><span class="sly-page-title">'.$page->getTitle().'</span></a>';
+			print '<li '.$liAttr.'><a '.$aAttr.'></a><i class="sly-navigation-icon"></i><span class="sly-page-title">'.$page->getTitle().'</span><i class="sly-navigation-icon-collapse"></i>';
 		}
 		else {
-			print '<li '.$liAttr.'><a '.$aAttr.'><span class="sly-page-title">'.$page->getTitle().'</span></a>';
+			print '<li '.$liAttr.'><a '.$aAttr.'><i class="sly-navigation-icon"></i><span class="sly-page-title">'.$page->getTitle().'</span></a>';
 		}
 
 		// ***** Subnavi
 		if (!empty($subpages)) {
 			print '<ul id="sly-navi-page-'.$page->getPageParam().'-collapse" class="collapse'.($page->isActive() ? ' in' : '').'">';
-			$first = true;
 
 			foreach ($subpages as $sp) {
 				$param = $sp->getPageParam();
-				$class = 'sly-navigation-level-2';
+				$class = '';
 				$id    = 'sly-navi-'.$p.'-subpage-'.$param;
 				$href  = $_router->getPlainUrl($param, '', $sp->getExtraParams());
 
-				if ($first)          $class .= ' sly-first';
-				if ($sp->isActive()) $class .= ' sly-active';
+				if ($sp->isActive()) $class = 'sly-active';
 
 				$liAttr = sly_Util_HTML::buildAttributeString(array('class' => $class, 'id' => $id));
 				$aAttr  = sly_Util_HTML::buildAttributeString(array('class' => $class, 'href' => $href));
 
 				print '<li '.$liAttr.'><a '.$aAttr.'>'.$sp->getTitle().'</a></li>';
-				$first = false;
 			}
 
 			print '</ul>';
 		}
 
 		print '</li>';
-
-		$first = false;
 	}
 
 	print '</ul>';
