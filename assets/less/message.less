@@ -1,0 +1,24 @@
+.sly-message {
+	border: 0;
+	margin-bottom: @gap-layout-md;
+	font-weight: 500;
+
+	&:extend(.alert all);
+
+	a {
+		color: @color-white;
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+
+.sly-info {
+	&:extend(.alert-success all);
+}
+
+.sly-warn {
+	&:extend(.alert-danger all);
+}

@@ -1,0 +1,28 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form = new sly_Form($_router->getUrl(null, 'setup'), 'POST', '', '', 'sly-form-system-setup');
+$form->setApplyButton();
+$form->setResetButton();
+
+$text = new sly_Form_Freeform('setup', null, null);
+$text->setContent(t('setup_text'));
+
+$form->beginFieldset(t('setup'), 'sly-system-setup');
+$form->add($text);
+
+$submit = new sly_Form_Input_Button('submit', 'sendit', t('submit'));
+$submit->addClass('sly-confirm-me sly-button-danger');
+$form->setSubmitButton($submit);
+
+print $form->render();
+

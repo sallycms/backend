@@ -1,0 +1,47 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form         = new sly_Form($_router->getPlainUrl(null, 'update'), 'POST', '');
+$login        = new sly_Form_Text(t('username'), $user->getLogin());
+$password     = new sly_Form_Input_Text('password', t('new_password'), '');
+$username     = new sly_Form_Input_Text('username', t('name'), $user->getName());
+$userdesc     = new sly_Form_Input_Text('description', t('description'), $user->getDescription());
+$localeSelect = new sly_Form_Select_DropDown('locale', t('backend_locale'), $user->getBackendLocale(), $this->getBackendLocales());
+
+$startPage  = $user->getStartPage();
+$timezone   = $user->getTimeZone();
+$timezone   = $timezone ? $timezone : array();
+$tzSelect   = sly_Backend_Form_Helper::getTimezoneSelect('timezone', $timezone);
+$homeSelect = new sly_Form_Select_DropDown('startpage', t('startpage'), $startPage, $this->getPossibleStartpages());
+$zones      = $tzSelect->getValues();
+$zones      = array_merge(array('' => t('use_default_locale')), $zones);
+
+$tzSelect->setValues($zones);
+
+$localeSelect->setMultiple(false);
+
+$form->beginFieldset(t('my_profile'), '', 2);
+$form->addRow(array($login, $password));
+$form->addRow(array($username, $userdesc));
+$form->addRow(array($homeSelect, $localeSelect));
+$form->addRow(array($tzSelect));
+
+$form->getSubmitButton()->setAttribute('value', t('save'));
+$form->setResetButton(null);
+$form->setFocus('username');
+
+$eventparams = array('user' => $user);
+$form = sly_Core::dispatcher()->filter('SLY_PROFILE_FORM', $form, $eventparams);
+
+if ($form instanceof sly_Viewable) {
+	print $form->render();
+}

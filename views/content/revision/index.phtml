@@ -1,0 +1,72 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form = new sly_Form($_router->getPlainUrl(null, 'comparerevision'), 'POST', t('general'));
+$form->addHiddenValue('article_id', $article->getId());
+$form->addHiddenValue('clang', $article->getClang());
+
+$button = new sly_Form_Input_Button('submit', 'compare_revision', t('compare_revision'));
+$button->addClass('sly-form-submit');
+$form->setSubmitButton($button);
+$form->setResetButton(null);
+
+/////////////////////////////////////////////////////////////////
+// revision
+
+$form->beginFieldset(t('contentmeta_revisions'), 'sly-article-revisions');
+
+$table = new sly_Table('sly-article-revisions-table');
+$table->addColumn(sly_Table_Column::factory('<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="revisions[]" />', 'sly-icon sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory(t('abbreviation_revision'), 'sly-col-rev'));
+$table->addColumn(sly_Table_Column::factory(t('articletype'), 'sly-col-art-type'));
+$table->addColumn(sly_Table_Column::factory(t('create_time'), 'sly-col-created'));
+$table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
+$table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
+
+$table->setPagerParam('revisions');
+$table->openBuffer();
+
+foreach ($revisions as $revision) {
+	$id         = $revision->getId();
+	$clang      = $revision->getClang();
+	$rev        = $revision->getRevision();
+	$revType    = $revision->getType();
+	$online     = $revision->isOnline();
+	$current    = $rev === $article->getRevision();
+	$compareUrl = $_router->getUrl('contentrevision', 'comparerevision', array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+	$selectUrl  = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+	$deleteUrl  = $_router->getUrl('contentrevision', 'deleterevision', array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
+	$user       = $userService->findByLogin($revision->getCreateUser());
+	$username   = $user ? ($user->getName() ?: $user->getLogin()) : $revision->getCreateUser();
+
+	?>
+	<tr data-slyid="<?php echo $id ?>" data-slyclang="<?php echo $clang ?>" data-slyrevision="<?php echo $rev ?>" data-slyonline="<?php echo $online ? '1' : '0' ?>">
+		<td class="sly-col-icon sly-icon"><input class="sly-form-checkbox" type="checkbox" name="revisions[]" value="<?php print $rev ?>" /></td>
+		<td class="sly-col-rev"><?php echo sly_Util_String::formatNumber($rev, 0) ?></td>
+		<td class="sly-col-art-type"><?php echo $revType ?></td>
+		<td class="sly-col-created <?php echo $online ? 'sly-online' : 'sly-offline' ?>">
+			<?php echo sly_Util_HTML::getDatetimeTag($revision->getUpdateDate()) ?>
+		</td>
+		<td class="sly-col-user"><?php echo sly_html($username) ?></td>
+		<td class="sly-col-func">
+			<a href="<?php echo $selectUrl ?>" class="sly-postlink"><?php echo t('select_revision') ?></a>
+			<a href="<?php echo $deleteUrl ?>" class="sly-delete sly-postlink"><?php echo t('delete_revision') ?></a>
+		</td>
+	</tr>
+	<?php
+}
+
+$table->closeBuffer();
+$revTable = new sly_Form_Fragment($table->render($total));
+$form->addElement($revTable);
+
+print $form->render();

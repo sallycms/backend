@@ -1,0 +1,50 @@
+.sly-icheckbox,
+.sly-iradio {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: @gap-layout-xs;
+	width: @line-height-computed - 6;
+	height: @line-height-computed - 6;
+	font-size: 32px;
+	border: none;
+	cursor: pointer;
+	overflow: hidden;
+	border: 1px solid @color-grey-light;
+	position: relative;
+	top: -1px;
+
+	&:before {
+		position: relative;
+		top: -5px;
+		left: -5px;
+		line-height: @line-height-computed - 6;
+	}
+
+	&.hover {
+		border-color: @color-green;
+	}
+
+	&.disabled {
+		cursor: not-allowed;
+		background-color: fade(@input-bg-disabled, 50);
+	}
+
+	&.checked {
+		color: @color-white;
+		border-color: @color-green;
+		background-color: @color-green;
+
+		&:extend(.sallycms-icon all);
+		&:extend(.sallycms-icon-component-icheck-check all);
+
+		&.disabled {
+			color: @color-grey-light;
+			border: 1px solid @color-grey-light;
+			background-color: fade(@input-bg-disabled, 50);
+		}
+	}
+}
+
+.sly-iradio {
+	border-radius: 100%;
+}
