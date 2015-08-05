@@ -1,0 +1,106 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+print sly_Helper_Message::renderFlashMessage();
+
+$form = new sly_Form($_router->getPlainUrl(null, 'comparerevision'), 'POST', t('contentmeta_revisions_compare'));
+$form->setSubmitButton(null);
+$form->setResetButton(null);
+
+foreach ($comparisons as $comparison) {
+	$table = new sly_Table('sly-article-revision-compare-table', array('sly-table-diff'));
+	$table->addColumn(sly_Table_Column::factory(ht('contentmeta_revisions_compare_ab', $comparison->getRevA(), $comparison->getSlotName()), 'sly-col-rev-a', '', array('colspan' => '2')));
+	$table->addColumn(sly_Table_Column::factory(ht('contentmeta_revisions_compare_ab', $comparison->getRevB(), $comparison->getSlotName()), 'sly-col-rev-b', '', array('colspan' => '2')));
+
+	$table->openBuffer();
+
+	foreach ($comparison->getDiff() as $skipped => $blocks) { ?>
+
+		<?php if ($skipped > 0): ?>
+		<tbody class="skipped">
+			<th>&hellip;</th><td></td>
+			<th>&hellip;</th><td></td>
+		</tbody>
+		<?php endif ?>
+
+		<?php foreach ($blocks as $change): ?>
+			<tbody class="change-<?php print $change['tag'] ?>">
+
+			<?php if ($change['tag'] === 'equal'): ?>
+				<?php foreach ($change['base']['lines'] as $line => $code): ?>
+					<tr>
+						<th><?php print $change['base']['offset'] + $line + 1 ?></th>
+						<td class="left"><span><?php print $code ?></span></td>
+						<th><?php print $change['changed']['offset'] + $line + 1 ?></th>
+						<td class="right"><span><?php print $code ?></span></td>
+					</tr>
+				<?php endforeach ?>
+
+			<?php elseif ($change['tag'] === 'insert'): ?>
+				<?php foreach ($change['changed']['lines'] as $line => $code): ?>
+					<tr>
+						<th></th>
+						<td class="left"></td>
+						<th><?php print $change['changed']['offset'] + $line + 1 ?></th>
+						<td class="right"><span><?php print $code ?></span></td>
+					</tr>
+				<?php endforeach ?>
+
+			<?php elseif ($change['tag'] === 'delete'): ?>
+				<?php foreach ($change['base']['lines'] as $line => $code): ?>
+					<tr>
+						<th><?php print $change['base']['offset'] + $line + 1 ?></th>
+						<td class="left"><span><?php print $code ?></span></td>
+						<th></th>
+						<td class="right"></td>
+					</tr>
+				<?php endforeach ?>
+
+			<?php elseif ($change['tag'] === 'replace'): ?>
+				<?php if (count($change['base']['lines']) >= count($change['changed']['lines'])): ?>
+					<?php foreach ($change['base']['lines'] as $line => $code): ?>
+						<tr>
+							<th><?php print $change['base']['offset'] + $line + 1 ?></th>
+							<td class="left"><span><?php print $code ?></span></td>
+							<?php if (isset($change['changed']['lines'][$line])): ?>
+							<th><?php print $change['base']['offset'] + $line + 1 ?></th>
+							<td class="right"><span><?php print $change['changed']['lines'][$line] ?></span></td>
+							<?php else: ?>
+							<th></th>
+							<td class="right"></td>
+							<?php endif ?>
+						</tr>
+					<?php endforeach ?>
+				<?php else: ?>
+					<?php foreach ($change['changed']['lines'] as $line => $code): ?>
+						<tr>
+							<?php if (isset($change['base']['lines'][$line])): ?>
+							<th><?php print $change['base']['offset'] + $line + 1 ?></th>
+							<td class="left"><span><?php print $change['base']['lines'][$line] ?></span></td>
+							<?php else: ?>
+							<th></th>
+							<td class="left"></td>
+							<?php endif ?>
+							<th><?php print $change['changed']['offset'] + $line + 1 ?></th>
+							<td class="right"><span><?php print $code ?></span></td>
+						</tr>
+					<?php endforeach ?>
+				<?php endif ?>
+			<?php endif ?>
+
+			</tbody>
+		<?php endforeach ?>
+	<?php }
+
+	$table->closeBuffer();
+	$form->addElement(new sly_Form_Fragment($table->render()));
+}
+
+print $form->render();

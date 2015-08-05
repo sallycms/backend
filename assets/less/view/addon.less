@@ -1,0 +1,138 @@
+.sly-addonlist {
+	&:extend(.list-unstyled all);
+
+	.sly-addon {
+		background-color: @color-white;
+		margin-bottom: @gap-layout-md;
+		transition: background-color 0.5s;
+
+		&.i0,
+		&.a0 {
+			background-color: fade(@color-white, 50);
+		}
+
+		&.a1 {
+			.sly-button {
+				&:extend(.btn-primary all);
+			}
+		}
+	}
+
+	.details {
+		padding: @gap-layout-md;
+
+		&:extend(.list-unstyled all);
+
+		h1 {
+			margin-bottom: 0;
+			padding-bottom: @gap-layout-sm;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		> .version,
+		> .depsinfo {
+			&:extend(.hidden-xs all);
+		}
+
+		> .buttons {
+			margin-top: @gap-layout-xs;
+			display: block;
+
+			.sly-button {
+				&:extend(.btn-block all);
+			}
+
+			span {
+				width: 100%;
+			}
+
+			@media (min-width: @screen-md-min) {
+				margin-top: @gap-layout-md;
+				display: inline-block;
+
+				span {
+					width: auto;
+				}
+			}
+		}
+	}
+
+	/* status map */
+
+	/*
+	a   is activated
+	i   is installed
+	c   is compatible
+	ch  has children
+	ca  has active children
+	d   has dependencies (is required)
+	r   has requirements
+	ro  requirements are OK (all required addOns are available)
+	u   usable (addOn exists, is compatible and has only usable requirements)
+
+	Append '0' to the letters above to get the 'false' class and 1 for the 'true' class.
+	*/
+
+	/* reset */
+
+	.buttons > span {
+		display: none;
+	}
+
+	.u0.c1           > .details .unusable     { display: block; }
+	.u0.c0           > .details .incompatible { display: block; }
+	.u1.c1.i0.ro1    > .details .install      { display: block; }
+	.u1.c1.i0.ro0    > .details .fullinstall  { display: block; }
+	.u1.c1.i1.a0.ro0 > .details .fullactivate { display: block; }
+	.i1              > .details .reinstall    { display: block; }
+	.i1.d0           > .details .uninstall    { display: block; }
+	.i1.a0.ro1       > .details .activate     { display: block; }
+	.i1.a1.d0        > .details .deactivate   { display: block; }
+	.i1.a1.d1        > .details .hasdeps      { display: block; }
+	.i1              > .details .reinit       { display: block; }
+
+	@media (min-width: @screen-md-min) {
+		.u0.c1           > .details .unusable     { display: inline-block; }
+		.u0.c0           > .details .incompatible { display: inline-block; }
+		.u1.c1.i0.ro1    > .details .install      { display: inline-block; }
+		.u1.c1.i0.ro0    > .details .fullinstall  { display: inline-block; }
+		.u1.c1.i1.a0.ro0 > .details .fullactivate { display: inline-block; }
+		.i1              > .details .reinstall    { display: inline-block; }
+		.i1.d0           > .details .uninstall    { display: inline-block; }
+		.i1.a0.ro1       > .details .activate     { display: inline-block; }
+		.i1.a1.d0        > .details .deactivate   { display: inline-block; }
+		.i1.a1.d1        > .details .hasdeps      { display: inline-block; }
+		.i1              > .details .reinit       { display: inline-block; }
+	}
+
+	/* hide all controls for addOns which have non-active parents */
+
+	.sly-pkg.a0 .sly-pkg-child .details {
+		.install, .fullinstall, .activate {
+			display: none !important;
+		}
+	}
+
+	.sly-pkg.i0 .sly-pkg-child.i0 {
+		display: none !important;
+	}
+
+	/* hide all controls if an addOn is not compatible and was forcefully disabled */
+
+	.i1.a0.c0, .i1.a0.ro0.u0 {
+		.reinit, .reinstall, .uninstall, .activate {
+			display: none !important;
+		}
+	}
+
+	/* error message */
+
+	.error {
+		display: none;
+
+		&:extend(.alert all);
+		&:extend(.alert-danger all);
+	}
+}

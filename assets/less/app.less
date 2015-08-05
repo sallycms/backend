@@ -1,0 +1,71 @@
+@import '../vendor/roboto-fontface/css/roboto-fontface';
+@import '../vendor/bootstrap/less/bootstrap';
+
+@import 'variable';
+@import 'mixin';
+@import 'font/sallycms';
+
+@roboto-font-path: '../vendor/roboto-fontface/fonts/';
+@font-family-sans-serif: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-size-base: 18px;
+@font-size-h1: 30px;
+@font-size-h2: 25px;
+@font-size-h3: 20px;
+@font-size-h4: 15px;
+@headings-font-weight: 400;
+@line-height-base: 1.66666666667;
+@padding-base-vertical: 9px;
+@padding-base-horizontal: 18px;
+@text-color: @color-grey-medium;
+@input-color: @color-grey-medium;
+@input-border: @color-grey-light;
+@brand-primary: @color-blue;
+@brand-success: @color-green;
+@brand-danger: fade(@color-red, 75);
+@icon-font-path: '../vendor/bootstrap/fonts/';
+@border-radius-base: 0;
+
+@alert-success-bg: fade(@color-green, 50);
+@alert-success-text: @color-white;
+
+@alert-danger-bg: fade(@color-red, 50);
+@alert-danger-text: @color-white;
+
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	background-color: @color-grey-light-extra;
+
+	* {
+		text-rendering: optimizelegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+#sly-page {
+	width: 100%;
+}
+
+@import 'typo';
+@import 'form';
+@import 'button';
+@import 'table';
+@import 'message';
+@import 'widget';
+@import 'view/default';
+@import 'view/structure';
+@import 'view/login';
+@import 'view/content';
+@import 'view/addon';
+@import 'view/user';
+@import 'view/system';
+@import 'view/mediapool';
+@import 'view/linkmap';
+@import 'vendor/select2';
+@import 'vendor/icheck';
+@import 'vendor/nprogress';
+@import 'vendor/magnificpopup';

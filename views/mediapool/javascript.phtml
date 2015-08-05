@@ -1,0 +1,74 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+$callback = $this->getRequest()->request('callback', 'string', '');
+$callback = preg_replace('#[^a-z0-9.]#i', '', $callback);
+
+ob_start();
+
+if ($callback) {
+	?>
+jQuery(function($) {
+	$('#sly-wrapper').delegate('a[href="#"]', 'click', function() {
+		var self     = $(this);
+		var filename = self.data('filename');
+		var title    = self.data('title');
+		var link     = 'mediapool/' + filename;
+		var callback = null;
+
+		// fallback for ckeditor mediapool extra popup window
+		if (window.opener) {
+			callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
+		}
+		else {
+			callback = '<?php echo $callback ?>' in window.parent ? window.parent['<?php echo $callback ?>'] : null;
+		}
+
+		var close    = true;
+		var fullName = '';
+
+		if (title.length === 0) {
+			fullName = filename;
+		}
+		else {
+			fullName = title;
+		}
+
+		// execute callback (media widget, WYMeditor, ...)
+		if (callback !== null) {
+			close = callback(filename, fullName, title, link, window);
+		}
+
+		// close the popup
+		if (close) {
+			// fallback for ckeditor mediapool extra popup window
+			if (window.opener) {
+				window.close();
+			}
+			else {
+				// @edge more comfortable popups
+				window.parent.$.magnificPopup.close();
+			}
+		}
+		return false;
+	});
+});
+	<?php
+}
+?>
+function openPage(src) {
+	window.self.location.href = src;
+	// @edge more comfortable popups
+	// self.close();
+	window.parent.$.magnificPopup.close();
+}
+<?php
+$javascript = ob_get_clean();
+sly_Core::getLayout()->addJavaScript($javascript);
