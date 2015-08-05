@@ -126,6 +126,7 @@ module.exports = function (grunt) {
 					'assets/dist/js/vendor.min.js': [
 						'assets/vendor/modernizr/modernizr.js',
 						'assets/vendor/jquery/dist/jquery.js',
+						'assets/vendor/jquery-migrate/index.js',
 						'assets/vendor/select2/select2.js',
 						'assets/vendor/bootstrap/js/collapse.js',
 						'assets/vendor/bootstrap/js/transition.js',
