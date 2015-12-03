@@ -7,13 +7,13 @@
 
 var sly = sly || {};
 
-(function($, sly, win, undef) {
+(function ($, sly, win, undef) {
 	/////////////////////////////////////////////////////////////////////////////
 	// Popups
 
 	var openPopups = [], tokenName = 'sly-csrf-token';
 
-	sly.Popup = function(name, url, posx, posy, width, height, extra) {
+	sly.Popup = function (name, url, posx, posy, width, height, extra) {
 		// ensure names are somewhat unique
 		name += (new Date()).getTime();
 
@@ -26,21 +26,21 @@ var sly = sly || {};
 		}
 
 		this.name = name;
-		this.url  = url;
-		this.obj  = win.open(url, name, 'width='+width+',height='+height+extra);
+		this.url = url;
+		this.obj = win.open(url, name, 'width=' + width + ',height=' + height + extra);
 
 		openPopups[name] = this;
 
-		this.close = function() {
+		this.close = function () {
 			this.obj.close();
 		};
 
-		this.setGlobal = function(name, value) {
+		this.setGlobal = function (name, value) {
 			this.obj[name] = value;
 		};
 	};
 
-	sly.closeAllPopups = function() {
+	sly.closeAllPopups = function () {
 		// @edge more comfortable popups
 		// for (var name in openPopups) {
 		// 	if (openPopups.hasOwnProperty(name)) {
@@ -51,16 +51,18 @@ var sly = sly || {};
 		$.magnificPopup.close();
 	};
 
-	sly.openCenteredPopup = function(name, link, width, height, extra) {
-		if (width === 0)  width  = 550;
-		if (height === 0) height = 400;
+	sly.openCenteredPopup = function (name, link, width, height, extra) {
+		if (width === 0)
+			width = 550;
+		if (height === 0)
+			height = 400;
 
 		if (extra === undef) {
 			extra = ',scrollbars=yes,toolbar=no,status=yes,resizable=yes';
 		}
 
-		var posx = parseInt((screen.width-width) / 2, 10);
-		var posy = parseInt((screen.height-height) / 2, 10) - 24;
+		var posx = parseInt((screen.width - width) / 2, 10);
+		var posy = parseInt((screen.height - height) / 2, 10) - 24;
 
 		return new sly.Popup(name, link, posx, posy, width, height, extra);
 	};
@@ -68,7 +70,7 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Mediapool
 
-	sly.openMediapool = function(subpage, value, callback, filetypes, categories) {
+	sly.openMediapool = function (subpage, value, callback, filetypes, categories) {
 		var controller = 'mediapool', args = {args: {}};
 
 		NProgress.start();
@@ -107,7 +109,7 @@ var sly = sly || {};
 		// return sly.openCenteredPopup('slymediapool', sly.getUrl(controller, null, args), 857, 600);
 	};
 
-	sly.openLinkmap = function(value, callback, articletypes, categories) {
+	sly.openLinkmap = function (value, callback, articletypes, categories) {
 		var controller = 'linkmap', args = {args: {}};
 
 		NProgress.start();
@@ -145,18 +147,19 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Helper
 
-	sly.inherit = function(subClass, baseClass) {
-		var tmpClass = function() {};
+	sly.inherit = function (subClass, baseClass) {
+		var tmpClass = function () {
+		};
 		tmpClass.prototype = baseClass.prototype;
 		subClass.prototype = new tmpClass();
 	};
 
-	var getCallbackName = function(base) {
+	var getCallbackName = function (base) {
 		return base + (new Date()).getTime();
 	};
 
-	var readLists = function(el, name) {
-		var values = ((el.data(name) || '')+'').split('|'), len = values.length, i = 0, res = [];
+	var readLists = function (el, name) {
+		var values = ((el.data(name) || '') + '').split('|'), len = values.length, i = 0, res = [];
 
 		for (; i < len; ++i) {
 			if (values[i].length > 0) {
@@ -170,24 +173,23 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Abstract Widget
 
-	sly.AbstractWidget = function(elem) {
-		this.element    = $(elem);
+	sly.AbstractWidget = function (elem) {
+		this.element = $(elem);
 		this.valueInput = this.element.find('input.value');
-		this.nameInput  = this.element.find('input.name');
+		this.nameInput = this.element.find('input.name');
 
 		// register events
 		var icons = this.element.find('.sly-icons');
-		icons.delegate('a.fct-open',   'click', $.proxy(this.onOpen,   this));
-		icons.delegate('a.fct-add',    'click', $.proxy(this.onAdd,    this));
+		icons.delegate('a.fct-open', 'click', $.proxy(this.onOpen, this));
+		icons.delegate('a.fct-add', 'click', $.proxy(this.onAdd, this));
 		icons.delegate('a.fct-delete', 'click', $.proxy(this.onDelete, this));
 	};
 
 	sly.AbstractWidget.prototype = {
-		getValue: function() {
+		getValue: function () {
 			return this.valueInput.val();
 		},
-
-		setValue: function(identifier, title) {
+		setValue: function (identifier, title) {
 			this.valueInput.val(identifier);
 			this.nameInput.val(title);
 
@@ -196,20 +198,16 @@ var sly = sly || {};
 
 			return true; // signalize the popup to close itself
 		},
-
-		clear: function() {
+		clear: function () {
 			this.setValue('', '');
 		},
-
-		onOpen: function() {
+		onOpen: function () {
 			return false;
 		},
-
-		onAdd: function() {
+		onAdd: function () {
 			return false;
 		},
-
-		onDelete: function() {
+		onDelete: function () {
 			this.clear();
 			return false;
 		}
@@ -218,23 +216,23 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Media Widgets
 
-	sly.MediaWidget = function(elem) {
+	sly.MediaWidget = function (elem) {
 		sly.AbstractWidget.call(this, elem);
 
-		this.filetypes  = readLists(this.element, 'filetypes');
+		this.filetypes = readLists(this.element, 'filetypes');
 		this.categories = readLists(this.element, 'categories');
 	};
 
 	sly.inherit(sly.MediaWidget, sly.AbstractWidget);
 
-	sly.MediaWidget.prototype.onOpen = function() {
+	sly.MediaWidget.prototype.onOpen = function () {
 		var cb = getCallbackName('slymediawidget');
 		sly.openMediapool('detail', this.getValue(), cb, this.filetypes, this.categories);
 		win[cb] = $.proxy(this.setValue, this);
 		return false;
 	};
 
-	sly.MediaWidget.prototype.onAdd = function() {
+	sly.MediaWidget.prototype.onAdd = function () {
 		var cb = getCallbackName('slymediawidget');
 		sly.openMediapool('upload', '', cb, this.filetypes, this.categories);
 		win[cb] = $.proxy(this.setValue, this);
@@ -244,16 +242,16 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Link Widgets
 
-	sly.LinkWidget = function(elem) {
+	sly.LinkWidget = function (elem) {
 		sly.AbstractWidget.call(this, elem);
 
 		this.articletypes = readLists(this.element, 'articletypes');
-		this.categories   = readLists(this.element, 'categories');
+		this.categories = readLists(this.element, 'categories');
 	};
 
 	sly.inherit(sly.LinkWidget, sly.AbstractWidget);
 
-	sly.LinkWidget.prototype.onOpen = function() {
+	sly.LinkWidget.prototype.onOpen = function () {
 		var catID = this.element.data('catid'), cb = getCallbackName('slylinkwidget');
 
 		sly.openLinkmap(catID, cb, this.articletypes, this.categories);
@@ -265,27 +263,27 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Generic lists
 
-	sly.AbstractListWidget = function(elem) {
+	sly.AbstractListWidget = function (elem) {
 		this.element = $(elem);
-		this.input   = this.element.find('input[type=hidden]');
-		this.list    = this.element.find('select');
-		this.min     = this.element.data('min') || 0;
-		this.max     = this.element.data('max') || -1;
+		this.input = this.element.find('input[type=hidden]');
+		this.list = this.element.find('select');
+		this.min = this.element.data('min') || 0;
+		this.max = this.element.data('max') || -1;
 
 		// register events
 		var icons = this.element.find('.sly-icons.move');
 		icons.delegate('a', 'click', $.proxy(this.onMove, this));
 
 		icons = this.element.find('.sly-icons.edit');
-		icons.delegate('a.fct-open',   'click', $.proxy(this.onOpen,   this));
-		icons.delegate('a.fct-add',    'click', $.proxy(this.onAdd,    this));
+		icons.delegate('a.fct-open', 'click', $.proxy(this.onOpen, this));
+		icons.delegate('a.fct-add', 'click', $.proxy(this.onAdd, this));
 		icons.delegate('a.fct-delete', 'click', $.proxy(this.onDelete, this));
 	};
 
 	sly.AbstractListWidget.prototype = {
-		getElements: function() {
+		getElements: function () {
 			var options = this.list.find('option');
-			var result  = [];
+			var result = [];
 
 			for (var i = 0, len = options.length; i < len; ++i) {
 				result.push(options[i].value);
@@ -293,22 +291,18 @@ var sly = sly || {};
 
 			return result;
 		},
-
-		getCount: function() {
+		getCount: function () {
 			return this.list.find('option').length;
 		},
-
-		getSelected: function() {
+		getSelected: function () {
 			var selected = this.list.find('option:selected');
 			return selected.length ? selected.val() : null;
 		},
-
-		clear: function() {
+		clear: function () {
 			this.list.find('option').remove();
 			this.input.val('').change();
 		},
-
-		addValue: function(identifier, title) {
+		addValue: function (identifier, title) {
 			var count = this.getCount(), max = this.max;
 
 			if (count === max) {
@@ -318,19 +312,18 @@ var sly = sly || {};
 			this.list.append($('<option>').val(identifier).text(title));
 			this.createList();
 
-			var full = (count+1) === max;
+			var full = (count + 1) === max;
 
 			if (full) {
 				this.element.addClass('at-max');
 			}
 
-			this.element.toggleClass('at-min', (count+1) <= this.min);
+			this.element.toggleClass('at-min', (count + 1) <= this.min);
 
 			// close if the maximum number of elements is reached
 			return full;
 		},
-
-		onDelete: function() {
+		onDelete: function () {
 			var selected = this.list.find('option:selected');
 
 			if (selected.length === 0) {
@@ -366,11 +359,10 @@ var sly = sly || {};
 			// done
 			return false;
 		},
-
-		onMove: function(event) {
+		onMove: function (event) {
 			var direction = event.target.className.replace('fct-', '');
-			var list      = this.list;
-			var selected  = list.find('option:selected');
+			var list = this.list;
+			var selected = list.find('option:selected');
 
 			if (selected.length === 0) {
 				return false;
@@ -392,16 +384,13 @@ var sly = sly || {};
 			this.createList();
 			return false;
 		},
-
-		createList: function() {
+		createList: function () {
 			this.input.val(this.getElements().join(',')).change();
 		},
-
-		onOpen: function() {
+		onOpen: function () {
 			return false;
 		},
-
-		onAdd: function() {
+		onAdd: function () {
 			return false;
 		}
 	};
@@ -409,25 +398,27 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Medialist Widgets
 
-	sly.MedialistWidget = function(elem) {
+	sly.MedialistWidget = function (elem) {
 		sly.AbstractListWidget.call(this, elem);
 
-		this.filetypes  = readLists(this.element, 'filetypes');
+		this.filetypes = readLists(this.element, 'filetypes');
 		this.categories = readLists(this.element, 'categories');
 	};
 
 	sly.inherit(sly.MedialistWidget, sly.AbstractListWidget);
 
-	sly.MedialistWidget.prototype.onOpen = function() {
-		if (this.getCount() === this.max) return false;
+	sly.MedialistWidget.prototype.onOpen = function () {
+		if (this.getCount() === this.max)
+			return false;
 		var cb = getCallbackName('slymedialistwidget');
 		sly.openMediapool('detail', this.getSelected(), cb, this.filetypes, this.categories);
 		win[cb] = $.proxy(this.addValue, this);
 		return false;
 	};
 
-	sly.MedialistWidget.prototype.onAdd = function() {
-		if (this.getCount() === this.max) return false;
+	sly.MedialistWidget.prototype.onAdd = function () {
+		if (this.getCount() === this.max)
+			return false;
 		var cb = getCallbackName('slymedialistwidget');
 		sly.openMediapool('upload', '', cb, this.filetypes, this.categories);
 		win[cb] = $.proxy(this.addValue, this);
@@ -437,17 +428,18 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Linklist Widgets
 
-	sly.LinklistWidget = function(elem) {
+	sly.LinklistWidget = function (elem) {
 		sly.AbstractListWidget.call(this, elem);
 
 		this.articletypes = readLists(this.element, 'articletypes');
-		this.categories   = readLists(this.element, 'categories');
+		this.categories = readLists(this.element, 'categories');
 	};
 
 	sly.inherit(sly.LinklistWidget, sly.AbstractListWidget);
 
-	sly.LinklistWidget.prototype.onOpen = function() {
-		if (this.getCount() === this.max) return false;
+	sly.LinklistWidget.prototype.onOpen = function () {
+		if (this.getCount() === this.max)
+			return false;
 		var catID = this.element.data('catid'), cb = getCallbackName('slylinklistwidget');
 
 		sly.openLinkmap(catID, cb, this.articletypes, this.categories);
@@ -459,7 +451,7 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// Misc functions
 
-	sly.disableLogin = function(timerElement) {
+	sly.disableLogin = function (timerElement) {
 		var nextTime = parseInt(timerElement.html(), 10) - 1;
 
 		timerElement.html(nextTime + '');
@@ -473,7 +465,7 @@ var sly = sly || {};
 		}
 	};
 
-	sly.startLoginTimer = function(message) {
+	sly.startLoginTimer = function (message) {
 		var timerElement = $('div.sly-message p span strong');
 
 		if (timerElement.length === 1) {
@@ -483,8 +475,9 @@ var sly = sly || {};
 		}
 	};
 
-	sly.setModernizrCookie = function() {
-		if (typeof Modernizr === 'undefined') return false;
+	sly.setModernizrCookie = function () {
+		if (typeof Modernizr === 'undefined')
+			return false;
 
 		// Audio and video elements get squashed together and are stored as
 		// just true or false. We have to manually copy all elements to make
@@ -503,29 +496,33 @@ var sly = sly || {};
 		}
 
 		// Keep the cookie small and remove all underscore properties.
-		copy._version       = undef;
-		copy._prefixes      = undef;
-		copy._domPrefixes   = undef;
+		copy._version = undef;
+		copy._prefixes = undef;
+		copy._domPrefixes = undef;
 		copy._cssomPrefixes = undef;
 
-		document.cookie = 'sly_modernizr='+escape(JSON.stringify(copy));
+		document.cookie = 'sly_modernizr=' + escape(JSON.stringify(copy));
 	};
 
-	sly.initWidgets = function(context) {
-		$('.sly-widget:not(.sly-initialized)', context).each(function() {
+	sly.initWidgets = function (context) {
+		$('.sly-widget:not(.sly-initialized)', context).each(function () {
 			var self = $(this), init = false;
 
 			if (self.is('.sly-link')) {
-				new sly.LinkWidget(this); init = true;
+				new sly.LinkWidget(this);
+				init = true;
 			}
 			else if (self.is('.sly-media')) {
-				new sly.MediaWidget(this); init = true;
+				new sly.MediaWidget(this);
+				init = true;
 			}
 			else if (self.is('.sly-linklist')) {
-				new sly.LinklistWidget(this); init = true;
+				new sly.LinklistWidget(this);
+				init = true;
 			}
 			else if (self.is('.sly-medialist')) {
-				new sly.MedialistWidget(this); init = true;
+				new sly.MedialistWidget(this);
+				init = true;
 			}
 
 			if (init) {
@@ -534,15 +531,15 @@ var sly = sly || {};
 		});
 	};
 
-	sly.assetBaseUri = function(addon) {
-		return '../assets/addon/' + (addon ? (addon+'/') : '');
+	sly.assetBaseUri = function (addon) {
+		return '../assets/addon/' + (addon ? (addon + '/') : '');
 	};
 
-	sly.getUrl = function(controller, action, params, sep) {
+	sly.getUrl = function (controller, action, params, sep) {
 		var url = './';
 
-		action     = action || 'index';
-		action     = action.toLowerCase();
+		action = action || 'index';
+		action = action.toLowerCase();
 		controller = controller.toLowerCase();
 
 		url += encodeURI(controller);
@@ -576,7 +573,7 @@ var sly = sly || {};
 	/////////////////////////////////////////////////////////////////////////////
 	// dom:loaded handler
 
-	$(function() {
+	$(function () {
 		// Init widgets
 
 		sly.initWidgets();
@@ -590,19 +587,19 @@ var sly = sly || {};
 		// $('input[name=\'' + target + '\']').prop('checked', this.checked);
 		// });
 
-		$('.sly-check-all').on('ifChecked', function() {
+		$('.sly-check-all').on('ifChecked', function () {
 			var target = $(this).data('target');
 			$('input[name=\'' + target + '\']').iCheck('check');
 		});
 
-		$('.sly-check-all').on('ifUnchecked', function() {
+		$('.sly-check-all').on('ifUnchecked', function () {
 			var target = $(this).data('target');
 			$('input[name=\'' + target + '\']').iCheck('uncheck');
 		});
 
 		// Lösch-Links
 
-		$('a.sly-delete, input.sly-button-delete').click(function() {
+		$('a.sly-delete, input.sly-button-delete').click(function () {
 			return confirm('Sicher?');
 		});
 
@@ -610,20 +607,20 @@ var sly = sly || {};
 		// something like 'Are you sure you want to delete...?', existing code does
 		// not look weird.
 
-		$('a.sly-confirm-me, input.sly-confirm-me').click(function() {
+		$('a.sly-confirm-me, input.sly-confirm-me').click(function () {
 			return confirm('Sicher?');
 		});
 
 		// Filter-Funktionen in sly_Table
 
-		$('.sly-table-extras-filter input[class*=filter_input_]').keyup(function(event) {
+		$('.sly-table-extras-filter input[class*=filter_input_]').keyup(function (event) {
 			// Klassen- und Tabellennamen ermitteln
 
 			var
 				className = $(this).attr('class'),
 				tableName = className.match(/filter_input_([a-zA-Z0-9_-]+)/)[1],
-				table     = $('#' + tableName),
-				c         = event.keyCode;
+				table = $('#' + tableName),
+				c = event.keyCode;
 
 			// Wert auch in allen anderen Suchfeldern übernehmen
 
@@ -636,12 +633,12 @@ var sly = sly || {};
 			if (c === 8 || c === 46 || c === 109 || c === 189 || (c >= 65 && c <= 90) || (c >= 48 && c <= 57)) {
 				var keyword = new RegExp($(this).val(), 'i');
 
-				$('tbody tr', table).each(function() {
+				$('tbody tr', table).each(function () {
 					var
-						row  = $(this),
-						rows = $('td', row).filter(function() {
-							return keyword.test($(this).text());
-						});
+						row = $(this),
+						rows = $('td', row).filter(function () {
+						return keyword.test($(this).text());
+					});
 
 					row.toggle(rows.length > 0);
 				});
@@ -654,7 +651,7 @@ var sly = sly || {};
 
 		// open mediapool in popup
 
-		$('#sly-navi-page-mediapool a').click(function() {
+		$('#sly-navi-page-mediapool a').click(function () {
 			sly.openMediapool();
 			return false;
 		});
@@ -663,8 +660,8 @@ var sly = sly || {};
 
 		// @edge fix for icheck
 
-		$('.sly-form .sly-select-checkbox-list a[rel]').on('click', function() {
-			var rel   = $(this).attr('rel');
+		$('.sly-form .sly-select-checkbox-list a[rel]').on('click', function () {
+			var rel = $(this).attr('rel');
 			var boxes = $(this).closest('div').find('input');
 			// boxes.prop('checked', rel === 'all');
 
@@ -685,7 +682,7 @@ var sly = sly || {};
 
 			for (var type in types) {
 				if (types.hasOwnProperty(type) && types[type]) {
-					$('input[type='+type+']').addClass('ua-supported');
+					$('input[type=' + type + ']').addClass('ua-supported');
 				}
 			}
 
@@ -699,26 +696,26 @@ var sly = sly || {};
 			// Fallback-Implementierung für type=range via jQuery Tools Slider
 			$('input[type="range"]:not(.ua-supported)').rangeinput({
 				css: {
-					input:    'sly-range-range',
-					slider:   'sly-range-slider',
+					input: 'sly-range-range',
+					slider: 'sly-range-slider',
 					progress: 'sly-range-progress',
-					handle:   'sly-jqt-handle'
+					handle: 'sly-jqt-handle'
 				}
 			});
 
 			// Fallback-Implementierung für type=date
 			$('input[type*="date"]').slyDateTime({
-				lngNoDateSelected:   sly.locale.noDateSelected,
-				lngDeleteDate:       sly.locale.deleteDate,
+				lngNoDateSelected: sly.locale.noDateSelected,
+				lngDeleteDate: sly.locale.deleteDate,
 				lngClickToInputDate: sly.locale.clickToInputDate,
-				lngMonths:           sly.locale.months.join(','),
-				lngShortMonths:      sly.locale.shortMonths.join(','),
-				lngDays:             sly.locale.days.join(','),
-				lngShortDays:        sly.locale.shortDays.join(',')
+				lngMonths: sly.locale.months.join(','),
+				lngShortMonths: sly.locale.shortMonths.join(','),
+				lngDays: sly.locale.days.join(','),
+				lngShortDays: sly.locale.shortDays.join(',')
 			});
 		}
 
-		var sly_apply_select2 = function(container) {
+		var sly_apply_select2 = function (container) {
 			// run Select2, but transform manual indentation (aka prefixing values with '&nbsp;'s)
 			// into lvl-N classes, or else the quick filter function of Chosen will not work
 			// properly.
@@ -727,14 +724,14 @@ var sly = sly || {};
 
 				for (; i < len; ++i) {
 					option = $(options[i]);
-					depth  = option.html().match(/^(&nbsp;)*/)[0].length / 6;
+					depth = option.html().match(/^(&nbsp;)*/)[0].length / 6;
 
 					if (depth > 0) {
-						option.addClass('sly-lvl-'+depth).html(option.html().substr(depth*6));
+						option.addClass('sly-lvl-' + depth).html(option.html().substr(depth * 6));
 					}
 				}
 
-				$('.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function() {
+				$('.sly-form-select:not(.sly-no-select2):not(.sly-no-chosen)', container).each(function () {
 					var select = $(this);
 					if (select.data('placeholder') === undefined) {
 						select.data('placeholder', 'Bitte auswählen');
@@ -749,20 +746,20 @@ var sly = sly || {};
 		sly_apply_select2($('body'));
 
 		// listen to rowAdded event
-		$('body').bind('rowAdded', function(event) {
+		$('body').bind('rowAdded', function (event) {
 			sly_apply_select2(event.currentTarget);
 		});
 
-		$('body').delegate('a.sly-postlink', 'click', function() {
+		$('body').delegate('a.sly-postlink', 'click', function () {
 			var
-				parts  = $(this).attr('href').split('?'),
+				parts = $(this).attr('href').split('?'),
 				action = parts[0],
 				params = parts[1] || '',
-				form   = $('<form>').attr('action', action).attr('method', 'post'),
-				token  = $('meta[name="'+tokenName+'"]'),
+				form = $('<form>').attr('action', action).attr('method', 'post'),
+				token = $('meta[name="' + tokenName + '"]'),
 				i, tmp, key, value;
 
-				$('body').append(form);
+			$('body').append(form);
 
 			if (params.indexOf('#') >= 0) {
 				params = params.split('#')[0];
@@ -771,8 +768,8 @@ var sly = sly || {};
 			params = params.split('&');
 
 			for (i in params) {
-				tmp   = params[i].split('=');
-				key   = tmp[0];
+				tmp = params[i].split('=');
+				key = tmp[0];
 				value = tmp[1];
 
 				$('<input>')
@@ -798,13 +795,13 @@ var sly = sly || {};
 
 		// Checkboxen erzeugen
 
-		$('.sly-form-row.sly-form-multilingual').each(function() {
+		$('.sly-form-row.sly-form-multilingual').each(function () {
 			var
-				$this   = $(this),
-				equal   = $this.is(':visible'),
-				id      = $this.attr('rel'),
-				checked = equal ? ' checked="checked"': '',
-				span    = '<span class="sly-form-i18n-switch"><input type="checkbox" name="equal__'+id+'" id="equal__'+id+'" value="1"'+checked+' /><\/span>';
+				$this = $(this),
+				equal = $this.is(':visible'),
+				id = $this.attr('rel'),
+				checked = equal ? ' checked="checked"' : '',
+				span = '<span class="sly-form-i18n-switch"><input class="sly-form-checkbox" type="checkbox" name="equal__' + id + '" id="equal__' + id + '" value="1"' + checked + ' /><\/span>';
 
 			if (equal) {
 				$('label:first', this).after(span);
@@ -819,34 +816,34 @@ var sly = sly || {};
 
 		// @edge replace with a special icheck component
 
-		// var checkboxes = $('.sly-form-i18n-switch input[id^=equal__]');
+		var checkboxes = $('.sly-form-i18n-switch input[id^=equal__]');
 
-		// if (checkboxes.length > 0) {
-		// 	checkboxes.imgCheckbox('off.png', 'on.png', '../assets/app/backend/form-i18n-switch-').next().click(function() {
-		// 		var
-		// 			checkbox       = $(this).prev('input'),
-		// 			shown          = !checkbox[0].checked, // was already changed before this event handler
-		// 			id             = checkbox.attr('id').replace(/^equal__/, ''),
-		// 			container      = $('div[rel="'+id+'"]'),
-		// 			span           = checkbox.parent('span'),
-		// 			equalcontainer = $('div.sly-form-i18n-container.c-'+id);
+		if (checkboxes.length > 0) {
+			checkboxes.on('ifChanged', function(){
+				var
+					checkbox = $(this),
+					shown = !checkbox[0].checked, // was already changed before this event handler
+					id = checkbox.attr('id').replace(/^equal__/, ''),
+					container = $('div[rel="' + id + '"]'),
+					span = checkbox.parents('span'),
+					equalcontainer = $('div.sly-form-i18n-container.c-' + id);
 
-		// 		if (shown) {
-		// 			container.hide();
-		// 			equalcontainer.show();
-		// 			$('label:first', equalcontainer).after(span);
-		// 		}
-		// 		else {
-		// 			container.show();
-		// 			equalcontainer.hide();
-		// 			$('label:first', container).after(span);
-		// 		}
-		// 	});
-		// }
+				if (shown) {
+					container.hide();
+					equalcontainer.show();
+					$('label:first', equalcontainer).after(span);
+				}
+				else {
+					container.show();
+					equalcontainer.hide();
+					$('label:first', container).after(span);					
+				}
+			});
+		}
 
 		// Module selection on content page
 
-		$('.sly-module-select').change(function() {
+		$('.sly-module-select').change(function () {
 			if ($(this).val()) {
 				$(this).closest('form').submit();
 			}
@@ -861,11 +858,11 @@ var sly = sly || {};
 
 			for (var i = 0; i < slots.length; ++i) {
 				var
-					slot     = $(slots[i]),
-					active   = slot.is('.sly-active'),
+					slot = $(slots[i]),
+					active = slot.is('.sly-active'),
 					slotName = slot.data('slyslot'),
-					title    = slot.text(),
-					option   = $('<option></option>').text(title).val(slotName);
+					title = slot.text(),
+					option = $('<option></option>').text(title).val(slotName);
 
 				if (active) {
 					option.prop('selected', true);
@@ -874,13 +871,13 @@ var sly = sly || {};
 				select.append(option);
 			}
 
-			select.change(function() {
+			select.change(function () {
 				var
-					slot      = select.val(),
-					header    = $('.sly-content-header'),
+					slot = select.val(),
+					header = $('.sly-content-header'),
 					articleID = header.data('slyid'),
-					clang     = header.data('slyclang'),
-					revision  = header.data('slyrevision');
+					clang = header.data('slyclang'),
+					revision = header.data('slyrevision');
 
 				window.location = sly.getUrl('content', null, {article_id: articleID, clang: clang, revision: revision, slot: slot}, '&');
 				return false;
@@ -892,7 +889,7 @@ var sly = sly || {};
 		}
 
 		// toggle cache options
-		$('#sly-system-toggle-cache').click(function() {
+		$('#sly-system-toggle-cache').click(function () {
 			$('#sly-form-system-caches p').slideToggle();
 			return false;
 		});
@@ -900,15 +897,15 @@ var sly = sly || {};
 		// use ajax to install/activate addOns
 		var errorHider = null;
 
-		$('#sly-page-addon .sly-addonlist').delegate('a:not(.sly-blank)', 'click', function() {
+		$('#sly-page-addon .sly-addonlist').delegate('a:not(.sly-blank)', 'click', function () {
 			var
-				link     = $(this),
-				list     = $('.sly-addonlist'),
-				rows     = $('.pkg', list),
-				row      = link.closest('.pkg'),
-				token    = $('meta[name="'+tokenName+'"]').attr('content'),
-				href     = link.attr('href'),
-				func     = decodeURI((RegExp('addon/(.+?)(\\?|$)').exec(href)||[,null])[1]),
+				link = $(this),
+				list = $('.sly-addonlist'),
+				rows = $('.pkg', list),
+				row = link.closest('.pkg'),
+				token = $('meta[name="' + tokenName + '"]').attr('content'),
+				href = link.attr('href'),
+				func = decodeURI((RegExp('addon/(.+?)(\\?|$)').exec(href) || [, null])[1]),
 				errorrow = $('.error', list);
 
 			// build POST data
@@ -936,16 +933,17 @@ var sly = sly || {};
 
 			NProgress.start();
 
-			var updateAddOnStatus = function(stati) {
+			var updateAddOnStatus = function (stati) {
 				for (var key in stati) {
-					if (!stati.hasOwnProperty(key)) continue;
+					if (!stati.hasOwnProperty(key))
+						continue;
 					var status = stati[key], comp = $('.pkg[data-key="' + key + '"]');
 					comp.attr('class', status.classes + ' pkg');
 					$('.deps', comp).html(status.deps);
 				}
 			};
 
-			var successHandler = function(xhr) {
+			var successHandler = function (xhr) {
 				if (xhr.finished === false) {
 					performRequest();
 				}
@@ -963,12 +961,14 @@ var sly = sly || {};
 						row.after(errorrow);
 						$('span', errorrow).html(xhr.message);
 						errorrow.show();
-						errorHider = win.setTimeout(function() { errorrow.slideUp(); }, 10000);
+						errorHider = win.setTimeout(function () {
+							errorrow.slideUp();
+						}, 10000);
 					}
 				}
 			};
 
-			var performRequest = function() {
+			var performRequest = function () {
 				$.ajax({
 					url: sly.getUrl('addon', func),
 					data: postData,
@@ -992,7 +992,7 @@ var sly = sly || {};
 		////////////////////////////////////////////////////
 		// mediapool and linkmap iframe preloading
 		var isMediapool = !!$('body[id^=sly-page-mediapool]').length;
-		var isLinkmap   = !!$('body[id^=sly-page-linkmap]').length;
+		var isLinkmap = !!$('body[id^=sly-page-linkmap]').length;
 
 		window.onload = function () {
 			if (isMediapool) {
@@ -1054,21 +1054,21 @@ var sly = sly || {};
 				return '0 Byte';
 			}
 
-			var k     = 1000,
+			var k = 1000,
 				sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-				i     = Math.floor(Math.log(bytes) / Math.log(k));
+				i = Math.floor(Math.log(bytes) / Math.log(k));
 
 			return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
 		}
 
-		var input  = $('input[type=file]'),
+		var input = $('input[type=file]'),
 			button = $('<span class="sly-button sly-button-file"/>');
 
 		input.wrap(button).before('<span class="sly-button-file-info">Auswählen &hellip;</span>');
 
 		$(document).on('change', '.sly-button-file :file', function () {
-			var input    = $(this),
-				files    = input.get(0).files ? input.get(0).files : null,
+			var input = $(this),
+				files = input.get(0).files ? input.get(0).files : null,
 				filename = input.val().replace(/\\/g, '/').replace(/.*\//, '');
 
 			input.trigger('fileselect', [files, filename]);
