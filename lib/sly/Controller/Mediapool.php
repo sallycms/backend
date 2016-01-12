@@ -14,18 +14,18 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 
 		$dispatcher = $this->container->getDispatcher();
 		$selected   = $this->getCurrentCategory();
-		$files      = $this->getFiles();
+		$data       = $this->getFiles();
 
 		$this->render('mediapool/toolbar.phtml', compact('selected', 'dispatcher'), false);
 
-		if (empty($files)) {
+		if (empty($data['files'])) {
 			$this->getFlashMessage()->addInfo(t('no_media_found'));
 		}
 
 		print sly_Helper_Message::renderFlashMessage();
 
-		if (!empty($files)) {
-			$this->render('mediapool/index.phtml', compact('files'), false);
+		if (!empty($data['files'])) {
+			$this->render('mediapool/index.phtml', $data, false);
 		}
 	}
 
@@ -83,6 +83,8 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 	}
 
 	protected function getFiles() {
+		sly_Table::setElementsPerPageStatic(20);
+
 		$service = $this->getContainer()->getMediumService();
 		$db      = $this->getContainer()->getPersistence();
 		$cat     = $this->getCurrentCategory();
@@ -101,20 +103,28 @@ class sly_Controller_Mediapool extends sly_Controller_Mediapool_Base implements 
 		}
 
 		$where .= ' AND deleted = 0';
-
-		$db     = $this->getContainer()->getPersistence();
+		
 		$prefix = $db->getPrefix();
 		$order  = $this->getFileOrder();
-		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.'.$order;
-		$files  = array();
 
+		$query  = 'SELECT f.id FROM '.$prefix.'file f LEFT JOIN '.$prefix.'file_category c ON f.category_id = c.id WHERE '.$where.' ORDER BY f.'.$order;
 		$db->query($query);
 
+		$data = array(
+			'total' => $db->affectedRows()
+		);
+
+		$paging = sly_Table::getPagingParameters('media', true, false);
+		$counter = 0;
+
 		foreach ($db as $row) {
-			$files[$row['id']] = sly_Util_Medium::findById($row['id']);
+			if ($counter++ < $paging['start']) continue;
+			$data['files'][$row['id']] = $service->findById($row['id']);
+
+			if ($counter >= $paging['end']) break;
 		}
 
-		return $files;
+		return $data;
 	}
 
 	protected function getFileOrder() {

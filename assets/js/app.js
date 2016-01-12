@@ -73,8 +73,6 @@ var sly = sly || {};
 	sly.openMediapool = function (subpage, value, callback, filetypes, categories) {
 		var controller = 'mediapool', args = {args: {}};
 
-		NProgress.start();
-
 		if (value) {
 			controller += '_detail';
 			args.file_name = value;
@@ -111,8 +109,6 @@ var sly = sly || {};
 
 	sly.openLinkmap = function (value, callback, articletypes, categories) {
 		var controller = 'linkmap', args = {args: {}};
-
-		NProgress.start();
 
 		if (value) {
 			args.category_id = value;
@@ -931,8 +927,6 @@ var sly = sly || {};
 
 			rows.find('.sly-button').addClass('disabled');
 
-			NProgress.start();
-
 			var updateAddOnStatus = function (stati) {
 				for (var key in stati) {
 					if (!stati.hasOwnProperty(key))
@@ -954,8 +948,6 @@ var sly = sly || {};
 					// $('.blocker').remove();
 
 					rows.find('.sly-button').removeClass('disabled');
-
-					NProgress.done();
 
 					if (xhr.status !== true) {
 						row.after(errorrow);
@@ -996,24 +988,16 @@ var sly = sly || {};
 
 		window.onload = function () {
 			if (isMediapool) {
-				window.parent.NProgress.start();
-
 				setTimeout(function () {
 					$('body[id^=sly-page-mediapool]').addClass('sly-iframe-ready');
 					// window.parent.$('.mfp-close').addClass('sly-iframe-ready');
-
-					window.parent.NProgress.done();
 				}, 1000);
 			}
 
 			if (isLinkmap) {
-				window.parent.NProgress.start();
-
 				setTimeout(function () {
 					$('body[id^=sly-page-linkmap]').addClass('sly-iframe-ready');
 					// window.parent.$('.mfp-close').addClass('sly-iframe-ready');
-
-					window.parent.NProgress.done();
 				}, 1000);
 			}
 		};
