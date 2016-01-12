@@ -26,7 +26,7 @@ $isAdmin = $this->isMediaAdmin();
 ////////////////////////////////////////////////////////
 // prepare table
 
-$table = new sly_Table('', array('sly-mediapool-list'));
+$table = new sly_Table('media', array('sly-mediapool-list'));
 
 $table->addColumn(sly_Table_Column::factory('<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />', 'sly-icon sly-col-icon'));
 $table->addColumn(sly_Table_Column::factory(t('thumbnail'), 'sly-col-thumbnail'));
@@ -80,7 +80,7 @@ $table->closeBuffer();
 // putting it all together
 
 $container = new sly_Form_Container();
-$container->setContent($table->render());
+$container->setContent($table->render($total));
 $form->add($container);
 
 ////////////////////////////////////////////////////////
