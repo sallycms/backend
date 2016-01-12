@@ -131,7 +131,6 @@ module.exports = function (grunt) {
 						'assets/vendor/bootstrap/js/collapse.js',
 						'assets/vendor/bootstrap/js/transition.js',
 						'assets/vendor/iCheck/icheck.js',
-//						'assets/vendor/nprogress/nprogress.js',
 						'assets/vendor/magnific-popup/dist/jquery.magnific-popup.js'
 					]
 				}
