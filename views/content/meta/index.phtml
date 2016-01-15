@@ -55,7 +55,7 @@ foreach ($revisions as $revision) {
 	$current   = $rev === $article->getRevision();
 	$selectUrl = $_router->getUrl('content', null, array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
 	$deleteUrl = $_router->getUrl('contentmeta', 'deleterevision', array('article_id' => $id, 'clang' => $clang, 'revision' => $rev), '&');
-	$user      = $userService->findByLogin($revision->getCreateUser());
+	$user      = $userService->findByLogin($revision->getUpdateUser());
 	$username  = $user ? ($user->getName() ?: $user->getLogin()) : $revision->getCreateUser();
 
 	?>
