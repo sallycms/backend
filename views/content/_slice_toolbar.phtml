@@ -38,8 +38,8 @@ if ($allowed && !$noContentAllowed && $service->exists($module) && sly_Util_Arti
 	$moveUp   = t('move_up');
 	$moveDown = t('move_down');
 
-	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'up'))).'#messages" title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
-	$listElements[] = '<a href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'down'))).'#messages" title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
+	$listElements[] = '<a '.($slice->getPrevious() ? 'href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'up'))).'#messages"' : '').' title="'.$moveUp.'" class="sly-up sly-postlink"></a>';
+	$listElements[] = '<a '.($slice->getNext() ? 'href="'.$_router->getUrl('content', 'moveSlice', array_merge($urlParams, array('direction' => 'down'))).'#messages"' : '').' title="'.$moveDown.'" class="sly-down sly-postlink"></a>';
 
 	$dispatcher   = sly_Core::dispatcher();
 	$listElements = $dispatcher->filter('ART_SLICE_MENU', $listElements, array(
