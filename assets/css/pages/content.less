@@ -126,6 +126,13 @@
 		&.sly-up,
 		&.sly-down {
 			width: 0;
+			&.disabled {
+				&,
+				&:hover {
+					background-color: #828282;
+					opacity: 0.5;
+				}
+			}
 		}
 
 		&.sly-down {
