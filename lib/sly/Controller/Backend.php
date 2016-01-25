@@ -29,12 +29,12 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 	 * @param  boolean $returnOutput  set to false to not use an output buffer
 	 * @return string                 the generated output if $returnOutput, else null
 	 */
-	protected function render($filename, array $params = array(), $returnOutput = true) {
+	protected function render() {
 		// make router available to all controller views
 		$router = $this->getContainer()->getApplication()->getRouter();
-		$params = array_merge(array('_router' => $router), $params);
+		$params = array_merge(array('_router' => $router), func_get_arg(1));
 
-		return parent::render($filename, $params, $returnOutput);
+		return parent::render(func_get_arg(0), $params, func_get_arg(2));
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {
