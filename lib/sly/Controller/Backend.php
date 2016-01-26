@@ -31,10 +31,14 @@ abstract class sly_Controller_Backend extends sly_Controller_Base {
 	 */
 	protected function render() {
 		// make router available to all controller views
-		$router = $this->getContainer()->getApplication()->getRouter();
-		$params = array_merge(array('_router' => $router), func_get_arg(1));
+		$args         = func_get_args();
+		$params       = isset($args[1]) ? $args[1] : array();
+		$returnOutput = isset($args[2]) ? $args[2] : true;
+		$router       = $this->getContainer()->getApplication()->getRouter();
+		$params       = array_merge(array('_router' => $router), $params);
+		
 
-		return parent::render(func_get_arg(0), $params, func_get_arg(2));
+		return parent::render($args[0], $params, $returnOutput);
 	}
 
 	protected function redirect($params = array(), $page = null, $code = 302) {
