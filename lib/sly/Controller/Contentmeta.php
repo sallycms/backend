@@ -19,10 +19,19 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$userService = $container['sly-service-user'];
 		$artService  = $container['sly-service-article'];
 
+		$page = $this->getRequest()->get('p_revisions', 'int', 0);
+		$perPage = 20;
+
+		$revisions = $artService->findAllRevisions($this->article->getId(), $this->article->getClang(), $page * $perPage, $perPage);
+
 		$this->render('content/meta/index.phtml', array(
-			'article' => $this->article,
-			'user'    => $userService->getCurrentUser(),
-			'clangB'  => $post->get('clang_b', 'int')
+			'article'     => $this->article,
+			'user'        => $userService->getCurrentUser(),
+			'clangB'      => $post->get('clang_b', 'int'),
+			'revisions'   => $revisions,
+			'userService' => $userService,
+			'perPage'     => $perPage,
+			'total'       => $artService->countRevisions($this->article)
 		), false);
 	}
 

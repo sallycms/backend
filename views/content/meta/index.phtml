@@ -47,6 +47,7 @@ $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
 $table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
 
 $table->setPagerParam('revisions');
+$table->setElementsPerPage($perPage);
 $table->openBuffer();
 
 foreach ($revisions as $revision) {
