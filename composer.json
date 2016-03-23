@@ -24,14 +24,14 @@
     },
     "require": {
         "php": ">=5.2.1",
-        "sallycms/core": "0.10.*",
+        "sallycms/core": "0.11.*",
         "sallycms/less-mixins": ">=2.2.0,<3.0.0",
         "sallycms/composer-installer": "~1.1",
         "phpspec/php-diff": "~1.0"
     },
     "extra": {
         "branch-alias": {
-            "dev-default": "0.10.x-dev"
+            "dev-default": "0.11.x-dev"
         }
     }
 }
