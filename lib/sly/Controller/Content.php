@@ -306,7 +306,7 @@ class sly_Controller_Content extends sly_Controller_Content_Base {
 				$flash->appendWarning(t('cannot_delete_slice'));
 			}
 			else {
-				$flash->prependWarning(t('cannot_update_slice'));
+				$flash->prependWarning(t('cannot_update_slice'), false);
 			}
 		}
 
