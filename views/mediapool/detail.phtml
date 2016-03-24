@@ -1,0 +1,145 @@
+<?php
+/*
+ * Copyright (c) 2014, webvariants GmbH & Co. KG, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+use sly\Assets\Util;
+
+$fileID     = $medium->getId();
+$title      = $medium->getTitle();
+$filename   = $medium->getFilename();
+$filetype   = $medium->getFiletype();
+$filesize   = $medium->getFormattedSize();
+$updatedate = $medium->getUpdateDate();
+$categoryID = $medium->getCategoryId();
+$encoded    = urlencode($filename);
+
+////////////////////////////////////////////////////////
+// info and error messages
+
+print sly_Helper_Message::renderFlashMessage();
+
+////////////////////////////////////////////////////////
+// start forms
+
+if ($this->canAccessFile($medium)) {
+	$form = new sly_Form($_router->getPlainUrl(null, 'save'), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+	$form->setEncType('multipart/form-data');
+	$form->addHiddenValue('file_id', $fileID);
+	$this->appendParamsToForm($form);
+}
+else {
+	$form = new sly_Form($_router->getPlainUrl(null), 'POST', t('edit_medium'), '', 'sly-form-mediapool-detail');
+}
+
+////////////////////////////////////////////////////////
+// image container (same for both forms)
+
+$imageContainer = new sly_Form_Container();
+$imageContainer->setContent($this->getThumbnailTag($medium, 160, 120));
+$imageContainer->addFormRowClass('sly-mediapool-detail-image');
+$form->add($imageContainer);
+
+////////////////////////////////////////////////////////
+// add more elements to our forms
+
+if ($this->canAccessFile($medium)) {
+	// title
+
+	$title = new sly_Form_Input_Text('title', t('title'), $title);
+	$title->addFormRowClass('sly-mediapool-detail-title');
+	$title->setRequired();
+	$form->add($title);
+
+	// category
+
+	$select = $this->getCategorySelect();
+	$select->setLabel(t('category'));
+	$select->setAttribute('id', 'new_category');
+	$select->setAttribute('onchange', '');
+	$select->setAttribute('value', $categoryID);
+	$form->add($select);
+
+	// extensions
+
+	$form = sly_Core::dispatcher()->filter('SLY_MEDIA_FORM_EDIT', $form, array(
+		'file_id' => $fileID,
+		'medium'  => $medium,
+		'media'   => $medium /* BC compat */
+	));
+
+	// setup buttons
+
+	$submit = $form->getSubmitButton();
+	$submit->setAttribute('value', t('update'));
+	$submit->setAttribute('name', 'update');
+
+	$delete = new sly_Form_Input_Button('submit', 'delete', t('delete'));
+	$delete->addClass('sly-button-delete');
+
+	$form->setApplyButton($delete);
+	$form->setResetButton(null);
+}
+else {
+	$catname = t('no_category');
+	$cat     = $categoryID != 0 ? sly_Util_MediaCategory::findById($categoryID) : null;
+	$user    = sly_Util_User::getCurrentUser();
+
+	if ($cat) {
+		$catname = $cat->getName();
+	}
+
+	// title & cat
+
+	$title = new sly_Form_Text(t('title'), $title);
+	$title->addFormRowClass('sly-mediapool-detail-title');
+
+	$form->add($title);
+	$form->add(new sly_Form_Text(t('category'), $catname));
+
+	// setup buttons
+
+	$form->setSubmitButton(null);
+	$form->setResetButton(null);
+}
+
+// file dimensions, if image
+
+if ($this->isImage($medium)) {
+	$label      = t('width').' / '.t('height');
+	$dimensions = $medium->getWidth().' px / '.$medium->getHeight().' px';
+	$dimensions = new sly_Form_Text($label, $dimensions);
+
+	$form->add($dimensions);
+}
+
+// display filename
+
+$filename = '<a href="'.Util::mediapoolUri($encoded).'">'.sly_html(sly_Util_String::cutText($filename, 55)).'</a> ['.$filesize.']';
+$filename = new sly_Form_Text(t('filename'), $filename);
+$filename->setIsHTML(true);
+$form->add($filename);
+
+// display update date
+
+$updated = sly_Util_HTML::getDatetimeTag($medium->getUpdateDate()).' ['.sly_html($medium->getUpdateUser()).']';
+$updated = new sly_Form_Text(t('updated_at'), $updated, null, true);
+$form->add($updated);
+
+// display creation date
+
+$created = sly_Util_HTML::getDatetimeTag($medium->getCreateDate()).' ['.sly_html($medium->getCreateUser()).']';
+$created = new sly_Form_Text(t('created_at'), $created, null, true);
+$form->add($created);
+
+if ($this->canAccessFile($medium)) {
+	$file = new sly_Form_Input_File('file_new', t('replacement_file'));
+	$form->add($file);
+}
+
+print $form->render();

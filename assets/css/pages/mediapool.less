@@ -1,0 +1,141 @@
+/* mediapool popup is wider than normal popups */
+
+.sly-popup.sly-mediapool {
+	#sly-wrapper, .sly-form legend {
+		width: 797px;
+	}
+}
+
+/* general styles for all subpages */
+
+.sly-mediapool {
+	.sly-navi-path ul {
+		border: 0;
+		list-style: none;
+		margin: 0 0 10px 0;
+		padding: 0;
+		font-size: 1em;
+
+		li {
+			display: inline;
+			font-weight: normal;
+
+			a.sly-active { color: @drk_grey; }
+		}
+	}
+
+	tbody .sly-col-thumbnail {
+		text-align: center;
+		line-height: 55px;
+		width: 75px;
+
+		img { vertical-align: middle; }
+	}
+
+	.sly-form {
+		td { padding: 5px 0 }
+
+		caption { display: none; }
+
+		/* less space between category select and file list */
+		.sly-form-wrapper {
+			margin-bottom: 10px;
+		}
+
+		textarea {
+			height: 75px;
+		}
+
+		label {
+			width: 110px;
+		}
+	}
+
+	.sly-mediapool-list {
+		margin-bottom: 0 !important;
+
+		td {
+			height: auto;
+		}
+
+		th {
+			background-color: #fff;
+			color: @drk_grey;
+			font-weight: bold;
+			vertical-align: middle;
+			border-bottom: 1px dotted @md_grey;
+			padding: 6px 0;
+		}
+
+		select {
+			width: 300px;
+		}
+
+		label {
+			float: none;
+		}
+
+		tfoot td {
+			border-top: 1px dotted @md_grey;
+		}
+	}
+
+	.sly-mediapool-detail-image {
+		position: relative;
+		height: 0;
+		border: 0 none;
+		padding: 0 7px;
+
+		div {
+			position: absolute;
+			right: 0;
+			top: 0;
+			padding: 7px;
+			width: 160px;
+			text-align: right;
+
+			img {
+				max-height: 120px;
+				max-width: 160px;
+			}
+		}
+	}
+
+	.sly-mediapool-detail-title {
+		border-top: 0 none;
+	}
+}
+
+/* index page */
+
+#sly-form-mediapool-selectcategory {
+	input[type=submit] {
+		margin-left: 10px;
+	}
+
+	.sly-form-wrapper {
+		min-height: 4px;
+	}
+
+	fieldset:first-child {
+		.sly-form-wrapper {
+			margin-bottom: 0;
+			.border-radius(0);
+		}
+	}
+}
+
+#sly-form-mediapool-media {
+	.sly-form-wrapper .sly-form-row.sly-num0 {
+		padding: 0;
+	}
+}
+
+/* structure management */
+
+#sly-page-mediapool-structure {
+	.sly-col-func { width: 150px; }
+}
+
+.sly-sprite-mediacat     { background-position: -32px 0;     }
+.sly-sprite-mediacat-add { background-position: -32px -16px; }
