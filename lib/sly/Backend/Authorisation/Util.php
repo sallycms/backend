@@ -73,9 +73,9 @@ class sly_Backend_Authorisation_Util {
 	 * @return boolean
 	 */
 	public static function canEditArticle(sly_Model_User $user, $articleID) {
-		if ($user->isAdmin()) return true;
-		if ($user->hasRight('article', 'edit', sly_Authorisation_ListProvider::ALL)) return true;
-		return $user->hasRight('article', 'edit', $articleID);
+		return $user->isAdmin() ||
+			$user->hasRight('article', 'edit', sly_Authorisation_ListProvider::ALL) ||
+			$user->hasRight('article', 'edit', $articleID);
 	}
 
 	/**
@@ -84,8 +84,8 @@ class sly_Backend_Authorisation_Util {
 	 * @return boolean
 	 */
 	public static function canEditContent(sly_Model_User $user, $articleID) {
-		if ($user->isAdmin()) return true;
-		if ($user->hasRight('article', 'editcontent', sly_Authorisation_ListProvider::ALL)) return true;
-		return $user->hasRight('article', 'editcontent', $articleID);
+		return $user->isAdmin() ||
+			$user->hasRight('article', 'editcontent', sly_Authorisation_ListProvider::ALL) ||
+			$user->hasRight('article', 'editcontent', $articleID);
 	}
 }
