@@ -19,7 +19,9 @@ $canDelete = $isAdmin || $user->hasRight('user', 'delete');
 if ($canAdd) {
 	$link  = $_router->getPlainUrl(null, 'add');
 	$title = t('add_user');
-	$id    = 'sly-user-add';
+	// @edge be consistent
+	// $id    = 'sly-user-add';
+	$id    = 'user-add';
 }
 else {
 	$link  = '';
@@ -37,7 +39,8 @@ if ($canDelete) {
 	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 }
 
-$table->enableSearching(true, array('page' => 'user'));
+// @edge needs to be improved to save space
+// $table->enableSearching(true, array('page' => 'user'));
 $table->setIsEmpty(empty($users));
 $table->setEmptyNotice(t('no_users_found'));
 $table->openBuffer();

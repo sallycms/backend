@@ -53,6 +53,20 @@ class sly_Layout_Navigation_Backend {
 			$system->addSubpage('system', t('settings'));
 			$system->addSubpage('system_languages', t('languages'));
 
+			// @edge / TODO:
+			//
+			// add authorisations for new pages
+
+			$system->addSubpage('system_cache', t('cache'));
+			$system->addSubpage('system_environment', t('environment'));
+
+			// it's not perfect, but let's check whether the setup app actually
+			// exists before showing the 'Setup' button inside the form.
+
+			if (is_dir(SLY_SALLYFOLDER.'/setup')) {
+				$system->addSubpage('system_setup', t('setup'));
+			}
+
 			if (!sly_Core::isDeveloperMode()) {
 				$handler = sly_Core::getErrorHandler();
 

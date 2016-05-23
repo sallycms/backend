@@ -15,12 +15,20 @@ if ($callback) {
 	ob_start();
 	?>
 jQuery(function($) {
-	$('.articlelist').delegate('a', 'click', function() {
+	$('.article-list').delegate('a', 'click', function() {
 		var self     = $(this);
 		var id       = self.data('id');
 		var name     = self.data('name');
 		var link     = 'sally://' + id + '/';
-		var callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
+		var callback = null;
+
+		// fallback for ckeditor mediapool extra popup window
+		if (window.opener) {
+			callback = '<?php echo $callback ?>' in window.opener ? window.opener['<?php echo $callback ?>'] : null;
+		}
+		else {
+			callback = '<?php echo $callback ?>' in window.parent ? window.parent['<?php echo $callback ?>'] : null;
+		}
 		var close    = true;
 		var fullName = name.length === 0 ? <?php echo json_encode(t('unnamed_article')) ?> + ' [' + id + ']' : name;
 
@@ -29,8 +37,16 @@ jQuery(function($) {
 			close = callback(id, fullName, name, link, window);
 		}
 
-		// close the popup
-		if (close) window.close();
+		if (close) {
+			// fallback for ckeditor mediapool extra popup window
+			if (window.opener) {
+				window.close();
+			}
+			else {
+				// @edge more comfortable popups
+				window.parent.$.magnificPopup.close();
+			}
+		}
 		return false;
 	});
 });

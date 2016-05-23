@@ -52,14 +52,18 @@ if (count($languages) > 1) {
 	}
 
 	?>
+	<!--
+	@edge remove unnecessary markup
 	<div class="sly-clang-toolbar sly-toolbar">
 		<div class="sly-toolbar-content">
-			<ul>
-				<li><?php print t('languages') ?> :</li>
-				<?php print implode('', $links) ?>
+	-->
+			<ul class="sly-navi-language">
+				<li><?php print t('languages') ?></li><?php print implode('', $links) ?>
 			</ul>
+	<!--
 		</div>
 	</div>
+	-->
 	<?php
 
 	if ($forbidden !== null) {

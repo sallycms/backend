@@ -83,8 +83,8 @@ redirect_previous_page: 'Sie werden zu Ihrer <a href="{0}">vorherigen Seite</a> 
 redirect_startpage: 'Sie werden zu Ihrer <a href="{0}">Startseite</a> weitergeleitet.'
 unknown_controller: 'Unbekannter Controller {0} angefordert.'
 unknown_page: Unbekannte Seite
-unknown_action: 'Methode {0} in {1} nicht gefunden!'
-page_not_allowed: 'Zugriff auf {0} in {1} nicht gestattet!'
+unknown_action: 'Methode {0} in {1} nicht gefunden.'
+page_not_allowed: 'Zugriff auf {0} in {1} nicht gestattet.'
 security_violation: Sicherheitsverletzung
 controller_error: Controller-Fehler
 unexpected_exception: Unerwartete Ausnahme
@@ -94,9 +94,10 @@ users: Benutzer
 mediapool: Medienpool
 content: Inhalt
 structure: Struktur
-addons: AddOns
+addons: Addons
 profile: Profil
-my_profile: Mein Profil
+# my_profile: Mein Profil # @edge changed wording
+my_profile: Benutzerprofil
 login_title: Login
 base_navigation: Basis-Navigation
 createdate: Erstelldatum
@@ -118,13 +119,13 @@ article_moved: Artikel wurde verschoben.
 article_deleted: Artikel wurde gelöscht.
 cannot_move_article: Der Artikel konnte nicht verschoben werden.
 category_deleted: Kategorie wurde gelöscht.
-category_not_found: 'Die Kategorie {0} wurde nicht gefunden!'
-cannot_delete_start_article: Der Webseiten-Startartikel kann nicht gelöscht werden!
-cannot_delete_not_found_article: Der "Nicht gefunden"-Artikel kann nicht gelöscht werden!
+category_not_found: 'Die Kategorie {0} wurde nicht gefunden.'
+cannot_delete_start_article: Der Webseiten-Startartikel kann nicht gelöscht werden.
+cannot_delete_not_found_article: Der "Nicht gefunden"-Artikel kann nicht gelöscht werden.
 
-no_rights_to_this_function: Sie haben keine Rechte für diese Funktion!
+no_rights_to_this_function: Sie haben keine Rechte für diese Funktion.
 
-file_not_found: 'Die Datei {0} wurde nicht gefunden!'
+file_not_found: 'Die Datei {0} wurde nicht gefunden.'
 error_moving_uploaded_file: 'Beim Verschieben der Datei {0} ist ein Fehler aufgetreten.'
 description: Beschreibung
 
@@ -135,7 +136,7 @@ startarticle: Startartikel
 article_is_startarticle: Dieser Artikel ist ein Startartikel.
 convert_to_startarticle: Artikel zum Startartikel umwandeln
 root_articles_cannot_be_startarticles: Artikel auf der obersten Ebene können nicht in Startartikel umgewandelt werden.
-cannot_convert_to_startarticle: Beim Umwandeln in einen Startartikel ist ein Fehler aufgetreten!
+cannot_convert_to_startarticle: Beim Umwandeln in einen Startartikel ist ein Fehler aufgetreten.
 article_converted_to_startarticle: Dieser Artikel wurde erfolgreich zum Startartikel umgewandelt.
 category_moved: Kategorie wurde verschoben.
 articletype: Artikeltyp
@@ -176,13 +177,13 @@ profile_updated: Ihr Profil wurde aktualisiert.
 user_updated: Benutzer wurde aktualisiert.
 user_deleted: Benutzer wurde gelöscht.
 user_added: Benutzer wurde hinzugefügt.
-user_not_found: 'Benutzer {0} wurde nicht gefunden!'
+user_not_found: 'Benutzer {0} wurde nicht gefunden.'
 edit_user: Benutzer bearbeiten
 add_user: Benutzer hinzufügen
-user_login_already_exists: Der gewählte Benutzername existiert bereits!
+user_login_already_exists: Der gewählte Benutzername existiert bereits.
 admin: Administrator
-you_cannot_delete_yourself: Sie können sich nicht selbst löschen!
-you_cannot_delete_admins: Sie können keine Administratoren löschen!
+you_cannot_delete_yourself: Sie können sich nicht selbst löschen.
+you_cannot_delete_admins: Sie können keine Administratoren löschen.
 categories: Kategorien
 modules: Module
 last_login: Letzter Login
@@ -191,11 +192,14 @@ permissions: Rechte
 backend_locale: Backendsprache
 startpage: Startseite
 
-plase_enter_a_name: Bitte geben Sie einen Namen an!
+plase_enter_a_name: Bitte geben Sie einen Namen an.
 configuration_updated: Systemkonfiguration wurde aktualisiert.
-delete_cache: Cache löschen
-delete_cache_description: 'Mit dieser Funktion können Sie den Zwischenspeicher leeren, in dem häufig benötigte Daten abgelegt werden. Der Cache wird automatisch während der nächsten Aufrufe Ihrer Website neu aufgebaut.'
-delete_cache_message: Der Cache wurde gelöscht.
+cache: Cache
+cache_core: System
+cache_extensions: Erweiterungen
+delete_cache: Cache leeren
+delete_cache_description: 'Mit Hilfe dieser Funktion können Sie den Cache des Systems leeren. Im Cache werden häufig benötigte Daten abgelegt um schneller auf sie zugreifen zu können. Der Cache wird während der nächsten Aufrufe Ihrer Website wieder automatisch neu aufgebaut.'
+delete_cache_message: Der Cache wurde geleert.
 features: Features
 settings: Einstellungen
 invalid_start_article_selected: Es wurde eine ungültige Startseite ausgewählt.
@@ -211,12 +215,12 @@ edit_language: Sprache bearbeiten
 language_added: Sprache wurde hinzugefügt.
 language_updated: Sprache wurde aktualisiert.
 language_deleted: Sprache wurde gelöscht.
-cannot_delete_language: Die Sprache konnte nicht gelöscht werden!
+cannot_delete_language: Die Sprache konnte nicht gelöscht werden.
 locale: Locale
 version: Version
 host: Host
 database: Datenbank
-database_connection: Datenbank-Verbindung
+database_connection: Datenbank-Verbindung # @edge deprecated
 caching_strategy: Cache-Strategie
 developer_mode: Entwicklermodus
 project_name: Projektname
@@ -225,14 +229,27 @@ timezone: Zeitzone
 not_found_article: Artikel bei fehlender Seite
 default_language: Standard-Frontendsprache
 
+# @edge added new translations
+
+environment: Umgebung
+environment_system_component: Komponente
+environment_system_version: Version
+environment_version_system: Sally
+environment_version_php: PHP
+environment_version_database: Datenbank
+
 setup: Setup
 setup_text: Hier können Sie das Setup erneut starten. Dies sollten Sie nur im Notfall machen. Unter normalen Umständen ist es nicht nötig.
 
 back: zurück
 addon: AddOn
 install: installieren
-install_including_requirements: inkl. Abhängigkeiten installieren
-activate_including_requirements: inkl. Abhängigkeiten aktivieren
+# @edge enough space to skip truncating
+# install_including_requirements: inkl. Abhängigkeiten installieren
+# activate_including_requirements: inkl. Abhängigkeiten aktivieren
+install_including_requirements: inklusive Abhängigkeiten installieren
+activate_including_requirements: inklusive Abhängigkeiten aktivieren
+
 reinstall: re-installieren
 uninstall: deinstallieren
 deactivate: deaktivieren
@@ -240,13 +257,13 @@ activate: aktivieren
 reinit_assets: Assets re-initialisieren
 reinit_all_addon_assets: Assets aller AddOns re-initialisieren
 addon_help: 'Hilfe für {0}'
-addon_help_file_not_found: Die Hilfedatei (help.php) wurde nicht gefunden!
-addon_boot_file_not_found: Das Startup-Script (boot.php) wurde nicht gefunden!
+addon_help_file_not_found: Die Hilfedatei (help.php) wurde nicht gefunden.
+addon_boot_file_not_found: Das Startup-Script (boot.php) wurde nicht gefunden.
 addon_install_failed: '{0} konnte aus folgendem Grund nicht installiert werden:<br /> {1}'
 addon_install_sql_failed: '{0} konnte wegen Fehlern in der install.sql nicht installiert werden:<br /> {1}'
 addon_uninstall_failed: '{0} konnte aus folgendem Grund nicht deinstalliert werden:<br /> {1}'
 addon_uninstall_sql_failed: '{0} konnte wegen Fehlern in der unstall.sql nicht deinstalliert werden:<br /> {1}'
-addon_activate_failed: '{0} konnte nicht aktiviert werden, da es noch nicht installiert wurde!'
+addon_activate_failed: '{0} konnte nicht aktiviert werden, da es noch nicht installiert wurde.'
 addon_installed: '{0} wurde installiert.'
 addon_activated: '{0} wurde aktiviert.'
 addon_deactivated: '{0} wurde deaktiviert.'
@@ -256,12 +273,12 @@ addon_requires_addon: '{1} benötigt {0}.'
 addon_incompatible: '{0} ist nicht mit dieser Version von SallyCMS ({1}) kompatibel.'
 addon_incompatible_with_this_version: 'nicht mit dieser Version von SallyCMS kompatibel'
 addon_has_no_sally_version_info: '{0} hat keine Kompatibilitätsinformationen und kann daher nicht installiert werden.'
-addon_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0})!'
-addon_not_found: 'Das AddOn {0} wurde nicht gefunden!'
-addon_not_given: 'Es wurde kein AddOn angegeben!'
+addon_assets_failed: 'Fehler beim Kopieren des assets-Verzeichnisses ({0}).'
+addon_not_found: 'Das AddOn {0} wurde nicht gefunden.'
+addon_not_given: 'Es wurde kein AddOn angegeben.'
 no_dependencies: keine Abhängigkeiten
 
-addon_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0})!'
+addon_cleanup_failed: 'Fehler beim Löschen des assets-Verzeichnisses ({0}).'
 no_addons_found: Keine AddOns gefunden. Laden Sie neue AddOns in das Verzeichnis sally/addons.
 
 credits: Credits
@@ -284,13 +301,14 @@ remove_medium: Ausgewähltes Medium löschen
 select_link: Artikel auswählen
 remove_link: Ausgewählten Artikel entfernen
 
-you_have_no_access_to_this_language: 'Sie haben keinen Zugriff auf Sprache {0}!'
-you_have_no_access_to_this_medium: 'Sie haben keinen Zugriff auf dieses Medium!'
-articletype_not_found: 'Der Artikeltyp {0} wurde nicht gefunden!'
+you_have_no_access_to_this_language: 'Sie haben keinen Zugriff auf Sprache {0}.'
+you_have_no_access_to_this_medium: 'Sie haben keinen Zugriff auf dieses Medium.'
+articletype_not_found: 'Der Artikeltyp {0} wurde nicht gefunden.'
 
 no_articletype_set: Der Typ dieses Artikels wurde nicht gesetzt.
 no_startarticle: 'Kein Startartikel selektiert. Bitte setze ihn im <a href="{0}">Backend</a>.'
-to_website: zur Website
+# to_website: zur Website # @edge changed wording
+to_website: Vorschau
 
 errorlog: Fehlerprotokoll
 cant_work_with_foreign_errorhandler: 'Kann Protokoll nicht erzeugen, da der ausgewählte Error Handler ({0}) unbekannten Typs ist.'
@@ -302,7 +320,7 @@ error_details: Fehlerdetails
 in_file: in Datei
 in_line: in Zeile
 errorlog_cleared: Das Protokoll wurde geleert.
-errorlog_not_cleared: Das Protokoll konnte nicht geleert werden!
+errorlog_not_cleared: Das Protokoll konnte nicht geleert werden.
 
 use_default_locale: '(Projektstandard)'
 unnamed_article: unbenannter Artikel
@@ -316,17 +334,17 @@ you_have_been_logged_out: Sie wurden vom System abgemeldet.
 
 articles: Artikel
 articleslice_must_contain_slice_id_or_module: Artikelslices müssen eine Slice-ID oder Modul enthalten.
-article_not_found: 'Artikel {0} wurde nicht gefunden!'
+article_not_found: 'Artikel {0} wurde nicht gefunden.'
 cannot_insert_multilingual_element_in_multicolumn_fieldset: In mehrspaltige Fieldsets können keine mehrsprachigen Elemente eingefügt werden.
 cannot_move_category_into_child: Eine Kategorie kann nicht in eine Kindkategorie verschoben werden.
 cannot_render_slices: Slices können nicht gerendert werden.
 slots: Slots
-could_not_find_log_dir: Konnte Log-Verzeichnis nicht finden!
+could_not_find_log_dir: Konnte Log-Verzeichnis nicht finden.
 create: anlegen
 db_driver: Datenbank-Typ
 db_prefix: Tabellen-Präfix
-develop_file_not_found: 'Die Development-Ressource {0} wurde nicht gefunden!'
-does_not_implement: 'Die Klasse {0} implementiert nicht das Interface {1}!'
+develop_file_not_found: 'Die Development-Ressource {0} wurde nicht gefunden.'
+does_not_implement: 'Die Klasse {0} implementiert nicht das Interface {1}.'
 email_is_invalid: 'Die eMail-Adresse ist ungültig.'
 error_rendering_slice: 'Es trat ein Fehler beim Rendern des Slices auf:<br />{0}'
 error_sending_mail: 'Es trat ein Fehler beim Versenden der eMail auf.'
@@ -357,45 +375,52 @@ no_username_given: Kein Benutzername angegeben.
 parent_category_not_found: Die Elternkategorie wurde nicht gefunden.
 password_needs_valid_createdate: Zum Hashen ist ein gültiges createdate erforderlich.
 redirect_to: 'Sie werden <a href="{0}">weitergeleitet</a>.'
-service_not_found: 'Der {0}-Service wurde nicht gefunden!'
+service_not_found: 'Der {0}-Service wurde nicht gefunden.'
 slice_could_not_be_generated: Der Slicecache konnte nicht generiert werden.
-sort_function_not_found: 'Die Sortierfunktion {0} wurde nicht gefunden!'
-source_and_target_are_equal: Quelle und Ziel sind identisch!
+sort_function_not_found: 'Die Sortierfunktion {0} wurde nicht gefunden.'
+source_and_target_are_equal: Quelle und Ziel sind identisch.
 table_is_empty: Diese Tabelle enthält noch keine Inhalte.
 target_category: Ziel-Kategorie
-target_category_not_found: Die Ziel-Kategorie wurde nicht gefunden!
-template_not_found: 'Das Template {0} wurde nicht gefunden!'
-title_cannot_be_empty: Der Titel kann nicht leer sein!
+target_category_not_found: Die Ziel-Kategorie wurde nicht gefunden.
+template_not_found: 'Das Template {0} wurde nicht gefunden.'
+title_cannot_be_empty: Der Titel kann nicht leer sein.
 unknown_log_level: 'Unbekanntes Log-Level {0} angegeben.'
 unsupported_direction: 'Fehlerhafte Richtung {0} angegeben.'
 use_category_service_to_copy_categories: 'Benutzen Sie den Kategorie-Service, um Kategorien zu kopieren.'
 use_category_service_to_move_categories: 'Benutzen Sie den Kategorie-Service, um Kategorien zu verschieben.'
-view_not_found: 'Der View {0} wurde nicht gefunden!'
+view_not_found: 'Der View {0} wurde nicht gefunden.'
 safemode_openbasedir: safe_mode und open_basedir
 layout_has_not_been_set: Das Layout wurde noch nicht über ::setLayout() gesetzt.
 media_categories: Medienkategorien
 move: verschieben
 query_uses_forbidden_storage_engine: 'Die {0}. Query verwendet nicht InnoDB, sondern {1} als Storage Engine. Wenn Sie sich absolut sicher sind, {1} verwenden zu wollen, können Sie in der static.yml den Key allow_non_innodb auf true setzen.'
 no_language_selected: Es wurden keine Sprachen ausgewählt.
-sally_core_cache: 'SallyCMS-Cache (Artikel, Inhalte)'
+sally_core_cache: System (Artikel und Inhalte) #'SallyCMS-Cache (Artikel, Inhalte)'
 sally_assetcache: Asset-Cache
-sally_develop_content: 'Templates & Module synchronisieren'
-slice_not_found: 'Block {0} wurde nicht gefunden!'
+sally_develop_content: Entwickler (Templates und Module) #'Templates & Module synchronisieren'
+slice_not_found: 'Block {0} wurde nicht gefunden.'
 applications: Anwendungen
 backend: Backend
 package: Paket
-operation_requires_user_context: 'Die Operation {0} erfordert einen Nutzerkontext!'
-an_operation_requires_user_context: Diese Operation erfordert einen Nutzerkontext!
-article_slice_not_found: 'Artikel-Slice {0} wurde nicht gefunden!'
+operation_requires_user_context: 'Die Operation {0} erfordert einen Nutzerkontext.'
+an_operation_requires_user_context: Diese Operation erfordert einen Nutzerkontext.
+article_slice_not_found: 'Artikel-Slice {0} wurde nicht gefunden.'
 no_users_found: Es wurden keine passenden Benutzer gefunden.
 
-edit_mode: Editier Modus
-metadata: Metadaten/Sonstiges
+# @edge save space
+# edit_mode: Editier Modus
+# @edge save space
+# metadata: Metadaten/Sonstiges
+# @edge save space
+# preview: Vorschau
+
+edit_mode: Inhalte
+metadata: Metadaten
 preview: Vorschau
 
-module_not_found: 'Das Modul {0} wurde nicht gefunden!'
+module_not_found: 'Das Modul {0} wurde nicht gefunden.'
 module_not_allowed_in_slot: 'Das Modul {0} ist im Slot {1} nicht erlaubt.'
-no_rights_to_this_module: Sie haben keine Rechte für dieses Modul!
+no_rights_to_this_module: Sie haben keine Rechte für dieses Modul.
 
 edit_slice: Block bearbeiten
 add_slice: Block hinzufügen
@@ -404,33 +429,34 @@ slice_added: Block wurde hinzugefügt.
 slice_moved: Block wurde verschoben.
 slice_deleted: Block wurde gelöscht.
 cannot_move_slice: 'Der Block konnte nicht verschoben werden: {0}'
-cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten!
-cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten!
+cannot_delete_slice: Beim Löschen des Blocks ist ein Fehler aufgetreten.
+cannot_update_slice: Beim Speichern des Blocks ist ein Fehler aufgetreten.
 
-select_type_first: Bitte wählen sie zuerst einen Artikeltypen!
+select_type_first: Bitte wählen sie zuerst einen Artikeltypen.
 no_template_defined: Dieser Artikel hat kein Template. Es können keine Inhalte eingepflegt werden.
 template_has_no_slots: In diesem Artikel können keine Inhalte eingepflegt werden.
 no_modules_allowed: In diesem Slot können keine Inhalte eingepflegt werden.
 slices_left: 'Der Inhalt dieses Artikels kann nicht bearbeitet werden, aber es sind noch Module vorhanden.'
-delete_this_slice: Bitte löschen sie diesen Block!
+delete_this_slice: Bitte löschen sie diesen Block.
 
 metadata_updated: Metadaten wurden aktualisiert.
 move_article: Artikel verschieben
 article_copied: Artikel wurde kopiert.
 article_content_copied: Die Inhalte des Artikels wurden kopiert.
 article_revision_deleted: Die Revision wurde gelöscht.
-cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten!
-cannot_copy_article: Der Artikel konnte nicht kopiert werden!
-cannot_move_category: Die Kategorie konnte nicht verschoben werden!
+cannot_copy_article_content: Beim Kopieren der Inhalte ist ein Fehler aufgetreten.
+cannot_copy_article: Der Artikel konnte nicht kopiert werden.
+cannot_move_category: Die Kategorie konnte nicht verschoben werden.
 cannot_delete_article_revision: Die Revision konnte nicht gelöscht werden.
 
 contentmeta_revisions: Revisionen
-contentmeta_select_revision: Revision auswählen
+contentmeta_revisions_compare: Revisionen vergleichen
+contentmeta_revisions_compare_ab: 'Revision {0} ({1})' # @edge new entry
 create_time: Erstellt am
 
 affected_files: Betroffene Dateien
 apply_file: Medium übernehmen
-category_has_children: 'Die Kategorie kann nicht gelöscht werden, da sie noch Unterkategorien enthält!'
+category_has_children: 'Die Kategorie kann nicht gelöscht werden, da sie noch Unterkategorien enthält.'
 category_name: Kategoriename
 edit_medium: Medium bearbeiten
 file: Datei
@@ -443,15 +469,17 @@ file_not_found_maybe_too_big: Datei wurde nicht gefunden. Vielleicht war sie zu 
 filename: Dateiname
 files_synced: '{0} Datei(en) wurden synchronisiert.'
 height: Höhe
-invalid_file_data: Es trat ein Fehler beim Upload der Datei auf!
+invalid_file_data: Es trat ein Fehler beim Upload der Datei auf.
 max_uploadsize: Maximale Uploadgröße
 media_list: Medien
 medium_deleted: Datei wurde gelöscht.
 medium_updated: Medium wurde aktualisiert.
-move_to_category: in Kategorie verschieben
+# @edge save space
+# move_to_category: in Kategorie verschieben
+move_to_category: Verschieben
 no_category: keine Kategorie
 no_file_diffs_found: Es wurden keine Unterschiede festgestellt.
-no_files_selected: Es wurden keine Medien ausgewählt!
+no_files_selected: Es wurden keine Medien ausgewählt.
 no_media_found: Keine Medien in dieser Medienkategorie gefunden.
 no_title: kein Titel
 replacement_file: Datei austauschen
@@ -464,19 +492,25 @@ structure_caption: Liste der Kategorien
 sync_files: Dateien synchronisieren
 synchronize: synchronisieren
 thumbnail: Thumbnail
-types_of_old_and_new_do_not_match: 'Diese Datei kann nicht zum Austausch benutzt werden, da sie von einem anderen Dateityp ist!'
-an_error_happened_during_upload: Es trat ein Fehler beim Hochladen auf!
-upload: hochladen
-upload_and_use: hochladen und übernehmen
+types_of_old_and_new_do_not_match: 'Diese Datei kann nicht zum Austausch benutzt werden, da sie von einem anderen Dateityp ist.'
+an_error_happened_during_upload: Es trat ein Fehler beim Hochladen auf.
+# upload: hochladen
+# upload_and_use: hochladen und übernehmen
+# @edge ucfirst
+upload: Hochladen
+upload_and_use: Hochladen und benutzen
 upload_file: Medium hochladen
 width: Breite
 revision: Revision
 abbreviation_revision: Rev.
-delete_revision: Revision löschen
+# @edge added new translations
+delete_revision: Löschen
+compare_revision: Vergleichen
+select_revision: Anzeigen
 backend_areas: Backend-Bereiche
 
-delete_permanent: unwiderruflich löschen
-restore: wiederherstellen
+delete_permanent: Unwiderruflich löschen
+restore: Wiederherstellen
 recycle_bin: Papierkorb
 recycle_bin_is_empty: Der Papierkorb ist leer.
 media_restored: Medien wurden wiederhergestellt.

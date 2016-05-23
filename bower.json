@@ -1,0 +1,14 @@
+{
+  "name": "sallycms-edge",
+  "version": "0.10.0",
+  "dependencies": {
+    "modernizr": "~2.8",
+    "jquery": "~1.11",
+    "jquery-migrate": "http://code.jquery.com/jquery-migrate-1.2.1.js",
+    "select2": "~3.5",
+    "bootstrap": "~3.3",
+    "iCheck": "~1.0",    
+    "magnific-popup": "~0.9",
+    "roboto-fontface": "~0.4.2"
+  }
+}

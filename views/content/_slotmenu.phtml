@@ -38,9 +38,13 @@ $listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_SLOT_MENU', $li
 ));
 
 ?>
-<ul class="sly-navi-slots">
-	<li><?php echo t('slots') ?></li>
-	<?php foreach ($listElements as $idx => $listElement): ?>
-	<li><?php echo $listElement ?></li>
-	<?php endforeach ?>
-</ul>
+<div class="sly-content-footer" data-slyid="<?php print $article->getId() ?>" data-slyclang="<?php print $article->getClang() ?>" data-slyrevision="<?php print $article->getRevision() ?>">
+	<ul class="sly-navi-slots">
+		<!-- @edge save space -->
+		<!-- <li><?php echo t('slots') ?></li> -->
+		<?php foreach ($listElements as $idx => $listElement): ?>
+		<li><?php echo $listElement ?></li>
+		<?php endforeach ?>
+	</ul>
+</div>
+

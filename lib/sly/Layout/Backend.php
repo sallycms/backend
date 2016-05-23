@@ -25,17 +25,11 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 		$favicon = $config->get('backend/favicon');
 		$project = $config->get('projectname');
 
-		$this->addCSSFile(Util::appUri('css/import.less'));
+		$this->addCSSFile(Util::appUri('dist/css/vendor.min.css'));
+		$this->addCSSFile(Util::appUri('dist/css/app.min.css'));
 
-		$this->addJavaScriptFile(Util::appUri('js/modernizr.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/iso8601.min.js'), 'if lt IE 8');
-		$this->addJavaScriptFile(Util::appUri('js/jquery.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/json2.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/jquery.select2.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/jquery.tools.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/jquery.datetime.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/locales/'.$locale.'.min.js'));
-		$this->addJavaScriptFile(Util::appUri('js/standard.min.js'));
+		$this->addJavaScriptFile(Util::appUri('dist/js/vendor.min.js'));
+		$this->addJavaScriptFile(Util::appUri('dist/js/app.min.js'));
 
 		if ($project) {
 			$this->setTitle($project.' - ');
@@ -44,9 +38,13 @@ class sly_Layout_Backend extends sly_Layout_XHTML5 implements sly_ContainerAware
 		$this->addMeta('robots', 'noindex,nofollow');
 		$this->setBase($request->getAppBaseUrl().'/');
 
-		if ($favicon) {
-			$this->setFavIcon(Util::appUri($favicon));
-		}
+		// @edge / TODO
+		//
+		// re-add favicon when new ci is finished
+
+		// if ($favicon) {
+		// 	$this->setFavIcon(Util::appUri($favicon));
+		// }
 
 		$locale = explode('_', $locale, 2);
 		$locale = reset($locale);

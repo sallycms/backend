@@ -12,7 +12,7 @@ class sly_Controller_Login extends sly_Controller_Backend implements sly_Control
 	public function genericAction($action) {
 		$layout = $this->getContainer()->getLayout();
 		$layout->showNavigation(false);
-		$layout->pageHeader(t('login_title'));
+		// $layout->pageHeader(t('login_title'));
 
 		$action = strtolower($action);
 
