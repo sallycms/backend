@@ -19,25 +19,19 @@ class sly_Controller_Contentmeta extends sly_Controller_Content_Base {
 		$userService = $container['sly-service-user'];
 		$artService  = $container['sly-service-article'];
 
-		// handle pagination of revision list
+		$page = $this->getRequest()->get('p_revisions', 'int', 0);
+		$perPage = 20;
 
-		sly_Table::setElementsPerPageStatic(25);
-		$paging = sly_Table::getPagingParameters('revisions', true, false);
-
-		// fetch revisions
-
-		$art       = $this->article;
-		$revisions = $artService->findAllRevisions($art->getId(), $art->getClang(), $paging['start'], $paging['elements']);
-		$total     = $artService->countRevisions($art);
+		$revisions = $artService->findAllRevisions($this->article->getId(), $this->article->getClang(), $page * $perPage, $perPage);
 
 		$this->render('content/meta/index.phtml', array(
-			'article'     => $art,
-			'slot'        => $this->slot,
-			'revisions'   => $revisions,
+			'article'     => $this->article,
 			'user'        => $userService->getCurrentUser(),
 			'clangB'      => $post->get('clang_b', 'int'),
+			'revisions'   => $revisions,
 			'userService' => $userService,
-			'total'       => $total
+			'perPage'     => $perPage,
+			'total'       => $artService->countRevisions($this->article)
 		), false);
 	}
 

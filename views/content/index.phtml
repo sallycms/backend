@@ -36,9 +36,10 @@ $form->setSubmitButton($button);
 // additional form elements
 $form = sly_Core::dispatcher()->filter('SLY_ART_META_FORM', $form, $params);
 
-if (!$localmsg) {
-	print $messages;
-}
+// @edge moved messages before menus.phtml
+// if (!$localmsg) {
+// 	print $messages;
+// }
 
 if ($form instanceof sly_Viewable) {
 	print $form->render();
@@ -65,6 +66,9 @@ if ($noContentAllowed && !empty($articleSlices)) {
 }
 
 if (!$noContentAllowed) {
+	// @edge only show slots menu on the content page below meta fieldset
+	$this->render('content/_slotmenu.phtml', array('article' => $article, 'slot' => $slot), false);
+
 	print '<div class="sly-content-editmode">';
 
 	for ($i = 0; $i <= count($articleSlices); ++$i) {

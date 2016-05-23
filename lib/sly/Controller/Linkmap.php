@@ -18,6 +18,7 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 	protected $popupHelper = array();
 	protected $category    = null;
 	protected $router      = null;
+	protected $path        = null; // @edge navi path
 
 	public function setContainer(sly_Container $container) {
 		parent::setContainer($container);
@@ -89,10 +90,10 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 
 		if (empty($this->categories) || in_array(0, $this->categories)) {
 			$link      = $this->url(array('category_id' => 0));
-			$naviPath .= '<li> : <a href="'.$link.'">'.t('home').'</a></li>';
+			$naviPath .= '<li><a href="'.$link.'">'.t('home').'</a></li>';
 		}
 		else {
-			$naviPath .= '<li> : <span>'.t('home').'</span></li>';
+			$naviPath .= '<li><span>'.t('home').'</span></li>';
 		}
 
 		if ($category) {
@@ -106,10 +107,10 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 
 				if (empty($this->categories) || in_array($id, $this->categories)) {
 					$link      = $this->url(array('category_id' => $id));
-					$naviPath .= '<li> : <a href="'.$link.'">'.sly_html($cat->getName()).'</a></li>';
+					$naviPath .= '<li><a href="'.$link.'">'.sly_html($cat->getName()).'</a></li>';
 				}
 				else {
-					$naviPath .= '<li> : <span>'.sly_html($cat->getName()).'</span></li>';
+					$naviPath .= '<li><span>'.sly_html($cat->getName()).'</span></li>';
 				}
 
 				if ($root === null) $root = $id;
@@ -129,9 +130,12 @@ class sly_Controller_Linkmap extends sly_Controller_Backend implements sly_Contr
 		$naviPath .= '</ul>';
 		$layout    = $this->getContainer()->getLayout();
 
+		// @edge navi path
+		$this->path = $naviPath;
+
 		$layout->setBodyAttr('class', 'sly-popup');
 		$layout->showNavigation(false);
-		$layout->pageHeader(t('linkmap'), $naviPath);
+		$layout->pageHeader(t('linkmap')/*, $naviPath*/);
 	}
 
 	protected function getGlobals($key = null, $default = null) {

@@ -1,0 +1,64 @@
+.mfp-bg {
+	background-color: @color-blue-dark;
+}
+
+.mfp-iframe-holder {
+	padding: 0;
+}
+
+.mfp-iframe-scaler {
+	padding-top: 85vh;
+
+	iframe {
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+
+.mfp-iframe-holder .mfp-content {
+	width: 90vw;
+	max-width: 100%;
+}
+
+.mfp-iframe-holder .mfp-close {
+	top: 0;
+	right: -@input-height-base;
+	padding: 0;
+	width: @input-height-base;
+	height: @input-height-base;
+	line-height: @input-height-base;
+	background-color: @color-blue-light;
+	text-align: center;
+	display: block;
+	overflow: hidden;
+	color: @color-blue;
+	transition: opacity 0.3s;
+	opacity: 0;
+
+	&:extend(.sallycms-icon all);
+	&:extend(.sallycms-icon-component-magnificpopup-close all);
+
+	&.sly-iframe-ready {
+		opacity: 1;
+	}
+}
+
+.mfp-bg {
+	z-index: 11042;
+}
+
+.mfp-wrap {
+	z-index: 11043;
+}
+
+.mfp-preloader {
+	z-index: 11044;
+}
+
+.mfp-content {
+	z-index: 11045;
+}
+
+button.mfp-close, button.mfp-arrow {
+	z-index: 11046;
+}

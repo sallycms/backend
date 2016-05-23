@@ -22,17 +22,10 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 	public function indexAction() {
 		$this->init();
 
-		$container = $this->getContainer();
-
-		// it's not perfect, but let's check whether the setup app actually
-		// exists before showing the 'Setup' button inside the form.
-		$hasSetupApp = is_dir(SLY_SALLYFOLDER.'/setup');
+		$container   = $this->getContainer();
 		$locales     = $this->getBackendLocales();
 		$languages   = sly_Util_Language::findAll();
-		$database    = $container->getConfig()->get('database');
 		$types       = array('' => t('no_articletype'));
-
-		$database['version'] = $container->getPersistence()->getPDO()->getAttribute(PDO::ATTR_SERVER_VERSION);
 
 		try {
 			$typeService = $this->getContainer()->getArticleTypeService();
@@ -42,39 +35,7 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 			// pass...
 		}
 
-		$this->render('system/index.phtml', compact('hasSetupApp', 'locales', 'languages', 'database', 'types'), false);
-	}
-
-	public function clearcacheAction() {
-		$this->init();
-
-		$container  = $this->getContainer();
-		$dispatcher = $container->getDispatcher();
-
-		// do not call sly_Core::clearCache(), since we want to have fine-grained
-		// control over what caches get cleared
-		clearstatcache();
-
-		// clear our own data caches
-		if ($this->isCacheSelected('sly_core')) {
-			$container->getCache()->clear('sly', true);
-		}
-
-		// sync develop files
-		if ($this->isCacheSelected('sly_develop')) {
-			$container->getTemplateService()->refresh();
-			$container->getModuleService()->refresh();
-		}
-
-		$this->getFlashMessage()->addInfo(t('delete_cache_message'));
-		$dispatcher->notify('SLY_CACHE_CLEARED', null, array('backend' => true));
-
-		$this->indexAction();
-	}
-
-	public function isCacheSelected($name) {
-		$caches = $this->getRequest()->postArray('caches', 'string');
-		return in_array($name, $caches);
+		$this->render('system/index.phtml', compact('locales', 'languages', 'types'), false);
 	}
 
 	public function updateAction() {
@@ -196,20 +157,16 @@ class sly_Controller_System extends sly_Controller_Backend implements sly_Contro
 		$conf->set('environment', $developerMode ? 'dev' : 'prod');
 		$conf->set('projectname', $projectName);
 		$conf->store();
+
 		// notify system
 		$dispatcher->notify('SLY_SETTINGS_UPDATED', null, compact('originals'));
 
 		return $this->redirectResponse();
 	}
 
-	public function setupAction() {
-		$this->init();
-		$this->getContainer()->getConfig()->set('setup', true)->store();
-		$this->redirect(array(), '');
-	}
-
 	public function checkPermission($action) {
 		$user = $this->getCurrentUser();
+
 		if (!$user) {
 			return false;
 		}

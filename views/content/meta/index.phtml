@@ -8,10 +8,12 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
+// @edge put revisions into a separate view/controller
+
 print sly_Helper_Message::renderFlashMessage();
 
 $category_id = $article->getCategoryId();
-$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article, 'revisions' => $revisions, 'total_revisions' => $total);
+$params      = array('id' => $article->getId(), 'clang' => $article->getClang(), 'article' => $article);
 $form        = new sly_Form($_router->getPlainUrl(null, 'processmetaform'), 'POST', t('general'));
 
 $form->setEncType('multipart/form-data');
@@ -45,6 +47,7 @@ $table->addColumn(sly_Table_Column::factory(t('user'), 'sly-col-user'));
 $table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
 
 $table->setPagerParam('revisions');
+$table->setElementsPerPage($perPage);
 $table->openBuffer();
 
 foreach ($revisions as $revision) {

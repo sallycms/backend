@@ -1,0 +1,35 @@
+h1 {
+	font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0 0 @gap-layout-md 0;
+}
+
+h4,
+h5,
+h6 {
+	font-weight: 600;
+	margin: 0 0 @gap-layout-sm 0;
+}
+
+abbr[title],
+abbr[data-original-title] {
+	cursor: default;
+	border-bottom: none;
+}
+
+.caret {
+	padding: 0;
+	width: @input-height-base - 2;
+	height: @input-height-base - 2;
+	line-height: @input-height-base - 2;
+	font-size: 32px;
+	border: none;
+
+	&:extend(.sallycms-icon all);
+	&:extend(.sallycms-icon-component-select2-arrow all);
+}

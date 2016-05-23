@@ -8,7 +8,9 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$resize   = sly_Util_AddOn::isAvailable('sallycms/image-resize');
+use sly\Assets\Util;
+
+// @edge rewritten view logic
 $selected = $this->getCurrentCategory();
 
 ////////////////////////////////////////////////////////
@@ -24,9 +26,9 @@ $isAdmin = $this->isMediaAdmin();
 ////////////////////////////////////////////////////////
 // prepare table
 
-$table = new sly_Table('', array('sly-mediapool-list'));
+$table = new sly_Table('media', array('sly-mediapool-list'));
 
-$table->addColumn(sly_Table_Column::factory('&nbsp;', 'sly-icon sly-col-icon'));
+$table->addColumn(sly_Table_Column::factory('<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />', 'sly-icon sly-col-icon'));
 $table->addColumn(sly_Table_Column::factory(t('thumbnail'), 'sly-col-thumbnail'));
 $table->addColumn(sly_Table_Column::factory(t('file_info').' / '.t('description'), 'sly-col-info'));
 $table->addColumn(sly_Table_Column::factory(t('functions'), 'sly-col-func'));
@@ -36,44 +38,14 @@ $table->setEmptyNotice(t('no_media_found'));
 $table->openBuffer();
 
 ////////////////////////////////////////////////////////
-// move and delete selected items
-
-if ($isAdmin) {
-	$inputs = '';
-	$select = $this->getCategorySelect();
-
-	if ($select->getValueCount() > 1) {
-		$select->setAttribute('id', 'sly_dest_category');
-		$select->setAttribute('onchange', '');
-
-		$inputs =
-			'<label for="sly_dest_category">'.t('selected_media').'</label>'.$select->render().
-			'<input class="sly-form-submit-2 sly-button-changecat sly-form-submit" type="submit" name="move" value="'.t('move_to_category').'" />';
-	}
-
-	$inputs .= '<input class="sly-form-submit-2 sly-button-delete sly-form-submit" type="submit" name="delete" value="'.t('delete').'" />';
-
-	?>
-	<tfoot><tr>
-		<td class="sly-col-icon sly-icon">
-			<label class="sly-form-hidden-label" for="check_all"><?php echo t('select_all') ?></label>
-			<input class="sly-form-checkbox sly-check-all" type="checkbox" id="check_all" data-target="selectedmedia[]" />
-		</td>
-		<td colspan="3" class="sly-col-footer"><?php echo $inputs ?></td>
-	</tr></tfoot>
-	<?php
-}
-
-////////////////////////////////////////////////////////
 // list files
-
-print '<tbody>';
 
 foreach ($files as $file) {
 	$id        = $file->getId();
 	$filename  = $file->getFilename();
 	$title     = $file->getTitle();
-	$thumbnail = $this->getThumbnailTag($file, 60, 55);
+	$thumbnail = $this->getThumbnailTag($file, 240, 240);
+	$encoded   = urlencode($filename);
 
 	if ($title == '') $title = '['.t('no_title').']';
 
@@ -108,9 +80,34 @@ $table->closeBuffer();
 // putting it all together
 
 $container = new sly_Form_Container();
-$container->setContent($table->render());
-
+$container->setContent($table->render($total));
 $form->add($container);
+
+////////////////////////////////////////////////////////
+// move and delete selected items
+
+if ($isAdmin) {
+	$inputs  = '';
+	$select  = $this->getCategorySelect();
+	$select->setLabel('');
+	$buttons = new sly_Form_ButtonBar();
+
+	if ($select->getValueCount() > 1) {
+		$select->setAttribute('id', 'sly_dest_category');
+		$select->setAttribute('onchange', '');
+		$form->add($select);
+
+		$move = new sly_Form_Input_Button('submit', 'move', t('move_to_category'));
+		$buttons->addButton($move);
+	}
+
+	$delete = new sly_Form_Input_Button('submit', 'delete', t('delete'));
+	$delete->addClass('sly-button-delete');
+	$buttons->addButton($delete);
+
+	$form->add($buttons);
+}
+
 $form->setResetButton(null);
 $form->setSubmitButton(null);
 print $form->render();

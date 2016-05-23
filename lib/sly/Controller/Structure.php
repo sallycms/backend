@@ -189,6 +189,10 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 	 * @return string
 	 */
 	protected function getBreadcrumb() {
+		// @edge / TODO
+		//
+		// move breadcrumb markup from controller to view (toolbars/breadcrumb.phtml)
+
 		$result = '';
 		$cat    = $this->catService->findByPK($this->categoryId, $this->clangId);
 		$router = $this->getContainer()->getApplication()->getRouter();
@@ -196,18 +200,13 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 		if ($cat) {
 			foreach ($cat->getParentTree() as $parent) {
 				if ($this->canViewCategory($parent->getId())) {
-					$result .= '<li> : <a href="'.$router->getUrl(null, null, array('category_id' => $parent->getId(), 'clang' => $this->clangId)).'">'.sly_html($parent->getName()).'</a></li>';
+					$result .= '<li><a href="'.$router->getUrl(null, null, array('category_id' => $parent->getId(), 'clang' => $this->clangId)).'">'.sly_html($parent->getName()).'</a></li>';
 				}
 			}
 		}
 
-		$result = '
-			<ul class="sly-navi-path">
-				<li>'.t('path').'</li>
-				<li> : <a href="'.$router->getUrl(null, null, array('clang' => $this->clangId)).'">'.t('home').'</a></li>
-				'.$result.'
-			</ul>
-			';
+		// @edge fixed whitespace line breaks
+		$result = '<ul class="sly-navi-path"><li>'.t('path').'</li><li><a href="'.$router->getUrl(null, null, array('clang' => $this->clangId)).'">'.t('home').'</a></li>'.$result.'</ul>';
 
 		return $result;
 	}
@@ -304,12 +303,16 @@ class sly_Controller_Structure extends sly_Controller_Backend implements sly_Con
 			return;
 		}
 
-		$layout->pageHeader(t('structure'), $this->getBreadcrumb());
+		$layout->pageHeader(t('structure')/*, $this->getBreadcrumb()*/);
 
 		$this->render('toolbars/languages.phtml', array(
 			'controller' => 'structure',
 			'curClang'   => $this->clangId,
 			'params'     => array('category_id' => $this->categoryId)
+		), false);
+
+		$this->render('toolbars/breadcrumb.phtml', array(
+			'breadcrumb' => $this->getBreadcrumb()
 		), false);
 
 		print $dispatcher->filter('PAGE_STRUCTURE_HEADER', '', array(

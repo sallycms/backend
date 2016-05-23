@@ -271,19 +271,25 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 		);
 
 		$extension = $medium->getExtension();
-		$base      = 'mime/';
+		$base      = 'sly-mime-icon-';
 
 		if (!$medium->exists()) {
-			return Util::appUri($base.'missing.png');
+			// @edge css instead of images
+			// return Util::appUri($base.'missing.png');
+			return '&times;';
 		}
 
 		foreach ($mapping as $type => $exts) {
 			if (in_array($extension, $exts, true)) {
-				return Util::appUri($base.$type.'.png');
+				// @edge css instead of images
+				// return Util::appUri($base.$type.'.png');
+				return $type;
 			}
 		}
 
-		return Util::appUri($base.'unknown.png');
+		// @edge css instead of images
+		// return Util::appUri($base.'unknown.png');
+		return '&hellip;';
 	}
 
 	protected function isImage(sly_Model_Medium $medium) {
@@ -293,12 +299,16 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 
 	protected function getThumbnailTag(sly_Model_Medium $medium, $width, $height) {
 		if (!$medium->exists()) {
-			$thumbnail = '<img src="'.$this->getMimeIcon($medium).'" width="44" height="38" alt="'.ht('file_not_found').'" />';
+			// @edge use css instead of images
+			// $thumbnail = '<img src="'.$this->getMimeIcon($medium).'" width="44" height="38" alt="'.ht('file_not_found').'" />';
+			$thumbnail = '<span class="sly-mime-icon-'.$this->getMimeIcon($medium).'" data-mime-type="'.$this->getMimeIcon($medium).'"></span>';
 		}
 		else {
 			$icon_src  = $this->getMimeIcon($medium);
 			$alt       = $medium->getTitle();
-			$thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
+			// @edge use css instead of images
+			// $thumbnail = '<img src="'.$icon_src.'" alt="'.sly_html($alt).'" title="'.sly_html($alt).'" />';
+			$thumbnail = '<span class="sly-mime-icon-'.$this->getMimeIcon($medium).'" data-mime-type="'.$this->getMimeIcon($medium).'"></span>';
 
 			if ($this->isImage($medium)) {
 				$mwidth    = $medium->getWidth();
@@ -311,8 +321,8 @@ abstract class sly_Controller_Mediapool_Base extends sly_Controller_Backend impl
 				$attrs = array(
 					'alt'    => $alt,
 					'title'  => $alt,
-					'width'  => $width,
-					'height' => $height,
+					// 'width'  => $width,  // @edge no fixed image sizes - use css
+					// 'height' => $height, // @edge no fixed image sizes - use css
 					'src'    => sly\Assets\Util::mediapoolUri($encoded.'?t='.$timestamp)
 				);
 

@@ -8,14 +8,18 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-$urlParams    = array('article_id' => $article->getId(), 'clang' => $article->getClang(), 'revision' => $article->getRevision());
-$menu         = '';
-$isEditActive = $this instanceof sly_Controller_Content;
-$isMetaActive = $this instanceof sly_Controller_Contentmeta;
+// @edge put revisions into a separate view/controller
+
+$urlParams        = array('article_id' => $article->getId(), 'clang' => $article->getClang(), 'revision' => $article->getRevision());
+$menu             = '';
+$isEditActive     = $this instanceof sly_Controller_Content;
+$isMetaActive     = $this instanceof sly_Controller_Contentmeta;
+$isRevisionActive = $this instanceof sly_Controller_Contentrevision;
 
 $listElements = array();
 $listElements[] = '<a href="'.$_router->getUrl('content', null, $urlParams).'"'.($isEditActive ? ' class="sly-active"' : '').'>'.t('edit_mode').'</a>';
 $listElements[] = '<a href="'.$_router->getUrl('contentmeta', null, $urlParams).'"'.($isMetaActive ? ' class="sly-active"' : '').'>'.t('metadata').'</a>';
+$listElements[] = '<a href="'.$_router->getUrl('contentrevision', null, $urlParams).'"'.($isRevisionActive ? ' class="sly-active"' : '').'>'.t('contentmeta_revisions').'</a>';
 $listElements[] = '<a href="'.$_router->getUrl('preview', null, $urlParams).'" class="sly-blank">'.t('show').'</a>';
 
 $listElements = sly_Core::dispatcher()->filter('SLY_PAGE_CONTENT_ACTIONS_MENU', $listElements, array(

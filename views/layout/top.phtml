@@ -10,22 +10,38 @@
 ?>
 <div id="sly-page">
 	<div id="sly-navi-top">
+		<!--
+			@edge / TODO
+
+			add branding when new ci is finished
+		-->
+		<a href="./" class="sly-home">
+			<span>Sallycms</span>
+		</a>
 		<?php if ($username && $navigation): ?>
-		<ul class="sly-meta">
+		<!--
+			@edge / TODO
+
+			wrap navigation into a mobile collapsible markup
+		-->
+		<nav class="sly-meta">
+			<!-- @edge save space
 			<li class="sly-first"><span><?php print t('logged_in_as').' '.sly_html($username) ?></span></li>
-			<li><a href="<?php print $_router->getUrl('profile') ?>"><?php print t('my_profile') ?></a></li>
-			<li><a href="<?php print $_router->getUrl('login', 'logout') ?>" class="sly-postlink"><?php print t('logout') ?></a></li>
-			<li><a href="../" class="sly-blank"><?php print t('to_website') ?></a></li>
-		</ul>
+			-->
+			<a href="<?php print $_router->getUrl('profile') ?>"><?php print t('my_profile') ?></a>
+			<a href="<?php print $_router->getUrl('login', 'logout') ?>" class="sly-postlink"><?php print t('logout') ?></a>
+			<a href="../" class="sly-blank"><?php print t('to_website') ?></a>
+		</nav>
 		<?php elseif ($this->hasNavigation()): ?>
 		<p class="sly-meta"><?php print t('logged_out') ?></p>
 		<?php endif ?>
 	</div>
 
-	<?php if ($username && $navigation): ?>
-	<div id="sly-navi-main">
-		<?php print $this->renderView('navigation.phtml', array('nav' => $navigation)); ?>
-	</div>
-	<?php endif ?>
+	<div id="sly-page-content">
+		<?php if ($username && $navigation): ?>
+		<div id="sly-navi-main">
+			<?php print $this->renderView('navigation.phtml', array('nav' => $navigation)); ?>
+		</div>
+		<?php endif ?>
 
-	<div id="sly-wrapper">
+		<div id="sly-wrapper">
