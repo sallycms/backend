@@ -90,7 +90,7 @@
 				color: #fff;
 			}
 		}
-		
+
 		&.ellipsis, &.first, &.prev, &.next, &.last {
 			&:hover, &:focus {
 				background-color: transparent;
@@ -113,4 +113,14 @@
 		display: inline-block;
 		width: ~"calc(100% - 255px)";
 	}
+}
+
+.sly-table-extras-filter {
+	input[type=text] {
+		width: 100%;
+	}
+}
+
+.table-responsive + [class^=sly-table-extras-] {
+	margin-top: 20px;
 }
