@@ -68,6 +68,7 @@
 
 .sly-table-extras-pager {
 	&:extend(.pagination);
+	margin-top: 0;
 
 	a {
 		&:extend(.pagination > li > a all);
@@ -116,11 +117,12 @@
 }
 
 .sly-table-extras-filter {
+	margin-bottom: 30px;
 	input[type=text] {
 		width: 100%;
 	}
 }
 
-.table-responsive + [class^=sly-table-extras-] {
-	margin-top: 20px;
+.table-responsive {
+	margin-bottom: 30px;
 }
