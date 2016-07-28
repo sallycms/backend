@@ -68,6 +68,7 @@
 
 .sly-table-extras-pager {
 	&:extend(.pagination);
+	margin-top: 0;
 
 	a {
 		&:extend(.pagination > li > a all);
@@ -90,7 +91,7 @@
 				color: #fff;
 			}
 		}
-		
+
 		&.ellipsis, &.first, &.prev, &.next, &.last {
 			&:hover, &:focus {
 				background-color: transparent;
@@ -113,4 +114,15 @@
 		display: inline-block;
 		width: ~"calc(100% - 255px)";
 	}
+}
+
+.sly-table-extras-filter {
+	margin-bottom: 30px;
+	input[type=text] {
+		width: 100%;
+	}
+}
+
+.table-responsive {
+	margin-bottom: 30px;
 }

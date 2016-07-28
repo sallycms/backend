@@ -39,14 +39,12 @@ if ($canDelete) {
 	$table->addColumn(sly_Table_Column::factory(t('function'), 'sly-col-func'));
 }
 
-// @edge needs to be improved to save space
-// $table->enableSearching(true, array('page' => 'user'));
+$table->enableSearching(true, array('page' => 'user'));
 $table->setIsEmpty(empty($users));
 $table->setEmptyNotice(t('no_users_found'));
 $table->openBuffer();
 
 $tdIcon      = '';
-$user        = sly_Util_User::getCurrentUser();
 $currentID   = $user->getId();
 $action      = $canEdit ? 'edit' : 'view';
 $actionTitle = t($canEdit ? 'edit' : 'show');
