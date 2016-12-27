@@ -28,12 +28,8 @@ class sly_Controller_Preview extends sly_Controller_Backend implements sly_Contr
 			throw new Exception(t('no_template_set'));
 		}
 
-		// preserve the backend layout and PAGE_HEADER listeners
+		// preserve the backend layout
 		$backendLayout = $container->getLayout();
-		$headerEvents  = $dispatcher->getListeners('PAGE_HEADER');
-		// clear PAGE_HEADER event so no backend addon stuff will
-		// try to manipulate the frontend rendering
-		$dispatcher->clear('PAGE_HEADER');
 
 		try {
 			// hide backend
@@ -60,11 +56,6 @@ class sly_Controller_Preview extends sly_Controller_Backend implements sly_Contr
 		catch (Exception $e) {
 			// if anything goes wrong, restore
 			$container->setLayout($backendLayout);
-
-			//readd listeners for backend page header
-			foreach ($headerEvents as $event) {
-				$dispatcher->addListener('PAGE_HEADER', $event['listener'], $event['params']);
-			}
 
 			throw $e;
 		}
