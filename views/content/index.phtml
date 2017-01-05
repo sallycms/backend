@@ -45,6 +45,9 @@ if ($form instanceof sly_Viewable) {
 	print $form->render();
 }
 
+// @edge only show slots menu on the content page below meta fieldset
+$this->render('content/_slotmenu.phtml', array('article' => $article, 'slot' => $slot), false);
+
 if (!$hasType) {
 	print sly_Helper_Message::warn(t('select_type_first'));
 }
@@ -66,8 +69,6 @@ if ($noContentAllowed && !empty($articleSlices)) {
 }
 
 if (!$noContentAllowed) {
-	// @edge only show slots menu on the content page below meta fieldset
-	$this->render('content/_slotmenu.phtml', array('article' => $article, 'slot' => $slot), false);
 
 	print '<div class="sly-content-editmode">';
 
